@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { AIWriterButton } from "@/components/ui/AIWriterButton";
 
 export const EducationForm = () => {
   const { resumeData, addEducation, updateEducation, deleteEducation } = useResumeStore();
@@ -18,18 +19,11 @@ export const EducationForm = () => {
   }, [resumeData.education]);
 
   const handleAdd = () => {
-    const newEducation = {
-      id: `edu-${Date.now()}`,
-      school: '',
-      degree: '',
-      field: '',
-      startDate: '',
-      endDate: '',
-      gpa: '',
-      description: '',
-    };
-    addEducation(newEducation);
-    setExpandedId(newEducation.id);
+    addEducation();
+    // Auto-expand the newly added item
+    if (resumeData.education.length > 0) {
+      // Will be handled by useEffect
+    }
   };
 
   return (
@@ -143,7 +137,15 @@ export const EducationForm = () => {
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <Label>Description</Label>
+                    <div className="flex items-center gap-2">
+                      <Label>Description</Label>
+                      <AIWriterButton
+                        fieldName="description"
+                        fieldLabel="Education Description"
+                        fieldValue={edu.description || ''}
+                        onUpdate={(newText) => updateEducation(edu.id, { description: newText })}
+                      />
+                    </div>
                     <Textarea
                       value={edu.description}
                       onChange={(e) => updateEducation(edu.id, { description: e.target.value })}

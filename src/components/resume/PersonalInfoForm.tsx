@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { User } from "lucide-react";
 import { motion } from "framer-motion";
+import { AIWriterButton } from "@/components/ui/AIWriterButton";
 
 export const PersonalInfoForm = () => {
   const { resumeData, updatePersonalInfo } = useResumeStore();
@@ -84,7 +85,15 @@ export const PersonalInfoForm = () => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="summary">Professional Summary</Label>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="summary">Professional Summary</Label>
+          <AIWriterButton
+            fieldName="summary"
+            fieldLabel="Summary"
+            fieldValue={personalInfo.summary || ''}
+            onUpdate={(newText) => updatePersonalInfo({ summary: newText })}
+          />
+        </div>
         <Textarea
           id="summary"
           value={personalInfo.summary}

@@ -13,9 +13,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, FileText, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
+import { AIReviewModal } from "@/components/ui/AIReviewModal";
+import { useUiStore } from "@/stores/uiStore";
 
 const ResumeBuilder = () => {
-  const [activeTab, setActiveTab] = useState("personal");
+  const { activeTab, setActiveTab } = useUiStore();
   const [showPreview, setShowPreview] = useState(false);
   const navigate = useNavigate();
 
@@ -67,7 +70,7 @@ const ResumeBuilder = () => {
             className="space-y-6"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
+              <TabsList className="grid w-full grid-cols-7">
                 <TabsTrigger value="personal">Personal</TabsTrigger>
                 <TabsTrigger value="work">Work</TabsTrigger>
                 <TabsTrigger value="education">Education</TabsTrigger>
@@ -106,6 +109,10 @@ const ResumeBuilder = () => {
           )}
         </div>
       </div>
+
+      {/* Global AI Writer Modals */}
+      <AIInstructionModal />
+      <AIReviewModal />
     </div>
   );
 };

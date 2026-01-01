@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FolderGit2, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { AIWriterButton } from "@/components/ui/AIWriterButton";
 
 export const ProjectsForm = () => {
   const { resumeData, addProject, updateProject, deleteProject } = useResumeStore();
@@ -133,7 +134,15 @@ export const ProjectsForm = () => {
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <Label>Description *</Label>
+                    <div className="flex items-center gap-2">
+                      <Label>Description *</Label>
+                      <AIWriterButton
+                        fieldName="description"
+                        fieldLabel="Project Description"
+                        fieldValue={proj.description || ''}
+                        onUpdate={(newText) => updateProject(proj.id, { description: newText })}
+                      />
+                    </div>
                     <Textarea
                       value={proj.description}
                       onChange={(e) => updateProject(proj.id, { description: e.target.value })}
