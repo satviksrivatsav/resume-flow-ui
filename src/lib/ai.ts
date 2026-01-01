@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api/v1";
+const API_BASE_URL = "https://resume-flow-backend-9b1g.onrender.com/api/v1";
 
 export interface AIFieldRequest {
     action: 'REWRITE' | 'GENERATE';
