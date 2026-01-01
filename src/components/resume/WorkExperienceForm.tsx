@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
+import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -139,7 +140,7 @@ export const WorkExperienceForm = () => {
                     <Checkbox
                       id={`current-${exp.id}`}
                       checked={exp.current}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         updateWorkExperience(exp.id, { current: checked as boolean })
                       }
                     />
@@ -152,7 +153,15 @@ export const WorkExperienceForm = () => {
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <Label>Description</Label>
+                    <div className="flex items-center gap-2">
+                      <Label>Description</Label>
+                      <AIWriterButton
+                        fieldName="description"
+                        fieldLabel="Work Experience Description"
+                        fieldValue={exp.description || ''}
+                        onUpdate={(newText) => updateWorkExperience(exp.id, { description: newText })}
+                      />
+                    </div>
                     <Textarea
                       value={exp.description}
                       onChange={(e) => updateWorkExperience(exp.id, { description: e.target.value })}
