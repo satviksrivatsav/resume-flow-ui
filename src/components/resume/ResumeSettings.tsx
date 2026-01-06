@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const THEME_COLORS = [
-  '#ef4444', '#f87171', '#fb923c', '#f97316',
+  '#1f2937', '#ef4444', '#fb923c', '#f97316',
   '#fbbf24', '#22c55e', '#16a34a', '#38bdf8',
   '#0ea5e9', '#a78bfa', '#7c3aed',
 ];
@@ -21,10 +21,6 @@ const FONT_SIZES = [
   { value: 'compact' as const, label: 'Compact', pt: 9 },
   { value: 'standard' as const, label: 'Standard', pt: 11 },
   { value: 'large' as const, label: 'Large', pt: 13 },
-];
-
-const DOCUMENT_SIZES = [
-  { value: "a4" as const, label: "A4", subtitle: "8.27 x 11.69 in" },
 ];
 
 export const ResumeSettings = () => {
@@ -124,11 +120,10 @@ export const ResumeSettings = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => updateSettings({ fontFamily: font })}
-              className={`px-4 py-2.5 rounded-md border-2 text-sm font-medium transition-all ${
-                settings.fontFamily === font
-                  ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                  : 'border-border bg-background hover:border-primary/50'
-              }`}
+              className={`px-4 py-2.5 rounded-md border-2 text-sm font-medium transition-all ${settings.fontFamily === font
+                ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                : 'border-border bg-background hover:border-primary/50'
+                }`}
               style={{ fontFamily: font }}
             >
               {font}
@@ -152,11 +147,10 @@ export const ResumeSettings = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => updateSettings({ fontSize: size.value })}
-              className={`px-4 py-2.5 rounded-md border-2 text-sm font-medium transition-all ${
-                settings.fontSize === size.value
-                  ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                  : 'border-border bg-background hover:border-primary/50'
-              }`}
+              className={`px-4 py-2.5 rounded-md border-2 text-sm font-medium transition-all ${settings.fontSize === size.value
+                ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                : 'border-border bg-background hover:border-primary/50'
+                }`}
             >
               {size.label}
             </motion.button>

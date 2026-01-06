@@ -129,18 +129,18 @@ export default function LandingPage() {
       <Spotlight />
       <div className="p-4 px-6 max-w-7xl mx-auto relative z-10 w-full pt-36 md:pt-0">
         <h1 className="text-2xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight md:leading-tight pb-1">
-          Everyone deserves a <br/><ContainerTextFlip words={words} /> Resume.
+          Everyone deserves a <br /><ContainerTextFlip words={words} /> Resume.
         </h1>
         <br></br>
         <p className="mt-3 md:mt-4 font-normal text-sm md:text-base text-neutral-300 max-w-lg text-center mx-auto px-2">
           Create stunning, professional resumes in minutes with Resume Flow. Modern templates, easy customization, and ATS-friendly designs.
         </p>
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 mt-6 md:mt-8">
-        <HoverBorderGradient
+          <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"
             onClick={() => navigate("/resume-builder")}
-            className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2 cursor-pointer"
+            className="bg-white text-black flex items-center space-x-2 cursor-pointer"
           >
             <AceternityLogo />
             <span>Build now</span>
@@ -148,7 +148,7 @@ export default function LandingPage() {
           <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"
-            className="dark:bg-black bg-black text-white dark:text-white flex items-center space-x-2 cursor-pointer"
+            className="bg-black text-white flex items-center space-x-2 cursor-pointer"
           >
             <AceternityLogo />
             <span>Create from existing resume</span>

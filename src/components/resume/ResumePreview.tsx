@@ -9,10 +9,9 @@ const fontSizeMap = {
   large: { base: '13pt', heading: '15pt', name: '26pt' },
 };
 
-const documentSizeMap = {
-  a4: { width: "210mm", height: "297mm" },
-  legal: { width: "8.5in", height: "14in" },
-};
+// A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
+const A4_WIDTH = '794px';
+const A4_HEIGHT = '1123px';
 
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>{children}</div>
@@ -188,8 +187,8 @@ export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
   const { personalInfo, education, workExperience, projects, skills, customSections, settings } = resumeData;
 
   const sizes = fontSizeMap[settings.fontSize];
-  const { width: pageWidth, height: pageHeight } =
-    documentSizeMap[settings.documentSize as keyof typeof documentSizeMap] || documentSizeMap.a4;
+  const pageWidth = A4_WIDTH;
+  const pageHeight = A4_HEIGHT;
   const pageMargin = '0.5in';
 
   const formatDate = (dateStr: string) => {

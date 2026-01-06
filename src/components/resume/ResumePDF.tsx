@@ -129,7 +129,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
 
   const sizes = fontSizeMap[settings.fontSize] || fontSizeMap.standard;
   const fontFamily = settings.fontFamily || 'Roboto';
-  
+
   // Create styles dynamically based on settings
   const styles = StyleSheet.create({
     page: {
@@ -261,7 +261,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   return (
     <Document>
       <Page
-        size={settings.documentSize === 'a4' ? 'A4' : 'LETTER'}
+        size="A4"
         style={styles.page}
       >
         {/* Header */}

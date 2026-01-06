@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
 import { AIReviewModal } from "@/components/ui/AIReviewModal";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useUiStore } from "@/stores/uiStore";
 import {
   Panel,
@@ -94,6 +95,7 @@ const ResumeBuilder = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Button
                 variant="outline"
                 onClick={() => setShowPreview(!showPreview)}

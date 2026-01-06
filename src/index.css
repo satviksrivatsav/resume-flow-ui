@@ -8,57 +8,66 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light theme - clean, professional look */
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    /* Light theme - soft, eye-friendly palette */
+    /* More pronounced warm cream tones */
+    --background: 40 30% 95%;
+    /* Noticeably warm cream #F5F0E8 */
+    --foreground: 220 25% 18%;
+    /* Darker slate for better contrast */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 40 20% 98%;
+    /* Warm off-white cards */
+    --card-foreground: 220 25% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 40 20% 98%;
+    --popover-foreground: 220 25% 18%;
 
     --primary: 221 83% 53%;
+    /* Blue accent - keeping vibrant */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 40 20% 90%;
+    /* Warmer, more visible gray */
+    --secondary-foreground: 220 25% 18%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 40 15% 88%;
+    /* Darker warm gray for preview bg */
+    --muted-foreground: 220 15% 40%;
+    /* Better contrast muted text */
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 40 20% 90%;
+    --accent-foreground: 220 25% 18%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 40 15% 82%;
+    /* More visible warm border */
+    --input: 40 15% 85%;
     --ring: 221 83% 53%;
 
     --radius: 0.5rem;
-    
-    /* Gradient colors for light mode */
-    --gradient-start: 210 40% 96%;
-    --gradient-mid: 262 83% 58%;
-    --gradient-end: 200 95% 55%;
-    --gradient-accent: 145 100% 50%;
-    
-    /* Glass effect for light mode */
-    --glass-bg: 0 0% 100% / 0.7;
-    --glass-border: 0 0% 0% / 0.1;
-    
-    /* Shadows */
-    --shadow-colorful: 0 0% 0% / 0.1;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 222 47% 11%;
+    /* Gradient colors for light mode */
+    --gradient-start: 40 30% 95%;
+    --gradient-mid: 262 70% 60%;
+    --gradient-end: 200 80% 55%;
+    --gradient-accent: 145 70% 45%;
+
+    /* Glass effect for light mode */
+    --glass-bg: 40 25% 98% / 0.85;
+    --glass-border: 40 15% 65% / 0.25;
+
+    /* Shadows */
+    --shadow-colorful: 220 25% 18% / 0.1;
+
+    --sidebar-background: 40 25% 94%;
+    --sidebar-foreground: 220 25% 18%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
+    --sidebar-accent: 40 20% 90%;
+    --sidebar-accent-foreground: 220 25% 18%;
+    --sidebar-border: 40 15% 82%;
     --sidebar-ring: 221 83% 53%;
   }
 
@@ -91,13 +100,13 @@ All colors MUST be HSL.
     --border: 240 10% 20%;
     --input: 240 10% 20%;
     --ring: 221 83% 53%;
-    
+
     /* Gradient colors for dark mode */
     --gradient-start: 240 67% 11%;
     --gradient-mid: 285 87% 53%;
     --gradient-end: 175 100% 50%;
     --gradient-accent: 145 100% 50%;
-    
+
     /* Glass effect for dark mode */
     --glass-bg: 0 0% 100% / 0.05;
     --glass-border: 0 0% 100% / 0.1;
@@ -118,6 +127,31 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  /* Apple-style smooth theme transition */
+  /* Only animate essential elements for performance */
+  body,
+  .bg-background,
+  .bg-card,
+  .bg-popover,
+  .bg-muted,
+  .bg-accent,
+  .bg-secondary {
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Faster transition for smaller UI elements */
+  button,
+  input,
+  textarea,
+  select,
+  [class*="border"] {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -130,14 +164,14 @@ All colors MUST be HSL.
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--glass-border));
   }
-  
+
   .gradient-text {
     background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-mid)), hsl(var(--gradient-end)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .gradient-bg {
     background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-mid)), hsl(var(--gradient-end)));
   }
@@ -149,12 +183,12 @@ All colors MUST be HSL.
     margin: 0;
     size: letter;
   }
-  
+
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
+
   .no-print {
     display: none !important;
   }

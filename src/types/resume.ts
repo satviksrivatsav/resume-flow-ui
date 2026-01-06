@@ -57,7 +57,6 @@ export interface ResumeSettings {
   themeColor: string;
   fontFamily: string;
   fontSize: 'compact' | 'standard' | 'large';
-  documentSize: 'letter' | 'a4';
 }
 
 export interface ResumeData {
@@ -87,9 +86,8 @@ export const defaultResumeData: ResumeData = {
   skills: [],
   customSections: [],
   settings: {
-    themeColor: '#38bdf8',
+    themeColor: '#1f2937',
     fontFamily: 'Open Sans',
     fontSize: 'standard',
-    documentSize: 'letter',
   },
 };
