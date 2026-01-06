@@ -8,97 +8,108 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 98%;
+    /* Light theme - clean, professional look */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
     --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 221 83% 53%;
 
     --radius: 0.5rem;
     
-    /* Gradient colors - vibrant multi-color gradient */
-    --gradient-start: 240 67% 11%;     /* Very Dark Blue */
-    --gradient-mid: 285 87% 53%;       /* Vibrant Purple/Magenta */
-    --gradient-end: 175 100% 50%;      /* Bright Cyan/Turquoise */
-    --gradient-accent: 145 100% 50%;   /* Bright Green */
+    /* Gradient colors for light mode */
+    --gradient-start: 210 40% 96%;
+    --gradient-mid: 262 83% 58%;
+    --gradient-end: 200 95% 55%;
+    --gradient-accent: 145 100% 50%;
     
-    /* Glass effect */
-    --glass-bg: 0 0% 10% / 0.5;
-    --glass-border: 0 0% 100% / 0.1;
+    /* Glass effect for light mode */
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 0% / 0.1;
     
     /* Shadows */
     --shadow-colorful: 0 0% 0% / 0.1;
 
-    --sidebar-background: 0 0% 10%;
-
-    --sidebar-foreground: 0 0% 98%;
-
-    --sidebar-primary: 0 0% 98%;
-
-    --sidebar-primary-foreground: 0 0% 10%;
-
-    --sidebar-accent: 0 0% 15%;
-
-    --sidebar-accent-foreground: 0 0% 98%;
-
-    --sidebar-border: 0 0% 20%;
-
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
     --sidebar-ring: 221 83% 53%;
   }
 
   .dark {
-    --background: 240 10% 10%;
+    /* Dark theme */
+    --background: 240 10% 4%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 13%;
+    --card: 240 10% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 13%;
+    --popover: 240 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 262 83% 58%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 65% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 10% 20%;
+    --muted: 240 10% 15%;
     --muted-foreground: 240 5% 65%;
 
-    --accent: 200 95% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 10% 15%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 10% 20%;
     --input: 240 10% 20%;
-    --ring: 262 83% 58%;
+    --ring: 221 83% 53%;
     
+    /* Gradient colors for dark mode */
+    --gradient-start: 240 67% 11%;
+    --gradient-mid: 285 87% 53%;
+    --gradient-end: 175 100% 50%;
+    --gradient-accent: 145 100% 50%;
+    
+    /* Glass effect for dark mode */
     --glass-bg: 0 0% 100% / 0.05;
     --glass-border: 0 0% 100% / 0.1;
+
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 10% 8%;
+    --sidebar-accent: 240 10% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 10% 20%;
+    --sidebar-ring: 221 83% 53%;
   }
 }
 

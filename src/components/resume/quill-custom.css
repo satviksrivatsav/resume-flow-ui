@@ -32,6 +32,6 @@
 }
 
 .ql-editor.ql-blank::before {
-  color: #a1a1aa; /* zinc-400 */
+  color: hsl(var(--muted-foreground));
   font-style: normal;
 }
