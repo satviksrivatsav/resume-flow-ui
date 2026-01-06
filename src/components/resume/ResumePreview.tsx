@@ -189,7 +189,7 @@ export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
   const sizes = fontSizeMap[settings.fontSize];
   const { width: pageWidth, height: pageHeight } =
-  documentSizeMap[settings.documentSize as keyof typeof documentSizeMap] || documentSizeMap.a4;
+    documentSizeMap[settings.documentSize as keyof typeof documentSizeMap] || documentSizeMap.a4;
   const pageMargin = '0.5in';
 
   const formatDate = (dateStr: string) => {
@@ -227,6 +227,8 @@ export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         backgroundColor: 'white',
         color: '#000',
         padding: pageMargin,
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
       }}
     >
       <ResumeContent {...contentProps} />
