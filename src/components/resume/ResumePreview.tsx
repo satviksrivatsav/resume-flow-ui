@@ -166,19 +166,20 @@ const ResumeContent = ({
       )}
 
       {/* Custom Sections */}
-      {customSections.map((section: any) => (
+      {customSections.filter((section: any) => section && section.title).map((section: any) => (
         <div key={section.id} className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
-            {section.title.toUpperCase()}
+            {(section.title || '').toUpperCase()}
           </h2>
           <div
             className="resume-item"
             style={{ color: '#374151', lineHeight: '1.5' }}
-            dangerouslySetInnerHTML={{ __html: section.description }}
+            dangerouslySetInnerHTML={{ __html: section.description || '' }}
           />
         </div>
       ))}
     </>
+
   )
 }
 

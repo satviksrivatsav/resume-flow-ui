@@ -4,6 +4,7 @@ import { ResumeData, defaultResumeData, CustomSection } from '@/types/resume';
 
 interface ResumeStore {
   resumeData: ResumeData;
+  setResumeData: (data: ResumeData) => void;
   updatePersonalInfo: (data: Partial<ResumeData['personalInfo']>) => void;
   updateSettings: (settings: Partial<ResumeData['settings']>) => void;
   addEducation: () => void;
@@ -24,9 +25,12 @@ interface ResumeStore {
   resetResume: () => void;
 }
 
+
 export const useResumeStore = create<ResumeStore>((set) => ({
   resumeData: defaultResumeData,
-  
+
+  setResumeData: (data) => set({ resumeData: data }),
+
   updatePersonalInfo: (data) =>
     set((state) => ({
       resumeData: {
@@ -34,7 +38,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         personalInfo: { ...state.resumeData.personalInfo, ...data },
       },
     })),
-  
+
   updateSettings: (settings) =>
     set((state) => ({
       resumeData: {
@@ -42,7 +46,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         settings: { ...state.resumeData.settings, ...settings },
       },
     })),
-  
+
   addEducation: () =>
     set((state) => ({
       resumeData: {
@@ -53,7 +57,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ],
       },
     })),
-  
+
   updateEducation: (id, education) =>
     set((state) => ({
       resumeData: {
@@ -63,7 +67,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ),
       },
     })),
-  
+
   deleteEducation: (id) =>
     set((state) => ({
       resumeData: {
@@ -71,7 +75,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         education: state.resumeData.education.filter((item) => item.id !== id),
       },
     })),
-  
+
   addWorkExperience: () =>
     set((state) => ({
       resumeData: {
@@ -82,7 +86,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ],
       },
     })),
-  
+
   updateWorkExperience: (id, experience) =>
     set((state) => ({
       resumeData: {
@@ -92,7 +96,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ),
       },
     })),
-  
+
   deleteWorkExperience: (id) =>
     set((state) => ({
       resumeData: {
@@ -100,7 +104,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         workExperience: state.resumeData.workExperience.filter((item) => item.id !== id),
       },
     })),
-  
+
   addProject: () =>
     set((state) => ({
       resumeData: {
@@ -111,7 +115,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ],
       },
     })),
-  
+
   updateProject: (id, project) =>
     set((state) => ({
       resumeData: {
@@ -121,7 +125,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ),
       },
     })),
-  
+
   deleteProject: (id) =>
     set((state) => ({
       resumeData: {
@@ -129,7 +133,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         projects: state.resumeData.projects.filter((item) => item.id !== id),
       },
     })),
-  
+
   addSkill: () =>
     set((state) => ({
       resumeData: {
@@ -166,7 +170,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ],
       },
     })),
-  
+
   updateCustomSection: (id, section) =>
     set((state) => ({
       resumeData: {
@@ -184,6 +188,6 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         customSections: state.resumeData.customSections.filter((item) => item.id !== id),
       },
     })),
-  
+
   resetResume: () => set({ resumeData: defaultResumeData }),
 }));

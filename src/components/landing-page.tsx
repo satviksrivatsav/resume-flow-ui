@@ -148,11 +148,13 @@ export default function LandingPage() {
           <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"
+            onClick={() => navigate("/upload")}
             className="bg-black text-white flex items-center space-x-2 cursor-pointer"
           >
             <AceternityLogo />
             <span>Create from existing resume</span>
           </HoverBorderGradient>
+
         </div>
       </div>
     </div>

@@ -6,7 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import ResumeBuilder from "./pages/ResumeBuilder";
+import UploadResume from "./pages/UploadResume";
 import NotFound from "./pages/NotFound";
+
 
 const queryClient = new QueryClient();
 
@@ -26,9 +28,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/resume-builder" element={<ResumeBuilder />} />
+            <Route path="/upload" element={<UploadResume />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
