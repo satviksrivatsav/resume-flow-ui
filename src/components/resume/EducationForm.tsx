@@ -7,6 +7,7 @@ import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
+import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
 
 export const EducationForm = () => {
   const { resumeData, addEducation, updateEducation, deleteEducation } = useResumeStore();
@@ -110,31 +111,27 @@ export const EducationForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>GPA</Label>
+                    <Label>Grade</Label>
                     <Input
-                      value={edu.gpa}
-                      onChange={(e) => updateEducation(edu.id, { gpa: e.target.value })}
-                      placeholder="3.8/4.0"
+                      value={edu.grade || ''}
+                      onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
+                      placeholder="e.g., 3.8/4.0 GPA, 8.5/10 CGPA, or 85%"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Start Date *</Label>
-                    <Input
-                      type="month"
-                      value={edu.startDate}
-                      onChange={(e) => updateEducation(edu.id, { startDate: e.target.value })}
-                    />
-                  </div>
+                  <MonthYearPicker
+                    label="Start Date"
+                    value={edu.startDate}
+                    onChange={(value) => updateEducation(edu.id, { startDate: value })}
+                    required
+                  />
 
-                  <div className="space-y-2">
-                    <Label>End Date *</Label>
-                    <Input
-                      type="month"
-                      value={edu.endDate}
-                      onChange={(e) => updateEducation(edu.id, { endDate: e.target.value })}
-                    />
-                  </div>
+                  <MonthYearPicker
+                    label="End Date"
+                    value={edu.endDate}
+                    onChange={(value) => updateEducation(edu.id, { endDate: value })}
+                    required
+                  />
 
                   <div className="md:col-span-2 space-y-2">
                     <div className="flex items-center gap-2">

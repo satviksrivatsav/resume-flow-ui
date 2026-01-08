@@ -2,6 +2,7 @@ export interface PersonalInfo {
   name: string;
   email: string;
   phone: string;
+  phoneCountryCode: string;
   location: string;
   linkedin?: string;
   website?: string;
@@ -16,7 +17,7 @@ export interface Education {
   field: string;
   startDate: string;
   endDate: string;
-  gpa?: string;
+  grade?: string;
   description: string;
 }
 
@@ -34,9 +35,11 @@ export interface WorkExperience {
 export interface Project {
   id: string;
   name: string;
-  technologies: string;
+  role?: string;
+  technologies: string[];
   startDate: string;
   endDate: string;
+  ongoing?: boolean;
   description: string;
   link?: string;
 }
@@ -74,6 +77,7 @@ export const defaultResumeData: ResumeData = {
     name: '',
     email: '',
     phone: '',
+    phoneCountryCode: 'US',
     location: '',
     linkedin: '',
     website: '',

@@ -2,6 +2,7 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { forwardRef } from "react";
 import { format } from "date-fns";
 import { Phone, Mail, Globe, Github, Linkedin, MapPin } from "lucide-react";
+import { getCountryByCode } from "@/lib/countries";
 
 const fontSizeMap = {
   compact: { base: '9pt', heading: '11pt', name: '18pt' },
@@ -37,7 +38,7 @@ const ResumeContent = ({
         </h1>
         <div style={{ fontSize: sizes.base, display: 'flex', flexWrap: 'wrap', gap: '8px 16px', color: '#374151' }}>
           {personalInfo.email && <IconWrapper><Mail size={12} /><span>{personalInfo.email}</span></IconWrapper>}
-          {personalInfo.phone && <IconWrapper><Phone size={12} /><span>{personalInfo.phone}</span></IconWrapper>}
+          {personalInfo.phone && <IconWrapper><Phone size={12} /><span>{getCountryByCode(personalInfo.phoneCountryCode)?.dialCode || ''} {personalInfo.phone}</span></IconWrapper>}
           {personalInfo.location && <IconWrapper><MapPin size={12} /><span>{personalInfo.location}</span></IconWrapper>}
           {personalInfo.linkedin && <IconWrapper><Linkedin size={12} /><span>{personalInfo.linkedin}</span></IconWrapper>}
           {personalInfo.website && <IconWrapper><Globe size={12} /><span>{personalInfo.website}</span></IconWrapper>}
@@ -106,7 +107,7 @@ const ResumeContent = ({
               </div>
               <div style={{ color: '#374151' }}>
                 {edu.school}
-                {edu.gpa && <span style={{ color: '#6B7280' }}> • GPA: {edu.gpa}</span>}
+                {edu.grade && <span style={{ color: '#6B7280' }}> • {edu.grade}</span>}
               </div>
               {edu.description && (
                 <div style={{ color: '#374151', lineHeight: '1.5', whiteSpace: 'pre-line', marginTop: '4px' }}>
@@ -128,15 +129,25 @@ const ResumeContent = ({
             <div key={proj.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <strong style={{ color: '#111827' }}>{proj.name}</strong>
-                {proj.link && (
-                  <a href={proj.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: sizes.base, color: settings.themeColor }}>
-                    {proj.link}
-                  </a>
+                {(proj.startDate || proj.endDate || proj.ongoing) && (
+                  <span style={{ fontSize: sizes.base, color: '#6B7280', whiteSpace: 'nowrap', paddingLeft: '16px' }}>
+                    {formatDate(proj.startDate)} - {proj.ongoing ? 'Ongoing' : formatDate(proj.endDate)}
+                  </span>
                 )}
               </div>
-              {proj.technologies && (
+              {proj.link && (
+                <a href={proj.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: sizes.base, color: settings.themeColor, display: 'block', marginBottom: '4px' }}>
+                  {proj.link}
+                </a>
+              )}
+              {proj.role && (
                 <div style={{ fontSize: '0.9em', color: '#6B7280', marginBottom: '4px' }}>
-                  <strong>Technologies:</strong> {proj.technologies}
+                  <strong>Role:</strong> {proj.role}
+                </div>
+              )}
+              {proj.technologies && (Array.isArray(proj.technologies) ? proj.technologies.length > 0 : proj.technologies) && (
+                <div style={{ fontSize: '0.9em', color: '#6B7280', marginBottom: '4px' }}>
+                  <strong>Technologies:</strong> {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
                 </div>
               )}
               {proj.description && (

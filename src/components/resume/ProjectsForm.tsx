@@ -3,10 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FolderGit2, Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
+import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
+import { TechChipsInput } from "@/components/ui/TechChipsInput";
 
 export const ProjectsForm = () => {
   const { resumeData, addProject, updateProject, deleteProject } = useResumeStore();
@@ -19,17 +22,8 @@ export const ProjectsForm = () => {
   }, [resumeData.projects]);
 
   const handleAdd = () => {
-    const newProject = {
-      id: `proj-${Date.now()}`,
-      name: '',
-      technologies: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      link: '',
-    };
-    addProject(newProject);
-    setExpandedId(newProject.id);
+    addProject();
+    // The useEffect will automatically expand the newly added project
   };
 
   return (
@@ -98,30 +92,51 @@ export const ProjectsForm = () => {
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <Label>Technologies *</Label>
+                    <Label>Your Role</Label>
                     <Input
-                      value={proj.technologies}
-                      onChange={(e) => updateProject(proj.id, { technologies: e.target.value })}
-                      placeholder="React, Node.js, PostgreSQL"
+                      value={proj.role || ''}
+                      onChange={(e) => updateProject(proj.id, { role: e.target.value })}
+                      placeholder="Lead Developer, Frontend Engineer, etc."
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Start Date</Label>
-                    <Input
-                      type="month"
-                      value={proj.startDate}
-                      onChange={(e) => updateProject(proj.id, { startDate: e.target.value })}
+                  <div className="md:col-span-2">
+                    <TechChipsInput
+                      label="Technologies"
+                      value={Array.isArray(proj.technologies) ? proj.technologies : []}
+                      onChange={(techs) => updateProject(proj.id, { technologies: techs })}
+                      placeholder="Type a technology and press Enter"
+                      required
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>End Date</Label>
-                    <Input
-                      type="month"
-                      value={proj.endDate}
-                      onChange={(e) => updateProject(proj.id, { endDate: e.target.value })}
+                  <MonthYearPicker
+                    label="Start Date"
+                    value={proj.startDate}
+                    onChange={(value) => updateProject(proj.id, { startDate: value })}
+                  />
+
+                  <MonthYearPicker
+                    label="End Date"
+                    value={proj.endDate}
+                    onChange={(value) => updateProject(proj.id, { endDate: value })}
+                    disabled={proj.ongoing}
+                  />
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`ongoing-${proj.id}`}
+                      checked={proj.ongoing}
+                      onCheckedChange={(checked) =>
+                        updateProject(proj.id, { ongoing: checked as boolean })
+                      }
                     />
+                    <label
+                      htmlFor={`ongoing-${proj.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Ongoing project
+                    </label>
                   </div>
 
                   <div className="md:col-span-2 space-y-2">

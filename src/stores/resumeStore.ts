@@ -53,7 +53,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ...state.resumeData,
         education: [
           ...state.resumeData.education,
-          { id: uuidv4(), school: '', degree: '', field: '', startDate: '', endDate: '', gpa: '', description: '' },
+          { id: uuidv4(), school: '', degree: '', field: '', startDate: '', endDate: '', grade: '', description: '' },
         ],
       },
     })),
@@ -111,7 +111,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ...state.resumeData,
         projects: [
           ...state.resumeData.projects,
-          { id: uuidv4(), name: '', startDate: '', endDate: '', technologies: '', link: '', description: '' },
+          { id: uuidv4(), name: '', role: '', startDate: '', endDate: '', technologies: [], link: '', description: '' },
         ],
       },
     })),

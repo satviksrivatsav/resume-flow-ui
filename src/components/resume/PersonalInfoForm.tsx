@@ -2,13 +2,45 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { User } from "lucide-react";
+import { User, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
+import { PhoneInput } from "@/components/ui/PhoneInput";
+import { useEffect, useState } from "react";
+import { getGeoLocation, formatLocation } from "@/lib/geolocation";
+import { getCountryByCode } from "@/lib/countries";
 
 export const PersonalInfoForm = () => {
   const { resumeData, updatePersonalInfo } = useResumeStore();
   const { personalInfo } = resumeData;
+  const [geoDetected, setGeoDetected] = useState(false);
+
+  // Auto-detect location and country code on first load
+  useEffect(() => {
+    const detectLocation = async () => {
+      // Only auto-detect if location and phone are empty (first time)
+      if (!personalInfo.location && !personalInfo.phone && !geoDetected) {
+        const geo = await getGeoLocation();
+        if (geo) {
+          // Auto-fill location
+          const formattedLocation = formatLocation(geo);
+          if (formattedLocation) {
+            updatePersonalInfo({ location: formattedLocation });
+          }
+
+          // Auto-select country code for phone
+          const country = getCountryByCode(geo.countryCode);
+          if (country) {
+            updatePersonalInfo({ phoneCountryCode: geo.countryCode });
+          }
+
+          setGeoDetected(true);
+        }
+      }
+    };
+
+    detectLocation();
+  }, []);
 
   return (
     <motion.div
@@ -45,22 +77,27 @@ export const PersonalInfoForm = () => {
 
         <div className="space-y-2">
           <Label htmlFor="phone">Phone *</Label>
-          <Input
-            id="phone"
+          <PhoneInput
             value={personalInfo.phone}
-            onChange={(e) => updatePersonalInfo({ phone: e.target.value })}
-            placeholder="+1 (555) 123-4567"
+            onChange={(value) => updatePersonalInfo({ phone: value })}
+            countryCode={personalInfo.phoneCountryCode || 'US'}
+            onCountryCodeChange={(code) => updatePersonalInfo({ phoneCountryCode: code })}
+            placeholder="Phone number"
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="location">Location *</Label>
-          <Input
-            id="location"
-            value={personalInfo.location}
-            onChange={(e) => updatePersonalInfo({ location: e.target.value })}
-            placeholder="New York, NY"
-          />
+          <div className="relative">
+            <Input
+              id="location"
+              value={personalInfo.location}
+              onChange={(e) => updatePersonalInfo({ location: e.target.value })}
+              placeholder="City, Country"
+              className="pr-8"
+            />
+            <MapPin className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          </div>
         </div>
 
         <div className="space-y-2">

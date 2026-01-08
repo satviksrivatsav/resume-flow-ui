@@ -12,6 +12,7 @@ import {
   Link,
 } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
+import { getCountryByCode } from '@/lib/countries';
 
 interface ResumePDFProps {
   resumeData: ResumeData;
@@ -249,9 +250,13 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   };
 
   // Build contact info
+  const phoneWithCode = personalInfo.phone
+    ? `${getCountryByCode(personalInfo.phoneCountryCode)?.dialCode || ''} ${personalInfo.phone}`.trim()
+    : '';
+
   const contactItems = [
     personalInfo.email,
-    personalInfo.phone,
+    phoneWithCode,
     personalInfo.location,
     personalInfo.linkedin,
     personalInfo.website,
@@ -333,7 +338,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                     </Text>
                     <Text style={styles.itemSubtitle}>
                       {edu.school || 'School'}
-                      {edu.gpa && ` • GPA: ${edu.gpa}`}
+                      {edu.grade && ` • ${edu.grade}`}
                     </Text>
                   </View>
                   <Text style={styles.itemDate}>
@@ -355,16 +360,28 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             {projects.map((proj) => (
               <View key={proj.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
-                  {proj.link && proj.link.trim() && (
-                    <Link src={proj.link} style={styles.link}>
-                      {proj.link}
-                    </Link>
+                  <View style={styles.itemHeaderLeft}>
+                    <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
+                  </View>
+                  {(proj.startDate || proj.endDate || proj.ongoing) && (
+                    <Text style={styles.itemDate}>
+                      {formatDate(proj.startDate)} - {proj.ongoing ? 'Ongoing' : formatDate(proj.endDate)}
+                    </Text>
                   )}
                 </View>
-                {proj.technologies && proj.technologies.trim() && (
+                {proj.link && proj.link.trim() && (
+                  <Link src={proj.link} style={styles.link}>
+                    {proj.link}
+                  </Link>
+                )}
+                {proj.role && proj.role.trim() && (
                   <Text style={styles.itemSubtitle}>
-                    Technologies: {proj.technologies}
+                    Role: {proj.role}
+                  </Text>
+                )}
+                {proj.technologies && proj.technologies.length > 0 && (
+                  <Text style={styles.itemSubtitle}>
+                    Technologies: {proj.technologies.join(', ')}
                   </Text>
                 )}
                 {proj.description && proj.description.trim() && (

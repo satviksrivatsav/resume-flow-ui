@@ -8,6 +8,7 @@ import { Briefcase, Plus, Trash2 } from "lucide-react";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
 
 export const WorkExperienceForm = () => {
   const { resumeData, addWorkExperience, updateWorkExperience, deleteWorkExperience } = useResumeStore();
@@ -100,7 +101,7 @@ export const WorkExperienceForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Company *</Label>
+                    <Label>Company</Label>
                     <Input
                       value={exp.company}
                       onChange={(e) => updateWorkExperience(exp.id, { company: e.target.value })}
@@ -117,24 +118,19 @@ export const WorkExperienceForm = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Start Date *</Label>
-                    <Input
-                      type="month"
-                      value={exp.startDate}
-                      onChange={(e) => updateWorkExperience(exp.id, { startDate: e.target.value })}
-                    />
-                  </div>
+                  <MonthYearPicker
+                    label="Start Date"
+                    value={exp.startDate}
+                    onChange={(value) => updateWorkExperience(exp.id, { startDate: value })}
+                    required
+                  />
 
-                  <div className="space-y-2">
-                    <Label>End Date</Label>
-                    <Input
-                      type="month"
-                      value={exp.endDate}
-                      onChange={(e) => updateWorkExperience(exp.id, { endDate: e.target.value })}
-                      disabled={exp.current}
-                    />
-                  </div>
+                  <MonthYearPicker
+                    label="End Date"
+                    value={exp.endDate}
+                    onChange={(value) => updateWorkExperience(exp.id, { endDate: value })}
+                    disabled={exp.current}
+                  />
 
                   <div className="flex items-center space-x-2">
                     <Checkbox
