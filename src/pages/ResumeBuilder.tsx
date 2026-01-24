@@ -164,32 +164,34 @@ const ResumeBuilder = () => {
             </Panel>
           </PanelGroup>
         ) : (
-          <div className="container mx-auto px-4 py-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="max-w-4xl mx-auto"
-            >
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-7">
-                  <TabsTrigger value="personal">Personal</TabsTrigger>
-                  <TabsTrigger value="work">Work</TabsTrigger>
-                  <TabsTrigger value="education">Education</TabsTrigger>
-                  <TabsTrigger value="projects">Projects</TabsTrigger>
-                  <TabsTrigger value="skills">Skills</TabsTrigger>
-                  <TabsTrigger value="custom">Custom</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
+          <div className="h-full overflow-y-auto">
+            <div className="container mx-auto px-4 py-8">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="max-w-4xl mx-auto pb-8"
+              >
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-7">
+                    <TabsTrigger value="personal">Personal</TabsTrigger>
+                    <TabsTrigger value="work">Work</TabsTrigger>
+                    <TabsTrigger value="education">Education</TabsTrigger>
+                    <TabsTrigger value="projects">Projects</TabsTrigger>
+                    <TabsTrigger value="skills">Skills</TabsTrigger>
+                    <TabsTrigger value="custom">Custom</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
+                  </TabsList>
 
-                <TabsContent value="personal"><PersonalInfoForm /></TabsContent>
-                <TabsContent value="work"><WorkExperienceForm /></TabsContent>
-                <TabsContent value="education"><EducationForm /></TabsContent>
-                <TabsContent value="projects"><ProjectsForm /></TabsContent>
-                <TabsContent value="skills"><SkillsForm /></TabsContent>
-                <TabsContent value="custom"><CustomSectionsForm /></TabsContent>
-                <TabsContent value="settings"><ResumeSettings /></TabsContent>
-              </Tabs>
-            </motion.div>
+                  <TabsContent value="personal"><PersonalInfoForm /></TabsContent>
+                  <TabsContent value="work"><WorkExperienceForm /></TabsContent>
+                  <TabsContent value="education"><EducationForm /></TabsContent>
+                  <TabsContent value="projects"><ProjectsForm /></TabsContent>
+                  <TabsContent value="skills"><SkillsForm /></TabsContent>
+                  <TabsContent value="custom"><CustomSectionsForm /></TabsContent>
+                  <TabsContent value="settings"><ResumeSettings /></TabsContent>
+                </Tabs>
+              </motion.div>
+            </div>
           </div>
         )}
       </div>

@@ -6,40 +6,30 @@ import { User, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { PhoneInput } from "@/components/ui/PhoneInput";
-import { useEffect, useState } from "react";
-import { getGeoLocation, formatLocation } from "@/lib/geolocation";
+import { useEffect, useRef } from "react";
+import { detectCountryFromTimezone } from "@/lib/geolocation";
 import { getCountryByCode } from "@/lib/countries";
 
 export const PersonalInfoForm = () => {
   const { resumeData, updatePersonalInfo } = useResumeStore();
   const { personalInfo } = resumeData;
-  const [geoDetected, setGeoDetected] = useState(false);
+  const hasDetected = useRef(false);
 
-  // Auto-detect location and country code on first load
+  // Auto-detect country code from timezone on first load
   useEffect(() => {
-    const detectLocation = async () => {
-      // Only auto-detect if location and phone are empty (first time)
-      if (!personalInfo.location && !personalInfo.phone && !geoDetected) {
-        const geo = await getGeoLocation();
-        if (geo) {
-          // Auto-fill location
-          const formattedLocation = formatLocation(geo);
-          if (formattedLocation) {
-            updatePersonalInfo({ location: formattedLocation });
-          }
+    if (hasDetected.current) return;
+    hasDetected.current = true;
 
-          // Auto-select country code for phone
-          const country = getCountryByCode(geo.countryCode);
-          if (country) {
-            updatePersonalInfo({ phoneCountryCode: geo.countryCode });
-          }
-
-          setGeoDetected(true);
+    // Only auto-detect if phone country code is empty
+    if (!personalInfo.phoneCountryCode) {
+      const detectedCountryCode = detectCountryFromTimezone();
+      if (detectedCountryCode) {
+        const country = getCountryByCode(detectedCountryCode);
+        if (country) {
+          updatePersonalInfo({ phoneCountryCode: detectedCountryCode });
         }
       }
-    };
-
-    detectLocation();
+    }
   }, []);
 
   return (

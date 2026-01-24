@@ -27,6 +27,7 @@ export const ResumeSettings = () => {
   const { resumeData, updateSettings } = useResumeStore();
   const { settings } = resumeData;
   const [customColor, setCustomColor] = useState(settings.themeColor);
+  const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
 
   const handleColorChange = (color: string) => {
     setCustomColor(color);
@@ -73,7 +74,7 @@ export const ResumeSettings = () => {
               )}
             </motion.button>
           ))}
-          <Dialog>
+          <Dialog open={isColorDialogOpen} onOpenChange={setIsColorDialogOpen}>
             <DialogTrigger asChild>
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -102,7 +103,10 @@ export const ResumeSettings = () => {
                     onChange={(e) => handleColorChange(e.target.value)}
                     placeholder="#ffffff"
                   />
-                  <Button onClick={() => updateSettings({ themeColor: customColor })}>Set Color</Button>
+                  <Button onClick={() => {
+                    updateSettings({ themeColor: customColor });
+                    setIsColorDialogOpen(false);
+                  }}>Set Color</Button>
                 </div>
               </div>
             </DialogContent>

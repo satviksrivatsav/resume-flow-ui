@@ -77,7 +77,7 @@ export const defaultResumeData: ResumeData = {
     name: '',
     email: '',
     phone: '',
-    phoneCountryCode: 'US',
+    phoneCountryCode: '',
     location: '',
     linkedin: '',
     website: '',
