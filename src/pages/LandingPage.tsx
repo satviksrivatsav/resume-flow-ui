@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
+import { PageTransition } from "@/components/layout/PageTransition";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -125,7 +126,7 @@ export default function LandingPage() {
   const words = ["GREAT", "STRIKING", "MODERN", "BEAUTIFUL"];
 
   return (
-    <div className="h-screen w-full rounded-md flex md:items-center md:justify-center bg-black antialiased bg-grid-white/[0.02] relative overflow-hidden">
+    <PageTransition className="h-screen w-full rounded-md flex md:items-center md:justify-center bg-black antialiased bg-grid-white/[0.02] relative overflow-hidden">
       <Spotlight />
       <div className="p-4 px-6 max-w-7xl mx-auto relative z-10 w-full pt-36 md:pt-0">
         <h1 className="text-2xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight md:leading-tight pb-1">
@@ -157,6 +158,6 @@ export default function LandingPage() {
 
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

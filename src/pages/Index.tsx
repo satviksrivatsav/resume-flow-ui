@@ -1,4 +1,4 @@
-import LandingPage from "@/components/landing-page";
+import LandingPage from "@/pages/LandingPage";
 import {
   Navbar,
   NavBody,
