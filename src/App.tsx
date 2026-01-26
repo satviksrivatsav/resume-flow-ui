@@ -37,14 +37,7 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/resume-builder"
-          element={
-            <ProtectedRoute>
-              <ResumeBuilder />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />

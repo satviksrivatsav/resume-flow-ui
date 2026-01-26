@@ -23,8 +23,8 @@ const Index = () => {
       link: "#pricing",
     },
     {
-      name: "Contact",
-      link: "#contact",
+      name: "Login",
+      link: "/login",
     },
   ];
 
