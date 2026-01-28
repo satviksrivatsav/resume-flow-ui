@@ -66,11 +66,11 @@ export default function UploadResume() {
     };
 
     return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
             {/* Back Button */}
             <Button
                 variant="ghost"
-                className="absolute top-6 left-6 text-neutral-400 hover:text-white"
+                className="absolute top-6 left-6 text-muted-foreground hover:text-foreground"
                 onClick={() => navigate('/')}
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -78,7 +78,7 @@ export default function UploadResume() {
             </Button>
 
             <div className="max-w-xl w-full">
-                <h1 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">
+                <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
                     Upload Your Resume
                 </h1>
 
@@ -89,7 +89,7 @@ export default function UploadResume() {
                     onDragLeave={handleDragLeave}
                     className={`
             relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 cursor-pointer
-            ${dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-neutral-700 hover:border-neutral-500'}
+            ${dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-border hover:border-muted-foreground'}
             ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
             ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
           `}
@@ -111,13 +111,13 @@ export default function UploadResume() {
                                 exit={{ opacity: 0, y: -10 }}
                                 className="flex flex-col items-center"
                             >
-                                <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center mb-4">
-                                    <Upload className="w-8 h-8 text-neutral-400" />
+                                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                                    <Upload className="w-8 h-8 text-muted-foreground" />
                                 </div>
-                                <p className="text-lg font-medium text-white mb-1">
+                                <p className="text-lg font-medium text-foreground mb-1">
                                     Drop your PDF resume here
                                 </p>
-                                <p className="text-sm text-neutral-500">
+                                <p className="text-sm text-muted-foreground">
                                     or click to browse
                                 </p>
                             </motion.div>
@@ -132,10 +132,10 @@ export default function UploadResume() {
                                 className="flex flex-col items-center"
                             >
                                 <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-                                <p className="text-lg font-medium text-white mb-1">
+                                <p className="text-lg font-medium text-foreground mb-1">
                                     Parsing your resume...
                                 </p>
-                                <p className="text-sm text-neutral-500">
+                                <p className="text-sm text-muted-foreground">
                                     This may take a few seconds
                                 </p>
                             </motion.div>
@@ -149,10 +149,10 @@ export default function UploadResume() {
                                 className="flex flex-col items-center"
                             >
                                 <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
-                                <p className="text-lg font-medium text-green-400">
+                                <p className="text-lg font-medium text-green-500 dark:text-green-400">
                                     Resume parsed successfully!
                                 </p>
-                                <p className="text-sm text-neutral-500">
+                                <p className="text-sm text-muted-foreground">
                                     Redirecting to builder...
                                 </p>
                             </motion.div>
@@ -166,16 +166,16 @@ export default function UploadResume() {
                                 className="flex flex-col items-center"
                             >
                                 <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-                                <p className="text-lg font-medium text-red-400 mb-1">
+                                <p className="text-lg font-medium text-red-500 dark:text-red-400 mb-1">
                                     Failed to parse resume
                                 </p>
-                                <p className="text-sm text-neutral-500 mb-4">
+                                <p className="text-sm text-muted-foreground mb-4">
                                     {error}
                                 </p>
                                 <Button
                                     variant="outline"
                                     onClick={() => setUploadState('idle')}
-                                    className="border-neutral-700"
+                                    className="border-border"
                                 >
                                     Try Again
                                 </Button>
@@ -185,7 +185,7 @@ export default function UploadResume() {
                 </div>
 
                 {/* Supported formats */}
-                <div className="flex items-center justify-center gap-2 mt-6 text-neutral-500 text-sm">
+                <div className="flex items-center justify-center gap-2 mt-6 text-muted-foreground text-sm">
                     <FileText className="w-4 h-4" />
                     <span>Supported format: PDF (max 10MB)</span>
                 </div>
