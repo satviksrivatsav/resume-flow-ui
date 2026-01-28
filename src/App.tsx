@@ -14,6 +14,8 @@ import SignUpPage from "./pages/SignUpPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { useAuthStore } from "./stores/authStore";
 
@@ -39,6 +41,8 @@ function AnimatedRoutes() {
         />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
