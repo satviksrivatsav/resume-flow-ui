@@ -10,7 +10,7 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, FileText, ArrowLeft, GripVertical } from "lucide-react";
+import { Eye, FileText, ArrowLeft, GripVertical, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
@@ -88,6 +88,15 @@ const ResumeBuilder = () => {
                 onClick={() => navigate("/")}
               >
                 <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/upload")}
+                className="gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Upload Resume
               </Button>
               <div className="flex items-center gap-2">
                 <FileText className="w-6 h-6 text-primary" />
