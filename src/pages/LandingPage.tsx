@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Spotlight } from "@/components/ui/spotlight-new";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 import { PageTransition } from "@/components/layout/PageTransition";
 
@@ -126,9 +126,9 @@ export default function LandingPage() {
   const words = ["GREAT", "STRIKING", "MODERN", "BEAUTIFUL"];
 
   return (
-    <PageTransition className="h-screen w-full rounded-md flex md:items-center md:justify-center bg-black antialiased bg-grid-white/[0.02] relative overflow-hidden">
+    <PageTransition className="h-screen w-full rounded-md flex items-center justify-center bg-black antialiased bg-grid-white/[0.02] relative overflow-hidden">
       <Spotlight />
-      <div className="p-4 px-6 max-w-7xl mx-auto relative z-10 w-full pt-36 md:pt-0">
+      <div className="p-4 px-6 max-w-7xl mx-auto relative z-10 w-full">
         <h1 className="text-2xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight md:leading-tight pb-1">
           Everyone deserves a <br /><ContainerTextFlip words={words} /> Resume.
         </h1>
@@ -157,6 +157,17 @@ export default function LandingPage() {
           </HoverBorderGradient>
 
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center items-center gap-4 text-sm text-neutral-500">
+        <Link to="/privacy" className="hover:text-neutral-300 transition-colors">
+          Privacy Policy
+        </Link>
+        <span className="text-neutral-700">•</span>
+        <Link to="/terms" className="hover:text-neutral-300 transition-colors">
+          Terms of Service
+        </Link>
       </div>
     </PageTransition>
   );
