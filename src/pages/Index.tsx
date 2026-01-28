@@ -1,4 +1,4 @@
-import LandingPage from "@/components/landing-page";
+import LandingPage from "@/pages/LandingPage";
 import {
   Navbar,
   NavBody,
@@ -23,8 +23,8 @@ const Index = () => {
       link: "#pricing",
     },
     {
-      name: "Contact",
-      link: "#contact",
+      name: "Login",
+      link: "/login",
     },
   ];
 

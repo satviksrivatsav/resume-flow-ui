@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
 import { AIReviewModal } from "@/components/ui/AIReviewModal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { UserMenu } from "@/components/ui/UserMenu";
 import { useUiStore } from "@/stores/uiStore";
 import {
   Panel,
@@ -114,6 +115,7 @@ const ResumeBuilder = () => {
                 {showPreview ? "Hide" : "Show"} Preview
               </Button>
               <DownloadButton />
+              <UserMenu />
             </div>
           </div>
         </div>
