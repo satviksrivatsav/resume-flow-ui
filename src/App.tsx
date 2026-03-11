@@ -31,18 +31,12 @@ function AnimatedRoutes() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="/update-password"
-          element={
-            <ProtectedRoute>
-              <UpdatePasswordPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/update-password" element={<ProtectedRoute> <UpdatePasswordPage /> </ProtectedRoute>} />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
