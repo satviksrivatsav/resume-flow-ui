@@ -36,15 +36,10 @@ export const ResumeSettings = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-lg border p-6 space-y-6"
+      className="space-y-8"
     >
-      <div className="flex items-center gap-2">
-        <Settings className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold">Resume Settings</h2>
-      </div>
-
       {/* Theme Color */}
       <div className="space-y-3">
         <div>
@@ -58,7 +53,7 @@ export const ResumeSettings = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => updateSettings({ themeColor: color })}
-              className="w-full aspect-square rounded-md relative transition-all"
+              className="w-full aspect-square rounded-full relative transition-all"
               style={{ backgroundColor: color }}
             >
               {settings.themeColor === color && (
@@ -79,7 +74,7 @@ export const ResumeSettings = () => {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full aspect-square rounded-md relative transition-all bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center"
+                className="w-full aspect-square rounded-full relative transition-all bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center"
               >
                 <Pencil className="w-6 h-6 text-white" />
               </motion.button>

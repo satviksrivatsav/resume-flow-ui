@@ -54,7 +54,7 @@ export function AIReviewModal() {
                             {/* Original Text */}
                             <div className="space-y-2">
                                 <h4 className="text-sm font-medium text-muted-foreground">Original text</h4>
-                                <div className="p-4 rounded-lg bg-muted/50 text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap">
+                                <div className="p-4 rounded-2xl bg-muted/50 text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap">
                                     {originalText || (
                                         <span className="text-muted-foreground italic">No original content</span>
                                     )}
@@ -64,7 +64,7 @@ export function AIReviewModal() {
                             {/* New Text */}
                             <div className="space-y-2">
                                 <h4 className="text-sm font-medium text-primary">New text</h4>
-                                <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap">
+                                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap">
                                     {newText || (
                                         <span className="text-muted-foreground italic">No content generated</span>
                                     )}

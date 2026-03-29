@@ -48,7 +48,7 @@ export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
         onChange(newValue);
     };
 
-    const selectClassName = `flex h-10 w-full rounded-md border border-input bg-background pl-3 pr-8 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none bg-no-repeat bg-[length:16px] bg-[right_8px_center] ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
+    const selectClassName = `flex h-10 w-full rounded-full border border-input bg-background pl-3 pr-8 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none bg-no-repeat bg-[length:16px] bg-[right_8px_center] ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
 
     return (
         <div className="space-y-2">

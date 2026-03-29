@@ -53,7 +53,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-1 px-2 h-10 rounded-l-md border border-r-0 border-input bg-background hover:bg-accent transition-colors min-w-[80px]"
+                    className="flex items-center gap-1 pl-4 pr-2 h-10 rounded-l-full border border-r-0 border-input bg-background hover:bg-accent transition-colors min-w-[90px]"
                 >
                     <span className="text-lg">{selectedCountry.flag}</span>
                     <span className="text-sm font-medium">{selectedCountry.dialCode}</span>
@@ -66,13 +66,13 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="flex-1 h-10 rounded-r-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className="flex-1 h-10 rounded-r-full border border-input bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 />
             </div>
 
             {/* Dropdown */}
             {isOpen && (
-                <div className="absolute z-50 top-full left-0 mt-1 w-64 max-h-60 overflow-auto rounded-md border border-input bg-background shadow-lg">
+                <div className="absolute z-50 top-full left-0 mt-1 w-64 max-h-60 overflow-auto rounded-2xl border border-input bg-background shadow-lg">
                     {/* Search */}
                     <div className="sticky top-0 bg-background p-2 border-b">
                         <input
@@ -80,7 +80,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search country..."
-                            className="w-full h-8 px-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                            className="w-full h-8 px-4 text-sm border border-input rounded-full bg-background focus:outline-none focus:ring-1 focus:ring-ring"
                             autoFocus
                         />
                     </div>
@@ -92,7 +92,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                                 key={country.code}
                                 type="button"
                                 onClick={() => handleSelect(country)}
-                                className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors ${country.code === countryCode ? 'bg-accent' : ''
+                                className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors rounded-full mx-1 w-[calc(100%-8px)] ${country.code === countryCode ? 'bg-accent' : ''
                                     }`}
                             >
                                 <span className="text-lg">{country.flag}</span>

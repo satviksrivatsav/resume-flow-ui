@@ -4,179 +4,236 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Briefcase, Plus, Trash2 } from "lucide-react";
+import { Briefcase, Plus, Trash2, ChevronDown, ChevronUp, MapPin, Calendar } from "lucide-react";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
+import { cn } from "@/lib/utils";
 
 export const WorkExperienceForm = () => {
   const { resumeData, addWorkExperience, updateWorkExperience, deleteWorkExperience } = useResumeStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (resumeData.workExperience.length > 0) {
+    if (resumeData.workExperience.length > 0 && !expandedId) {
       setExpandedId(resumeData.workExperience[resumeData.workExperience.length - 1].id);
     }
   }, [resumeData.workExperience]);
 
   const handleAdd = () => {
-    const newExperience = {
-      id: `work-${Date.now()}`,
-      company: '',
-      position: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      current: false,
-      description: '',
-    };
-    addWorkExperience(newExperience);
-    setExpandedId(newExperience.id);
+    const newId = `work-${Date.now()}`;
+    addWorkExperience();
+    // The store adds it with a uuid, but we can find the last one
+    setTimeout(() => {
+      const lastExp = resumeData.workExperience[resumeData.workExperience.length - 1];
+      if (lastExp) setExpandedId(lastExp.id);
+    }, 0);
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-lg border p-6 space-y-4"
+      className="space-y-4"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Work Experience</h2>
-        </div>
-        <Button onClick={handleAdd} size="sm" className="gap-2">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-muted-foreground">
+          Add your relevant work history, starting with your most recent role.
+        </p>
+        <Button onClick={handleAdd} size="sm" className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
           Add Experience
         </Button>
       </div>
 
-      <AnimatePresence mode="popLayout">
-        {resumeData.workExperience.map((exp, index) => (
-          <motion.div
-            key={exp.id}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border rounded-lg p-4 space-y-4"
-          >
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => setExpandedId(expandedId === exp.id ? null : exp.id)}
-                className="text-left flex-1"
-              >
-                <h3 className="font-medium">
-                  {exp.position || `Experience ${index + 1}`}
-                </h3>
-                {exp.company && (
-                  <p className="text-sm text-muted-foreground">{exp.company}</p>
+      <div className="space-y-3">
+        <AnimatePresence mode="popLayout">
+          {resumeData.workExperience.map((exp, index) => {
+            const isExpanded = expandedId === exp.id;
+            
+            return (
+              <motion.div
+                key={exp.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className={cn(
+                  "group border rounded-xl overflow-hidden transition-all duration-200",
+                  isExpanded ? "ring-1 ring-primary/20 shadow-md bg-card" : "hover:border-primary/30 hover:shadow-sm bg-card/50"
                 )}
-              </button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteWorkExperience(exp.id)}
-                className="text-destructive hover:text-destructive"
               >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <AnimatePresence>
-              {expandedId === exp.id && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                <div 
+                  className={cn(
+                    "flex items-center justify-between p-4 cursor-pointer select-none",
+                    isExpanded && "border-b bg-muted/30"
+                  )}
+                  onClick={() => setExpandedId(isExpanded ? null : exp.id)}
                 >
-                  <div className="space-y-2">
-                    <Label>Position *</Label>
-                    <Input
-                      value={exp.position}
-                      onChange={(e) => updateWorkExperience(exp.id, { position: e.target.value })}
-                      placeholder="Software Engineer"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Company</Label>
-                    <Input
-                      value={exp.company}
-                      onChange={(e) => updateWorkExperience(exp.id, { company: e.target.value })}
-                      placeholder="Tech Corp"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Location</Label>
-                    <Input
-                      value={exp.location}
-                      onChange={(e) => updateWorkExperience(exp.id, { location: e.target.value })}
-                      placeholder="San Francisco, CA"
-                    />
-                  </div>
-
-                  <MonthYearPicker
-                    label="Start Date"
-                    value={exp.startDate}
-                    onChange={(value) => updateWorkExperience(exp.id, { startDate: value })}
-                    required
-                  />
-
-                  <MonthYearPicker
-                    label="End Date"
-                    value={exp.endDate}
-                    onChange={(value) => updateWorkExperience(exp.id, { endDate: value })}
-                    disabled={exp.current}
-                  />
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`current-${exp.id}`}
-                      checked={exp.current}
-                      onCheckedChange={(checked) =>
-                        updateWorkExperience(exp.id, { current: checked as boolean })
-                      }
-                    />
-                    <label
-                      htmlFor={`current-${exp.id}`}
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Currently working here
-                    </label>
-                  </div>
-
-                  <div className="md:col-span-2 space-y-2">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Label>Description</Label>
-                      <AIWriterButton
-                        fieldName="description"
-                        fieldLabel="Work Experience Description"
-                        fieldValue={exp.description || ''}
-                        onUpdate={(newText) => updateWorkExperience(exp.id, { description: newText })}
-                      />
+                      <h3 className="font-semibold text-base truncate">
+                        {exp.position || `Work Experience ${index + 1}`}
+                      </h3>
+                      {exp.current && (
+                        <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-full">
+                          Present
+                        </span>
+                      )}
                     </div>
-                    <Textarea
-                      value={exp.description}
-                      onChange={(e) => updateWorkExperience(exp.id, { description: e.target.value })}
-                      placeholder="• Led development of key features&#10;• Improved performance by 50%"
-                      rows={4}
-                    />
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                      {exp.company && (
+                        <span className="flex items-center gap-1.5 font-medium text-foreground/80">
+                          <Briefcase className="w-3.5 h-3.5" />
+                          {exp.company}
+                        </span>
+                      )}
+                      {(exp.startDate || exp.endDate) && (
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {exp.startDate || "Start"} — {exp.current ? "Present" : (exp.endDate || "End")}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+                  <div className="flex items-center gap-1 ml-4">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteWorkExperience(exp.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <div className="text-muted-foreground p-1">
+                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </div>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                    >
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Position *</Label>
+                          <Input
+                            value={exp.position}
+                            onChange={(e) => updateWorkExperience(exp.id, { position: e.target.value })}
+                            placeholder="e.g. Senior Software Engineer"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Company Name</Label>
+                          <Input
+                            value={exp.company}
+                            onChange={(e) => updateWorkExperience(exp.id, { company: e.target.value })}
+                            placeholder="e.g. Google"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</Label>
+                          <div className="relative">
+                            <Input
+                              value={exp.location}
+                              onChange={(e) => updateWorkExperience(exp.id, { location: e.target.value })}
+                              placeholder="e.g. San Francisco, CA"
+                              className="pl-9"
+                            />
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <MonthYearPicker
+                            label="Start Date"
+                            value={exp.startDate}
+                            onChange={(value) => updateWorkExperience(exp.id, { startDate: value })}
+                          />
+
+                          <div className="space-y-2">
+                            <MonthYearPicker
+                              label="End Date"
+                              value={exp.endDate}
+                              onChange={(value) => updateWorkExperience(exp.id, { endDate: value })}
+                              disabled={exp.current}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="md:col-span-2 flex items-center space-x-2 bg-muted/30 p-3 rounded-2xl border border-dashed">
+                          <Checkbox
+                            id={`current-${exp.id}`}
+                            checked={exp.current}
+                            onCheckedChange={(checked) =>
+                              updateWorkExperience(exp.id, { current: checked as boolean })
+                            }
+                          />
+                          <label
+                            htmlFor={`current-${exp.id}`}
+                            className="text-sm font-medium leading-none cursor-pointer select-none"
+                          >
+                            I am currently working in this role
+                          </label>
+                        </div>
+
+                        <div className="md:col-span-2 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm font-semibold">Key Achievements & Responsibilities</Label>
+                            <AIWriterButton
+                              fieldName="description"
+                              fieldLabel="Work Experience Description"
+                              fieldValue={exp.description || ''}
+                              onUpdate={(newText) => updateWorkExperience(exp.id, { description: newText })}
+                            />
+                          </div>
+                          <Textarea
+                            value={exp.description}
+                            onChange={(e) => updateWorkExperience(exp.id, { description: e.target.value })}
+                            placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
+                            className="min-h-[150px] font-mono text-sm"
+                            rows={6}
+                          />
+                          <p className="text-[11px] text-muted-foreground">
+                            Tip: Use bullet points and focus on quantifiable achievements (e.g., increased revenue by 20%, reduced latency by 50ms).
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
 
       {resumeData.workExperience.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-8">
-          No work experience added yet. Click "Add Experience" to get started.
-        </p>
+        <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
+          <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <Briefcase className="w-6 h-6 text-muted-foreground" />
+          </div>
+          <h3 className="font-medium text-lg">No experience yet</h3>
+          <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">
+            Add your professional history to show employers your journey.
+          </p>
+          <Button onClick={handleAdd} variant="outline" className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add your first role
+          </Button>
+        </div>
       )}
     </motion.div>
   );
 };
+
