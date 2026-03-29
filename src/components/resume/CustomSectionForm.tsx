@@ -87,7 +87,7 @@ export const CustomSectionsForm = () => {
                         e.stopPropagation();
                         deleteCustomSection(section.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -107,7 +107,9 @@ export const CustomSectionsForm = () => {
                     >
                       <div className="p-6 space-y-6">
                         <div className="space-y-2 max-w-md">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Section Title *</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Section Title <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             placeholder="e.g. Certifications, Awards, Languages"
                             value={section.title}

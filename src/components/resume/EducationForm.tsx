@@ -93,7 +93,7 @@ export const EducationForm = () => {
                         e.stopPropagation();
                         deleteEducation(edu.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -113,7 +113,9 @@ export const EducationForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 md:col-span-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">School / University *</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            School / University <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={edu.school}
                             onChange={(e) => updateEducation(edu.id, { school: e.target.value })}
@@ -122,7 +124,9 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Degree *</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Degree <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={edu.degree}
                             onChange={(e) => updateEducation(edu.id, { degree: e.target.value })}
@@ -141,12 +145,12 @@ export const EducationForm = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                           <MonthYearPicker
-                            label="Start Date"
+                            label={<span>Start Date <span className="text-red-500">*</span></span>}
                             value={edu.startDate}
                             onChange={(value) => updateEducation(edu.id, { startDate: value })}
                           />
                           <MonthYearPicker
-                            label="End Date"
+                            label={<span>End Date <span className="text-red-500">*</span></span>}
                             value={edu.endDate}
                             onChange={(value) => updateEducation(edu.id, { endDate: value })}
                           />

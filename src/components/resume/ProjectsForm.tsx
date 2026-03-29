@@ -103,7 +103,7 @@ export const ProjectsForm = () => {
                         e.stopPropagation();
                         deleteProject(proj.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -123,7 +123,9 @@ export const ProjectsForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Project Name *</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Project Name <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={proj.name}
                             onChange={(e) => updateProject(proj.id, { name: e.target.value })}
@@ -132,7 +134,9 @@ export const ProjectsForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Role</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Your Role <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={proj.role || ''}
                             onChange={(e) => updateProject(proj.id, { role: e.target.value })}
@@ -142,7 +146,7 @@ export const ProjectsForm = () => {
 
                         <div className="md:col-span-2">
                           <TechChipsInput
-                            label="Technologies"
+                            label={<span>Technologies <span className="text-red-500">*</span></span>}
                             value={Array.isArray(proj.technologies) ? proj.technologies : []}
                             onChange={(techs) => updateProject(proj.id, { technologies: techs })}
                             placeholder="Type a technology and press Enter"
@@ -151,12 +155,12 @@ export const ProjectsForm = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                           <MonthYearPicker
-                            label="Start Date"
+                            label={<span>Start Date <span className="text-red-500">*</span></span>}
                             value={proj.startDate}
                             onChange={(value) => updateProject(proj.id, { startDate: value })}
                           />
                           <MonthYearPicker
-                            label="End Date"
+                            label={<span>End Date {!proj.ongoing && <span className="text-red-500">*</span>}</span>}
                             value={proj.endDate}
                             onChange={(value) => updateProject(proj.id, { endDate: value })}
                             disabled={proj.ongoing}
@@ -194,7 +198,9 @@ export const ProjectsForm = () => {
 
                         <div className="md:col-span-2 space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label className="text-sm font-semibold">Project Description</Label>
+                            <Label className="text-sm font-semibold">
+                              Project Description <span className="text-red-500">*</span>
+                            </Label>
                             <AIWriterButton
                               fieldName="description"
                               fieldLabel="Project Description"

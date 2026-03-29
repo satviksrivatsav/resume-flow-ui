@@ -104,7 +104,7 @@ export const WorkExperienceForm = () => {
                         e.stopPropagation();
                         deleteWorkExperience(exp.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -124,7 +124,9 @@ export const WorkExperienceForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Position *</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Position <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={exp.position}
                             onChange={(e) => updateWorkExperience(exp.id, { position: e.target.value })}
@@ -133,7 +135,9 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Company Name</Label>
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Company Name <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={exp.company}
                             onChange={(e) => updateWorkExperience(exp.id, { company: e.target.value })}
@@ -156,14 +160,14 @@ export const WorkExperienceForm = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                           <MonthYearPicker
-                            label="Start Date"
+                            label={<span>Start Date <span className="text-red-500">*</span></span>}
                             value={exp.startDate}
                             onChange={(value) => updateWorkExperience(exp.id, { startDate: value })}
                           />
 
                           <div className="space-y-2">
                             <MonthYearPicker
-                              label="End Date"
+                              label={<span>End Date {!exp.current && <span className="text-red-500">*</span>}</span>}
                               value={exp.endDate}
                               onChange={(value) => updateWorkExperience(exp.id, { endDate: value })}
                               disabled={exp.current}
