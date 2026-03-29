@@ -33,7 +33,7 @@ export function ContainerTextFlip({
   const updateWidthForWord = () => {
     if (textRef.current) {
       // Add some padding to the text width (30px on each side)
-      // @ts-ignore
+      // @ts-expect-error - scrollWidth is a valid property but TypeScript doesn't know about it in this context
       const textWidth = textRef.current.scrollWidth + 30;
       setWidth(textWidth);
     }
@@ -60,7 +60,7 @@ export function ContainerTextFlip({
       animate={{ width }}
       transition={{ duration: animationDuration / 2000 }}
       className={cn(
-        "relative inline-block rounded-lg pt-2 pb-3 text-center text-4xl font-bold text-black md:text-6xl",
+        "relative inline-block rounded-2xl pt-2 pb-3 text-center text-4xl font-bold text-black md:text-6xl",
         "[background:linear-gradient(to_bottom,#f3f4f6,#e5e7eb)]",
         "shadow-[inset_0_-1px_#d1d5db,inset_0_0_0_1px_#d1d5db,_0_4px_8px_#d1d5db]",
         className,

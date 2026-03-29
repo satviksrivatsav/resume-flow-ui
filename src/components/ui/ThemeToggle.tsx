@@ -4,45 +4,34 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-    const { theme, resolvedTheme, setTheme } = useTheme();
+    const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-
-    console.log("[ThemeToggle] Render - mounted:", mounted, "theme:", theme, "resolvedTheme:", resolvedTheme);
 
     // Avoid hydration mismatch - must wait for client-side render
     useEffect(() => {
-        console.log("[ThemeToggle] useEffect - setting mounted to true");
         setMounted(true);
     }, []);
 
     if (!mounted) {
-        console.log("[ThemeToggle] Not mounted yet, returning placeholder");
         return (
-            <Button variant="outline" size="icon" className="w-9 h-9">
+            <Button variant="outline" size="icon" className="rounded-full">
                 <Sun className="h-4 w-4" />
             </Button>
         );
     }
 
     const isDark = (theme ?? "light") === "dark";
-    console.log("[ThemeToggle] isDark:", isDark, "theme:", theme);
 
     const toggleTheme = () => {
-        const newTheme = isDark ? "light" : "dark";
-        console.log("[ThemeToggle] CLICK! Toggling from", theme, "to", newTheme);
-        setTheme(newTheme);
-        console.log("[ThemeToggle] setTheme called with:", newTheme);
+        setTheme(isDark ? "light" : "dark");
     };
 
     return (
         <Button
             variant="outline"
             size="icon"
-            onClick={() => {
-                console.log("[ThemeToggle] onClick handler fired!");
-                toggleTheme();
-            }}
-            className="relative w-9 h-9 overflow-hidden"
+            onClick={toggleTheme}
+            className="relative overflow-hidden rounded-full border-primary/20 hover:bg-primary/5"
             aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
         >
             {/* Sun icon - visible in dark mode */}

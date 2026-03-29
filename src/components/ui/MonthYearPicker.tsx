@@ -1,87 +1,80 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Label } from '@/components/ui/label';
+import { Calendar } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MonthYearPickerProps {
-    label: string;
-    value: string; // Format: "YYYY-MM" for compatibility
+    label: React.ReactNode;
+    value: string; // Format: "YYYY-MM"
     onChange: (value: string) => void;
     required?: boolean;
     disabled?: boolean;
 }
 
-const MONTHS = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
-];
-
-// Generate years from 1970 to current year + 10
-const currentYear = new Date().getFullYear();
-const YEARS = Array.from({ length: currentYear - 1970 + 11 }, (_, i) => (currentYear + 10 - i).toString());
-
 export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
     label,
     value,
     onChange,
-    required = false,
     disabled = false,
 }) => {
-    // Parse the value (format: "YYYY-MM")
-    const [year, month] = value ? value.split('-') : ['', ''];
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleMonthChange = (newMonth: string) => {
-        const newValue = year ? `${year}-${newMonth}` : `${currentYear}-${newMonth}`;
-        onChange(newValue);
+    const handleTrigger = () => {
+        if (!disabled && inputRef.current) {
+            try {
+                inputRef.current.showPicker();
+            } catch (e) {
+                inputRef.current.focus();
+            }
+        }
     };
 
-    const handleYearChange = (newYear: string) => {
-        const newValue = month ? `${newYear}-${month}` : `${newYear}-01`;
-        onChange(newValue);
+    const formatDateDisplay = (val: string) => {
+        if (!val) return 'Select Month & Year';
+        try {
+            const [year, month] = val.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+        } catch {
+            return val;
+        }
     };
-
-    const selectClassName = `flex h-10 w-full rounded-md border border-input bg-background pl-3 pr-8 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none bg-no-repeat bg-[length:16px] bg-[right_8px_center] ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
 
     return (
         <div className="space-y-2">
-            <Label>{label}{required && ' *'}</Label>
-            <div className="flex gap-2">
-                <select
-                    value={month}
-                    onChange={(e) => handleMonthChange(e.target.value)}
-                    className={selectClassName}
-                    style={{ flex: 2 }}
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</Label>
+            <div 
+                onClick={handleTrigger}
+                className={cn(
+                    "group relative flex items-center cursor-pointer transition-all active:scale-[0.99]",
+                    disabled && "opacity-50 cursor-not-allowed active:scale-100"
+                )}
+            >
+                {/* Icon Box */}
+                <div className="flex items-center justify-center w-10 h-10 rounded-l-full border border-r-0 border-input bg-muted/30 text-muted-foreground group-hover:bg-muted/50 group-focus-within:border-primary group-focus-within:text-primary transition-colors">
+                    <Calendar className="w-4 h-4" />
+                </div>
+                
+                {/* Visual Display - Replaces the ugly input dashes */}
+                <div className="flex-1 h-10 flex items-center rounded-r-full border border-input bg-background px-4 text-sm ring-offset-background group-focus-within:ring-2 group-focus-within:ring-ring group-focus-within:ring-offset-2 overflow-hidden">
+                    <span className={cn(
+                        "truncate",
+                        !value ? "text-muted-foreground/40 italic" : "text-foreground font-medium"
+                    )}>
+                        {formatDateDisplay(value)}
+                    </span>
+                </div>
+
+                {/* Hidden Native Input */}
+                <input
+                    ref={inputRef}
+                    type="month"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
                     disabled={disabled}
-                >
-                    <option value="">Month</option>
-                    {MONTHS.map((m) => (
-                        <option key={m.value} value={m.value}>
-                            {m.label}
-                        </option>
-                    ))}
-                </select>
-                <select
-                    value={year}
-                    onChange={(e) => handleYearChange(e.target.value)}
-                    className={selectClassName}
-                    style={{ flex: 1 }}
-                    disabled={disabled}
-                >
-                    <option value="">Year</option>
-                    {YEARS.map((y) => (
-                        <option key={y} value={y}>
-                            {y}
-                        </option>
-                    ))}
-                </select>
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-none"
+                    tabIndex={-1}
+                />
             </div>
         </div>
     );

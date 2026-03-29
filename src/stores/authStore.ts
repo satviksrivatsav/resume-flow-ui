@@ -45,9 +45,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     user: session?.user ?? null,
                 });
             });
-        } catch (error: any) {
-            console.error('Auth initialization error:', error);
-            set({ isLoading: false, error: error.message });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Auth initialization failed';
+            console.error('Auth initialization error:', message);
+            set({ isLoading: false, error: message });
         }
     },
 
@@ -68,9 +69,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             });
 
             return {};
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
-            return { error: error.message };
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Sign up failed';
+            set({ isLoading: false, error: message });
+            return { error: message };
         }
     },
 
@@ -91,9 +93,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             });
 
             return {};
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
-            return { error: error.message };
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Sign in failed';
+            set({ isLoading: false, error: message });
+            return { error: message };
         }
     },
 
@@ -108,8 +111,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             });
 
             if (error) throw error;
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'OAuth sign in failed';
+            set({ isLoading: false, error: message });
         }
     },
 
@@ -124,9 +128,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             set({ isLoading: false });
             return { message: 'Check your email for the password reset link' };
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
-            return { error: error.message };
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Password reset failed';
+            set({ isLoading: false, error: message });
+            return { error: message };
         }
     },
 
@@ -141,9 +146,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             set({ isLoading: false });
             return { message: 'Password updated successfully' };
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
-            return { error: error.message };
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Password update failed';
+            set({ isLoading: false, error: message });
+            return { error: message };
         }
     },
 
@@ -158,8 +164,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 session: null,
                 isLoading: false,
             });
-        } catch (error: any) {
-            set({ isLoading: false, error: error.message });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Sign out failed';
+            set({ isLoading: false, error: message });
         }
     },
 

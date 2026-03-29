@@ -1,4 +1,4 @@
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,18 +11,40 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthStore } from '@/stores/authStore';
+import { useSidebar } from '@/components/ui/sidebar-context';
 
 export function UserMenu() {
     const navigate = useNavigate();
     const { user, signOut } = useAuthStore();
+    const { state } = useSidebar();
 
     if (!user) {
+        if (state === 'collapsed') {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                            <UserCircle className="h-6 w-6" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" align="end" className="w-40">
+                        <DropdownMenuItem onClick={() => navigate('/login')}>
+                            Log in
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/signup')}>
+                            Sign up
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
         return (
-            <div className="flex items-center gap-2">
-                <Button variant="ghost" onClick={() => navigate('/login')}>
+            <div className="flex items-center gap-2 w-full justify-center">
+                <Button variant="ghost" onClick={() => navigate('/login')} className="flex-1 max-w-[80px] h-10">
                     Log in
                 </Button>
-                <Button onClick={() => navigate('/signup')}>
+                <Button onClick={() => navigate('/signup')} className="flex-1 max-w-[80px] h-10">
                     Sign up
                 </Button>
             </div>
@@ -42,8 +64,8 @@ export function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
                         <AvatarImage src={userAvatar} alt={userName} />
                         <AvatarFallback className="bg-primary text-primary-foreground">
                             {initials}
@@ -51,7 +73,12 @@ export function UserMenu() {
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent 
+                className="w-56" 
+                align={state === 'collapsed' ? 'end' : 'end'} 
+                side={state === 'collapsed' ? 'right' : 'bottom'}
+                forceMount
+            >
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{userName}</p>

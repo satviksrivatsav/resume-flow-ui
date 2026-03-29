@@ -3,164 +3,203 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Plus, Trash2 } from "lucide-react";
+import { GraduationCap, Plus, Trash2, ChevronDown, ChevronUp, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
+import { cn } from "@/lib/utils";
 
 export const EducationForm = () => {
   const { resumeData, addEducation, updateEducation, deleteEducation } = useResumeStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (resumeData.education.length > 0) {
+    if (resumeData.education.length > 0 && !expandedId) {
       setExpandedId(resumeData.education[resumeData.education.length - 1].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeData.education]);
 
   const handleAdd = () => {
     addEducation();
-    // Auto-expand the newly added item
-    if (resumeData.education.length > 0) {
-      // Will be handled by useEffect
-    }
+    setTimeout(() => {
+      const lastEdu = resumeData.education[resumeData.education.length - 1];
+      if (lastEdu) setExpandedId(lastEdu.id);
+    }, 0);
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-lg border p-6 space-y-4"
+      className="space-y-4"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <GraduationCap className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Education</h2>
-        </div>
-        <Button onClick={handleAdd} size="sm" className="gap-2">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-muted-foreground">
+          List your educational background, starting with your most recent degree.
+        </p>
+        <Button onClick={handleAdd} className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
           Add Education
         </Button>
       </div>
 
-      <AnimatePresence mode="popLayout">
-        {resumeData.education.map((edu, index) => (
-          <motion.div
-            key={edu.id}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border rounded-lg p-4 space-y-4"
-          >
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => setExpandedId(expandedId === edu.id ? null : edu.id)}
-                className="text-left flex-1"
-              >
-                <h3 className="font-medium">
-                  {edu.degree || `Education ${index + 1}`}
-                </h3>
-                {edu.school && (
-                  <p className="text-sm text-muted-foreground">{edu.school}</p>
+      <div className="space-y-3">
+        <AnimatePresence mode="popLayout">
+          {resumeData.education.map((edu, index) => {
+            const isExpanded = expandedId === edu.id;
+
+            return (
+              <motion.div
+                key={edu.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className={cn(
+                  "group border rounded-xl overflow-hidden transition-all duration-200",
+                  isExpanded ? "ring-1 ring-primary/20 shadow-md bg-card" : "hover:border-primary/30 hover:shadow-sm bg-card/50"
                 )}
-              </button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteEducation(edu.id)}
-                className="text-destructive hover:text-destructive"
               >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <AnimatePresence>
-              {expandedId === edu.id && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                <div 
+                  className={cn(
+                    "flex items-center justify-between p-4 cursor-pointer select-none",
+                    isExpanded && "border-b bg-muted/30"
+                  )}
+                  onClick={() => setExpandedId(isExpanded ? null : edu.id)}
                 >
-                  <div className="space-y-2">
-                    <Label>School/University *</Label>
-                    <Input
-                      value={edu.school}
-                      onChange={(e) => updateEducation(edu.id, { school: e.target.value })}
-                      placeholder="MIT"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Degree *</Label>
-                    <Input
-                      value={edu.degree}
-                      onChange={(e) => updateEducation(edu.id, { degree: e.target.value })}
-                      placeholder="Bachelor of Science"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Field of Study *</Label>
-                    <Input
-                      value={edu.field}
-                      onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
-                      placeholder="Computer Science"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Grade</Label>
-                    <Input
-                      value={edu.grade || ''}
-                      onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
-                      placeholder="e.g., 3.8/4.0 GPA, 8.5/10 CGPA, or 85%"
-                    />
-                  </div>
-
-                  <MonthYearPicker
-                    label="Start Date"
-                    value={edu.startDate}
-                    onChange={(value) => updateEducation(edu.id, { startDate: value })}
-                    required
-                  />
-
-                  <MonthYearPicker
-                    label="End Date"
-                    value={edu.endDate}
-                    onChange={(value) => updateEducation(edu.id, { endDate: value })}
-                    required
-                  />
-
-                  <div className="md:col-span-2 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Label>Description</Label>
-                      <AIWriterButton
-                        fieldName="description"
-                        fieldLabel="Education Description"
-                        fieldValue={edu.description || ''}
-                        onUpdate={(newText) => updateEducation(edu.id, { description: newText })}
-                      />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-base truncate">
+                      {edu.degree ? `${edu.degree}${edu.field ? ` in ${edu.field}` : ''}` : `Education ${index + 1}`}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                      {edu.school && (
+                        <span className="flex items-center gap-1.5 font-medium text-foreground/80">
+                          <GraduationCap className="w-3.5 h-3.5" />
+                          {edu.school}
+                        </span>
+                      )}
+                      {(edu.startDate || edu.endDate) && (
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {edu.startDate || "Start"} — {edu.endDate || "End"}
+                        </span>
+                      )}
                     </div>
-                    <Textarea
-                      value={edu.description}
-                      onChange={(e) => updateEducation(edu.id, { description: e.target.value })}
-                      placeholder="Relevant coursework, achievements, honors..."
-                      rows={3}
-                    />
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+                  <div className="flex items-center gap-1 ml-4">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteEducation(edu.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <div className="text-muted-foreground p-1">
+                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </div>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                    >
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2 md:col-span-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            School / University <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            value={edu.school}
+                            onChange={(e) => updateEducation(edu.id, { school: e.target.value })}
+                            placeholder="e.g. Stanford University"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Degree <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            value={edu.degree}
+                            onChange={(e) => updateEducation(edu.id, { degree: e.target.value })}
+                            placeholder="e.g. Bachelor of Science"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Field of Study</Label>
+                          <Input
+                            value={edu.field}
+                            onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
+                            placeholder="e.g. Computer Science"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
+                          <MonthYearPicker
+                            label={<span>Start Date <span className="text-red-500">*</span></span>}
+                            value={edu.startDate}
+                            onChange={(value) => updateEducation(edu.id, { startDate: value })}
+                          />
+                          <MonthYearPicker
+                            label={<span>End Date <span className="text-red-500">*</span></span>}
+                            value={edu.endDate}
+                            onChange={(value) => updateEducation(edu.id, { endDate: value })}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grade / GPA</Label>
+                          <Input
+                            value={edu.grade}
+                            onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
+                            placeholder="e.g. 3.8/4.0"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2 space-y-3">
+                          <Label className="text-sm font-semibold">Description / Achievements</Label>
+                          <Textarea
+                            value={edu.description}
+                            onChange={(e) => updateEducation(edu.id, { description: e.target.value })}
+                            placeholder="• Relevant coursework: Data Structures, Algorithms&#10;• Dean's List for 4 semesters"
+                            className="min-h-[120px]"
+                            rows={4}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
 
       {resumeData.education.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-8">
-          No education added yet. Click "Add Education" to get started.
-        </p>
+        <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
+          <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <GraduationCap className="w-6 h-6 text-muted-foreground" />
+          </div>
+          <h3 className="font-medium text-lg">No education added</h3>
+          <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">
+            Add your academic background to highlight your qualifications.
+          </p>
+          <Button onClick={handleAdd} variant="outline" className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add Education
+          </Button>
+        </div>
       )}
     </motion.div>
   );

@@ -2,7 +2,7 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { User, MapPin } from "lucide-react";
+import { User, MapPin, Mail, Phone, Linkedin, Globe, Github } from "lucide-react";
 import { motion } from "framer-motion";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { PhoneInput } from "@/components/ui/PhoneInput";
@@ -30,32 +30,35 @@ export const PersonalInfoForm = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-lg border p-6 space-y-4"
+      className="space-y-6"
     >
-      <div className="flex items-center gap-2 mb-4">
-        <User className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold">Personal Information</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name *</Label>
+          <Label htmlFor="name" className="flex items-center gap-2">
+            <User className="w-3.5 h-3.5 text-muted-foreground" />
+            Full Name <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="name"
             value={personalInfo.name}
             onChange={(e) => updatePersonalInfo({ name: e.target.value })}
             placeholder="John Doe"
+            className="focus-visible:ring-primary"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email *</Label>
+          <Label htmlFor="email" className="flex items-center gap-2">
+            <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+            Email <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="email"
             type="email"
@@ -66,7 +69,10 @@ export const PersonalInfoForm = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone *</Label>
+          <Label htmlFor="phone" className="flex items-center gap-2">
+            <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+            Phone <span className="text-red-500">*</span>
+          </Label>
           <PhoneInput
             value={personalInfo.phone}
             onChange={(value) => updatePersonalInfo({ phone: value })}
@@ -77,21 +83,23 @@ export const PersonalInfoForm = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="location">Location *</Label>
-          <div className="relative">
-            <Input
-              id="location"
-              value={personalInfo.location}
-              onChange={(e) => updatePersonalInfo({ location: e.target.value })}
-              placeholder="City, Country"
-              className="pr-8"
-            />
-            <MapPin className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          </div>
+          <Label htmlFor="location" className="flex items-center gap-2">
+            <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+            Location <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="location"
+            value={personalInfo.location}
+            onChange={(e) => updatePersonalInfo({ location: e.target.value })}
+            placeholder="City, Country"
+          />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="linkedin">LinkedIn</Label>
+          <Label htmlFor="linkedin" className="flex items-center gap-2">
+            <Linkedin className="w-3.5 h-3.5 text-muted-foreground" />
+            LinkedIn
+          </Label>
           <Input
             id="linkedin"
             value={personalInfo.linkedin}
@@ -101,7 +109,23 @@ export const PersonalInfoForm = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="website">Website</Label>
+          <Label htmlFor="github" className="flex items-center gap-2">
+            <Github className="w-3.5 h-3.5 text-muted-foreground" />
+            GitHub
+          </Label>
+          <Input
+            id="github"
+            value={personalInfo.github || ''}
+            onChange={(e) => updatePersonalInfo({ github: e.target.value })}
+            placeholder="github.com/johndoe"
+          />
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="website" className="flex items-center gap-2">
+            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+            Portfolio Website
+          </Label>
           <Input
             id="website"
             value={personalInfo.website}
@@ -111,9 +135,9 @@ export const PersonalInfoForm = () => {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Label htmlFor="summary">Professional Summary</Label>
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="summary" className="text-base font-semibold">Professional Summary</Label>
           <AIWriterButton
             fieldName="summary"
             fieldLabel="Summary"
@@ -126,9 +150,14 @@ export const PersonalInfoForm = () => {
           value={personalInfo.summary}
           onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
           placeholder="A brief summary of your professional background and career goals..."
+          className="min-h-[120px] resize-y"
           rows={4}
         />
+        <p className="text-xs text-muted-foreground italic">
+          Tip: Keep it concise (2-4 sentences) and focus on your unique value proposition.
+        </p>
       </div>
     </motion.div>
   );
 };
+

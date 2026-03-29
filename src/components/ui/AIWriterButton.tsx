@@ -33,11 +33,10 @@ export function AIWriterButton({ fieldName, fieldLabel, fieldValue, onUpdate }: 
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
+                    className="gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
                     disabled={isLoading}
                 >
-                    <Sparkles className="w-3 h-3" />
+                    <Sparkles className="w-3.5 h-3.5" />
                     AI Writer
                 </Button>
             </DropdownMenuTrigger>
