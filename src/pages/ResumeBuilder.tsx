@@ -116,7 +116,7 @@ const ResumeBuilder = () => {
               <div className="absolute inset-0 bg-grid-white/[0.02]" />
             </div>
             
-            <div className="mx-auto px-6 py-3 relative">
+            <div className="mx-auto px-6 py-4 relative">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
                   <SidebarTrigger />

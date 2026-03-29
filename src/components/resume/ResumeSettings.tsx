@@ -1,7 +1,7 @@
+import React, { useState, useCallback, useMemo } from "react";
 import { useResumeStore } from "@/stores/resumeStore";
 import { Pencil } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,85 +25,60 @@ const FONT_SIZES = [
   { value: 'large' as const, label: 'Large', pt: 13 },
 ];
 
+interface ColorHexagonProps {
+  color: string;
+  isActive: boolean;
+  onClick: (color: string) => void;
+}
+
+const ColorHexagon = ({ color, isActive, onClick }: ColorHexagonProps) => (
+  <motion.button
+    whileHover={{ y: -4, scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    onClick={() => onClick(color)}
+    className="w-16 h-14 relative transition-colors flex-shrink-0 drop-shadow-sm hover:drop-shadow-md border-none outline-none will-change-transform"
+    style={{ 
+      backgroundColor: color,
+      clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+    }}
+  >
+    {isActive && (
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        className="absolute inset-0 flex items-center justify-center bg-black/10"
+      >
+        <svg className="w-6 h-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        </svg>
+      </motion.div>
+    )}
+  </motion.button>
+);
+
 export const ResumeSettings = () => {
   const { resumeData, updateSettings } = useResumeStore();
   const { settings } = resumeData;
-  const [customColor, setCustomColor] = useState(settings.themeColor);
+  const [modalColor, setModalColor] = useState(settings.themeColor);
   const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
 
-  const handleColorChange = (color: string) => {
-    setCustomColor(color);
+  // Sync local modal state when dialog opens
+  const handleDialogOpenChange = useCallback((open: boolean) => {
+    if (open) {
+      setModalColor(settings.themeColor);
+    }
+    setIsColorDialogOpen(open);
+  }, [settings.themeColor]);
+
+  const handleApplyColor = useCallback(() => {
+    updateSettings({ themeColor: modalColor });
+    setIsColorDialogOpen(false);
+  }, [modalColor, updateSettings]);
+
+  const handleColorClick = useCallback((color: string) => {
     updateSettings({ themeColor: color });
-  };
-
-  const ColorHexagon = ({ color }: { color: string }) => (
-    <motion.button
-      whileHover={{ scale: 1.1, zIndex: 30 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => updateSettings({ themeColor: color })}
-      className="w-16 h-14 relative transition-all flex-shrink-0 drop-shadow-sm hover:drop-shadow-md"
-      style={{ 
-        backgroundColor: color,
-        clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
-      }}
-    >
-      {settings.themeColor === color && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="absolute inset-0 flex items-center justify-center bg-black/10"
-        >
-          <svg className="w-6 h-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-        </motion.div>
-      )}
-    </motion.button>
-  );
-
-  const CustomHexagon = () => (
-    <Dialog open={isColorDialogOpen} onOpenChange={setIsColorDialogOpen}>
-      <DialogTrigger asChild>
-        <motion.button
-          whileHover={{ scale: 1.1, zIndex: 30 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-16 h-14 relative transition-all bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md"
-          style={{ 
-            clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
-          }}
-        >
-          <Pencil className="w-5 h-5 text-white" />
-        </motion.button>
-      </DialogTrigger>
-      <DialogContent className="rounded-3xl">
-        <DialogHeader>
-          <DialogTitle>Choose a custom color</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col items-center gap-4">
-          <Input
-            type="color"
-            value={customColor}
-            onChange={(e) => handleColorChange(e.target.value)}
-            className="w-full h-24 p-0 m-0 border-none cursor-pointer rounded-2xl overflow-hidden"
-            style={{ padding: 0, margin: 0 }}
-          />
-          <div className="flex items-center gap-2 w-full">
-            <Input
-              type="text"
-              value={customColor}
-              onChange={(e) => handleColorChange(e.target.value)}
-              placeholder="#ffffff"
-              className="font-mono rounded-full"
-            />
-            <Button className="rounded-full" onClick={() => {
-              updateSettings({ themeColor: customColor });
-              setIsColorDialogOpen(false);
-            }}>Set Color</Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+  }, [updateSettings]);
 
   return (
     <motion.div
@@ -118,34 +93,121 @@ export const ResumeSettings = () => {
           <p className="text-xs font-mono text-muted-foreground uppercase">{settings.themeColor}</p>
         </div>
         
-        <div className="flex justify-center space-x-[-12px] pb-4">
-          {/* Col 1: 3 colors */}
+        <div className="flex justify-center space-x-[-12px] pb-4 overflow-visible">
+          {/* Col 1 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(0, 3).map(c => <ColorHexagon key={c} color={c} />)}
+            {THEME_COLORS.slice(0, 3).map(c => (
+              <ColorHexagon 
+                key={c} 
+                color={c} 
+                isActive={settings.themeColor === c} 
+                onClick={handleColorClick} 
+              />
+            ))}
           </div>
 
-          {/* Col 2: 4 colors */}
+          {/* Col 2 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(3, 7).map(c => <ColorHexagon key={c} color={c} />)}
+            {THEME_COLORS.slice(3, 7).map(c => (
+              <ColorHexagon 
+                key={c} 
+                color={c} 
+                isActive={settings.themeColor === c} 
+                onClick={handleColorClick} 
+              />
+            ))}
           </div>
 
-          {/* Col 3: 5 items (2 colors, CUSTOM, 2 colors) */}
+          {/* Col 3: Middle column with custom picker */}
           <div className="flex flex-col gap-1 justify-center">
-            <ColorHexagon color={THEME_COLORS[7]} />
-            <ColorHexagon color={THEME_COLORS[8]} />
-            <CustomHexagon />
-            <ColorHexagon color={THEME_COLORS[9]} />
-            <ColorHexagon color={THEME_COLORS[10]} />
+            <ColorHexagon 
+              color={THEME_COLORS[7]} 
+              isActive={settings.themeColor === THEME_COLORS[7]} 
+              onClick={handleColorClick} 
+            />
+            <ColorHexagon 
+              color={THEME_COLORS[8]} 
+              isActive={settings.themeColor === THEME_COLORS[8]} 
+              onClick={handleColorClick} 
+            />
+            
+            <Dialog open={isColorDialogOpen} onOpenChange={handleDialogOpenChange}>
+              <DialogTrigger asChild>
+                <motion.button
+                  whileHover={{ y: -4, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="w-16 h-14 relative transition-all bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
+                  style={{ 
+                    clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+                  }}
+                >
+                  <Pencil className="w-5 h-5 text-white" />
+                </motion.button>
+              </DialogTrigger>
+              <DialogContent className="rounded-3xl">
+                <DialogHeader>
+                  <DialogTitle>Choose a custom color</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-full h-24 rounded-2xl overflow-hidden border border-input relative">
+                    <input
+                      type="color"
+                      value={modalColor}
+                      onChange={(e) => setModalColor(e.target.value)}
+                      className="absolute inset-[-10px] w-[calc(100%+20px)] h-[calc(100%+20px)] cursor-pointer bg-transparent border-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 w-full">
+                    <Input
+                      type="text"
+                      value={modalColor}
+                      onChange={(e) => setModalColor(e.target.value)}
+                      placeholder="#ffffff"
+                      className="font-mono rounded-full h-10"
+                    />
+                    <Button className="rounded-full h-10 px-6" onClick={handleApplyColor}>
+                      Set Color
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <ColorHexagon 
+              color={THEME_COLORS[9]} 
+              isActive={settings.themeColor === THEME_COLORS[9]} 
+              onClick={handleColorClick} 
+            />
+            <ColorHexagon 
+              color={THEME_COLORS[10]} 
+              isActive={settings.themeColor === THEME_COLORS[10]} 
+              onClick={handleColorClick} 
+            />
           </div>
 
-          {/* Col 4: 4 colors */}
+          {/* Col 4 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(11, 15).map(c => <ColorHexagon key={c} color={c} />)}
+            {THEME_COLORS.slice(11, 15).map(c => (
+              <ColorHexagon 
+                key={c} 
+                color={c} 
+                isActive={settings.themeColor === c} 
+                onClick={handleColorClick} 
+              />
+            ))}
           </div>
 
-          {/* Col 5: 3 colors */}
+          {/* Col 5 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(15, 18).map(c => <ColorHexagon key={c} color={c} />)}
+            {THEME_COLORS.slice(15, 18).map(c => (
+              <ColorHexagon 
+                key={c} 
+                color={c} 
+                isActive={settings.themeColor === c} 
+                onClick={handleColorClick} 
+              />
+            ))}
           </div>
         </div>
       </div>
