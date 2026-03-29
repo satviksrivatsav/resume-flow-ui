@@ -23,19 +23,13 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab } = useUiStore();
   const [showPreview, setShowPreview] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('fit-height');
+  const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
@@ -60,7 +54,7 @@ const ResumeBuilder = () => {
     let zoom = 1;
 
     if (viewMode === 'fit-height') {
-        const containerHeight = rect.height - (isFullscreen ? 40 : 100);
+        const containerHeight = rect.height - (isFullscreen ? 40 : 120);
         zoom = containerHeight / resumeHeight;
     } else {
         const containerWidth = rect.width - (isFullscreen ? 40 : 60);
@@ -114,7 +108,7 @@ const ResumeBuilder = () => {
   };
 
   const previewContent = (
-    <div className="flex-1 flex flex-col items-center justify-start pt-8 pb-12">
+    <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-12">
       <div 
         className="flex flex-col transition-all duration-500 ease-out"
         style={{
@@ -168,7 +162,7 @@ const ResumeBuilder = () => {
         <ResumeSidebar />
         
         <div className="flex flex-col flex-1 overflow-hidden relative">
-          <header className="border-b bg-card/40 backdrop-blur-md sticky top-0 z-40 overflow-hidden group">
+          <header className="absolute top-0 left-0 right-0 z-40 border-b bg-card/40 backdrop-blur-md overflow-hidden group">
             <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
               <div 
                 className="absolute inset-[-100%] opacity-[0.03] dark:opacity-[0.05] animate-[gradient-flow_20s_ease_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(var(--primary-rgb),0.5)_25%,rgba(var(--primary-rgb),1)_50%,rgba(var(--primary-rgb),0.5)_75%,transparent_100%)] bg-[length:400%_100%]" 
@@ -212,10 +206,10 @@ const ResumeBuilder = () => {
             <div className="flex h-full w-full">
               {/* Form Column */}
               <div className={cn(
-                "h-full overflow-y-auto transition-all duration-300 ease-in-out p-4 md:p-8 custom-scrollbar",
+                "h-full overflow-y-auto transition-all duration-300 ease-in-out px-4 md:px-8 custom-scrollbar",
                 showPreview ? "w-full lg:w-[55%] xl:w-[60%]" : "w-full"
               )}>
-                <div className="max-w-3xl mx-auto space-y-6 pt-2 md:pt-4 pb-20">
+                <div className="max-w-3xl mx-auto space-y-6 pt-24 pb-20">
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, x: -10 }}
@@ -248,28 +242,21 @@ const ResumeBuilder = () => {
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
                   {/* Floating Toolbar */}
-                  <div className="sticky top-6 z-30 flex justify-center w-full pointer-events-none">
+                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-2">
                     <motion.div 
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto"
+                        className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto mt-2"
                     >
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 rounded-full gap-2 text-xs font-medium px-3">
-                                    {viewMode === 'fit-height' ? <MoveVertical className="w-3.5 h-3.5" /> : <MoveHorizontal className="w-3.5 h-3.5" />}
-                                    {viewMode === 'fit-height' ? 'Fit Height' : 'Fit Width'}
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="center" className="rounded-2xl min-w-[140px]">
-                                <DropdownMenuItem onClick={() => setViewMode('fit-height')} className="rounded-full gap-2 text-xs py-2">
-                                    <MoveVertical className="w-3.5 h-3.5" /> Fit Height
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setViewMode('fit-width')} className="rounded-full gap-2 text-xs py-2">
-                                    <MoveHorizontal className="w-3.5 h-3.5" /> Fit Width
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 rounded-full gap-2 text-xs font-medium px-3"
+                            onClick={() => setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')}
+                        >
+                            {viewMode === 'fit-height' ? <MoveVertical className="w-3.5 h-3.5" /> : <MoveHorizontal className="w-3.5 h-3.5" />}
+                            {viewMode === 'fit-height' ? 'Fit Height' : 'Fit Width'}
+                        </Button>
                         
                         <div className="w-[1px] h-4 bg-border mx-1" />
                         

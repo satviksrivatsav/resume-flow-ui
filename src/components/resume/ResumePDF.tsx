@@ -131,6 +131,13 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   const sizes = fontSizeMap[settings.fontSize] || fontSizeMap.standard;
   const fontFamily = settings.fontFamily || 'Roboto';
 
+  // Filter entries to only show ones with mandatory content
+  const validWork = workExperience.filter((exp) => exp.position || exp.company);
+  const validEducation = education.filter((edu) => edu.school || edu.degree);
+  const validProjects = projects.filter((proj) => proj.name);
+  const validSkills = skills.filter((skill) => skill.category || skill.items);
+  const validCustom = customSections.filter((section) => section && section.title);
+
   // Create styles dynamically based on settings
   const styles = StyleSheet.create({
     page: {
@@ -295,10 +302,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         )}
 
         {/* Work Experience */}
-        {workExperience && workExperience.length > 0 && (
+        {validWork && validWork.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Work Experience</Text>
-            {workExperience.map((exp) => (
+            {validWork.map((exp) => (
               <View key={exp.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
@@ -325,10 +332,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         )}
 
         {/* Education */}
-        {education && education.length > 0 && (
+        {validEducation && validEducation.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Education</Text>
-            {education.map((edu) => (
+            {validEducation.map((edu) => (
               <View key={edu.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
@@ -354,10 +361,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         )}
 
         {/* Projects */}
-        {projects && projects.length > 0 && (
+        {validProjects && validProjects.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Projects</Text>
-            {projects.map((proj) => (
+            {validProjects.map((proj) => (
               <View key={proj.id} style={styles.itemContainer}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
@@ -393,11 +400,11 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         )}
 
         {/* Skills */}
-        {skills && skills.length > 0 && (
+        {validSkills && validSkills.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Skills</Text>
             <View style={styles.skillsContainer}>
-              {skills.map((skill) => (
+              {validSkills.map((skill) => (
                 <View key={skill.id} style={styles.skillRow}>
                   <Text style={styles.skillCategory}>
                     {skill.category || 'Category'}:
@@ -410,9 +417,9 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         )}
 
         {/* Custom Sections */}
-        {customSections &&
-          customSections.length > 0 &&
-          customSections.map((section) => (
+        {validCustom &&
+          validCustom.length > 0 &&
+          validCustom.map((section) => (
             <View key={section.id} style={styles.section}>
               <Text style={styles.sectionTitle}>
                 {section.title || 'Section'}

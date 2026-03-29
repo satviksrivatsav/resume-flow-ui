@@ -29,6 +29,13 @@ const ResumeContent = ({
   sizes,
   formatDate
 }: any) => {
+  // Filter entries to only show ones with mandatory content
+  const validWork = workExperience.filter((exp: any) => exp.position || exp.company);
+  const validEducation = education.filter((edu: any) => edu.school || edu.degree);
+  const validProjects = projects.filter((proj: any) => proj.name);
+  const validSkills = skills.filter((skill: any) => skill.category || skill.items);
+  const validCustom = customSections.filter((section: any) => section && section.title);
+
   return (
     <>
       {/* Header */}
@@ -57,12 +64,12 @@ const ResumeContent = ({
       )}
 
       {/* Work Experience */}
-      {workExperience.length > 0 && (
+      {validWork.length > 0 && (
         <div className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             WORK EXPERIENCE
           </h2>
-          {workExperience.map((exp: any) => (
+          {validWork.map((exp: any) => (
             <div key={exp.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <div>
@@ -89,12 +96,12 @@ const ResumeContent = ({
       )}
 
       {/* Education */}
-      {education.length > 0 && (
+      {validEducation.length > 0 && (
         <div className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             EDUCATION
           </h2>
-          {education.map((edu: any) => (
+          {validEducation.map((edu: any) => (
             <div key={edu.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <div>
@@ -120,12 +127,12 @@ const ResumeContent = ({
       )}
 
       {/* Projects */}
-      {projects.length > 0 && (
+      {validProjects.length > 0 && (
         <div className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             PROJECTS
           </h2>
-          {projects.map((proj: any) => (
+          {validProjects.map((proj: any) => (
             <div key={proj.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <strong style={{ color: '#111827' }}>{proj.name}</strong>
@@ -161,13 +168,13 @@ const ResumeContent = ({
       )}
 
       {/* Skills */}
-      {skills.length > 0 && (
+      {validSkills.length > 0 && (
         <div className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             SKILLS
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {skills.map((skill: any) => (
+            {validSkills.map((skill: any) => (
               <div key={skill.id} className="resume-item" style={{ color: '#374151' }}>
                 <strong style={{ color: '#111827' }}>{skill.category}:</strong> {skill.items}
               </div>
@@ -177,7 +184,7 @@ const ResumeContent = ({
       )}
 
       {/* Custom Sections */}
-      {customSections.filter((section: any) => section && section.title).map((section: any) => (
+      {validCustom.map((section: any) => (
         <div key={section.id} className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             {(section.title || '').toUpperCase()}
