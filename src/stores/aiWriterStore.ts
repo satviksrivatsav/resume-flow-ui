@@ -85,8 +85,8 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
                 fieldName: currentField,
                 originalText: currentAction === 'REWRITE' ? originalText : undefined,
                 instruction: params.instruction,
-                tone: params.tone as any,
-                format: params.format as any,
+                tone: params.tone as AIFieldRequest['tone'],
+                format: params.format as AIFieldRequest['format'],
             };
 
             console.log('\n>>> SENDING TO API:');
@@ -102,12 +102,13 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
                 newText: response.newText,
                 isLoading: false,
             });
-        } catch (error: any) {
-            console.error('\n!!! API ERROR:', error.message);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to process request';
+            console.error('\n!!! API ERROR:', message);
             console.log('========================================\n');
 
             set({
-                error: error.message || 'Failed to process request',
+                error: message,
                 isLoading: false,
             });
         }

@@ -20,6 +20,7 @@ export const ProjectsForm = () => {
     if (resumeData.projects.length > 0 && !expandedId) {
       setExpandedId(resumeData.projects[resumeData.projects.length - 1].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeData.projects]);
 
   const handleAdd = () => {

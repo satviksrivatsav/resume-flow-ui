@@ -18,6 +18,18 @@ const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>{children}</div>
 );
 
+interface ResumeContentProps {
+  personalInfo: { name?: string; email?: string; phone?: string; phoneCountryCode?: string; location?: string; linkedin?: string; website?: string; github?: string; summary?: string };
+  education: Array<{ id: string; school?: string; degree?: string; field?: string; startDate?: string; endDate?: string; grade?: string; description?: string }>;
+  workExperience: Array<{ id: string; position?: string; company?: string; startDate?: string; endDate?: string; current?: boolean; location?: string; description?: string }>;
+  projects: Array<{ id: string; name?: string; startDate?: string; endDate?: string; ongoing?: boolean; link?: string; role?: string; technologies?: string | string[]; description?: string }>;
+  skills: Array<{ id: string; category?: string; items?: string }>;
+  customSections: Array<{ id: string; title?: string; description?: string }>;
+  settings: { themeColor: string; fontSize: string; fontFamily: string };
+  sizes: { base: string; heading: string; name: string };
+  formatDate: (date: string) => string;
+}
+
 const ResumeContent = ({
   personalInfo,
   education,
@@ -28,13 +40,13 @@ const ResumeContent = ({
   settings,
   sizes,
   formatDate
-}: any) => {
+}: ResumeContentProps) => {
   // Filter entries to only show ones with mandatory content
-  const validWork = workExperience.filter((exp: any) => exp.position || exp.company);
-  const validEducation = education.filter((edu: any) => edu.school || edu.degree);
-  const validProjects = projects.filter((proj: any) => proj.name);
-  const validSkills = skills.filter((skill: any) => skill.category || skill.items);
-  const validCustom = customSections.filter((section: any) => section && section.title);
+  const validWork = workExperience.filter((exp) => exp.position || exp.company);
+  const validEducation = education.filter((edu) => edu.school || edu.degree);
+  const validProjects = projects.filter((proj) => proj.name);
+  const validSkills = skills.filter((skill) => skill.category || skill.items);
+  const validCustom = customSections.filter((section) => section && section.title);
 
   return (
     <>
@@ -69,7 +81,7 @@ const ResumeContent = ({
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             WORK EXPERIENCE
           </h2>
-          {validWork.map((exp: any) => (
+          {validWork.map((exp) => (
             <div key={exp.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <div>
@@ -101,7 +113,7 @@ const ResumeContent = ({
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             EDUCATION
           </h2>
-          {validEducation.map((edu: any) => (
+          {validEducation.map((edu) => (
             <div key={edu.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <div>
@@ -132,7 +144,7 @@ const ResumeContent = ({
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             PROJECTS
           </h2>
-          {validProjects.map((proj: any) => (
+          {validProjects.map((proj) => (
             <div key={proj.id} className="resume-item" style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
                 <strong style={{ color: '#111827' }}>{proj.name}</strong>
@@ -174,7 +186,7 @@ const ResumeContent = ({
             SKILLS
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {validSkills.map((skill: any) => (
+            {validSkills.map((skill) => (
               <div key={skill.id} className="resume-item" style={{ color: '#374151' }}>
                 <strong style={{ color: '#111827' }}>{skill.category}:</strong> {skill.items}
               </div>
@@ -184,7 +196,7 @@ const ResumeContent = ({
       )}
 
       {/* Custom Sections */}
-      {validCustom.map((section: any) => (
+      {validCustom.map((section) => (
         <div key={section.id} className="resume-section" style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, marginBottom: '8px' }}>
             {(section.title || '').toUpperCase()}

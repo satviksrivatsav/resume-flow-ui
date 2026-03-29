@@ -50,8 +50,9 @@ export function AIInstructionModal() {
             setInstruction('');
             setTone(null);
             setFormat(null);
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to process request');
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to process request';
+            toast.error(message);
         }
     };
 

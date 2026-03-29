@@ -19,6 +19,7 @@ export const WorkExperienceForm = () => {
     if (resumeData.workExperience.length > 0 && !expandedId) {
       setExpandedId(resumeData.workExperience[resumeData.workExperience.length - 1].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeData.workExperience]);
 
   const handleAdd = () => {

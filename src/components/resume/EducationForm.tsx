@@ -17,6 +17,7 @@ export const EducationForm = () => {
     if (resumeData.education.length > 0 && !expandedId) {
       setExpandedId(resumeData.education[resumeData.education.length - 1].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeData.education]);
 
   const handleAdd = () => {

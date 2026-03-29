@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthStore } from '@/stores/authStore';
-import { useSidebar } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar-context';
 
 export function UserMenu() {
     const navigate = useNavigate();

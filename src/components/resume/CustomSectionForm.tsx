@@ -18,6 +18,7 @@ export const CustomSectionsForm = () => {
     if (resumeData.customSections.length > 0 && !expandedId) {
       setExpandedId(resumeData.customSections[resumeData.customSections.length - 1].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeData.customSections]);
 
   const handleAdd = () => {
