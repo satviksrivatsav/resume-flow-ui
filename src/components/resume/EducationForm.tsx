@@ -37,7 +37,7 @@ export const EducationForm = () => {
         <p className="text-sm text-muted-foreground">
           List your educational background, starting with your most recent degree.
         </p>
-        <Button onClick={handleAdd} size="sm" className="gap-2 shadow-sm">
+        <Button onClick={handleAdd} className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
           Add Education
         </Button>
@@ -93,7 +93,7 @@ export const EducationForm = () => {
                         e.stopPropagation();
                         deleteEducation(edu.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>

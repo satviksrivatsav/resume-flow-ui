@@ -56,7 +56,6 @@ export default function SignUpPage() {
                     {/* Back button */}
                     <Button
                         variant="ghost"
-                        size="sm"
                         className="mb-2"
                         onClick={() => navigate('/')}
                     >
@@ -76,7 +75,7 @@ export default function SignUpPage() {
                         <div className="space-y-2">
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-9 text-sm"
+                                className="w-full gap-2 h-10 text-sm"
                                 onClick={() => handleOAuth('google')}
                                 disabled={isLoading}
                             >
@@ -103,7 +102,7 @@ export default function SignUpPage() {
 
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-9 text-sm"
+                                className="w-full gap-2 h-10 text-sm"
                                 onClick={() => handleOAuth('github')}
                                 disabled={isLoading}
                             >
@@ -113,7 +112,7 @@ export default function SignUpPage() {
 
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-9 text-sm"
+                                className="w-full gap-2 h-10 text-sm"
                                 onClick={() => handleOAuth('linkedin_oidc')}
                                 disabled={isLoading}
                             >
@@ -157,7 +156,7 @@ export default function SignUpPage() {
                                             clearError();
                                             setLocalError('');
                                         }}
-                                        className="pl-10 h-9"
+                                        className="pl-10 h-10"
                                         required
                                     />
                                 </div>
@@ -177,7 +176,7 @@ export default function SignUpPage() {
                                             clearError();
                                             setLocalError('');
                                         }}
-                                        className="pl-10 h-9"
+                                        className="pl-10 h-10"
                                         required
                                     />
                                 </div>
@@ -196,7 +195,7 @@ export default function SignUpPage() {
                                             setConfirmPassword(e.target.value);
                                             setLocalError('');
                                         }}
-                                        className="pl-10 h-9"
+                                        className="pl-10 h-10"
                                         required
                                     />
                                 </div>

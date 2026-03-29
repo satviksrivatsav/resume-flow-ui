@@ -101,7 +101,6 @@ export default function LoginPage() {
                     {/* Back button */}
                     <Button
                         variant="ghost"
-                        size="sm"
                         className="mb-4"
                         onClick={() => navigate('/')}
                     >
@@ -121,7 +120,7 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-11"
+                                className="w-full gap-2 h-10"
                                 onClick={() => handleOAuth('google')}
                                 disabled={isLoading}
                             >
@@ -148,7 +147,7 @@ export default function LoginPage() {
 
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-11"
+                                className="w-full gap-2 h-10"
                                 onClick={() => handleOAuth('github')}
                                 disabled={isLoading}
                             >
@@ -158,7 +157,7 @@ export default function LoginPage() {
 
                             <Button
                                 variant="outline"
-                                className="w-full gap-2 h-11"
+                                className="w-full gap-2 h-10"
                                 onClick={() => handleOAuth('linkedin_oidc')}
                                 disabled={isLoading}
                             >
@@ -201,7 +200,7 @@ export default function LoginPage() {
                                             setEmail(e.target.value);
                                             clearError();
                                         }}
-                                        className="pl-10 h-11"
+                                        className="pl-10 h-10"
                                         required
                                     />
                                 </div>
@@ -229,13 +228,13 @@ export default function LoginPage() {
                                             setPassword(e.target.value);
                                             clearError();
                                         }}
-                                        className="pl-10 h-11"
+                                        className="pl-10 h-10"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                            <Button type="submit" className="w-full h-10" disabled={isLoading}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />

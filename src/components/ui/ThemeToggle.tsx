@@ -14,7 +14,7 @@ export function ThemeToggle() {
 
     if (!mounted) {
         return (
-            <Button variant="outline" size="icon" className="w-9 h-9 rounded-full">
+            <Button variant="outline" size="icon" className="rounded-full">
                 <Sun className="h-4 w-4" />
             </Button>
         );
@@ -31,7 +31,7 @@ export function ThemeToggle() {
             variant="outline"
             size="icon"
             onClick={toggleTheme}
-            className="relative w-9 h-9 overflow-hidden rounded-full border-primary/20 hover:bg-primary/5"
+            className="relative overflow-hidden rounded-full border-primary/20 hover:bg-primary/5"
             aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
         >
             {/* Sun icon - visible in dark mode */}

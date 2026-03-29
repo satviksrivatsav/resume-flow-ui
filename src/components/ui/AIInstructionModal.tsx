@@ -98,8 +98,7 @@ export function AIInstructionModal() {
                                 <Button
                                     key={option.value}
                                     variant={tone === option.value ? 'secondary' : 'outline'}
-                                    size="sm"
-                                    className={`gap-1.5 ${tone === option.value ? 'ring-1 ring-primary/30' : ''}`}
+                                    className={`gap-1.5 h-10 px-4 ${tone === option.value ? 'ring-1 ring-primary/30' : ''}`}
                                     onClick={() => setTone(tone === option.value ? null : option.value)}
                                 >
                                     <option.icon className="w-3.5 h-3.5" />
@@ -117,8 +116,7 @@ export function AIInstructionModal() {
                                 <Button
                                     key={option.value}
                                     variant={format === option.value ? 'secondary' : 'outline'}
-                                    size="sm"
-                                    className={`gap-1.5 ${format === option.value ? 'ring-1 ring-primary/30' : ''}`}
+                                    className={`gap-1.5 h-10 px-4 ${format === option.value ? 'ring-1 ring-primary/30' : ''}`}
                                     onClick={() => setFormat(format === option.value ? null : option.value)}
                                 >
                                     <option.icon className="w-3.5 h-3.5" />

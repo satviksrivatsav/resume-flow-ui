@@ -131,9 +131,8 @@ const ResumeBuilder = () => {
                 <div className="flex items-center gap-3">
                   <Button
                     variant="ghost"
-                    size="sm"
                     onClick={() => setShowPreview(!showPreview)}
-                    className="gap-2 bg-background/40 hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20"
+                    className="gap-2 bg-background/40 hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20 h-10 px-4"
                   >
                     <Eye className="w-4 h-4" />
                     <span className="hidden sm:inline font-medium">{showPreview ? "Hide" : "Show"} Preview</span>

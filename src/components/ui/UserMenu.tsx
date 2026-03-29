@@ -23,7 +23,7 @@ export function UserMenu() {
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
                             <UserCircle className="h-6 w-6" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -41,10 +41,10 @@ export function UserMenu() {
 
         return (
             <div className="flex items-center gap-2 w-full justify-center">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="flex-1 max-w-[80px]">
+                <Button variant="ghost" onClick={() => navigate('/login')} className="flex-1 max-w-[80px] h-10">
                     Log in
                 </Button>
-                <Button size="sm" onClick={() => navigate('/signup')} className="flex-1 max-w-[80px]">
+                <Button onClick={() => navigate('/signup')} className="flex-1 max-w-[80px] h-10">
                     Sign up
                 </Button>
             </div>
@@ -64,8 +64,8 @@ export function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
                         <AvatarImage src={userAvatar} alt={userName} />
                         <AvatarFallback className="bg-primary text-primary-foreground">
                             {initials}

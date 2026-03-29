@@ -87,9 +87,8 @@ export const ResumeSidebar = () => {
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           <Button
             variant="ghost"
-            size="sm"
             onClick={() => navigate("/")}
-            className="flex-1 justify-start gap-2 h-9 px-2 hover:bg-primary/10 transition-colors group/back group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+            className="flex-1 justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group/back group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
             title="Back to Dashboard"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover/back:-translate-x-1" />
@@ -136,23 +135,22 @@ export const ResumeSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <div className="mt-auto px-4 pb-4">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/upload")}
+            className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
+          >
+            <Upload className="w-4 h-4" />
+            <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
+          </Button>
+        </div>
       </SidebarContent>
 
       <SidebarFooter className="p-4 border-t">
-        <div className="flex flex-col gap-3 group-data-[collapsible=icon]:items-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/upload")}
-            className="w-full justify-start gap-2 h-9 group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
-          >
-            <Upload className="w-4 h-4" />
-            <span className="group-data-[collapsible=icon]:hidden">Upload Resume</span>
-          </Button>
-          
-          <div className="flex items-center justify-center w-full">
-            <UserMenu />
-          </div>
+        <div className="flex items-center justify-center w-full">
+          <UserMenu />
         </div>
       </SidebarFooter>
     </Sidebar>

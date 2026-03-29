@@ -32,7 +32,7 @@ export const SkillsForm = () => {
         <p className="text-sm text-muted-foreground">
           Group your skills into categories like "Languages", "Frameworks", or "Tools".
         </p>
-        <Button onClick={handleAdd} size="sm" className="gap-2 shadow-sm">
+        <Button onClick={handleAdd} className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
           Add Skill Category
         </Button>
@@ -52,7 +52,7 @@ export const SkillsForm = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => deleteSkill(skill.id)}
-                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"
+                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
