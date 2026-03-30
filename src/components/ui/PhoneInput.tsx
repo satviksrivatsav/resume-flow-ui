@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { COUNTRIES, CountryData, getCountryByCode } from '@/lib/countries';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface PhoneInputProps {
     value: string;
@@ -48,16 +49,20 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
     return (
         <div className="relative" ref={dropdownRef}>
-            <div className="flex">
+            <div className={cn(
+                "flex items-center rounded-full border border-input bg-background overflow-hidden transition-all duration-200",
+                "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary",
+                isOpen && "ring-2 ring-ring ring-offset-2 border-primary"
+            )}>
                 {/* Country Code Dropdown Button */}
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-1 pl-4 pr-2 h-10 rounded-l-full border border-r-0 border-input bg-background hover:bg-accent transition-colors min-w-[90px]"
+                    className="flex items-center gap-1 pl-4 pr-2 h-10 border-r border-input bg-muted/30 hover:bg-muted/50 transition-colors min-w-[90px] focus:outline-none"
                 >
                     <span className="text-lg">{selectedCountry.flag}</span>
                     <span className="text-sm font-medium">{selectedCountry.dialCode}</span>
-                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                    <ChevronDown className={cn("w-3 h-3 text-muted-foreground transition-transform duration-200", isOpen && "rotate-180")} />
                 </button>
 
                 {/* Phone Number Input */}
@@ -66,7 +71,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className="flex-1 h-10 rounded-r-full border border-input bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className="flex-1 h-10 bg-transparent px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none"
                 />
             </div>
 
