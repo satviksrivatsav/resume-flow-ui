@@ -15,7 +15,7 @@ const THEME_COLORS = [
 ];
 
 const FONT_FAMILIES = [
-  'Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway',
+  'Open Sans', 'Roboto', 'Lato', 'Montserrat', 'Raleway',
   'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather',
 ];
 

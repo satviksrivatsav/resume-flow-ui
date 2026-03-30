@@ -120,8 +120,8 @@ export const CustomSectionsForm = () => {
                         </div>
 
                         <div className="space-y-3">
-                          <Label className="text-sm font-semibold">Content</Label>
-                          <div className="bg-background rounded-2xl border overflow-hidden">
+                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Content</Label>
+                          <div className="bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary">
                             <ReactQuill
                               theme="snow"
                               value={section.description}
@@ -130,8 +130,7 @@ export const CustomSectionsForm = () => {
                               placeholder="Describe your achievements or details here..."
                             />
                           </div>
-                        </div>
-                      </div>
+                        </div>                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
