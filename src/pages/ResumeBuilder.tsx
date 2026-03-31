@@ -347,7 +347,7 @@ const ResumeBuilder = () => {
                                 variant="ghost"
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
-                                onClick={() => setFullscreenZoom(prev => Math.min(prev + 0.1, 2.5))}
+                                onClick={() => setFullscreenZoom(prev => Math.min(prev + 0.1, 1.5))}
                                 title="Zoom In"
                             >
                                 <ZoomIn className="w-5 h-5 text-white" />
@@ -356,11 +356,11 @@ const ResumeBuilder = () => {
                             <div className="h-32 py-2 flex items-center justify-center">
                                 <Slider
                                     orientation="vertical"
-                                    min={0.2}
-                                    max={2.5}
-                                    step={0.1}
+                                    min={0.5}
+                                    max={1.5}
+                                    step={0.01}
                                     value={[fullscreenZoom]}
-                                    onValueChange={(val) => setFullscreenZoom(val[0])}
+                                    onValueChange={(val) => setFullscreenZoom(Math.max(0.5, Math.min(val[0], 1.5)))}
                                     className="h-full"
                                     trackClassName="bg-white/20 w-1.5"
                                     rangeClassName="bg-white"
@@ -372,7 +372,7 @@ const ResumeBuilder = () => {
                                 variant="ghost"
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
-                                onClick={() => setFullscreenZoom(prev => Math.max(prev - 0.1, 0.2))}
+                                onClick={() => setFullscreenZoom(prev => Math.max(prev - 0.1, 0.5))}
                                 title="Zoom Out"
                             >
                                 <ZoomOut className="w-5 h-5 text-white" />
@@ -384,7 +384,7 @@ const ResumeBuilder = () => {
                                 variant="ghost"
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
-                                onClick={handleResetZoom}
+                                onClick={() => setFullscreenZoom(1.0)}
                                 title="Reset Zoom"
                             >
                                 <RotateCcw className="w-5 h-5 text-white/80" />
