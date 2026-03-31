@@ -46,17 +46,18 @@ export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
             <div 
                 onClick={handleTrigger}
                 className={cn(
-                    "group relative flex items-center cursor-pointer transition-all active:scale-[0.99]",
+                    "group/picker relative flex items-center cursor-pointer transition-all active:scale-[0.99] rounded-full border border-input bg-background overflow-hidden",
+                    "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary transition-all duration-200",
                     disabled && "opacity-50 cursor-not-allowed active:scale-100"
                 )}
             >
                 {/* Icon Box */}
-                <div className="flex items-center justify-center w-10 h-10 rounded-l-full border border-r-0 border-input bg-muted/30 text-muted-foreground group-hover:bg-muted/50 group-focus-within:border-primary group-focus-within:text-primary transition-colors">
+                <div className="flex items-center justify-center w-10 h-10 border-r border-input bg-muted/30 text-muted-foreground group-hover/picker:bg-muted/50 group-focus-within/picker:text-primary transition-colors">
                     <Calendar className="w-4 h-4" />
                 </div>
                 
                 {/* Visual Display - Replaces the ugly input dashes */}
-                <div className="flex-1 h-10 flex items-center rounded-r-full border border-input bg-background px-4 text-sm ring-offset-background group-focus-within:ring-2 group-focus-within:ring-ring group-focus-within:ring-offset-2 overflow-hidden">
+                <div className="flex-1 h-10 flex items-center px-4 text-sm overflow-hidden">
                     <span className={cn(
                         "truncate",
                         !value ? "text-muted-foreground/40 italic" : "text-foreground font-medium"
@@ -73,7 +74,7 @@ export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
                     onChange={(e) => onChange(e.target.value)}
                     disabled={disabled}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-none"
-                    tabIndex={-1}
+                    tabIndex={0}
                 />
             </div>
         </div>

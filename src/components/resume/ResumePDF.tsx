@@ -136,7 +136,12 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   const validEducation = education.filter((edu) => edu.school || edu.degree);
   const validProjects = projects.filter((proj) => proj.name);
   const validSkills = skills.filter((skill) => skill.category || skill.items);
-  const validCustom = customSections.filter((section) => section && section.title);
+  const validCustom = customSections.filter((section) => 
+    section && 
+    section.title && 
+    section.description && 
+    section.description !== '<p><br></p>'
+  );
 
   // Create styles dynamically based on settings
   const styles = StyleSheet.create({

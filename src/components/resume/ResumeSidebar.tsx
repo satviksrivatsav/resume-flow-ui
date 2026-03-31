@@ -55,15 +55,32 @@ export const ResumeSidebar = () => {
       
       case "work":
         return resumeData.workExperience.length > 0 && 
-               resumeData.workExperience.every(exp => exp.position && exp.company);
+               resumeData.workExperience.every(exp => 
+                 exp.position && 
+                 exp.company && 
+                 exp.startDate && 
+                 (exp.current || exp.endDate)
+               );
       
       case "education":
         return resumeData.education.length > 0 && 
-               resumeData.education.every(edu => edu.school && edu.degree);
+               resumeData.education.every(edu => 
+                 edu.school && 
+                 edu.degree && 
+                 edu.startDate && 
+                 edu.endDate
+               );
       
       case "projects":
         return resumeData.projects.length > 0 && 
-               resumeData.projects.every(proj => proj.name);
+               resumeData.projects.every(proj => 
+                 proj.name && 
+                 proj.role && 
+                 proj.description &&
+                 proj.startDate && 
+                 (proj.ongoing || proj.endDate) &&
+                 (Array.isArray(proj.technologies) ? proj.technologies.length > 0 : proj.technologies)
+               );
       
       case "skills":
         return resumeData.skills.length > 0 && 
@@ -71,7 +88,11 @@ export const ResumeSidebar = () => {
       
       case "custom":
         return resumeData.customSections.length > 0 && 
-               resumeData.customSections.every(section => section.title);
+               resumeData.customSections.every(section => 
+                 section.title && 
+                 section.description && 
+                 section.description !== '<p><br></p>'
+               );
       
       case "settings":
         return true;

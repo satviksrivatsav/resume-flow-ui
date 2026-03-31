@@ -10,12 +10,14 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Eye, Maximize2, Minimize2, MoveHorizontal, MoveVertical } from "lucide-react";
+import { Eye, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
 import { AIReviewModal } from "@/components/ui/AIReviewModal";
 import { useUiStore } from "@/stores/uiStore";
+import { useResumeStore } from "@/stores/resumeStore";
+import { Slider } from "@/components/ui/slider";
 import { ResumeSidebar } from "@/components/resume/ResumeSidebar";
 import Logo from "@/assets/ResumeFlowCut.svg";
 import {
@@ -31,6 +33,7 @@ const ResumeBuilder = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
+  const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -54,22 +57,23 @@ const ResumeBuilder = () => {
     let zoom = 1;
 
     if (viewMode === 'fit-height') {
-        const containerHeight = rect.height - (isFullscreen ? 40 : 120);
+        // Increased offset to 200 to account for top/bottom padding and controls
+        const containerHeight = rect.height - 200;
         zoom = containerHeight / resumeHeight;
     } else {
-        const containerWidth = rect.width - (isFullscreen ? 40 : 60);
+        const containerWidth = rect.width - 60;
         zoom = containerWidth / resumeWidth;
     }
 
-    setPreviewZoom(Math.max(0.2, Math.min(zoom, isFullscreen ? 1.5 : 1.2)));
-  }, [viewMode, isFullscreen]);
+    setPreviewZoom(Math.max(0.15, Math.min(zoom, 1.2)));
+  }, [viewMode]);
 
   useEffect(() => {
     if (showPreview) {
       const timer = setTimeout(calculateZoom, 400);
       return () => clearTimeout(timer);
     }
-  }, [showPreview, activeTab, viewMode, isFullscreen, calculateZoom]);
+  }, [showPreview, activeTab, viewMode, calculateZoom]);
 
   useEffect(() => {
     const handleResize = () => calculateZoom();
@@ -105,6 +109,11 @@ const ResumeBuilder = () => {
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const handleResetZoom = () => {
+    if (isFullscreen) setFullscreenZoom(1.0);
+    else calculateZoom();
   };
 
   const previewContent = (
@@ -286,45 +295,103 @@ const ResumeBuilder = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md flex flex-col"
+                    className="fixed inset-0 z-[100] bg-zinc-950/40 backdrop-blur-xl flex flex-col overflow-hidden"
                 >
-                    <div className="flex items-center justify-between p-4 border-b bg-card/50">
-                        <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/20 backdrop-blur-md z-10">
+                        <div className="flex items-center gap-3 w-1/4">
                             <img src={Logo} alt="Logo" className="w-8 h-8" />
-                            <span className="font-bold tracking-tight">Fullscreen Preview</span>
+                            <span className="font-bold tracking-tight hidden sm:block text-white">Fullscreen Preview</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        
+                        <div className="flex-1 flex justify-center">
+                            <h2 className="text-lg font-bold text-white tracking-tight">
+                                {useResumeStore.getState().resumeData.personalInfo.name || "Untitled Resume"}
+                            </h2>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 w-1/4">
                             <Button 
-                                variant="outline" 
+                                variant="secondary" 
                                 size="sm" 
-                                className="rounded-full h-9"
-                                onClick={() => setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')}
-                            >
-                                {viewMode === 'fit-height' ? 'Switch to Fit Width' : 'Switch to Fit Height'}
-                            </Button>
-                            <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="rounded-full h-9 w-9 bg-muted/50 hover:bg-muted"
+                                className="rounded-full px-5 h-10 gap-2 bg-white text-black hover:bg-white/90 shadow-lg"
                                 onClick={toggleFullscreen}
                             >
-                                <Minimize2 className="w-4 h-4" />
+                                <X className="w-4 h-4" />
+                                <span className="font-semibold">Close Preview</span>
                             </Button>
                         </div>
                     </div>
-                    <div className="flex-1 overflow-auto custom-scrollbar p-8">
-                        <div className="flex flex-col items-center justify-start">
-                            <div 
-                                className="shadow-2xl rounded-sm bg-white"
-                                style={{ 
-                                    width: '794px',
-                                    height: '1123px',
-                                    transform: `scale(${previewZoom * 1.5})`,
-                                    transformOrigin: 'top center',
-                                    marginBottom: `${1123 * previewZoom * 0.5}px`
-                                }}
+                    {/* Content Area */}
+                    <div className="flex-1 relative flex overflow-hidden">
+                        {/* Resume View */}
+                        <div className="flex-1 overflow-auto custom-scrollbar p-12 flex justify-center scroll-smooth bg-black/10">
+                            <div className="relative">
+                                <div 
+                                    className="shadow-2xl rounded-sm bg-white"
+                                    style={{ 
+                                        width: '794px',
+                                        height: '1123px',
+                                        transform: `scale(${fullscreenZoom})`,
+                                        transformOrigin: 'top center',
+                                        marginBottom: `${1123 * fullscreenZoom * 0.5}px`
+                                    }}
+                                >
+                                    <ResumePreview />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Floating Zoom Controls Pill - White Theme */}
+                        <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center py-5 px-2.5 gap-4 bg-zinc-900/80 backdrop-blur-2xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-full">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                onClick={() => setFullscreenZoom(prev => Math.min(prev + 0.1, 2.5))}
+                                title="Zoom In"
                             >
-                                <ResumePreview />
+                                <ZoomIn className="w-5 h-5 text-white" />
+                            </Button>
+                            
+                            <div className="h-32 py-2 flex items-center justify-center">
+                                <Slider
+                                    orientation="vertical"
+                                    min={0.2}
+                                    max={2.5}
+                                    step={0.1}
+                                    value={[fullscreenZoom]}
+                                    onValueChange={(val) => setFullscreenZoom(val[0])}
+                                    className="h-full"
+                                    trackClassName="bg-white/20 w-1.5"
+                                    rangeClassName="bg-white"
+                                    thumbClassName="bg-white border-white h-4 w-4"
+                                />
+                            </div>
+
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                onClick={() => setFullscreenZoom(prev => Math.max(prev - 0.1, 0.2))}
+                                title="Zoom Out"
+                            >
+                                <ZoomOut className="w-5 h-5 text-white" />
+                            </Button>
+
+                            <div className="w-8 h-[1px] bg-white/10 mx-auto" />
+
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                onClick={handleResetZoom}
+                                title="Reset Zoom"
+                            >
+                                <RotateCcw className="w-5 h-5 text-white/80" />
+                            </Button>
+
+                            <div className="text-[11px] font-bold text-white tabular-nums px-1">
+                                {Math.round(fullscreenZoom * 100)}%
                             </div>
                         </div>
                     </div>
