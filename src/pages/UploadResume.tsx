@@ -71,7 +71,7 @@ export default function UploadResume() {
             <Button
                 variant="ghost"
                 className="absolute top-6 left-6 text-muted-foreground hover:text-foreground"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(-1)}
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back

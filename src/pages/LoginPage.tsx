@@ -30,7 +30,7 @@ export default function LoginPage() {
             <Button
                 variant="ghost"
                 className="mb-0 -ml-3"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(-1)}
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
