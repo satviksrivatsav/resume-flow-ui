@@ -152,10 +152,10 @@ export const ResumeSidebar = () => {
               variant="ghost"
               onClick={() => navigate("/")}
               className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
-              title="Back to Dashboard"
+              title="Back to Home"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
-              <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">Dashboard</span>
+              <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">Home</span>
             </Button>
           </motion.div>
           <ThemeToggle />

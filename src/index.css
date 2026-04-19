@@ -127,6 +127,12 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  /* Suppress browser UA outline globally — all interactive components
+     use focus-visible:ring-* for their styled keyboard-nav indicator. */
+  *:focus {
+    outline: none;
+  }
+
   @keyframes gradient-flow {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
