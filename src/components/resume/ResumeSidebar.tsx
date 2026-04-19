@@ -30,6 +30,47 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserMenu } from "@/components/ui/UserMenu";
+import { motion } from "framer-motion";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
+
+// Per-icon hover animation variants
+const iconVariants: Record<string, object> = {
+  personal: {
+    // User: subtle bounce up (like waving hello)
+    hover: { y: -3, transition: { type: "spring", stiffness: 400, damping: 10 } },
+    tap:   { y: 0, scale: 0.9 },
+  },
+  work: {
+    // Briefcase: slight rock left-right (busy at work)
+    hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: "easeInOut" } },
+    tap:   { scale: 0.9 },
+  },
+  education: {
+    // GraduationCap: tilt side-to-side (thinking)
+    hover: { rotate: 12, transition: { type: "spring", stiffness: 300, damping: 8 } },
+    tap:   { rotate: 0, scale: 0.9 },
+  },
+  projects: {
+    // FolderGit2: pop scale (opening a folder)
+    hover: { scale: 1.25, transition: { type: "spring", stiffness: 400, damping: 10 } },
+    tap:   { scale: 0.9 },
+  },
+  skills: {
+    // Wrench: small clockwise rotation (tightening a bolt)
+    hover: { rotate: 30, transition: { type: "spring", stiffness: 300, damping: 8 } },
+    tap:   { rotate: 0, scale: 0.9 },
+  },
+  custom: {
+    // Layout: expand slightly (building a layout)
+    hover: { scaleX: 1.2, transition: { type: "spring", stiffness: 300, damping: 10 } },
+    tap:   { scaleX: 1, scale: 0.9 },
+  },
+  settings: {
+    // Settings: slow spin (gears turning)
+    hover: { rotate: 90, transition: { duration: 0.35, ease: "easeInOut" } },
+    tap:   { rotate: 0, scale: 0.9 },
+  },
+};
 
 const sections = [
   { id: "personal", label: "Personal Info", icon: User },
@@ -106,15 +147,17 @@ export const ResumeSidebar = () => {
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
       <SidebarHeader className="p-4 border-b">
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="flex-1 justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group/back group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
-            title="Back to Dashboard"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover/back:-translate-x-1" />
-            <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">Dashboard</span>
-          </Button>
+          <motion.div whileHover="hover" whileTap="tap" className="flex-1 group-data-[collapsible=icon]:flex-none">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/")}
+              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
+              title="Back to Dashboard"
+            >
+              <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
+              <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">Dashboard</span>
+            </Button>
+          </motion.div>
           <ThemeToggle />
         </div>
       </SidebarHeader>
@@ -131,26 +174,51 @@ export const ResumeSidebar = () => {
                 const isCompleted = getCompletionStatus(section.id);
                 const isActive = activeTab === section.id;
 
+                const variants = iconVariants[section.id] ?? {};
+
                 return (
-                  <SidebarMenuItem key={section.id}>
-                    <SidebarMenuButton
-                      isActive={isActive}
-                      onClick={() => setActiveTab(section.id)}
-                      tooltip={section.label}
-                      className={cn(
-                        "transition-all duration-200 h-10 px-4",
-                        isActive ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <Icon className={cn("w-4 h-4 mr-2", isActive ? "text-primary scale-110" : "")} />
-                      <span>{section.label}</span>
-                      {isCompleted ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10" />
-                      ) : (
-                        <Circle className="w-3.5 h-3.5 ml-auto text-muted-foreground/20" />
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  // motion.div owns whileHover/whileTap; framer-motion propagates
+                  // the active variant name down to the child motion.span automatically.
+                  <motion.div key={section.id} whileHover="hover" whileTap="tap">
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => setActiveTab(section.id)}
+                        tooltip={section.label}
+                        className={cn(
+                          "transition-all duration-200 h-10 px-4",
+                          isActive
+                            ? "bg-primary/10 text-primary font-semibold"
+                            : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        <motion.span
+                          variants={variants}
+                          initial={false}
+                          className="mr-2 inline-flex items-center justify-center"
+                          style={{ display: "inline-flex" }}
+                        >
+                          <Icon
+                            className={cn(
+                              "w-4 h-4 transition-colors duration-200",
+                              isActive ? "text-primary" : ""
+                            )}
+                            style={
+                              isActive
+                                ? { color: "hsl(var(--primary))" }
+                                : {}
+                            }
+                          />
+                        </motion.span>
+                        <span>{section.label}</span>
+                        {isCompleted ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10" />
+                        ) : (
+                          <Circle className="w-3.5 h-3.5 ml-auto text-muted-foreground/20" />
+                        )}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
                 );
               })}
             </SidebarMenu>
@@ -158,14 +226,16 @@ export const ResumeSidebar = () => {
         </SidebarGroup>
 
         <div className="mt-auto px-4 pb-4">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/upload")}
-            className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
-          >
-            <Upload className="w-4 h-4" />
-            <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
-          </Button>
+          <motion.div whileHover="hover" whileTap="tap">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/upload")}
+              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
+            >
+              <AnimatedIcon icon={Upload} preset="bounceUp" className="w-4 h-4" />
+              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
+            </Button>
+          </motion.div>
         </div>
       </SidebarContent>
 

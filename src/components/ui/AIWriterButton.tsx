@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,14 +33,16 @@ export function AIWriterButton({ fieldName, fieldLabel, fieldValue, onUpdate }: 
     return (
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    className="gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
-                    disabled={isLoading}
-                >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    AI Writer
-                </Button>
+                <motion.div whileHover="hover" whileTap="tap" style={{ display: 'inline-flex', overflow: 'hidden' }}>
+                  <Button
+                      variant="ghost"
+                      className="gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
+                      disabled={isLoading}
+                  >
+                      <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
+                      AI Writer
+                  </Button>
+                </motion.div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
                 <DropdownMenuItem onClick={() => handleAction('GENERATE')}>

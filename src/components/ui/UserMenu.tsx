@@ -1,6 +1,8 @@
 import { LogOut, User, UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -88,10 +90,12 @@ export function UserMenu() {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                </DropdownMenuItem>
+                <motion.div whileHover="hover" whileTap="tap">
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                      <AnimatedIcon icon={LogOut} preset="slideRight" className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                  </DropdownMenuItem>
+                </motion.div>
             </DropdownMenuContent>
         </DropdownMenu>
     );
