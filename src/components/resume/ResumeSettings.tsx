@@ -137,7 +137,7 @@ export const ResumeSettings = () => {
                   whileHover={{ y: -4, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="w-16 h-14 relative transition-all bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
+                  className="w-16 h-14 relative transition-colors bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
                   style={{ 
                     clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
                   }}
