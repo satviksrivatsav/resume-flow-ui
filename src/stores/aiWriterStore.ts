@@ -88,6 +88,10 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
 
         // Create a fresh AbortController for this request
         const abortController = new AbortController();
+        const timeoutId = setTimeout(() => {
+            console.log('⏱️ AI request timed out');
+            abortController.abort(new Error('TimeoutError'));
+        }, 20000);
 
         // Close instruction modal, show review modal with loading
         set({
@@ -113,6 +117,8 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
 
             const response = await processField(request, abortController.signal);
 
+            clearTimeout(timeoutId);
+
             console.log('\n<<< API RESPONSE:');
             console.log(JSON.stringify(response, null, 2));
             console.log('========================================\n');
@@ -123,6 +129,19 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
                 _abortController: null,
             });
         } catch (error: unknown) {
+            clearTimeout(timeoutId);
+
+            // Handle timeout abort
+            if (error instanceof Error && error.message === 'TimeoutError') {
+                console.error('\n!!! API TIMEOUT: Response took longer than 20 seconds');
+                set({
+                    error: "The AI took too long to respond. Please try again.",
+                    isLoading: false,
+                    _abortController: null,
+                });
+                return;
+            }
+
             // Aborts are intentional — just close silently, don't surface an error
             if (error instanceof Error && error.name === 'AbortError') {
                 console.log('🚫 Request aborted by user');

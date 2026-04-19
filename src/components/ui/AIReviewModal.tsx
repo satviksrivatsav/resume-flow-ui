@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Timer, AlertTriangle, ServerCrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -119,7 +119,16 @@ export function AIReviewModal() {
                         </div>
                     ) : error ? (
                         <div className="flex flex-col items-center justify-center py-16 gap-3">
-                            <p className="text-sm font-medium text-destructive">{error}</p>
+                            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+                                {error.toLowerCase().includes('too long') ? (
+                                    <Timer className="w-6 h-6 text-destructive" />
+                                ) : error.toLowerCase().includes('server') || error.toLowerCase().includes('500') || error.toLowerCase().includes('failed to fetch') ? (
+                                    <ServerCrash className="w-6 h-6 text-destructive" />
+                                ) : (
+                                    <AlertTriangle className="w-6 h-6 text-destructive" />
+                                )}
+                            </div>
+                            <p className="text-sm font-medium text-destructive px-8 text-center">{error}</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-4">
