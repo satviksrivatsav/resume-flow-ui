@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Sparkles, Briefcase, Coffee, Zap, Smile, List, AlignLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,6 +37,7 @@ export function AIInstructionModal() {
     const [instruction, setInstruction] = useState('');
     const [tone, setTone] = useState<string | null>(null);
     const [format, setFormat] = useState<string | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = async () => {
         console.log('🚀 Submitting AI Request...');
@@ -71,7 +72,7 @@ export function AIInstructionModal() {
 
     return (
         <Dialog open={showInstructionModal} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => { e.preventDefault(); inputRef.current?.focus(); }}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Sparkles className="w-5 h-5 text-primary" />
@@ -84,10 +85,17 @@ export function AIInstructionModal() {
                     <div className="space-y-2">
                         <Label htmlFor="instruction">Add custom instructions</Label>
                         <Input
+                            ref={inputRef}
                             id="instruction"
                             placeholder="e.g., Make it more impactful with metrics"
                             value={instruction}
                             onChange={(e) => setInstruction(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+                                    e.preventDefault();
+                                    handleSubmit();
+                                }
+                            }}
                         />
                     </div>
 

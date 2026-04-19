@@ -11,6 +11,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import UploadResume from "./pages/UploadResume";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import AuthLayout from "./components/layout/AuthLayout";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import NotFound from "./pages/NotFound";
@@ -24,12 +25,22 @@ const queryClient = new QueryClient();
 function AnimatedRoutes() {
   const location = useLocation();
 
+  // Keep a stable key for auth routes so AuthLayout stays mounted between
+  // /login and /signup, allowing the live panel-swap animation.
+  const isAuthRoute = ['/login', '/signup'].includes(location.pathname);
+  const routeKey = isAuthRoute ? 'auth' : location.pathname;
+
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+      <Routes location={location} key={routeKey}>
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+
+        {/* Auth routes share a layout so panels can slide between each other */}
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+        </Route>
+
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/update-password" element={<ProtectedRoute> <UpdatePasswordPage /> </ProtectedRoute>} />
         <Route path="/resume-builder" element={<ResumeBuilder />} />

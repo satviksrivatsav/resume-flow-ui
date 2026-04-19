@@ -6,6 +6,8 @@ import { useResumeStore } from '@/stores/resumeStore';
 import { ResumePDF } from './ResumePDF';
 import { useToast } from '@/hooks/use-toast';
 import { ResumeData } from '@/types/resume';
+import { motion } from 'framer-motion';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 // Validate mandatory fields before download
 const validateMandatoryFields = (resumeData: ResumeData): string[] => {
@@ -109,22 +111,24 @@ export const DownloadButton = () => {
   };
 
   return (
-    <Button
-      onClick={handleDownload}
-      disabled={isGenerating}
-      className="gap-2"
-    >
-      {isGenerating ? (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Generating PDF...
-        </>
-      ) : (
-        <>
-          <Download className="w-4 h-4" />
-          Download PDF
-        </>
-      )}
-    </Button>
+    <motion.div whileHover="hover" whileTap="tap">
+      <Button
+        onClick={handleDownload}
+        disabled={isGenerating}
+        className="gap-2"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Generating PDF...
+          </>
+        ) : (
+          <>
+            <AnimatedIcon icon={Download} preset="bounceDown" className="w-4 h-4" />
+            Download PDF
+          </>
+        )}
+      </Button>
+    </motion.div>
   );
 };

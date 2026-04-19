@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
 import { cn } from "@/lib/utils";
+import { FieldTip } from "@/components/ui/FieldTip";
 
 export const WorkExperienceForm = () => {
   const { resumeData, addWorkExperience, updateWorkExperience, deleteWorkExperience } = useResumeStore();
@@ -209,9 +210,9 @@ export const WorkExperienceForm = () => {
                             className="min-h-[150px] font-mono text-sm"
                             rows={6}
                           />
-                          <p className="text-[11px] text-muted-foreground">
-                            Tip: Use bullet points and focus on quantifiable achievements (e.g., increased revenue by 20%, reduced latency by 50ms).
-                          </p>
+                          <FieldTip>
+                            Use bullet points and lead with strong action verbs. Quantify impact where possible — e.g., "Reduced load time by 40%" or "Shipped feature used by 10k users."
+                          </FieldTip>
                         </div>
                       </div>
                     </motion.div>

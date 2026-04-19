@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, FileText, Loader2, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Upload, FileText, Loader2, CheckCircle, AlertCircle, ArrowLeft, Timer, ServerCrash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { parseResumeFromPdf } from '@/lib/parseResumeApi';
@@ -31,8 +31,15 @@ export default function UploadResume() {
         setUploadState('uploading');
         setError(null);
 
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(() => {
+            abortController.abort(new Error('TimeoutError'));
+        }, 30000); // 30 second timeout for parsing
+
         try {
-            const parsedData = await parseResumeFromPdf(file);
+            const parsedData = await parseResumeFromPdf(file, abortController.signal);
+            
+            clearTimeout(timeoutId);
             setResumeData(parsedData);
             setUploadState('success');
 
@@ -40,7 +47,20 @@ export default function UploadResume() {
             setTimeout(() => {
                 navigate('/resume-builder');
             }, 1000);
-        } catch (err) {
+        } catch (err: unknown) {
+            clearTimeout(timeoutId);
+            
+            if (err instanceof Error && err.message === 'TimeoutError') {
+                setError("Parsing took too long. Please try again.");
+                setUploadState('error');
+                return;
+            }
+
+            if (err instanceof Error && err.name === 'AbortError') {
+                // Ignore regular manual aborts if any
+                return;
+            }
+
             setError(err instanceof Error ? err.message : 'Failed to parse resume');
             setUploadState('error');
         }
@@ -71,7 +91,7 @@ export default function UploadResume() {
             <Button
                 variant="ghost"
                 className="absolute top-6 left-6 text-muted-foreground hover:text-foreground"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(-1)}
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
@@ -165,7 +185,13 @@ export default function UploadResume() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="flex flex-col items-center"
                             >
-                                <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                                {error?.toLowerCase().includes('too long') ? (
+                                    <Timer className="w-12 h-12 text-red-500 mb-4" />
+                                ) : error?.toLowerCase().includes('server') || error?.toLowerCase().includes('500') || error?.toLowerCase().includes('failed to fetch') ? (
+                                    <ServerCrash className="w-12 h-12 text-red-500 mb-4" />
+                                ) : (
+                                    <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                                )}
                                 <p className="text-lg font-medium text-red-500 dark:text-red-400 mb-1">
                                     Failed to parse resume
                                 </p>

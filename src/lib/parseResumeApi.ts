@@ -9,13 +9,14 @@ export interface ParseResponse {
     error?: string;
 }
 
-export async function parseResumeFromPdf(file: File): Promise<ResumeData> {
+export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Promise<ResumeData> {
     const formData = new FormData();
     formData.append('file', file);
 
     const response = await fetch(`${PARSER_API_URL}/api/v1/resume/parse`, {
         method: 'POST',
         body: formData,
+        signal,
     });
 
     if (!response.ok) {

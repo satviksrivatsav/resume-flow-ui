@@ -10,8 +10,9 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Eye, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
+import { Eye, EyeOff, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 import { useNavigate } from "react-router-dom";
 import { AIInstructionModal } from "@/components/ui/AIInstructionModal";
 import { AIReviewModal } from "@/components/ui/AIReviewModal";
@@ -193,17 +194,32 @@ const ResumeBuilder = () => {
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowPreview(!showPreview)}
-                    className={cn(
-                        "gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full",
-                        showPreview ? "text-primary border-primary/20 bg-primary/5" : "hover:bg-primary/10 hover:border-primary/20"
-                    )}
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span className="hidden sm:inline font-medium">{showPreview ? "Hide" : "Show"} Preview</span>
-                  </Button>
+                  <motion.div whileHover="hover" whileTap="tap">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setShowPreview(!showPreview)}
+                      className={cn(
+                          "gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full",
+                          showPreview ? "text-primary border-primary/20 bg-primary/5" : "hover:bg-primary/10 hover:border-primary/20"
+                      )}
+                    >
+                      <div className="relative w-4 h-4 flex items-center justify-center">
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          <motion.div
+                            key={showPreview ? "closed" : "open"}
+                            initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                            transition={{ duration: 0.2, type: "spring", stiffness: 300, damping: 20 }}
+                            className="absolute inset-0"
+                          >
+                            {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
+                      <span className="hidden sm:inline font-medium">{showPreview ? "Hide" : "Show"} Preview</span>
+                    </Button>
+                  </motion.div>
                   <div className="w-[1px] h-6 bg-border mx-1" />
                   <DownloadButton />
                 </div>
@@ -257,27 +273,32 @@ const ResumeBuilder = () => {
                         animate={{ y: 0, opacity: 1 }}
                         className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto mt-2"
                     >
-                        <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 rounded-full gap-2 text-xs font-medium px-3"
-                            onClick={() => setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')}
-                        >
-                            {viewMode === 'fit-height' ? <MoveVertical className="w-3.5 h-3.5" /> : <MoveHorizontal className="w-3.5 h-3.5" />}
-                            {viewMode === 'fit-height' ? 'Fit Height' : 'Fit Width'}
-                        </Button>
+                        <motion.div whileHover="hover" whileTap="tap">
+                          <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 rounded-full gap-2 text-xs font-medium px-3"
+                              onClick={() => setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')}
+                          >
+                              {viewMode === 'fit-height'
+                                ? <AnimatedIcon icon={MoveVertical} preset="slideV" className="w-3.5 h-3.5" />
+                                : <AnimatedIcon icon={MoveHorizontal} preset="slideH" className="w-3.5 h-3.5" />}
+                              {viewMode === 'fit-height' ? 'Fit Height' : 'Fit Width'}
+                          </Button>
+                        </motion.div>
                         
                         <div className="w-[1px] h-4 bg-border mx-1" />
                         
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 rounded-full" 
-                            onClick={toggleFullscreen}
-                            title="Fullscreen"
-                        >
-                            <Maximize2 className="w-3.5 h-3.5" />
-                        </Button>
+                        <motion.div whileHover="hover" whileTap="tap">
+                          <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 rounded-full" 
+                              onClick={toggleFullscreen}
+                          >
+                              <AnimatedIcon icon={Maximize2} preset="scaleUp" className="w-3.5 h-3.5" />
+                          </Button>
+                        </motion.div>
                     </motion.div>
                   </div>
 
@@ -310,15 +331,17 @@ const ResumeBuilder = () => {
                         </div>
 
                         <div className="flex items-center justify-end gap-3 w-1/4">
+                            <motion.div whileHover="hover" whileTap="tap">
                             <Button 
                                 variant="secondary" 
                                 size="sm" 
                                 className="rounded-full px-5 h-10 gap-2 bg-white text-black hover:bg-white/90 shadow-lg"
                                 onClick={toggleFullscreen}
                             >
-                                <X className="w-4 h-4" />
+                                <AnimatedIcon icon={X} preset="crossSpin" className="w-4 h-4" />
                                 <span className="font-semibold">Close Preview</span>
                             </Button>
+                          </motion.div>
                         </div>
                     </div>
                     {/* Content Area */}
@@ -343,15 +366,16 @@ const ResumeBuilder = () => {
 
                         {/* Floating Zoom Controls Pill - White Theme */}
                         <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center py-5 px-2.5 gap-4 bg-zinc-900/80 backdrop-blur-2xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-full">
-                            <Button
+                            <motion.div whileHover="hover" whileTap="tap">
+                              <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(prev => Math.min(prev + 0.1, 1.5))}
-                                title="Zoom In"
-                            >
-                                <ZoomIn className="w-5 h-5 text-white" />
-                            </Button>
+                              >
+                                <AnimatedIcon icon={ZoomIn} preset="scaleUp" className="w-5 h-5 text-white" />
+                              </Button>
+                            </motion.div>
                             
                             <div className="h-32 py-2 flex items-center justify-center">
                                 <Slider
@@ -368,27 +392,29 @@ const ResumeBuilder = () => {
                                 />
                             </div>
 
-                            <Button
+                            <motion.div whileHover="hover" whileTap="tap">
+                              <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(prev => Math.max(prev - 0.1, 0.5))}
-                                title="Zoom Out"
-                            >
-                                <ZoomOut className="w-5 h-5 text-white" />
-                            </Button>
+                              >
+                                <AnimatedIcon icon={ZoomOut} preset="scaleDown" className="w-5 h-5 text-white" />
+                              </Button>
+                            </motion.div>
 
                             <div className="w-8 h-[1px] bg-white/10 mx-auto" />
 
-                            <Button
+                            <motion.div whileHover="hover" whileTap="tap">
+                              <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all active:scale-95"
+                                className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(1.0)}
-                                title="Reset Zoom"
-                            >
-                                <RotateCcw className="w-5 h-5 text-white/80" />
-                            </Button>
+                              >
+                                <AnimatedIcon icon={RotateCcw} preset="spinCCW" className="w-5 h-5 text-white/80" />
+                              </Button>
+                            </motion.div>
 
                             <div className="text-[11px] font-bold text-white tabular-nums px-1">
                                 {Math.round(fullscreenZoom * 100)}%

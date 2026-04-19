@@ -11,6 +11,7 @@ import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
 import { TechChipsInput } from "@/components/ui/TechChipsInput";
 import { cn } from "@/lib/utils";
+import { FieldTip } from "@/components/ui/FieldTip";
 
 export const ProjectsForm = () => {
   const { resumeData, addProject, updateProject, deleteProject } = useResumeStore();
@@ -216,6 +217,9 @@ export const ProjectsForm = () => {
                             className="min-h-[120px]"
                             rows={4}
                           />
+                          <FieldTip>
+                            Describe the problem you solved, your specific contribution, and the outcome. Use bullet points and include metrics where possible.
+                          </FieldTip>
                         </div>
                       </div>
                     </motion.div>
