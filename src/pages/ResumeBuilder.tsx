@@ -10,7 +10,7 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Eye, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
+import { Eye, EyeOff, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 import { useNavigate } from "react-router-dom";
@@ -203,7 +203,20 @@ const ResumeBuilder = () => {
                           showPreview ? "text-primary border-primary/20 bg-primary/5" : "hover:bg-primary/10 hover:border-primary/20"
                       )}
                     >
-                      <AnimatedIcon icon={Eye} preset="blink" className="w-4 h-4" />
+                      <div className="relative w-4 h-4 flex items-center justify-center">
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          <motion.div
+                            key={showPreview ? "closed" : "open"}
+                            initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                            transition={{ duration: 0.2, type: "spring", stiffness: 300, damping: 20 }}
+                            className="absolute inset-0"
+                          >
+                            {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
                       <span className="hidden sm:inline font-medium">{showPreview ? "Hide" : "Show"} Preview</span>
                     </Button>
                   </motion.div>
