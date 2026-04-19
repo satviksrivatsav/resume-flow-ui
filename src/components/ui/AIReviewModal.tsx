@@ -1,4 +1,5 @@
-import { Check, RotateCcw, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -7,7 +8,50 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { useAIWriterStore } from '@/stores/aiWriterStore';
+import { motion } from 'framer-motion';
 
+// ── Hand-drawn X icon ────────────────────────────────────────────────────────
+// Two diagonal lines drawn one after the other on hover.
+function DrawableX({ draw }: { draw: boolean }) {
+    const line = (delay: number) => ({
+        animate: draw
+            ? { pathLength: [0, 1], transition: { duration: 0.2, ease: "easeOut" as const, delay } }
+            : { pathLength: 1 },
+    });
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            {/* first stroke: top-right → bottom-left */}
+            <motion.line x1="18" y1="6" x2="6" y2="18"
+                initial={{ pathLength: 1 }}
+                {...line(0)} />
+            {/* second stroke: top-left → bottom-right */}
+            <motion.line x1="6" y1="6" x2="18" y2="18"
+                initial={{ pathLength: 1 }}
+                {...line(0.18)} />
+        </svg>
+    );
+}
+
+// ── Hand-drawn checkmark icon ────────────────────────────────────────────────
+// Single path drawn tip-to-tip on hover.
+function DrawableCheck({ draw }: { draw: boolean }) {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <motion.polyline
+                points="4 12 9 17 20 6"
+                initial={{ pathLength: 1 }}
+                animate={draw
+                    ? { pathLength: [0, 1], transition: { duration: 0.3, ease: "easeOut" } }
+                    : { pathLength: 1 }
+                }
+            />
+        </svg>
+    );
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
 export function AIReviewModal() {
     const {
         showReviewModal,
@@ -20,6 +64,9 @@ export function AIReviewModal() {
         isLoading,
         error
     } = useAIWriterStore();
+
+    const [rejectHovered, setRejectHovered] = useState(false);
+    const [acceptHovered, setAcceptHovered] = useState(false);
 
     const fieldLabel = currentField
         ?.replace(/([A-Z])/g, ' $1')
@@ -72,24 +119,39 @@ export function AIReviewModal() {
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex justify-end gap-2 pt-2 border-t">
-                            <Button
-                                variant="outline"
-                                onClick={discardChanges}
-                                className="gap-2"
+                        {/* Action Buttons — pt-6 matches DialogContent's p-6 bottom padding */}
+                        <div className="flex justify-end gap-3 border-t pt-6">
+                            {/* Reject */}
+                            <motion.div
+                                whileTap={{ scale: 0.95 }}
+                                onHoverStart={() => setRejectHovered(true)}
+                                onHoverEnd={() => setRejectHovered(false)}
                             >
-                                <RotateCcw className="w-4 h-4" />
-                                Undo
-                            </Button>
-                            <Button
-                                onClick={acceptChanges}
-                                className="gap-2"
-                                disabled={!newText}
+                                <Button
+                                    variant="outline"
+                                    onClick={discardChanges}
+                                    className="gap-2 border-red-500/40 text-red-500 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/60 transition-colors rounded-full px-5"
+                                >
+                                    <DrawableX draw={rejectHovered} />
+                                    Reject
+                                </Button>
+                            </motion.div>
+
+                            {/* Accept */}
+                            <motion.div
+                                whileTap={{ scale: 0.95 }}
+                                onHoverStart={() => setAcceptHovered(true)}
+                                onHoverEnd={() => setAcceptHovered(false)}
                             >
-                                <Check className="w-4 h-4" />
-                                Accept
-                            </Button>
+                                <Button
+                                    onClick={acceptChanges}
+                                    disabled={!newText}
+                                    className="gap-2 bg-green-600 hover:bg-green-500 text-white border-0 transition-colors rounded-full px-5"
+                                >
+                                    <DrawableCheck draw={acceptHovered} />
+                                    Accept
+                                </Button>
+                            </motion.div>
                         </div>
                     </>
                 )}

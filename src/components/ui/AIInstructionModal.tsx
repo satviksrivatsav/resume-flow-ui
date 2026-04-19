@@ -88,6 +88,13 @@ export function AIInstructionModal() {
                             placeholder="e.g., Make it more impactful with metrics"
                             value={instruction}
                             onChange={(e) => setInstruction(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+                                    e.preventDefault();
+                                    handleSubmit();
+                                }
+                            }}
+                            autoFocus
                         />
                     </div>
 
