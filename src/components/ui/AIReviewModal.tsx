@@ -61,6 +61,7 @@ export function AIReviewModal() {
         currentAction,
         acceptChanges,
         discardChanges,
+        cancelRequest,
         isLoading,
         error
     } = useAIWriterStore();
@@ -73,7 +74,7 @@ export function AIReviewModal() {
         .replace(/^./, str => str.toUpperCase()) || 'Field';
 
     return (
-        <Dialog open={showReviewModal} onOpenChange={() => { }}>
+        <Dialog open={showReviewModal} onOpenChange={(open) => { if (!open) cancelRequest(); }}>
             <DialogContent
                 className="sm:max-w-3xl max-h-[80vh] overflow-hidden"
                 onPointerDownOutside={(e) => e.preventDefault()}
