@@ -236,6 +236,10 @@ export const ResumeSidebar = () => {
               <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
             </Button>
           </motion.div>
+          {/* Info label — hidden when sidebar is collapsed to icon-only mode */}
+          <p className="group-data-[collapsible=icon]:hidden mt-2 text-[10px] text-muted-foreground/60 leading-relaxed text-center px-1">
+            Upload an existing resume and we'll auto-fill your details.
+          </p>
         </div>
       </SidebarContent>
 

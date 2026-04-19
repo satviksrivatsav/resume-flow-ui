@@ -282,7 +282,6 @@ const ResumeBuilder = () => {
                               size="icon" 
                               className="h-8 w-8 rounded-full" 
                               onClick={toggleFullscreen}
-                              title="Fullscreen"
                           >
                               <AnimatedIcon icon={Maximize2} preset="scaleUp" className="w-3.5 h-3.5" />
                           </Button>
@@ -360,7 +359,6 @@ const ResumeBuilder = () => {
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(prev => Math.min(prev + 0.1, 1.5))}
-                                title="Zoom In"
                               >
                                 <AnimatedIcon icon={ZoomIn} preset="scaleUp" className="w-5 h-5 text-white" />
                               </Button>
@@ -387,7 +385,6 @@ const ResumeBuilder = () => {
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(prev => Math.max(prev - 0.1, 0.5))}
-                                title="Zoom Out"
                               >
                                 <AnimatedIcon icon={ZoomOut} preset="scaleDown" className="w-5 h-5 text-white" />
                               </Button>
@@ -401,7 +398,6 @@ const ResumeBuilder = () => {
                                 size="icon"
                                 className="h-9 w-9 rounded-full hover:bg-white/10 transition-all"
                                 onClick={() => setFullscreenZoom(1.0)}
-                                title="Reset Zoom"
                               >
                                 <AnimatedIcon icon={RotateCcw} preset="spinCCW" className="w-5 h-5 text-white/80" />
                               </Button>

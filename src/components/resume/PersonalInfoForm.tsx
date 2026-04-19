@@ -9,6 +9,7 @@ import { PhoneInput } from "@/components/ui/PhoneInput";
 import { useEffect, useRef } from "react";
 import { detectCountryFromTimezone } from "@/lib/geolocation";
 import { getCountryByCode } from "@/lib/countries";
+import { FieldTip } from "@/components/ui/FieldTip";
 
 export const PersonalInfoForm = () => {
   const { resumeData, updatePersonalInfo } = useResumeStore();
@@ -153,9 +154,9 @@ export const PersonalInfoForm = () => {
           className="min-h-[120px] resize-y"
           rows={4}
         />
-        <p className="text-xs text-muted-foreground italic">
-          Tip: Keep it concise (2-4 sentences) and focus on your unique value proposition.
-        </p>
+        <FieldTip>
+          Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
+        </FieldTip>
       </div>
     </motion.div>
   );

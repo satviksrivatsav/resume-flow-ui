@@ -9,6 +9,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './quill-custom.css';
 import { cn } from "@/lib/utils";
+import { FieldTip } from "@/components/ui/FieldTip";
 
 export const CustomSectionsForm = () => {
   const { resumeData, addCustomSection, updateCustomSection, deleteCustomSection } = useResumeStore();
@@ -130,6 +131,9 @@ export const CustomSectionsForm = () => {
                               placeholder="Describe your achievements or details here..."
                             />
                           </div>
+                          <FieldTip>
+                            Use the toolbar to add bullets, bold key terms, or italicise details. Keep each entry focused and relevant to the role you're applying for.
+                          </FieldTip>
                         </div>                      </div>
                     </motion.div>
                   )}
