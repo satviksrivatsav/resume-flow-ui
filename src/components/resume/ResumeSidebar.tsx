@@ -145,13 +145,13 @@ export const ResumeSidebar = () => {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className="p-4 border-b">
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2 border-b">
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           <motion.div whileHover="hover" whileTap="tap" className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
               variant="ghost"
               onClick={() => navigate("/")}
-              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
+              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
               title="Back to Home"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
@@ -225,12 +225,12 @@ export const ResumeSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto px-4 pb-4">
+        <div className="mt-auto px-4 pb-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2">
           <motion.div whileHover="hover" whileTap="tap">
             <Button
               variant="outline"
               onClick={() => navigate("/upload")}
-              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0"
+              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
             >
               <AnimatedIcon icon={Upload} preset="bounceUp" className="w-4 h-4" />
               <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
@@ -243,7 +243,7 @@ export const ResumeSidebar = () => {
         </div>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t">
+      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 border-t">
         <div className="flex items-center justify-center w-full">
           <UserMenu />
         </div>

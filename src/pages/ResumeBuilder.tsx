@@ -71,10 +71,21 @@ const ResumeBuilder = () => {
 
   useEffect(() => {
     if (showPreview) {
-      const timer = setTimeout(calculateZoom, 400);
-      return () => clearTimeout(timer);
+      calculateZoom();
     }
   }, [showPreview, activeTab, viewMode, calculateZoom]);
+
+  useEffect(() => {
+    if (!previewPanelRef.current || !showPreview) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      calculateZoom();
+    });
+
+    resizeObserver.observe(previewPanelRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [calculateZoom, showPreview]);
 
   useEffect(() => {
     const handleResize = () => calculateZoom();
@@ -120,7 +131,7 @@ const ResumeBuilder = () => {
   const previewContent = (
     <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-12">
       <div 
-        className="flex flex-col transition-all duration-500 ease-out"
+        className="flex flex-col transition-all duration-200 ease-out"
         style={{
           width: `${794 * previewZoom}px`,
         }}
