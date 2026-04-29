@@ -1,5 +1,7 @@
 # Resume Flow ✨
 
+[Part of Resume Flow Ecosystem](..)
+
 An intuitive, modern, and intelligent resume builder designed to streamline your job application process. Built with React, Vite, and Tailwind CSS, Resume Flow offers a seamless live preview and powerful customization options to help you craft the perfect resume effortlessly.
 
  <img width="3735" height="1845" alt="LandingPagePreview" src="https://github.com/user-attachments/assets/046a38b4-d310-48da-accd-15abce4e61ab" />
@@ -19,6 +21,10 @@ With robust features like one-click PDF downloads and theme customization, you c
 ## 🌟 Key Features
 
 *   **📝 Live Preview:** See your resume update in real-time as you type. No more guessing what the final document will look like.
+*   **🤖 AI Writer:**
+    *   **AI-Powered Bullet Points:** Generate impactful, action-oriented descriptions for your work experience and projects.
+    *   **Professional Summary Generator:** Automatically create a compelling summary based on your provided information.
+*   **🔍 AI Review:** Get intelligent feedback on your resume content to improve clarity and impact.
 *   **🎨 Rich Customization:** Instantly change the theme color, font family, font size, and paper size (A4/Legal) to match your style.
 *   **📥 One-Click PDF Download:** Export your resume as a pixel-perfect, professionally formatted PDF using `@react-pdf/renderer`.
 *   **🧱 Component-Based Sections:** Easily manage sections for Personal Info, Work Experience, Education, Projects, Skills, and even add your own Custom Sections.
@@ -30,7 +36,7 @@ With robust features like one-click PDF downloads and theme customization, you c
 
 ## 🛠️ Tech Stack
 
-This project is built with a modern and powerful technology stack:
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB) ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=flat&logo=vite&logoColor=white) ![Zustand](https://img.shields.io/badge/zustand-%2320232a.svg?style=flat) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat&logo=tailwind-css&logoColor=white) ![Shadcn/UI](https://img.shields.io/badge/shadcn%2Fui-000000?style=flat&logo=shadcnui&logoColor=white)
 
 *   **Framework:** [React](https://reactjs.org/)
 *   **Build Tool:** [Vite](https://vitejs.dev/)
@@ -50,11 +56,7 @@ To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-Make sure you have Node.js and npm (or yarn/pnpm) installed on your machine.
-*   **npm**
-    ```sh
-    npm install npm@latest -g
-    ```
+Make sure you have Node.js and a package manager (npm or bun) installed.
 
 ### Installation
 
@@ -64,11 +66,13 @@ Make sure you have Node.js and npm (or yarn/pnpm) installed on your machine.
     ```
 2.  **Navigate to the project directory:**
     ```sh
-    cd resume-flow
+    cd resume-flow/resume-flow-ui
     ```
-3.  **Install NPM packages:**
+3.  **Install packages:**
     ```sh
     npm install
+    # OR
+    bun install
     ```
 
 ### Running the Application
@@ -77,9 +81,11 @@ Once the dependencies are installed, you can run the development server:
 
 ```sh
 npm run dev
+# OR
+bun run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) (or the port specified in your terminal) to view it in your browser.
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 
 ---
 
@@ -87,10 +93,8 @@ Open [http://localhost:5173](http://localhost:5173) (or the port specified in yo
 
 Resume Flow is an evolving project. Here are some of the exciting features planned for the future:
 
-*   **🧠 LLM Integration:**
-    *   **AI-Powered Bullet Points:** Generate impactful, action-oriented descriptions for your work experience and projects.
+*   **🧠 Advanced AI:**
     *   **Job Description Tailoring:** Paste a job description and get AI-powered suggestions to tailor your resume for Applicant Tracking Systems (ATS).
-    *   **Professional Summary Generator:** Automatically create a compelling summary based on your provided information.
 *   **📄 More Templates:** Introduce a variety of new, professionally designed resume templates.
 *   **🔐 User Accounts:** Save and manage multiple versions of your resumes online.
 
