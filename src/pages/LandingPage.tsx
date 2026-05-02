@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Spotlight } from "@/components/ui/spotlight-new";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { MeshGradient } from "@/components/ui/MeshGradient";
+import { AnimatedResumeHero } from "@/components/ui/AnimatedResumeHero";
+import { HeartbeatPulseBackground } from "@/components/ui/heartbeat-pulse-background";
 
 type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
@@ -127,36 +129,47 @@ export default function LandingPage() {
   const words = ["GREAT", "STRIKING", "MODERN", "BEAUTIFUL"];
 
   return (
-    <PageTransition className="h-screen w-full rounded-md flex items-center justify-center bg-black antialiased bg-grid-white/[0.02] relative overflow-hidden">
-      <Spotlight />
-      <div className="p-4 px-6 max-w-7xl mx-auto relative z-10 w-full">
-        <h1 className="text-2xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight md:leading-tight pb-1">
-          Everyone deserves a <br /><ContainerTextFlip words={words} /> Resume.
-        </h1>
-        <br></br>
-        <p className="mt-3 md:mt-4 font-normal text-sm md:text-base text-neutral-300 max-w-lg text-center mx-auto px-2">
-          Create stunning, professional resumes in minutes with Resume Flow. Modern templates, easy customization, and ATS-friendly designs.
-        </p>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 mt-6 md:mt-8">
-          <HoverBorderGradient
-            containerClassName="rounded-full"
-            as="button"
-            onClick={() => navigate("/resume-builder")}
-            className="bg-white text-black flex items-center space-x-2 cursor-pointer"
-          >
-            <AceternityLogo />
-            <span>Build now</span>
-          </HoverBorderGradient>
-          <HoverBorderGradient
-            containerClassName="rounded-full"
-            as="button"
-            onClick={() => navigate("/upload")}
-            className="bg-black text-white flex items-center space-x-2 cursor-pointer"
-          >
-            <AceternityLogo />
-            <span>Create from existing resume</span>
-          </HoverBorderGradient>
+    <PageTransition className="min-h-screen w-full bg-black relative overflow-hidden flex flex-col items-center justify-center pt-20">
+      <HeartbeatPulseBackground opacity={0.4} />
+      <MeshGradient />
 
+      <div className="container relative z-10 grid lg:grid-cols-12 gap-12 items-center px-6">
+        <div className="lg:col-span-5 space-y-8">
+          <div className="backdrop-blur-md bg-white/5 p-8 rounded-3xl border border-white/10 shadow-2xl">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+              Everyone deserves a <br />
+              <ContainerTextFlip words={words} className="text-blue-500 bg-transparent shadow-none p-0" /> <br />
+              Resume.
+            </h1>
+            <p className="mt-6 text-lg text-zinc-400">
+              Create stunning, professional resumes in minutes with Resume Flow. Modern templates, easy customization, and ATS-friendly designs.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <HoverBorderGradient
+              containerClassName="rounded-full"
+              as="button"
+              onClick={() => navigate("/resume-builder")}
+              className="bg-white text-black flex items-center space-x-2 cursor-pointer"
+            >
+              <AceternityLogo />
+              <span>Build now</span>
+            </HoverBorderGradient>
+            <HoverBorderGradient
+              containerClassName="rounded-full"
+              as="button"
+              onClick={() => navigate("/upload")}
+              className="bg-black text-white flex items-center space-x-2 cursor-pointer"
+            >
+              <AceternityLogo />
+              <span>Create from existing resume</span>
+            </HoverBorderGradient>
+          </div>
+        </div>
+
+        <div className="lg:col-span-7 flex justify-center lg:justify-end">
+          <AnimatedResumeHero className="w-full max-w-xl" />
         </div>
       </div>
 
