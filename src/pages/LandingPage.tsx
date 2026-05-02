@@ -1,13 +1,11 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { MeshGradient } from "@/components/ui/MeshGradient";
 import { AnimatedResumeHero } from "@/components/ui/AnimatedResumeHero";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const words = ["GREAT", "STRIKING", "MODERN", "BEAUTIFUL"];
 
   return (
     <PageTransition className="min-h-screen w-full bg-black relative overflow-hidden flex flex-col items-center justify-center pt-24 md:pt-20">
@@ -17,25 +15,24 @@ export default function LandingPage() {
         <div className="lg:col-span-4 lg:pr-8 space-y-8">
           <div className="space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-              Everyone deserves a <br />
-              <ContainerTextFlip words={words} className="text-blue-500 bg-transparent shadow-none p-0" /> <br />
-              Resume.
+              You&apos;ve Done the Work.<br />
+              Let&apos;s Make Sure It <span className="text-blue-500">Shows.</span>
             </h1>
             <p className="mt-6 text-base md:text-lg text-zinc-400">
-              Create stunning, professional resumes in minutes with Resume Flow. Modern templates, easy customization, and ATS-friendly designs.
+              Resume Flow combines intelligent AI assistance with clean, modern templates — so your experience gets the spotlight it deserves.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-row flex-wrap items-center gap-4">
             <button
               onClick={() => navigate("/resume-builder")}
-              className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all"
+              className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all"
             >
               Build now
             </button>
             <button
               onClick={() => navigate("/upload")}
-              className="w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm"
+              className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm"
             >
               Create from existing resume
             </button>
