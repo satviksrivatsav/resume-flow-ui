@@ -14,8 +14,8 @@ export default function LandingPage() {
       <MeshGradient />
 
       <div className="container relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center px-6 py-12 md:py-0">
-        <div className="lg:col-span-5 space-y-8">
-          <div className="backdrop-blur-md bg-white/5 p-6 md:p-8 rounded-3xl border border-white/10 shadow-2xl">
+        <div className="lg:col-span-4 lg:pr-8 space-y-8">
+          <div className="space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
               Everyone deserves a <br />
               <ContainerTextFlip words={words} className="text-blue-500 bg-transparent shadow-none p-0" /> <br />
@@ -29,7 +29,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <button
               onClick={() => navigate("/resume-builder")}
-              className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+              className="w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all"
             >
               Build now
             </button>
@@ -42,7 +42,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-7 flex justify-center lg:justify-end">
+        <div className="lg:col-span-8 flex justify-center lg:justify-end">
           <AnimatedResumeHero className="w-full max-w-xl" />
         </div>
       </div>
