@@ -4,7 +4,6 @@ import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { MeshGradient } from "@/components/ui/MeshGradient";
 import { AnimatedResumeHero } from "@/components/ui/AnimatedResumeHero";
-import { HeartbeatPulseBackground } from "@/components/ui/heartbeat-pulse-background";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -12,7 +11,6 @@ export default function LandingPage() {
 
   return (
     <PageTransition className="min-h-screen w-full bg-black relative overflow-hidden flex flex-col items-center justify-center pt-24 md:pt-20">
-      <HeartbeatPulseBackground opacity={0.4} />
       <MeshGradient />
 
       <div className="container relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center px-6 py-12 md:py-0">
