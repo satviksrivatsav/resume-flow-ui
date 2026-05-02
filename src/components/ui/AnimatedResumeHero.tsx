@@ -45,15 +45,18 @@ export const AnimatedResumeHero = ({ className }: { className?: string }) => {
   const resumeTexts = [
     "Johnathan Doe",
     "Senior Product Designer",
-    "Led the redesign of the core web application, increasing user engagement by 45%.",
-    "Developed a comprehensive design system utilized by 5 cross-functional teams.",
-    "Pioneered accessible design standards, ensuring WCAG 2.1 AA compliance.",
+    "Creative problem solver with 8+ years of experience in building scalable design systems and intuitive user interfaces.",
+    "Led the redesign of the core web application, increasing user engagement by 45% and reducing churn by 12%.",
+    "Developed a comprehensive design system utilized by 5 cross-functional teams, ensuring 100% brand consistency.",
+    "Pioneered accessible design standards, ensuring WCAG 2.1 AA compliance across all digital touchpoints.",
+    "User Experience (UX)",
     "Interaction Design",
     "Framer Motion",
-    "React.js"
+    "React.js",
+    "Tailwind CSS"
   ];
   
-  const { displayedTexts, currentBlock } = useSequentialTyping(React.useMemo(() => resumeTexts, []), 20, 200, 3000);
+  const { displayedTexts, currentBlock } = useSequentialTyping(React.useMemo(() => resumeTexts, []), 15, 150, 3000);
 
   const Cursor = ({ active }: { active: boolean }) => (
     <motion.span
@@ -85,30 +88,39 @@ export const AnimatedResumeHero = ({ className }: { className?: string }) => {
           </div>
 
           <div className="space-y-4">
-             <div className="h-px w-full bg-white/10" />
+             <div className="text-[10px] md:text-sm font-semibold text-white/40 uppercase tracking-widest">About</div>
              <div className="text-zinc-300 text-xs md:text-sm font-mono leading-relaxed min-h-[40px]">
                 {displayedTexts[2]}<Cursor active={currentBlock === 2} />
              </div>
           </div>
 
-          <div className="pt-2 md:pt-4 space-y-4 md:space-y-6">
+          <div className="space-y-4">
+             <div className="h-px w-full bg-white/10" />
              <div className="text-[10px] md:text-sm font-semibold text-white/40 uppercase tracking-widest">Experience</div>
              
-             <div className="text-zinc-300 text-xs md:text-sm font-mono min-h-[20px]">
-                {displayedTexts[3]}<Cursor active={currentBlock === 3} />
-             </div>
+             <div className="space-y-4">
+               <div className="text-zinc-300 text-xs md:text-sm font-mono min-h-[36px]">
+                  {displayedTexts[3]}<Cursor active={currentBlock === 3} />
+               </div>
 
-             <div className="text-zinc-300 text-xs md:text-sm font-mono min-h-[20px] opacity-70">
-                {displayedTexts[4]}<Cursor active={currentBlock === 4} />
+               <div className="text-zinc-300 text-xs md:text-sm font-mono min-h-[36px] opacity-90">
+                  {displayedTexts[4]}<Cursor active={currentBlock === 4} />
+               </div>
+
+               <div className="text-zinc-300 text-xs md:text-sm font-mono min-h-[36px] opacity-80">
+                  {displayedTexts[5]}<Cursor active={currentBlock === 5} />
+               </div>
              </div>
           </div>
           
-          <div className="pt-2 md:pt-4 space-y-2">
-             <div className="text-[10px] md:text-sm font-semibold text-white/40 uppercase tracking-widest">Skills</div>
-             <div className="flex gap-2 flex-wrap text-xs md:text-sm font-mono text-zinc-400 min-h-[28px]">
-               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[5]}<Cursor active={currentBlock === 5} /></span>
+          <div className="pt-2 space-y-3">
+             <div className="text-[10px] md:text-sm font-semibold text-white/40 uppercase tracking-widest">Expertise</div>
+             <div className="flex gap-2 flex-wrap text-xs md:text-sm font-mono text-zinc-400">
                <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[6]}<Cursor active={currentBlock === 6} /></span>
                <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[7]}<Cursor active={currentBlock === 7} /></span>
+               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[8]}<Cursor active={currentBlock === 8} /></span>
+               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[9]}<Cursor active={currentBlock === 9} /></span>
+               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[10]}<Cursor active={currentBlock === 10} /></span>
              </div>
           </div>
         </div>

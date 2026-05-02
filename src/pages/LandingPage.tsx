@@ -12,7 +12,7 @@ export default function LandingPage() {
       <MeshGradient />
 
       <div className="container relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center px-6 py-12 md:py-0">
-        <div className="lg:col-span-4 lg:pr-8 space-y-8">
+        <div className="lg:col-span-6 lg:pr-12 space-y-8 lg:-translate-y-32">
           <div className="space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
               You&apos;ve Done the Work.<br />
@@ -39,8 +39,8 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-8 flex justify-center lg:justify-end">
-          <AnimatedResumeHero className="w-full max-w-xl" />
+        <div className="lg:col-span-6 flex justify-center lg:justify-end">
+          <AnimatedResumeHero className="w-full max-w-xl lg:max-w-2xl" />
         </div>
       </div>
 
