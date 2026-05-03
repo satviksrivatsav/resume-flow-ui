@@ -48,7 +48,7 @@ export default function SignUpPage() {
             <Button
                 variant="ghost"
                 className="mb-0 -ml-3"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/")}
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home

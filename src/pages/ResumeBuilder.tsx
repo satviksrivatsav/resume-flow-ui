@@ -20,7 +20,7 @@ import { useUiStore } from "@/stores/uiStore";
 import { useResumeStore } from "@/stores/resumeStore";
 import { Slider } from "@/components/ui/slider";
 import { ResumeSidebar } from "@/components/resume/ResumeSidebar";
-import Logo from "@/assets/ResumeFlowCut.svg";
+import Logo from "@/assets/logo.png";
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -197,7 +197,7 @@ const ResumeBuilder = () => {
                 <div className="flex items-center gap-6">
                   <SidebarTrigger />
                   <div className="flex items-center gap-3 group/logo cursor-pointer" onClick={() => navigate("/")}>
-                    <img src={Logo} alt="Resume Flow" className="w-9 h-9 transition-transform duration-500 group-hover/logo:rotate-[360deg]" />
+                    <img src={Logo} alt="Resume Flow" className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110" />
                     <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60 hidden sm:block tracking-tight">
                       Resume Flow
                     </h1>
@@ -331,7 +331,7 @@ const ResumeBuilder = () => {
                 >
                     <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/20 backdrop-blur-md z-10">
                         <div className="flex items-center gap-3 w-1/4">
-                            <img src={Logo} alt="Logo" className="w-8 h-8" />
+                            <img src={Logo} alt="Logo" className="w-8 h-8 object-contain" />
                             <span className="font-bold tracking-tight hidden sm:block text-white">Fullscreen Preview</span>
                         </div>
                         
@@ -358,19 +358,22 @@ const ResumeBuilder = () => {
                     {/* Content Area */}
                     <div className="flex-1 relative flex overflow-hidden">
                         {/* Resume View */}
-                        <div className="flex-1 overflow-auto custom-scrollbar p-12 flex justify-center scroll-smooth bg-black/10">
-                            <div className="relative">
-                                <div 
-                                    className="shadow-2xl rounded-sm bg-white"
-                                    style={{ 
-                                        width: '794px',
-                                        height: '1123px',
-                                        transform: `scale(${fullscreenZoom})`,
-                                        transformOrigin: 'top center',
-                                        marginBottom: `${1123 * fullscreenZoom * 0.5}px`
-                                    }}
-                                >
-                                    <ResumePreview />
+                        <div className="flex-1 overflow-auto custom-scrollbar bg-black/10">
+                            <div className="min-h-full flex flex-col items-center py-24">
+                                <div className="my-auto">
+                                    <div 
+                                        className="shadow-2xl rounded-sm bg-white shrink-0"
+                                        style={{ 
+                                            width: '794px',
+                                            height: '1123px',
+                                            transform: `scale(${fullscreenZoom})`,
+                                            transformOrigin: 'top center',
+                                        }}
+                                    >
+                                        <ResumePreview />
+                                    </div>
+                                    {/* This spacer ensures the bottom padding is respected when zoomed */}
+                                    <div style={{ height: `${1123 * (fullscreenZoom - 1)}px` }} />
                                 </div>
                             </div>
                         </div>

@@ -1,58 +1,72 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { MeshGradient } from "@/components/ui/MeshGradient";
 import { AnimatedResumeHero } from "@/components/ui/AnimatedResumeHero";
+import { FeaturesCarousel } from "@/components/landing/FeaturesCarousel";
+import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <PageTransition className="min-h-screen w-full bg-black relative overflow-hidden flex flex-col items-center justify-center pt-24 md:pt-20">
-      <MeshGradient />
+    <PageTransition className="w-full bg-black relative">
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <MeshGradient />
+      </div>
 
-      <div className="container relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center px-6 py-12 md:py-0">
-        <div className="lg:col-span-6 lg:pr-12 space-y-8 lg:-translate-y-32">
-          <div className="space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-              You&apos;ve Done the Work.<br />
-              Let&apos;s Make Sure It <span className="text-blue-500">Shows.</span>
-            </h1>
-            <p className="mt-6 text-base md:text-lg text-zinc-400">
-              Resume Flow combines intelligent AI assistance with clean, modern templates — so your experience gets the spotlight it deserves.
-            </p>
+      {/* Hero Section - Natural Vertical Flow */}
+      <div className="relative min-h-screen w-full z-20 flex flex-col items-center pt-24 md:pt-32 pb-0">
+        <div className="container relative z-10 grid lg:grid-cols-12 gap-12 px-6 h-full pb-0 flex-1">
+          <div className="lg:col-span-6 lg:pr-12 space-y-10 self-start pt-8 md:pt-12">
+            <div className="space-y-6 text-left">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.05]">
+                You&apos;ve Done the Work.<br />
+                Let&apos;s Make Sure It{" "}
+                <span className="bg-gradient-to-r from-zinc-200 to-zinc-500 bg-clip-text text-transparent">
+                  Shows.
+                </span>
+              </h1>
+              <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl">
+                Resume Flow combines intelligent AI assistance with clean, modern
+                templates — so your experience gets the spotlight it deserves.
+              </p>
+            </div>
+
+            {/* CTAs Group */}
+            <div className="flex flex-col items-start gap-8">
+              <div className="flex flex-row flex-wrap items-center gap-4">
+                <button
+                  onClick={() => navigate("/resume-builder")}
+                  className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all text-sm"
+                >
+                  Build now
+                </button>
+                <button
+                  onClick={() => navigate("/upload")}
+                  className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm text-sm"
+                >
+                  Create from existing resume
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-row flex-wrap items-center gap-4">
-            <button
-              onClick={() => navigate("/resume-builder")}
-              className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all"
-            >
-              Build now
-            </button>
-            <button
-              onClick={() => navigate("/upload")}
-              className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm"
-            >
-              Create from existing resume
-            </button>
+          <div className="lg:col-span-6 flex justify-center lg:justify-end self-start">
+            <AnimatedResumeHero className="w-full max-w-xl lg:max-w-2xl lg:-translate-y-12" />
           </div>
-        </div>
-
-        <div className="lg:col-span-6 flex justify-center lg:justify-end">
-          <AnimatedResumeHero className="w-full max-w-xl lg:max-w-2xl" />
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center items-center gap-4 text-sm text-neutral-500">
-        <Link to="/privacy" className="hover:text-neutral-300 transition-colors">
-          Privacy Policy
-        </Link>
-        <span className="text-neutral-700">•</span>
-        <Link to="/terms" className="hover:text-neutral-300 transition-colors">
-          Terms of Service
-        </Link>
+      {/* Features Section */}
+      <div id="features" className="w-full relative z-10 bg-black border-t border-white/5 -mt-24">
+        <FeaturesCarousel />
+      </div>
+
+      {/* Footer Section */}
+      <div className="w-full relative z-20 bg-black">
+        <LandingFooter />
       </div>
     </PageTransition>
   );

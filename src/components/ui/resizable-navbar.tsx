@@ -9,7 +9,7 @@ import {
 } from "motion/react";
 
 import React, { useRef, useState } from "react";
-import logo from "/src/assets/ResumeFlowCut.svg";
+import logo from "/src/assets/logo.png";
 
 
 interface NavbarProps {
@@ -30,6 +30,7 @@ interface NavItemsProps {
   }[];
   className?: string;
   onItemClick?: () => void;
+  visible?: boolean;
 }
 
 interface MobileNavProps {
@@ -75,9 +76,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean }>,
-              { visible },
-            )
+            child as React.ReactElement<{ visible?: boolean }>,
+            { visible },
+          )
           : child,
       )}
     </motion.div>
@@ -108,19 +109,27 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         className,
       )}
     >
-      {children}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(
+            child as React.ReactElement<{ visible?: boolean }>,
+            { visible },
+          )
+          : child,
+      )}
     </motion.div>
   );
 };
 
-export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
+export const NavItems = ({ items, className, onItemClick, visible }: NavItemsProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "hidden flex-1 flex-row items-center justify-end space-x-2 text-sm font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 lg:flex lg:space-x-2",
+        "hidden flex-1 flex-row items-center justify-end space-x-2 text-sm font-medium transition duration-200 lg:flex lg:space-x-2",
+        visible ? "text-zinc-600 hover:text-zinc-900" : "text-zinc-400 hover:text-white",
         className,
       )}
     >
@@ -128,20 +137,24 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-white hover:text-zinc-800 dark:text-neutral-300 dark:hover:text-neutral-400"
+          className={cn(
+            "relative px-4 py-2 transition-colors duration-200",
+            visible ? "text-zinc-900 hover:text-black" : "text-white/90 hover:text-white",
+            "dark:text-neutral-300 dark:hover:text-neutral-400"
+          )}
           key={`link-${idx}`}
           href={item.link}
         >
           {hovered === idx && (
             <motion.div
               layoutId="hovered"
-              className="absolute inset-0 h-full w-full rounded-full bg-gray-100 dark:bg-neutral-800"
+              className="absolute inset-0 h-full w-full rounded-full bg-zinc-100 dark:bg-neutral-800"
             />
           )}
           <span className="relative z-20">{item.name}</span>
         </a>
       ))}
-    </motion.div> 
+    </motion.div>
   );
 };
 
@@ -169,7 +182,14 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         className,
       )}
     >
-      {children}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(
+            child as React.ReactElement<{ visible?: boolean }>,
+            { visible },
+          )
+          : child,
+      )}
     </motion.div>
   );
 };
@@ -177,7 +197,8 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
 export const MobileNavHeader = ({
   children,
   className,
-}: MobileNavHeaderProps) => {
+  visible,
+}: MobileNavHeaderProps & { visible?: boolean }) => {
   return (
     <div
       className={cn(
@@ -185,7 +206,14 @@ export const MobileNavHeader = ({
         className,
       )}
     >
-      {children}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(
+            child as React.ReactElement<{ visible?: boolean }>,
+            { visible },
+          )
+          : child,
+      )}
     </div>
   );
 };
@@ -218,9 +246,11 @@ export const MobileNavMenu = ({
 export const MobileNavToggle = ({
   isOpen,
   onClick,
+  visible,
 }: {
   isOpen: boolean;
   onClick: () => void;
+  visible?: boolean;
 }) => {
   return (
     <button
@@ -237,7 +267,10 @@ export const MobileNavToggle = ({
           duration: 0.3,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="w-6 h-0.5 bg-white rounded-full origin-center"
+        className={cn(
+          "w-6 h-0.5 rounded-full origin-center transition-colors duration-300",
+          visible ? "bg-black" : "bg-white"
+        )}
       />
       <motion.span
         animate={{
@@ -248,7 +281,10 @@ export const MobileNavToggle = ({
           duration: 0.2,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="w-6 h-0.5 bg-white rounded-full"
+        className={cn(
+          "w-6 h-0.5 rounded-full transition-colors duration-300",
+          visible ? "bg-black" : "bg-white"
+        )}
       />
       <motion.span
         animate={{
@@ -259,22 +295,32 @@ export const MobileNavToggle = ({
           duration: 0.3,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="w-6 h-0.5 bg-white rounded-full origin-center"
+        className={cn(
+          "w-6 h-0.5 rounded-full origin-center transition-colors duration-300",
+          visible ? "bg-black" : "bg-white"
+        )}
       />
     </button>
   );
 };
 
-export const NavbarLogo = () => {
+export const NavbarLogo = ({ visible }: { visible?: boolean }) => {
   return (
-    <a href="#" className="relative z-20 flex items-center space-x-5">
+    <a href="/" className="relative z-20 flex items-center space-x-4 group">
       <img
         src={logo}
-        alt="logo"
-        width="50"
-        height="50"
+        alt="Resume Flow"
+        className={cn(
+          "w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-105",
+          visible ? "grayscale brightness-0" : ""
+        )}
       />
-      <span className="font-bold text-3xl text-white">Resume Flow</span>
+      <span className={cn(
+        "font-bold text-2xl tracking-tight transition-colors duration-300",
+        visible ? "text-black" : "text-white"
+      )}>
+        Resume Flow
+      </span>
     </a>
   );
 };
@@ -293,9 +339,9 @@ export const NavbarButton = ({
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-  | React.ComponentPropsWithoutRef<"a">
-  | React.ComponentPropsWithoutRef<"button">
-)) => {
+    | React.ComponentPropsWithoutRef<"a">
+    | React.ComponentPropsWithoutRef<"button">
+  )) => {
   const baseStyles =
     "px-4 py-2 rounded-full bg-white button text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
 
@@ -305,7 +351,7 @@ export const NavbarButton = ({
     secondary: "bg-transparent shadow-none dark:text-white",
     dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     gradient:
-      "bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
+      "bg-gradient-to-b from-zinc-100 to-zinc-300 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
   };
 
   return (

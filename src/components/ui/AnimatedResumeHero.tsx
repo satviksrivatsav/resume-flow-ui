@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Custom hook to sequence typing across multiple text blocks
@@ -42,47 +42,66 @@ const useSequentialTyping = (texts: string[], delayPerChar = 30, delayBetweenBlo
 };
 
 export const AnimatedResumeHero = ({ className }: { className?: string }) => {
-  const resumeTexts = [
-    "Johnathan Doe",
-    "Senior Product Designer",
-    "Creative problem solver with 8+ years of experience in building scalable design systems and intuitive user interfaces.",
-    "Led the redesign of the core web application, increasing user engagement by 45% and reducing churn by 12%.",
-    "Developed a comprehensive design system utilized by 5 cross-functional teams, ensuring 100% brand consistency.",
-    "Pioneered accessible design standards, ensuring WCAG 2.1 AA compliance across all digital touchpoints.",
-    "User Experience (UX)",
-    "Interaction Design",
-    "Framer Motion",
-    "React.js",
-    "Tailwind CSS"
-  ];
+  const { scrollY } = useScroll();
+
+  // Transform rotation from tilted (15, -5) to flat (0, 0)
+  // Straightens over the first 400px of scrolling
+  const rotateX = useTransform(scrollY, [0, 400], [15, 0]);
+  const rotateY = useTransform(scrollY, [0, 400], [-5, 0]);
+  const scale = useTransform(scrollY, [0, 400], [1, 1.02]);
+  const opacity = useTransform(scrollY, [0, 600, 1000], [1, 1, 0.4]);
+
+
+  const resumeTexts = React.useMemo(() => [
+    "Dr. Alan Turing",
+    "Senior Machine Learning Engineer",
+    "AI researcher and engineer specializing in Large Language Models, distributed training, and scalable inference. Proven track record of deploying robust ML pipelines that serve millions of daily requests with sub-50ms latency.",
+    "Architected and trained a custom 13B parameter MoE model for domain-specific reasoning, outperforming baseline models by 24% on internal benchmarks.",
+    "Engineered a distributed data processing pipeline using Apache Spark, reducing dataset preparation time from 4 days to 6 hours across a 50-node cluster.",
+    "Optimized model inference serving using TensorRT and vLLM, cutting GPU memory usage by 40% and increasing throughput by 3x.",
+    "PyTorch",
+    "TensorFlow",
+    "CUDA",
+    "Kubernetes",
+    "LLMs",
+    "Python",
+    "Go"
+  ], []);
   
-  const { displayedTexts, currentBlock } = useSequentialTyping(React.useMemo(() => resumeTexts, []), 15, 150, 3000);
+  // Faster typing to handle more content
+  const { displayedTexts, currentBlock } = useSequentialTyping(resumeTexts, 12, 100, 4000);
 
   const Cursor = ({ active }: { active: boolean }) => (
     <motion.span
       animate={{ opacity: [1, 0] }}
       transition={{ duration: 0.8, repeat: Infinity }}
-      className={cn("inline-block w-0.5 h-[1em] bg-blue-500 ml-0.5 translate-y-0.5", active ? "visible" : "hidden")}
+      className={cn("inline-block w-0.5 h-[1em] bg-white ml-0.5 translate-y-0.5", active ? "visible" : "hidden")}
     />
   );
 
   return (
     <div className={cn("relative perspective-1000", className)}>
       <motion.div
-        initial={{ rotateX: 20, rotateY: -10, opacity: 0, y: 50 }}
-        animate={{ rotateX: 15, rotateY: -5, opacity: 1, y: 0 }}
+        style={{ 
+          rotateX, 
+          rotateY, 
+          scale,
+          opacity,
+          transformStyle: "preserve-3d" 
+        }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="w-full aspect-[3/4] max-w-2xl bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 md:p-10"
-        style={{ transformStyle: "preserve-3d" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
         
         <div className="space-y-6 md:space-y-8 relative z-10 text-left">
           <div className="space-y-1">
             <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight h-8">
               {displayedTexts[0]}<Cursor active={currentBlock === 0} />
             </h3>
-            <p className="text-blue-400 font-medium text-base md:text-lg h-6">
+            <p className="text-zinc-200 font-medium text-base md:text-lg h-6">
               {displayedTexts[1]}<Cursor active={currentBlock === 1} />
             </p>
           </div>
@@ -121,12 +140,14 @@ export const AnimatedResumeHero = ({ className }: { className?: string }) => {
                <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[8]}<Cursor active={currentBlock === 8} /></span>
                <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[9]}<Cursor active={currentBlock === 9} /></span>
                <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[10]}<Cursor active={currentBlock === 10} /></span>
+               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[11]}<Cursor active={currentBlock === 11} /></span>
+               <span className="bg-white/5 px-2 py-1 rounded inline-block">{displayedTexts[12]}<Cursor active={currentBlock === 12} /></span>
              </div>
           </div>
         </div>
 
         {/* Glowing border effect */}
-        <div className="absolute inset-0 border border-blue-500/20 rounded-2xl animate-pulse pointer-events-none" />
+        <div className="absolute inset-0 border border-white/20 rounded-2xl animate-pulse pointer-events-none" />
       </motion.div>
     </div>
   );
