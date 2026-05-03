@@ -72,8 +72,9 @@ function AppContent() {
 const App = () => (
   <ThemeProvider
     attribute="class"
-    defaultTheme="dark"
-    enableSystem={false}
+    defaultTheme="system"
+    enableSystem={true}
+    enableColorScheme={true}
     disableTransitionOnChange={false}
     storageKey="resume-flow-theme"
   >
