@@ -11,44 +11,51 @@ import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 // Validate mandatory fields before download
 const validateMandatoryFields = (resumeData: ResumeData): string[] => {
-  const missingFields: string[] = [];
+  const missingForms = new Set<string>();
 
   // Personal Info mandatory fields
-  if (!resumeData.personalInfo.name?.trim()) missingFields.push('Full Name');
-  if (!resumeData.personalInfo.email?.trim()) missingFields.push('Email');
-  if (!resumeData.personalInfo.phone?.trim()) missingFields.push('Phone');
-  if (!resumeData.personalInfo.location?.trim()) missingFields.push('Location');
+  if (
+    !resumeData.personalInfo.name?.trim() ||
+    !resumeData.personalInfo.email?.trim() ||
+    !resumeData.personalInfo.phone?.trim() ||
+    !resumeData.personalInfo.location?.trim()
+  ) {
+    missingForms.add('Personal Info');
+  }
 
   // Work Experience (only if entries exist)
-  resumeData.workExperience.forEach((exp, index) => {
-    const entryName = exp.position || exp.company || `Work #${index + 1}`;
-    if (!exp.position?.trim()) missingFields.push(`Position (${entryName})`);
-    if (!exp.company?.trim()) missingFields.push(`Company (${entryName})`);
-    if (!exp.startDate?.trim()) missingFields.push(`Start Date (${entryName})`);
-    if (!exp.current && !exp.endDate?.trim()) missingFields.push(`End Date (${entryName})`);
+  resumeData.workExperience.forEach((exp) => {
+    if (
+      !exp.position?.trim() ||
+      !exp.company?.trim() ||
+      !exp.startDate?.trim() ||
+      (!exp.current && !exp.endDate?.trim())
+    ) {
+      missingForms.add('Work Experience');
+    }
   });
 
   // Education (only if entries exist)
-  resumeData.education.forEach((edu, index) => {
-    const entryName = edu.school || edu.degree || `Education #${index + 1}`;
-    if (!edu.school?.trim()) missingFields.push(`School (${entryName})`);
-    if (!edu.degree?.trim()) missingFields.push(`Degree (${entryName})`);
-    if (!edu.startDate?.trim()) missingFields.push(`Start Date (${entryName})`);
-    if (!edu.endDate?.trim()) missingFields.push(`End Date (${entryName})`);
+  resumeData.education.forEach((edu) => {
+    if (
+      !edu.school?.trim() ||
+      !edu.degree?.trim() ||
+      !edu.startDate?.trim() ||
+      !edu.endDate?.trim() ||
+      !edu.grade?.trim()
+    ) {
+      missingForms.add('Education');
+    }
   });
 
-  // Projects (only if entries exist - all fields mandatory)
-  resumeData.projects.forEach((proj, index) => {
-    const entryName = proj.name || `Project #${index + 1}`;
-    if (!proj.name?.trim()) missingFields.push(`Project Name (${entryName})`);
-    if (!proj.role?.trim()) missingFields.push(`Role (${entryName})`);
-    if (!proj.description?.trim()) missingFields.push(`Description (${entryName})`);
-    if (!proj.startDate?.trim()) missingFields.push(`Start Date (${entryName})`);
-    if (!proj.ongoing && !proj.endDate?.trim()) missingFields.push(`End Date (${entryName})`);
-    if (!proj.technologies || proj.technologies.length === 0) missingFields.push(`Technologies (${entryName})`);
+  // Projects (only if entries exist)
+  resumeData.projects.forEach((proj) => {
+    if (!proj.name?.trim() || !proj.description?.trim()) {
+      missingForms.add('Projects');
+    }
   });
 
-  return missingFields;
+  return Array.from(missingForms);
 };
 
 export const DownloadButton = () => {
@@ -58,11 +65,11 @@ export const DownloadButton = () => {
 
   const handleDownload = async () => {
     // Validate mandatory fields before proceeding
-    const missingFields = validateMandatoryFields(resumeData);
-    if (missingFields.length > 0) {
+    const missingForms = validateMandatoryFields(resumeData);
+    if (missingForms.length > 0) {
       toast({
         title: 'Missing Required Fields',
-        description: `Please fill in the following mandatory fields: ${missingFields.join(', ')}`,
+        description: `Please fill the mandatory fields in the form(s): ${missingForms.join(', ')}`,
         variant: 'destructive',
       });
       return;

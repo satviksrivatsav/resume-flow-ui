@@ -137,7 +137,7 @@ export const ProjectsForm = () => {
 
                         <div className="md:col-span-2 space-y-2">
                           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Your Role <span className="text-red-500">*</span>
+                            Your Role
                           </Label>
                           <Input
                             value={proj.role || ''}
@@ -148,7 +148,7 @@ export const ProjectsForm = () => {
 
                         <div className="md:col-span-2">
                           <TechChipsInput
-                            label={<span>Technologies <span className="text-red-500">*</span></span>}
+                            label={<span>Technologies</span>}
                             value={Array.isArray(proj.technologies) ? proj.technologies : []}
                             onChange={(techs) => updateProject(proj.id, { technologies: techs })}
                             placeholder="Type a technology and press Enter"
@@ -157,12 +157,12 @@ export const ProjectsForm = () => {
 
                         <div className="grid grid-cols-1 gap-4">
                           <MonthYearPicker
-                            label={<span>Start Date <span className="text-red-500">*</span></span>}
+                            label={<span>Start Date</span>}
                             value={proj.startDate}
                             onChange={(value) => updateProject(proj.id, { startDate: value })}
                           />
                           <MonthYearPicker
-                            label={<span>End Date {!proj.ongoing && <span className="text-red-500">*</span>}</span>}
+                            label={<span>End Date</span>}
                             value={proj.endDate}
                             onChange={(value) => updateProject(proj.id, { endDate: value })}
                             disabled={proj.ongoing}

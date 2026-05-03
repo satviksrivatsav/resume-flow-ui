@@ -109,18 +109,15 @@ export const ResumeSidebar = () => {
                  edu.school && 
                  edu.degree && 
                  edu.startDate && 
-                 edu.endDate
+                 edu.endDate &&
+                 edu.grade
                );
       
       case "projects":
         return resumeData.projects.length > 0 && 
                resumeData.projects.every(proj => 
                  proj.name && 
-                 proj.role && 
-                 proj.description &&
-                 proj.startDate && 
-                 (proj.ongoing || proj.endDate) &&
-                 (Array.isArray(proj.technologies) ? proj.technologies.length > 0 : proj.technologies)
+                 proj.description
                );
       
       case "skills":
