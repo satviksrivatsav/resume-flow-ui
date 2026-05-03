@@ -1,6 +1,7 @@
 import { ResumeData, defaultResumeData } from '@/types/resume';
+import { config } from '@/config/config';
 
-const PARSER_API_URL = import.meta.env.VITE_PARSER_API_URL || 'https://resume-flow-parser.vercel.app';
+const PARSER_API_URL = config.parserApiUrl;
 
 
 export interface ParseResponse {
