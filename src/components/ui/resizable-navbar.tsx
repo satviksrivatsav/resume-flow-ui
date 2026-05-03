@@ -312,12 +312,12 @@ export const NavbarLogo = ({ visible }: { visible?: boolean }) => {
         alt="Resume Flow"
         className={cn(
           "w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-105",
-          visible ? "grayscale brightness-0" : ""
+          visible ? "brightness-0 dark:invert" : "brightness-0 invert"
         )}
       />
       <span className={cn(
         "font-bold text-2xl tracking-tight transition-colors duration-300",
-        visible ? "text-black" : "text-white"
+        visible ? "text-black dark:text-white" : "text-white"
       )}>
         Resume Flow
       </span>

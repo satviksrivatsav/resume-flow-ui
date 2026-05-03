@@ -31,7 +31,7 @@ const Index = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen dark bg-black">
       <Navbar className="top-10">
         {/* Desktop Navigation */}
         <NavBody>

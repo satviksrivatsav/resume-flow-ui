@@ -197,8 +197,12 @@ const ResumeBuilder = () => {
                 <div className="flex items-center gap-6">
                   <SidebarTrigger />
                   <div className="flex items-center gap-3 group/logo cursor-pointer" onClick={() => navigate("/")}>
-                    <img src={Logo} alt="Resume Flow" className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110" />
-                    <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60 hidden sm:block tracking-tight">
+                    <img 
+                      src={Logo} 
+                      alt="Resume Flow" 
+                      className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110 brightness-0 dark:invert" 
+                    />
+                    <h1 className="text-xl font-bold text-foreground hidden sm:block tracking-tight">
                       Resume Flow
                     </h1>
                   </div>
