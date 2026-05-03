@@ -32,6 +32,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { motion, Variants } from "framer-motion";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
+import { getSectionCompletionStatus } from "@/utils/mandatoryFieldValidator";
 
 // Per-icon hover animation variants
 const iconVariants: Record<string, Variants> = {
@@ -87,60 +88,6 @@ export const ResumeSidebar = () => {
   const { resumeData } = useResumeStore();
   const navigate = useNavigate();
 
-  const getCompletionStatus = (sectionId: string) => {
-    switch (sectionId) {
-      case "personal": {
-        const { personalInfo } = resumeData;
-        return !!(personalInfo.name &&
-          personalInfo.email &&
-          personalInfo.phone);
-      }
-
-      case "work":
-        return resumeData.workExperience.length > 0 &&
-          resumeData.workExperience.every(exp =>
-            exp.position &&
-            exp.company &&
-            exp.startDate &&
-            (exp.current || exp.endDate)
-          );
-
-      case "education":
-        return resumeData.education.length > 0 &&
-          resumeData.education.every(edu =>
-            edu.school &&
-            edu.degree &&
-            edu.startDate &&
-            edu.endDate &&
-            edu.grade
-          );
-
-      case "projects":
-        return resumeData.projects.length > 0 &&
-          resumeData.projects.every(proj =>
-            proj.name &&
-            proj.description
-          );
-
-      case "skills":
-        return resumeData.skills.length > 0 &&
-          resumeData.skills.every(skill => skill.category && skill.items);
-
-      case "custom":
-        return resumeData.customSections.length > 0 &&
-          resumeData.customSections.every(section =>
-            section.title &&
-            section.description &&
-            section.description !== '<p><br></p>'
-          );
-
-      case "settings":
-        return true;
-
-      default:
-        return false;
-    }
-  };
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
@@ -170,7 +117,7 @@ export const ResumeSidebar = () => {
             <SidebarMenu>
               {sections.map((section) => {
                 const Icon = section.icon;
-                const isCompleted = getCompletionStatus(section.id);
+                const isCompleted = getSectionCompletionStatus(section.id, resumeData);
                 const isActive = activeTab === section.id;
 
                 const variants = iconVariants[section.id] ?? {};

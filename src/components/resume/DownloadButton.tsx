@@ -8,54 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ResumeData } from '@/types/resume';
 import { motion } from 'framer-motion';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
 
-// Validate mandatory fields before download
-const validateMandatoryFields = (resumeData: ResumeData): string[] => {
-  const missingForms = new Set<string>();
-
-  // Personal Info mandatory fields
-  if (
-    !resumeData.personalInfo.name?.trim() ||
-    !resumeData.personalInfo.email?.trim() ||
-    !resumeData.personalInfo.phone?.trim()
-  ) {
-    missingForms.add('Personal Info');
-  }
-
-  // Work Experience (only if entries exist)
-  resumeData.workExperience.forEach((exp) => {
-    if (
-      !exp.position?.trim() ||
-      !exp.company?.trim() ||
-      !exp.startDate?.trim() ||
-      (!exp.current && !exp.endDate?.trim())
-    ) {
-      missingForms.add('Work Experience');
-    }
-  });
-
-  // Education (only if entries exist)
-  resumeData.education.forEach((edu) => {
-    if (
-      !edu.school?.trim() ||
-      !edu.degree?.trim() ||
-      !edu.startDate?.trim() ||
-      !edu.endDate?.trim() ||
-      !edu.grade?.trim()
-    ) {
-      missingForms.add('Education');
-    }
-  });
-
-  // Projects (only if entries exist)
-  resumeData.projects.forEach((proj) => {
-    if (!proj.name?.trim() || !proj.description?.trim()) {
-      missingForms.add('Projects');
-    }
-  });
-
-  return Array.from(missingForms);
-};
 
 export const DownloadButton = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -64,7 +18,7 @@ export const DownloadButton = () => {
 
   const handleDownload = async () => {
     // Validate mandatory fields before proceeding
-    const missingForms = validateMandatoryFields(resumeData);
+    const missingForms = getMissingMandatorySections(resumeData);
     if (missingForms.length > 0) {
       toast({
         title: 'Missing Required Fields',
