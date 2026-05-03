@@ -109,7 +109,7 @@ export default function UploadResume() {
                     onDragLeave={handleDragLeave}
                     className={`
             relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 cursor-pointer
-            ${dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-border hover:border-muted-foreground'}
+            ${dragActive ? 'border-white bg-white/10' : 'border-border hover:border-muted-foreground'}
             ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
             ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
           `}
@@ -151,7 +151,7 @@ export default function UploadResume() {
                                 exit={{ opacity: 0, y: -10 }}
                                 className="flex flex-col items-center"
                             >
-                                <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+                                <Loader2 className="w-12 h-12 text-zinc-500 animate-spin mb-4" />
                                 <p className="text-lg font-medium text-foreground mb-1">
                                     Parsing your resume...
                                 </p>

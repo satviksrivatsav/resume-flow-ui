@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
-import LogoImage from '@/assets/ResumeFlowCut.png';
+import LogoImage from '@/assets/logo.png';
 
 export default function AuthLayout() {
     const location = useLocation();
@@ -29,7 +29,7 @@ export default function AuthLayout() {
                             gap={18}
                             radius={1.5}
                             color="rgba(255,255,255,0.15)"
-                            glowColor="rgba(59, 130, 246, 0.6)"
+                            glowColor="rgba(255, 255, 255, 0.4)"
                             opacity={0.8}
                             centerX={0.5}
                             centerY={0.42}
@@ -38,7 +38,7 @@ export default function AuthLayout() {
                         />
 
                         {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-purple-900/20 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-zinc-900/40 pointer-events-none" />
 
                         {/* Content */}
                         <div className="relative z-10 flex flex-col justify-center items-center w-full p-12">
@@ -58,7 +58,7 @@ export default function AuthLayout() {
                                     <img
                                         src={LogoImage}
                                         alt="Resume Flow"
-                                        className="w-24 h-24 object-contain"
+                                        className="w-24 h-24 object-contain grayscale brightness-0 opacity-80"
                                     />
                                 </motion.div>
 

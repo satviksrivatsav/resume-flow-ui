@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
 import { PageTransition } from "@/components/layout/PageTransition";
 import { useAuthStore } from '@/stores/authStore';
-import LogoImage from '@/assets/ResumeFlowCut.png';
+import LogoImage from '@/assets/logo.png';
 
 export default function ForgotPasswordPage() {
     const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
                     gap={18}
                     radius={1.5}
                     color="rgba(255,255,255,0.15)"
-                    glowColor="rgba(59, 130, 246, 0.6)"
+                    glowColor="rgba(255, 255, 255, 0.4)"
                     opacity={0.8}
                     centerX={0.5}
                     centerY={0.42}
@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
                 />
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-purple-900/20 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-zinc-900/40 pointer-events-none" />
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-center items-center w-full p-12">
@@ -74,11 +74,11 @@ export default function ForgotPasswordPage() {
                             }}
                             className="w-40 h-40 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl relative z-10 mx-auto"
                         >
-                            <img
-                                src={LogoImage}
-                                alt="Resume Flow"
-                                className="w-24 h-24 object-contain"
-                            />
+                                <img
+                                    src={LogoImage}
+                                    alt="Resume Flow"
+                                    className="w-24 h-24 object-contain grayscale brightness-0 opacity-80"
+                                />
                         </motion.div>
                         <h2 className="text-4xl font-bold text-white mb-4">Resume Flow</h2>
                         <p className="text-xl text-neutral-400 max-w-md">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { cn } from '@/lib/utils';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -25,8 +26,8 @@ export function UserMenu() {
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-                            <UserCircle className="h-6 w-6" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <UserCircle className="h-5 w-5" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="end" className="w-40">
@@ -66,10 +67,15 @@ export function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10">
+                <Button variant="ghost" className={cn(
+                    "relative rounded-full",
+                    state === 'collapsed' ? "h-8 w-8" : "h-10 w-10"
+                )}>
+                    <Avatar className={cn(
+                        state === 'collapsed' ? "h-8 w-8" : "h-10 w-10"
+                    )}>
                         <AvatarImage src={userAvatar} alt={userName} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {initials}
                         </AvatarFallback>
                     </Avatar>

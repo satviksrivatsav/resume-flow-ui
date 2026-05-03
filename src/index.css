@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +9,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    --primary-rgb: 255, 255, 255;
     /* Light theme - soft, eye-friendly palette */
     /* More pronounced warm cream tones */
     --background: 40 30% 95%;
@@ -22,8 +24,7 @@ All colors MUST be HSL.
     --popover: 40 20% 98%;
     --popover-foreground: 220 25% 18%;
 
-    --primary: 221 83% 53%;
-    /* Blue accent - keeping vibrant */
+    --primary: 240 10% 3.9%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 40 20% 90%;
@@ -48,11 +49,12 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Gradient colors for light mode */
-    --gradient-start: 40 30% 95%;
-    --gradient-mid: 262 70% 60%;
-    --gradient-end: 200 80% 55%;
-    --gradient-accent: 145 70% 45%;
+    /* Gradient colors for light mode - Subtle and clean */
+    --gradient-start: 0 0% 100%;
+    --gradient-mid: 240 5% 96%;
+    --gradient-end: 240 5% 90%;
+    --gradient-accent: 240 5% 85%;
+    --gradient-foreground: 240 10% 3.9%;
 
     /* Glass effect for light mode */
     --glass-bg: 40 25% 98% / 0.85;
@@ -63,7 +65,7 @@ All colors MUST be HSL.
 
     --sidebar-background: 40 25% 94%;
     --sidebar-foreground: 220 25% 18%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary: 240 10% 3.9%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 40 20% 90%;
     --sidebar-accent-foreground: 220 25% 18%;
@@ -82,8 +84,8 @@ All colors MUST be HSL.
     --popover: 240 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 10% 3.9%;
 
     --secondary: 240 10% 15%;
     --secondary-foreground: 0 0% 98%;
@@ -99,13 +101,14 @@ All colors MUST be HSL.
 
     --border: 240 10% 20%;
     --input: 240 10% 20%;
-    --ring: 221 83% 53%;
+    --ring: 0 0% 98%;
 
-    /* Gradient colors for dark mode */
-    --gradient-start: 240 67% 11%;
-    --gradient-mid: 285 87% 53%;
-    --gradient-end: 175 100% 50%;
-    --gradient-accent: 145 100% 50%;
+    /* Gradient colors for dark mode - Deep and technical */
+    --gradient-start: 240 10% 8%;
+    --gradient-mid: 240 10% 12%;
+    --gradient-end: 240 10% 16%;
+    --gradient-accent: 240 10% 20%;
+    --gradient-foreground: 0 0% 98%;
 
     /* Glass effect for dark mode */
     --glass-bg: 0 0% 100% / 0.05;
@@ -118,7 +121,7 @@ All colors MUST be HSL.
     --sidebar-accent: 240 10% 15%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 10% 20%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-ring: 0 0% 98%;
   }
 }
 
@@ -165,7 +168,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground overflow-hidden;
+    @apply bg-background text-foreground overflow-x-hidden font-sans;
   }
 }
 
@@ -198,6 +201,10 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
   .glass {
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(20px);
