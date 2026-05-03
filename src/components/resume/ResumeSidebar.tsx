@@ -30,45 +30,45 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserMenu } from "@/components/ui/UserMenu";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 
 // Per-icon hover animation variants
-const iconVariants: Record<string, object> = {
+const iconVariants: Record<string, Variants> = {
   personal: {
     // User: subtle bounce up (like waving hello)
     hover: { y: -3, transition: { type: "spring", stiffness: 400, damping: 10 } },
-    tap:   { y: 0, scale: 0.9 },
+    tap: { y: 0, scale: 0.9 },
   },
   work: {
     // Briefcase: slight rock left-right (busy at work)
     hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: "easeInOut" } },
-    tap:   { scale: 0.9 },
+    tap: { scale: 0.9 },
   },
   education: {
     // GraduationCap: tilt side-to-side (thinking)
     hover: { rotate: 12, transition: { type: "spring", stiffness: 300, damping: 8 } },
-    tap:   { rotate: 0, scale: 0.9 },
+    tap: { rotate: 0, scale: 0.9 },
   },
   projects: {
     // FolderGit2: pop scale (opening a folder)
     hover: { scale: 1.25, transition: { type: "spring", stiffness: 400, damping: 10 } },
-    tap:   { scale: 0.9 },
+    tap: { scale: 0.9 },
   },
   skills: {
     // Wrench: small clockwise rotation (tightening a bolt)
     hover: { rotate: 30, transition: { type: "spring", stiffness: 300, damping: 8 } },
-    tap:   { rotate: 0, scale: 0.9 },
+    tap: { rotate: 0, scale: 0.9 },
   },
   custom: {
     // Layout: expand slightly (building a layout)
     hover: { scaleX: 1.2, transition: { type: "spring", stiffness: 300, damping: 10 } },
-    tap:   { scaleX: 1, scale: 0.9 },
+    tap: { scaleX: 1, scale: 0.9 },
   },
   settings: {
     // Settings: slow spin (gears turning)
     hover: { rotate: 90, transition: { duration: 0.35, ease: "easeInOut" } },
-    tap:   { rotate: 0, scale: 0.9 },
+    tap: { rotate: 0, scale: 0.9 },
   },
 };
 
@@ -91,50 +91,52 @@ export const ResumeSidebar = () => {
     switch (sectionId) {
       case "personal": {
         const { personalInfo } = resumeData;
-        return !!(personalInfo.name && personalInfo.email && personalInfo.phone && personalInfo.location);
+        return !!(personalInfo.name &&
+          personalInfo.email &&
+          personalInfo.phone);
       }
-      
+
       case "work":
-        return resumeData.workExperience.length > 0 && 
-               resumeData.workExperience.every(exp => 
-                 exp.position && 
-                 exp.company && 
-                 exp.startDate && 
-                 (exp.current || exp.endDate)
-               );
-      
+        return resumeData.workExperience.length > 0 &&
+          resumeData.workExperience.every(exp =>
+            exp.position &&
+            exp.company &&
+            exp.startDate &&
+            (exp.current || exp.endDate)
+          );
+
       case "education":
-        return resumeData.education.length > 0 && 
-               resumeData.education.every(edu => 
-                 edu.school && 
-                 edu.degree && 
-                 edu.startDate && 
-                 edu.endDate &&
-                 edu.grade
-               );
-      
+        return resumeData.education.length > 0 &&
+          resumeData.education.every(edu =>
+            edu.school &&
+            edu.degree &&
+            edu.startDate &&
+            edu.endDate &&
+            edu.grade
+          );
+
       case "projects":
-        return resumeData.projects.length > 0 && 
-               resumeData.projects.every(proj => 
-                 proj.name && 
-                 proj.description
-               );
-      
+        return resumeData.projects.length > 0 &&
+          resumeData.projects.every(proj =>
+            proj.name &&
+            proj.description
+          );
+
       case "skills":
-        return resumeData.skills.length > 0 && 
-               resumeData.skills.every(skill => skill.category && skill.items);
-      
+        return resumeData.skills.length > 0 &&
+          resumeData.skills.every(skill => skill.category && skill.items);
+
       case "custom":
-        return resumeData.customSections.length > 0 && 
-               resumeData.customSections.every(section => 
-                 section.title && 
-                 section.description && 
-                 section.description !== '<p><br></p>'
-               );
-      
+        return resumeData.customSections.length > 0 &&
+          resumeData.customSections.every(section =>
+            section.title &&
+            section.description &&
+            section.description !== '<p><br></p>'
+          );
+
       case "settings":
         return true;
-      
+
       default:
         return false;
     }

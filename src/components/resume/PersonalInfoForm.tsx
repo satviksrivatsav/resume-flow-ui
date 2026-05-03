@@ -86,7 +86,7 @@ export const PersonalInfoForm = () => {
         <div className="space-y-2">
           <Label htmlFor="location" className="flex items-center gap-2">
             <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-            Location <span className="text-red-500">*</span>
+            Location
           </Label>
           <Input
             id="location"

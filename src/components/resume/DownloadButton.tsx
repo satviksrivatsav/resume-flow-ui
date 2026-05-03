@@ -17,8 +17,7 @@ const validateMandatoryFields = (resumeData: ResumeData): string[] => {
   if (
     !resumeData.personalInfo.name?.trim() ||
     !resumeData.personalInfo.email?.trim() ||
-    !resumeData.personalInfo.phone?.trim() ||
-    !resumeData.personalInfo.location?.trim()
+    !resumeData.personalInfo.phone?.trim()
   ) {
     missingForms.add('Personal Info');
   }
