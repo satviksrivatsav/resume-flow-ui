@@ -42,7 +42,7 @@ export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Prom
         workExperience: result.data.workExperience || [],
         projects: result.data.projects || [],
         skills: result.data.skills || [],
-        customSections: result.data.customSections || [],
+        additionalSections: result.data.additionalSections || (result.data as any).customSections || [],
         settings: {
             ...defaultResumeData.settings,
             ...(result.data.settings || {}),

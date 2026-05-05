@@ -42,13 +42,12 @@ export const isSkillsComplete = (skills: ResumeData['skills']) => {
     skills.every(skill => skill.category?.trim() && skill.items?.trim());
 };
 
-export const isCustomSectionsComplete = (customSections: ResumeData['customSections']) => {
-  return customSections.length > 0 &&
-    customSections.every(section =>
-      section.title?.trim() &&
-      section.description?.trim() &&
-      section.description !== '<p><br></p>'
-    );
+export const isAdditionalSectionComplete = (section: ResumeData['additionalSections'][0]) => {
+  return !!(
+    section.title?.trim() &&
+    section.description?.trim() &&
+    section.description !== '<p><br></p>'
+  );
 };
 
 /**
@@ -101,11 +100,14 @@ export const getSectionCompletionStatus = (sectionId: string, resumeData: Resume
       return isProjectsComplete(resumeData.projects);
     case "skills":
       return isSkillsComplete(resumeData.skills);
-    case "custom":
-      return isCustomSectionsComplete(resumeData.customSections);
     case "settings":
       return true;
     default:
+      // Check if it's an additional section ID
+      const addSection = resumeData.additionalSections.find(s => s.id === sectionId);
+      if (addSection) {
+        return isAdditionalSectionComplete(addSection);
+      }
       return false;
   }
 };

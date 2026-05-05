@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { ResumeData, defaultResumeData, CustomSection } from '@/types/resume';
+import { ResumeData, defaultResumeData, AdditionalSection } from '@/types/resume';
 
 interface ResumeStore {
   resumeData: ResumeData;
@@ -19,9 +19,9 @@ interface ResumeStore {
   addSkill: () => void;
   updateSkill: (id: string, skill: Partial<ResumeData['skills'][0]>) => void;
   deleteSkill: (id: string) => void;
-  addCustomSection: () => void;
-  updateCustomSection: (id: string, section: Partial<CustomSection>) => void;
-  deleteCustomSection: (id: string) => void;
+  addAdditionalSection: () => void;
+  updateAdditionalSection: (id: string, section: Partial<AdditionalSection>) => void;
+  deleteAdditionalSection: (id: string) => void;
   resetResume: () => void;
 }
 
@@ -160,32 +160,32 @@ export const useResumeStore = create<ResumeStore>((set) => ({
       },
     })),
 
-  addCustomSection: () =>
+  addAdditionalSection: () =>
     set((state) => ({
       resumeData: {
         ...state.resumeData,
-        customSections: [
-          ...state.resumeData.customSections,
+        additionalSections: [
+          ...state.resumeData.additionalSections,
           { id: uuidv4(), title: 'New Section', description: '' },
         ],
       },
     })),
 
-  updateCustomSection: (id, section) =>
+  updateAdditionalSection: (id, section) =>
     set((state) => ({
       resumeData: {
         ...state.resumeData,
-        customSections: state.resumeData.customSections.map((item) =>
+        additionalSections: state.resumeData.additionalSections.map((item) =>
           item.id === id ? { ...item, ...section } : item
         ),
       },
     })),
 
-  deleteCustomSection: (id) =>
+  deleteAdditionalSection: (id) =>
     set((state) => ({
       resumeData: {
         ...state.resumeData,
-        customSections: state.resumeData.customSections.filter((item) => item.id !== id),
+        additionalSections: state.resumeData.additionalSections.filter((item) => item.id !== id),
       },
     })),
 

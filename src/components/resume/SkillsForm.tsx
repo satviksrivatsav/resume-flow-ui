@@ -2,7 +2,8 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Plus, Trash2, Wrench } from "lucide-react";
+import { Sparkles, Plus } from "lucide-react";
+import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { TechChipsInput } from "@/components/ui/TechChipsInput";
 
@@ -40,7 +41,7 @@ export const SkillsForm = () => {
 
       <div className="grid grid-cols-1 gap-6">
         <AnimatePresence mode="popLayout">
-          {resumeData.skills.map((skill, index) => (
+          {resumeData.skills.map((skill) => (
             <motion.div
               key={skill.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -48,14 +49,18 @@ export const SkillsForm = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               className="group relative border rounded-xl p-6 bg-card hover:border-primary/30 transition-all duration-200 shadow-sm"
             >
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteSkill(skill.id)}
-                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              <div className="absolute top-4 right-4">
+                <motion.div whileHover="hover" whileTap="tap">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteSkill(skill.id)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                  >
+                    <TrashAnimatedIcon className="w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </div>
 
               <div className="space-y-6">
                 <div className="space-y-2 max-w-md">
@@ -99,4 +104,3 @@ export const SkillsForm = () => {
     </motion.div>
   );
 };
-
