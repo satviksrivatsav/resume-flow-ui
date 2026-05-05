@@ -42,7 +42,7 @@ export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
 
     return (
         <div className="space-y-2">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</Label>
+            <Label className="font-medium">{label}</Label>
             <div 
                 onClick={handleTrigger}
                 className={cn(

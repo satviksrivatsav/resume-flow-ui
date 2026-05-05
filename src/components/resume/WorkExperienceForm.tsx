@@ -127,7 +127,7 @@ export const WorkExperienceForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Position <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -138,7 +138,7 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Company Name <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -149,7 +149,7 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</Label>
+                          <Label className="font-medium">Location</Label>
                           <div className="relative">
                             <Input
                               value={exp.location}

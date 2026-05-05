@@ -10,6 +10,8 @@ import './quill-custom.css';
 import { FieldTip } from "@/components/ui/FieldTip";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { useUiStore } from "@/stores/uiStore";
+import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const AdditionalSectionForm = () => {
   const { resumeData, updateAdditionalSection, deleteAdditionalSection } = useResumeStore();
@@ -34,7 +36,7 @@ export const AdditionalSectionForm = () => {
     >
       <div className="p-6 border rounded-xl bg-card/50 space-y-6 shadow-sm">
         <div className="space-y-2 max-w-md">
-          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Label className="font-medium">
             Section Title <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -45,9 +47,81 @@ export const AdditionalSectionForm = () => {
           />
         </div>
 
+        <div className="space-y-4 border p-4 rounded-xl bg-card">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={`has-date-${section.id}`}
+              checked={section.hasDate || false}
+              onCheckedChange={(checked) =>
+                updateAdditionalSection(section.id, { hasDate: checked as boolean })
+              }
+            />
+            <label
+              htmlFor={`has-date-${section.id}`}
+              className="text-sm font-medium leading-none cursor-pointer select-none"
+            >
+              Include a date or date range
+            </label>
+          </div>
+
+          {section.hasDate && (
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`is-range-${section.id}`}
+                  checked={section.isDateRange || false}
+                  onCheckedChange={(checked) =>
+                    updateAdditionalSection(section.id, { isDateRange: checked as boolean })
+                  }
+                />
+                <label
+                  htmlFor={`is-range-${section.id}`}
+                  className="text-sm font-medium leading-none cursor-pointer select-none"
+                >
+                  This is a date range
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <MonthYearPicker
+                  label={<span>{section.isDateRange ? "Start Date" : "Date"}</span>}
+                  value={section.startDate || ''}
+                  onChange={(value) => updateAdditionalSection(section.id, { startDate: value })}
+                />
+
+                {section.isDateRange && (
+                  <div className="space-y-4">
+                    <MonthYearPicker
+                      label={<span>End Date</span>}
+                      value={section.endDate || ''}
+                      onChange={(value) => updateAdditionalSection(section.id, { endDate: value })}
+                      disabled={section.current}
+                    />
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`current-${section.id}`}
+                        checked={section.current || false}
+                        onCheckedChange={(checked) =>
+                          updateAdditionalSection(section.id, { current: checked as boolean })
+                        }
+                      />
+                      <label
+                        htmlFor={`current-${section.id}`}
+                        className="text-sm font-medium leading-none cursor-pointer select-none"
+                      >
+                        Ongoing
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Content</Label>
+            <Label className="font-medium">Content</Label>
             <AIWriterButton
               fieldName="description"
               fieldLabel="Section Content"

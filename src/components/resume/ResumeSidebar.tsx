@@ -82,17 +82,18 @@ export const ResumeSidebar = () => {
 
   const handleAddAdditional = () => {
     addAdditionalSection();
-    // The store adds it to the end of the array
+    // Fetch the latest state to ensure we get the newly added section
     setTimeout(() => {
-      const lastSection = resumeData.additionalSections[resumeData.additionalSections.length - 1];
+      const latestData = useResumeStore.getState().resumeData;
+      const lastSection = latestData.additionalSections[latestData.additionalSections.length - 1];
       if (lastSection) {
         setActiveTab(lastSection.id);
       }
     }, 0);
   };
 
-  const renderMenuItem = (sectionId: string, label: string, Icon: any, variants: Variants) => {
-    const isCompleted = getSectionCompletionStatus(sectionId, resumeData);
+  const renderMenuItem = (sectionId: string, label: string, Icon: any, variants: Variants, showCompletion: boolean = true) => {
+    const isCompleted = showCompletion ? getSectionCompletionStatus(sectionId, resumeData) : false;
     const isActive = activeTab === sectionId;
 
     return (
@@ -123,10 +124,12 @@ export const ResumeSidebar = () => {
               />
             </motion.span>
             <span className="truncate">{label}</span>
-            {isCompleted ? (
-              <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10 shrink-0" />
-            ) : (
-              <Circle className="w-3.5 h-3.5 ml-auto text-muted-foreground/20 shrink-0" />
+            {showCompletion && (
+              isCompleted ? (
+                <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10 shrink-0" />
+              ) : (
+                <Circle className="w-3.5 h-3.5 ml-auto text-muted-foreground/20 shrink-0" />
+              )
             )}
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -185,7 +188,7 @@ export const ResumeSidebar = () => {
 
               <div className="my-2 border-t border-border/50" />
 
-              {renderMenuItem("settings", "Settings", Settings, iconVariants.settings)}
+              {renderMenuItem("settings", "Resume Settings", Settings, iconVariants.settings, false)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

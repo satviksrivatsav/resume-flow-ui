@@ -128,7 +128,7 @@ export const ProjectsForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Project Name <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -139,7 +139,7 @@ export const ProjectsForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Your Role
                           </Label>
                           <Input
@@ -189,7 +189,7 @@ export const ProjectsForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Project Link</Label>
+                          <Label className="font-medium">Project Link</Label>
                           <div className="relative">
                             <Input
                               value={proj.link}

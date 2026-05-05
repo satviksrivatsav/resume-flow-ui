@@ -2,7 +2,7 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Plus } from "lucide-react";
+import { Wrench, Plus } from "lucide-react";
 import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { TechChipsInput } from "@/components/ui/TechChipsInput";
@@ -55,7 +55,7 @@ export const SkillsForm = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => deleteSkill(skill.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                   >
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
@@ -64,7 +64,7 @@ export const SkillsForm = () => {
 
               <div className="space-y-6">
                 <div className="space-y-2 max-w-md">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category Name *</Label>
+                  <Label className="font-medium">Category Name <span className="text-red-500">*</span></Label>
                   <Input
                     value={skill.category}
                     onChange={(e) => updateSkill(skill.id, { category: e.target.value })}
@@ -89,7 +89,7 @@ export const SkillsForm = () => {
       {resumeData.skills.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Sparkles className="w-6 h-6 text-muted-foreground" />
+            <Wrench className="w-6 h-6 text-muted-foreground" />
           </div>
           <h3 className="font-medium text-lg">No skills added</h3>
           <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">

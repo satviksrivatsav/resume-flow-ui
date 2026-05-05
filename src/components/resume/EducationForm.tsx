@@ -117,7 +117,7 @@ export const EducationForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 md:col-span-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             School / University <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -128,7 +128,7 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Degree <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -139,7 +139,8 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Field of Study</Label>
+                          <Label className="font-medium">
+Field of Study</Label>
                           <Input
                             value={edu.field}
                             onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
@@ -161,7 +162,8 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grade / GPA <span className="text-red-500">*</span></Label>
+                          <Label className="font-medium">
+Grade / GPA <span className="text-red-500">*</span></Label>
                           <Input
                             value={edu.grade}
                             onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}

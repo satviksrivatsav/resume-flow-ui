@@ -54,6 +54,11 @@ export interface AdditionalSection {
   id: string;
   title: string;
   description: string;
+  hasDate?: boolean;
+  isDateRange?: boolean;
+  startDate?: string;
+  endDate?: string;
+  current?: boolean;
 }
 
 export interface ResumeSettings {
