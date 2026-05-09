@@ -9,8 +9,8 @@ export const config = {
 
   // Supabase Configuration
   supabase: {
-    url: import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key',
+    url: import.meta.env.VITE_SUPABASE_URL || 'https://znburrlaarxhwwivpgqr.supabase.co',
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_xpdy54PWl3Jm1LaTf-Ps5w_YsiDNvll',
   },
 
   // Feature Flags or other settings can go here

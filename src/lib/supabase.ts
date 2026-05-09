@@ -3,7 +3,7 @@ import { config } from '@/config/config';
 
 const { url, anonKey } = config.supabase;
 
-if (url === 'https://placeholder.supabase.co' || anonKey === 'placeholder-key') {
+if (!url || !anonKey) {
     console.warn('Supabase credentials not configured. Auth features will not work.');
 }
 

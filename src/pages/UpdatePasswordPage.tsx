@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Loader2 } from 'lucide-react';
+import { Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,8 @@ export default function UpdatePasswordPage() {
     const { updatePassword, isLoading, error, clearError } = useAuthStore();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [localError, setLocalError] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -127,7 +129,7 @@ export default function UpdatePasswordPage() {
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
                                         id="password"
-                                        type="password"
+                                        type={showPassword ? 'text' : 'password'}
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => {
@@ -135,9 +137,18 @@ export default function UpdatePasswordPage() {
                                             clearError();
                                             setLocalError('');
                                         }}
-                                        className="pl-10 h-11"
+                                        className="pl-10 pr-10 h-11"
                                         required
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((v) => !v)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                        tabIndex={-1}
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                 </div>
                             </div>
 
@@ -147,16 +158,25 @@ export default function UpdatePasswordPage() {
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
                                         id="confirmPassword"
-                                        type="password"
+                                        type={showConfirmPassword ? 'text' : 'password'}
                                         placeholder="••••••••"
                                         value={confirmPassword}
                                         onChange={(e) => {
                                             setConfirmPassword(e.target.value);
                                             setLocalError('');
                                         }}
-                                        className="pl-10 h-11"
+                                        className="pl-10 pr-10 h-11"
                                         required
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword((v) => !v)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                        tabIndex={-1}
+                                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                 </div>
                             </div>
 
