@@ -1,7 +1,7 @@
 import { ResumeData, defaultResumeData } from '@/types/resume';
 import { config } from '@/config/config';
 
-const PARSER_API_URL = config.parserApiUrl;
+const API_BASE_URL = config.aiApiUrl;
 
 
 export interface ParseResponse {
@@ -14,7 +14,7 @@ export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Prom
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${PARSER_API_URL}/api/v1/resume/parse`, {
+    const response = await fetch(`${API_BASE_URL}/resume/parse`, {
         method: 'POST',
         body: formData,
         signal,
