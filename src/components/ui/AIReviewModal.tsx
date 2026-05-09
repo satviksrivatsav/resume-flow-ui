@@ -9,34 +9,17 @@ import {
 } from '@/components/ui/dialog';
 import { useAIWriterStore } from '@/stores/aiWriterStore';
 import { motion } from 'framer-motion';
+import Lottie from 'lottie-react';
+import aiSearchAnimation from '@/assets/AI Searching.json';
 
 // ── Portal loading animation ─────────────────────────────────────────────────
-// Three Sparkles icons stream right→left in a staggered loop, like Samsung AI.
 function PortalLoader() {
     return (
-        <div className="flex flex-col items-center gap-5">
-            <div className="relative w-28 h-10 overflow-hidden flex items-center justify-center">
-                {[0, 1, 2].map((i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute"
-                        animate={{
-                            x: [56, 0, -56],
-                            opacity: [0, 1, 0],
-                            scale: [0.5, 1, 0.5],
-                        }}
-                        transition={{
-                            duration: 1.6,
-                            delay: i * (1.6 / 3),
-                            repeat: Infinity,
-                            ease: 'easeInOut',
-                        }}
-                    >
-                        <Sparkles className="w-7 h-7 text-primary" />
-                    </motion.div>
-                ))}
+        <div className="flex flex-col items-center gap-2">
+            <div className="w-32 h-32 flex items-center justify-center">
+                <Lottie animationData={aiSearchAnimation} loop={true} />
             </div>
-            <p className="text-sm text-muted-foreground">Generating content…</p>
+            <p className="text-sm text-muted-foreground font-medium">Generating content…</p>
         </div>
     );
 }

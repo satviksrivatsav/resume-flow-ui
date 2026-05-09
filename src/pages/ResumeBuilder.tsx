@@ -4,13 +4,14 @@ import { WorkExperienceForm } from "@/components/resume/WorkExperienceForm";
 import { EducationForm } from "@/components/resume/EducationForm";
 import { ProjectsForm } from "@/components/resume/ProjectsForm";
 import { SkillsForm } from "@/components/resume/SkillsForm";
-import { CustomSectionsForm } from "@/components/resume/CustomSectionForm";
+import { AdditionalSectionForm } from "@/components/resume/AdditionalSectionForm";
 import { ResumeSettings } from "@/components/resume/ResumeSettings";
 import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff, Maximize2, MoveHorizontal, MoveVertical, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
+import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab } = useUiStore();
+  const { resumeData, deleteAdditionalSection } = useResumeStore();
   const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
@@ -58,7 +60,6 @@ const ResumeBuilder = () => {
     let zoom = 1;
 
     if (viewMode === 'fit-height') {
-        // Increased offset to 200 to account for top/bottom padding and controls
         const containerHeight = rect.height - 200;
         zoom = containerHeight / resumeHeight;
     } else {
@@ -100,9 +101,11 @@ const ResumeBuilder = () => {
       case "education": return "Education";
       case "projects": return "Projects";
       case "skills": return "Skills";
-      case "custom": return "Custom Sections";
       case "settings": return "Resume Settings";
-      default: return "";
+      default: {
+        const section = resumeData.additionalSections.find(s => s.id === id);
+        return section ? section.title : "Additional Section";
+      }
     }
   };
 
@@ -113,9 +116,8 @@ const ResumeBuilder = () => {
       case "education": return "List your academic qualifications and achievements.";
       case "projects": return "Showcase your best projects and technical contributions.";
       case "skills": return "Categorize your professional and technical expertise.";
-      case "custom": return "Add any other relevant sections to your resume.";
       case "settings": return "Customize your resume's layout, colors, and fonts.";
-      default: return "";
+      default: return "Add any other relevant information to your resume.";
     }
   };
 
@@ -257,9 +259,28 @@ const ResumeBuilder = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
-                    <div className="space-y-1">
-                      <h2 className="text-2xl font-bold tracking-tight">{getSectionTitle(activeTab)}</h2>
-                      <p className="text-muted-foreground text-sm">{getSectionDescription(activeTab)}</p>
+                    <div className="flex items-end justify-between">
+                      <div className="space-y-1">
+                        <h2 className="text-2xl font-bold tracking-tight">{getSectionTitle(activeTab)}</h2>
+                        <p className="text-muted-foreground text-sm">{getSectionDescription(activeTab)}</p>
+                      </div>
+                      
+                      {resumeData.additionalSections.some(s => s.id === activeTab) && (
+                        <motion.div whileHover="hover" whileTap="tap">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              deleteAdditionalSection(activeTab);
+                              setActiveTab('personal');
+                            }}
+                            className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 gap-2 shrink-0 h-10 px-4"
+                          >
+                            <TrashAnimatedIcon className="w-4 h-4" />
+                            Delete Section
+                          </Button>
+                        </motion.div>
+                      )}
                     </div>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -268,8 +289,14 @@ const ResumeBuilder = () => {
                       <TabsContent value="education"><EducationForm /></TabsContent>
                       <TabsContent value="projects"><ProjectsForm /></TabsContent>
                       <TabsContent value="skills"><SkillsForm /></TabsContent>
-                      <TabsContent value="custom"><CustomSectionsForm /></TabsContent>
                       <TabsContent value="settings"><ResumeSettings /></TabsContent>
+                      
+                      {/* Dynamic Additional Sections Content */}
+                      {resumeData.additionalSections.map(section => (
+                        <TabsContent key={section.id} value={section.id}>
+                          <AdditionalSectionForm />
+                        </TabsContent>
+                      ))}
                     </Tabs>
                   </motion.div>
                 </div>
@@ -281,7 +308,6 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  {/* Floating Toolbar */}
                   <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-2">
                     <motion.div 
                         initial={{ y: -20, opacity: 0 }}
@@ -324,7 +350,6 @@ const ResumeBuilder = () => {
           </main>
         </div>
 
-        {/* Fullscreen Overlay */}
         <AnimatePresence>
             {isFullscreen && (
                 <motion.div 
@@ -359,9 +384,7 @@ const ResumeBuilder = () => {
                           </motion.div>
                         </div>
                     </div>
-                    {/* Content Area */}
                     <div className="flex-1 relative flex overflow-hidden">
-                        {/* Resume View */}
                         <div className="flex-1 overflow-auto custom-scrollbar bg-black/10">
                             <div className="min-h-full flex flex-col items-center py-24">
                                 <div className="my-auto">
@@ -376,13 +399,11 @@ const ResumeBuilder = () => {
                                     >
                                         <ResumePreview />
                                     </div>
-                                    {/* This spacer ensures the bottom padding is respected when zoomed */}
                                     <div style={{ height: `${1123 * (fullscreenZoom - 1)}px` }} />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Floating Zoom Controls Pill - White Theme */}
                         <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center py-5 px-2.5 gap-4 bg-zinc-900/80 backdrop-blur-2xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-full">
                             <motion.div whileHover="hover" whileTap="tap">
                               <Button

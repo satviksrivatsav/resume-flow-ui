@@ -4,7 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Briefcase, Plus, Trash2, ChevronDown, ChevronUp, MapPin, Calendar } from "lucide-react";
+import { Briefcase, Plus, ChevronDown, ChevronUp, MapPin, Calendar } from "lucide-react";
+import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -24,9 +25,7 @@ export const WorkExperienceForm = () => {
   }, [resumeData.workExperience]);
 
   const handleAdd = () => {
-    const newId = `work-${Date.now()}`;
     addWorkExperience();
-    // The store adds it with a uuid, but we can find the last one
     setTimeout(() => {
       const lastExp = resumeData.workExperience[resumeData.workExperience.length - 1];
       if (lastExp) setExpandedId(lastExp.id);
@@ -99,17 +98,19 @@ export const WorkExperienceForm = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 ml-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteWorkExperience(exp.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <motion.div whileHover="hover" whileTap="tap">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteWorkExperience(exp.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                      >
+                        <TrashAnimatedIcon className="w-4 h-4" />
+                      </Button>
+                    </motion.div>
                     <div className="text-muted-foreground p-1">
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
@@ -126,7 +127,7 @@ export const WorkExperienceForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Position <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -137,7 +138,7 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Company Name <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -148,7 +149,7 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</Label>
+                          <Label className="font-medium">Location</Label>
                           <div className="relative">
                             <Input
                               value={exp.location}
@@ -242,4 +243,3 @@ export const WorkExperienceForm = () => {
     </motion.div>
   );
 };
-

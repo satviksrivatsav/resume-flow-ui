@@ -1,6 +1,7 @@
 import { ResumeData, defaultResumeData } from '@/types/resume';
+import { config } from '@/config/config';
 
-const PARSER_API_URL = import.meta.env.VITE_PARSER_API_URL || 'https://resume-flow-parser.vercel.app';
+const API_BASE_URL = config.aiApiUrl;
 
 
 export interface ParseResponse {
@@ -13,7 +14,7 @@ export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Prom
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${PARSER_API_URL}/api/v1/resume/parse`, {
+    const response = await fetch(`${API_BASE_URL}/resume/parse`, {
         method: 'POST',
         body: formData,
         signal,
@@ -41,7 +42,7 @@ export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Prom
         workExperience: result.data.workExperience || [],
         projects: result.data.projects || [],
         skills: result.data.skills || [],
-        customSections: result.data.customSections || [],
+        additionalSections: result.data.additionalSections || (result.data as any).customSections || [],
         settings: {
             ...defaultResumeData.settings,
             ...(result.data.settings || {}),

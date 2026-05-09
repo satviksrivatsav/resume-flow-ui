@@ -50,10 +50,15 @@ export interface Skill {
   items: string;
 }
 
-export interface CustomSection {
+export interface AdditionalSection {
   id: string;
   title: string;
   description: string;
+  hasDate?: boolean;
+  isDateRange?: boolean;
+  startDate?: string;
+  endDate?: string;
+  current?: boolean;
 }
 
 export interface ResumeSettings {
@@ -68,7 +73,7 @@ export interface ResumeData {
   workExperience: WorkExperience[];
   projects: Project[];
   skills: Skill[];
-  customSections: CustomSection[];
+  additionalSections: AdditionalSection[];
   settings: ResumeSettings;
 }
 
@@ -88,7 +93,7 @@ export const defaultResumeData: ResumeData = {
   workExperience: [],
   projects: [],
   skills: [],
-  customSections: [],
+  additionalSections: [],
   settings: {
     themeColor: '#1f2937',
     fontFamily: 'Open Sans',

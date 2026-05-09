@@ -10,6 +10,10 @@ import {
   StyleSheet,
   Font,
   Link,
+  Svg,
+  Path,
+  Circle,
+  Rect,
 } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
 import { getCountryByCode } from '@/lib/countries';
@@ -19,7 +23,7 @@ interface ResumePDFProps {
 }
 
 // Register fonts from public/fonts folder
-// IMPORTANT: Adjust these paths based on your actual font file names
+Font.registerHyphenationCallback(word => [word]);
 
 // Roboto
 Font.register({
@@ -117,6 +121,94 @@ const fontSizeMap = {
   large: { base: 13, heading: 15, name: 26 },
 };
 
+const MailIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Rect x="2" y="4" width="20" height="16" rx="2" stroke="#000" strokeWidth={2} fill="none" />
+    <Path d="m22 7-10 7L2 7" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const PhoneIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const MapPinIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" stroke="#000" strokeWidth={2} fill="none" />
+    <Circle cx="12" cy="10" r="3" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const LinkedInIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="#000" strokeWidth={2} fill="none" />
+    <Rect x="2" y="9" width="4" height="12" stroke="#000" strokeWidth={2} fill="none" />
+    <Circle cx="4" cy="4" r="2" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const WebsiteIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Circle cx="12" cy="12" r="10" stroke="#000" strokeWidth={2} fill="none" />
+    <Path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const GitHubIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const stripHtml = (html: string) => {
+  if (!html) return '';
+  // Basic HTML stripping: remove tags and replace some common entities
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<li>/gi, '\n• ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+    .trim();
+};
+
+const PDFDescriptionRenderer = ({ text, style, isHtml = false }: { text?: string; style?: any; isHtml?: boolean }) => {
+  if (!text) return null;
+  
+  const processedText = isHtml ? stripHtml(text) : text;
+  const lines = processedText.split('\n');
+  
+  return (
+    <View style={style}>
+      {lines.map((line, i) => {
+        // Detect manual bullets: •, -, *, or similar with at least one space after
+        const bulletMatch = line.match(/^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/);
+        
+        if (bulletMatch) {
+          const indent = bulletMatch[1];
+          const bulletChar = bulletMatch[2];
+          const content = bulletMatch[3];
+          
+          return (
+            <View key={i} style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'flex-start' }}>
+              <Text style={{ width: 12, flexShrink: 0, marginLeft: indent ? indent.length * 4 : 0 }}>{bulletChar}</Text>
+              <Text style={{ flex: 1, hyphens: 'none' }}>{content}</Text>
+            </View>
+          );
+        }
+        
+        return <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2, hyphens: 'none' }}>{line}</Text>;
+      })}
+    </View>
+  );
+};
+
 export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   const {
     personalInfo,
@@ -124,7 +216,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     workExperience,
     projects,
     skills,
-    customSections,
+    additionalSections,
     settings,
   } = resumeData;
 
@@ -136,7 +228,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
   const validEducation = education.filter((edu) => edu.school || edu.degree);
   const validProjects = projects.filter((proj) => proj.name);
   const validSkills = skills.filter((skill) => skill.category || skill.items);
-  const validCustom = customSections.filter((section) => 
+  const validAdditional = additionalSections.filter((section) => 
     section && 
     section.title && 
     section.description && 
@@ -148,27 +240,27 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     page: {
       fontFamily: fontFamily,
       fontSize: sizes.base,
-      color: '#374151',
+      color: '#000000',
       padding: 36,
       backgroundColor: '#ffffff',
     },
     header: {
       marginBottom: 16,
-      borderBottomWidth: 2,
-      borderBottomColor: settings.themeColor || '#ef4444',
-      paddingBottom: 12,
+      alignItems: 'center',
     },
     name: {
       fontSize: sizes.name,
       fontWeight: 700,
       color: settings.themeColor || '#ef4444',
       marginBottom: 8,
+      textAlign: 'center',
     },
     contactRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       fontSize: sizes.base - 1,
-      color: '#6b7280',
+      color: '#000000',
+      justifyContent: 'center',
     },
     contactItem: {
       marginRight: 8,
@@ -179,11 +271,16 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     section: {
       marginBottom: 14,
     },
+    sectionTitleContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: settings.themeColor || '#ef4444',
+      paddingBottom: 2,
+      marginBottom: 10,
+    },
     sectionTitle: {
       fontSize: sizes.heading,
       fontWeight: 700,
       color: settings.themeColor || '#ef4444',
-      marginBottom: 8,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
@@ -203,44 +300,42 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     itemTitle: {
       fontSize: sizes.base,
       fontWeight: 700,
-      color: '#111827',
+      color: '#000000',
       marginBottom: 2,
     },
     itemSubtitle: {
       fontSize: sizes.base,
-      color: '#4b5563',
+      color: '#000000',
     },
     itemDate: {
       fontSize: sizes.base - 1,
-      color: '#6b7280',
+      color: '#000000',
     },
     itemLocation: {
       fontSize: sizes.base - 1,
-      color: '#6b7280',
+      color: '#000000',
       marginBottom: 4,
     },
     itemDescription: {
       fontSize: sizes.base,
-      color: '#4b5563',
+      color: '#000000',
       lineHeight: 1.5,
+      hyphens: 'none',
     },
     skillsContainer: {
       flexDirection: 'column',
     },
     skillRow: {
-      flexDirection: 'row',
       marginBottom: 4,
     },
     skillCategory: {
       fontWeight: 700,
       fontSize: sizes.base,
-      color: '#111827',
-      width: 100,
+      color: '#000000',
     },
     skillItems: {
       fontSize: sizes.base,
-      color: '#4b5563',
-      flex: 1,
+      color: '#000000',
     },
     link: {
       fontSize: sizes.base - 1,
@@ -266,14 +361,14 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     ? `${getCountryByCode(personalInfo.phoneCountryCode)?.dialCode || ''} ${personalInfo.phone}`.trim()
     : '';
 
-  const contactItems = [
-    personalInfo.email,
-    phoneWithCode,
-    personalInfo.location,
-    personalInfo.linkedin,
-    personalInfo.website,
-    personalInfo.github,
-  ].filter((item) => item && item.trim());
+  const contactInfo = [
+    { value: personalInfo.email, Icon: MailIcon },
+    { value: phoneWithCode, Icon: PhoneIcon },
+    { value: personalInfo.location, Icon: MapPinIcon },
+    { value: personalInfo.linkedin, Icon: LinkedInIcon },
+    { value: personalInfo.website, Icon: WebsiteIcon },
+    { value: personalInfo.github, Icon: GitHubIcon },
+  ].filter((item) => item.value && item.value.trim());
 
   return (
     <Document>
@@ -287,12 +382,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             {personalInfo.name || 'Your Name'}
           </Text>
           <View style={styles.contactRow}>
-            {contactItems.map((item, index) => (
-              <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={styles.contactItem}>{item}</Text>
-                {index < contactItems.length - 1 && (
-                  <Text style={styles.bullet}>•</Text>
-                )}
+            {contactInfo.map((item, index) => (
+              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
+                <item.Icon />
+                <Text style={styles.contactItem}>{item.value}</Text>
               </View>
             ))}
           </View>
@@ -301,17 +394,21 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Professional Summary */}
         {personalInfo.summary && personalInfo.summary.trim() && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Professional Summary</Text>
-            <Text style={styles.itemDescription}>{personalInfo.summary}</Text>
+            <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+              <Text style={styles.sectionTitle}>Professional Summary</Text>
+            </View>
+            <PDFDescriptionRenderer text={personalInfo.summary} style={styles.itemDescription} />
           </View>
         )}
 
         {/* Work Experience */}
         {validWork && validWork.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Work Experience</Text>
+            <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+              <Text style={styles.sectionTitle}>Work Experience</Text>
+            </View>
             {validWork.map((exp) => (
-              <View key={exp.id} style={styles.itemContainer}>
+              <View key={exp.id} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>
@@ -329,7 +426,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                   <Text style={styles.itemLocation}>{exp.location}</Text>
                 )}
                 {exp.description && exp.description.trim() && (
-                  <Text style={styles.itemDescription}>{exp.description}</Text>
+                  <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
                 )}
               </View>
             ))}
@@ -339,9 +436,11 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Education */}
         {validEducation && validEducation.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Education</Text>
+            <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+              <Text style={styles.sectionTitle}>Education</Text>
+            </View>
             {validEducation.map((edu) => (
-              <View key={edu.id} style={styles.itemContainer}>
+              <View key={edu.id} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>
@@ -358,7 +457,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                   </Text>
                 </View>
                 {edu.description && edu.description.trim() && (
-                  <Text style={styles.itemDescription}>{edu.description}</Text>
+                  <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
                 )}
               </View>
             ))}
@@ -368,9 +467,11 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Projects */}
         {validProjects && validProjects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Projects</Text>
+            <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+              <Text style={styles.sectionTitle}>Projects</Text>
+            </View>
             {validProjects.map((proj) => (
-              <View key={proj.id} style={styles.itemContainer}>
+              <View key={proj.id} style={styles.itemContainer} wrap={false}>
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
                     <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
@@ -397,7 +498,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                   </Text>
                 )}
                 {proj.description && proj.description.trim() && (
-                  <Text style={styles.itemDescription}>{proj.description}</Text>
+                  <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
                 )}
               </View>
             ))}
@@ -407,31 +508,39 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Skills */}
         {validSkills && validSkills.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Skills</Text>
+            <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+              <Text style={styles.sectionTitle}>Skills</Text>
+            </View>
             <View style={styles.skillsContainer}>
               {validSkills.map((skill) => (
-                <View key={skill.id} style={styles.skillRow}>
-                  <Text style={styles.skillCategory}>
-                    {skill.category || 'Category'}:
+                <View key={skill.id} style={styles.skillRow} wrap={false}>
+                  <Text style={styles.skillItems}>
+                    <Text style={styles.skillCategory}>
+                      {skill.category || 'Category'}:
+                    </Text>{' '}
+                    {skill.items || ''}
                   </Text>
-                  <Text style={styles.skillItems}>{skill.items || ''}</Text>
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* Custom Sections */}
-        {validCustom &&
-          validCustom.length > 0 &&
-          validCustom.map((section) => (
+        {/* Additional Sections */}
+        {validAdditional &&
+          validAdditional.length > 0 &&
+          validAdditional.map((section) => (
             <View key={section.id} style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {section.title || 'Section'}
-              </Text>
-              <Text style={styles.itemDescription}>
-                {section.description || ''}
-              </Text>
+              <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+                <Text style={styles.sectionTitle}>
+                  {section.title || 'Section'}
+                </Text>
+              </View>
+              <PDFDescriptionRenderer
+                text={section.description || ''}
+                style={styles.itemDescription}
+                isHtml={true}
+              />
             </View>
           ))}
       </Page>

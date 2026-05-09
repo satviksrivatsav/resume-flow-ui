@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Plus, Trash2, ChevronDown, ChevronUp, Calendar } from "lucide-react";
+import { GraduationCap, Plus, ChevronDown, ChevronUp, Calendar } from "lucide-react";
+import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
@@ -87,17 +88,19 @@ export const EducationForm = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 ml-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteEducation(edu.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <motion.div whileHover="hover" whileTap="tap">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteEducation(edu.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                      >
+                        <TrashAnimatedIcon className="w-4 h-4" />
+                      </Button>
+                    </motion.div>
                     <div className="text-muted-foreground p-1">
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
@@ -114,7 +117,7 @@ export const EducationForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 md:col-span-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             School / University <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -125,7 +128,7 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Degree <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -136,7 +139,8 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Field of Study</Label>
+                          <Label className="font-medium">
+Field of Study</Label>
                           <Input
                             value={edu.field}
                             onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
@@ -158,7 +162,8 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grade / GPA</Label>
+                          <Label className="font-medium">
+Grade / GPA <span className="text-red-500">*</span></Label>
                           <Input
                             value={edu.grade}
                             onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}

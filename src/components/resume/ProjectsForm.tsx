@@ -4,7 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FolderGit2, Plus, Trash2, ChevronDown, ChevronUp, Link as LinkIcon, Calendar, Code2 } from "lucide-react";
+import { FolderGit2, Plus, ChevronDown, ChevronUp, Link as LinkIcon, Calendar, Code2 } from "lucide-react";
+import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { AIWriterButton } from "@/components/ui/AIWriterButton";
@@ -98,17 +99,19 @@ export const ProjectsForm = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 ml-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteProject(proj.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <motion.div whileHover="hover" whileTap="tap">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteProject(proj.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                      >
+                        <TrashAnimatedIcon className="w-4 h-4" />
+                      </Button>
+                    </motion.div>
                     <div className="text-muted-foreground p-1">
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
@@ -125,7 +128,7 @@ export const ProjectsForm = () => {
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Label className="font-medium">
                             Project Name <span className="text-red-500">*</span>
                           </Label>
                           <Input
@@ -136,8 +139,8 @@ export const ProjectsForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Your Role <span className="text-red-500">*</span>
+                          <Label className="font-medium">
+                            Your Role
                           </Label>
                           <Input
                             value={proj.role || ''}
@@ -148,7 +151,7 @@ export const ProjectsForm = () => {
 
                         <div className="md:col-span-2">
                           <TechChipsInput
-                            label={<span>Technologies <span className="text-red-500">*</span></span>}
+                            label={<span>Technologies</span>}
                             value={Array.isArray(proj.technologies) ? proj.technologies : []}
                             onChange={(techs) => updateProject(proj.id, { technologies: techs })}
                             placeholder="Type a technology and press Enter"
@@ -157,12 +160,12 @@ export const ProjectsForm = () => {
 
                         <div className="grid grid-cols-1 gap-4">
                           <MonthYearPicker
-                            label={<span>Start Date <span className="text-red-500">*</span></span>}
+                            label={<span>Start Date</span>}
                             value={proj.startDate}
                             onChange={(value) => updateProject(proj.id, { startDate: value })}
                           />
                           <MonthYearPicker
-                            label={<span>End Date {!proj.ongoing && <span className="text-red-500">*</span>}</span>}
+                            label={<span>End Date</span>}
                             value={proj.endDate}
                             onChange={(value) => updateProject(proj.id, { endDate: value })}
                             disabled={proj.ongoing}
@@ -186,7 +189,7 @@ export const ProjectsForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Project Link</Label>
+                          <Label className="font-medium">Project Link</Label>
                           <div className="relative">
                             <Input
                               value={proj.link}
@@ -249,4 +252,3 @@ export const ProjectsForm = () => {
     </motion.div>
   );
 };
-

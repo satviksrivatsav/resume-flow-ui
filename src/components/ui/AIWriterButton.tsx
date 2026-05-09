@@ -3,6 +3,8 @@ import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import Lottie from 'lottie-react';
+import aiSearchAnimation from '@/assets/AI Searching.json';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,6 +23,8 @@ interface AIWriterButtonProps {
 export function AIWriterButton({ fieldName, fieldLabel, fieldValue, onUpdate }: AIWriterButtonProps) {
     const { openInstructionModal, isLoading } = useAIWriterStore();
     const [isOpen, setIsOpen] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const handleAction = (action: 'REWRITE' | 'GENERATE') => {
         console.log('🔘 AI Writer Button clicked:', { fieldName, action });
@@ -28,18 +32,39 @@ export function AIWriterButton({ fieldName, fieldLabel, fieldValue, onUpdate }: 
         setIsOpen(false);
     };
 
-    const hasContent = fieldValue && fieldValue.trim().length > 0;
+    const hasContent = (() => {
+        if (!fieldValue) return false;
+        // Parse HTML to get plain text, so empty rich text like <p><br></p> is correctly identified as empty
+        const doc = new DOMParser().parseFromString(fieldValue, 'text/html');
+        return (doc.body.textContent || "").trim().length > 0;
+    })();
 
     return (
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
-                <motion.div whileHover="hover" whileTap="tap" style={{ display: 'inline-flex', overflow: 'hidden' }}>
+                <motion.div 
+                    onHoverStart={() => {
+                        setIsHovered(true);
+                        setIsAnimating(true);
+                    }}
+                    onHoverEnd={() => setIsHovered(false)}
+                    animate={isHovered || isAnimating ? "hover" : "initial"}
+                    onAnimationComplete={() => setIsAnimating(false)}
+                    whileTap="tap"
+                    style={{ display: 'inline-flex', overflow: 'hidden' }}
+                >
                   <Button
                       variant="ghost"
                       className="gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
                       disabled={isLoading}
                   >
-                      <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
+                      {isLoading ? (
+                          <div className="w-4 h-4 flex items-center justify-center">
+                              <Lottie animationData={aiSearchAnimation} loop={true} />
+                          </div>
+                      ) : (
+                          <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
+                      )}
                       AI Writer
                   </Button>
                 </motion.div>
