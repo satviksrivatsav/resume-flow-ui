@@ -1,11 +1,12 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Heart, Plus } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { TechChipsInput } from "@/components/ui/TechChipsInput";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Heart, Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TechChipsInput } from '@/components/ui/TechChipsInput';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const InterestsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -56,7 +57,9 @@ export const InterestsForm = () => {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Interest / Hobby <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Interest / Hobby <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={interest.name}
                     onChange={(e) => updateItem('interests', interest.id, { name: e.target.value })}

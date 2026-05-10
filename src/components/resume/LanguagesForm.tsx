@@ -1,11 +1,12 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Languages, Plus, Trash2 } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { Slider } from "@/components/ui/slider";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Languages, Plus, Trash2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const LanguagesForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -56,7 +57,9 @@ export const LanguagesForm = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="font-medium">Language Name <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Language Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={lang.name}
                     onChange={(e) => updateItem('languages', lang.id, { name: e.target.value })}
@@ -68,7 +71,9 @@ export const LanguagesForm = () => {
                   <Label className="font-medium">Fluency / Proficiency</Label>
                   <Input
                     value={lang.description}
-                    onChange={(e) => updateItem('languages', lang.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('languages', lang.id, { description: e.target.value })
+                    }
                     placeholder="e.g. Native, Professional Working, Conversational"
                   />
                 </div>

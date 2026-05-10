@@ -1,13 +1,14 @@
-import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
+import { create } from 'zustand';
+
 import {
-  ResumeData,
   defaultResumeData,
   EducationItem,
   ExperienceItem,
-  ProjectItem,
-  SkillItem,
   ProfileItem,
+  ProjectItem,
+  ResumeData,
+  SkillItem,
 } from '@/types/resume';
 
 interface ResumeStore {
@@ -25,7 +26,10 @@ interface ResumeStore {
   updateMetadata: (metadata: Partial<ResumeData['metadata']>) => void;
 
   // Sections
-  updateSection: (sectionKey: keyof ResumeData['sections'], data: Partial<ResumeData['sections'][keyof ResumeData['sections']]>) => void;
+  updateSection: (
+    sectionKey: keyof ResumeData['sections'],
+    data: Partial<ResumeData['sections'][keyof ResumeData['sections']]>,
+  ) => void;
 
   // Items (Generic Handlers for arrays)
   addItem: (sectionKey: keyof ResumeData['sections'], item: any) => void;
@@ -52,7 +56,7 @@ interface ResumeStore {
   addProfile: () => void;
   updateProfile: (id: string, item: Partial<ProfileItem>) => void;
   deleteProfile: (id: string) => void;
-  
+
   // Helper for quick profile updates from Personal Info Form
   updateProfileByNetwork: (network: string, username: string) => void;
 
@@ -140,7 +144,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
             [sectionKey]: {
               ...section,
               items: section.items.map((item: any) =>
-                item.id === id ? { ...item, ...data } : item
+                item.id === id ? { ...item, ...data } : item,
               ),
             },
           },
@@ -166,15 +170,41 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     }),
 
   // Helpers
-  addEducation: () => get().addItem('education', { school: '', degree: '', area: '', grade: '', location: '', period: '', website: { label: '', href: '' }, description: '' }),
+  addEducation: () =>
+    get().addItem('education', {
+      school: '',
+      degree: '',
+      area: '',
+      grade: '',
+      location: '',
+      period: '',
+      website: { label: '', href: '' },
+      description: '',
+    }),
   updateEducation: (id, item) => get().updateItem('education', id, item),
   deleteEducation: (id) => get().deleteItem('education', id),
 
-  addExperience: () => get().addItem('experience', { company: '', position: '', location: '', period: '', website: { label: '', href: '' }, description: '', roles: [] }),
+  addExperience: () =>
+    get().addItem('experience', {
+      company: '',
+      position: '',
+      location: '',
+      period: '',
+      website: { label: '', href: '' },
+      description: '',
+      roles: [],
+    }),
   updateExperience: (id, item) => get().updateItem('experience', id, item),
   deleteExperience: (id) => get().deleteItem('experience', id),
 
-  addProject: () => get().addItem('projects', { name: '', description: '', period: '', website: { label: '', href: '' }, keywords: [] }),
+  addProject: () =>
+    get().addItem('projects', {
+      name: '',
+      description: '',
+      period: '',
+      website: { label: '', href: '' },
+      keywords: [],
+    }),
   updateProject: (id, item) => get().updateItem('projects', id, item),
   deleteProject: (id) => get().deleteItem('projects', id),
 
@@ -182,7 +212,13 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   updateSkill: (id, item) => get().updateItem('skills', id, item),
   deleteSkill: (id) => get().deleteItem('skills', id),
 
-  addProfile: () => get().addItem('profiles', { network: '', username: '', icon: '', website: { label: '', href: '' } }),
+  addProfile: () =>
+    get().addItem('profiles', {
+      network: '',
+      username: '',
+      icon: '',
+      website: { label: '', href: '' },
+    }),
   updateProfile: (id, item) => get().updateItem('profiles', id, item),
   deleteProfile: (id) => get().deleteItem('profiles', id),
 
@@ -195,14 +231,23 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       if (!username) {
         state.deleteItem('profiles', existing.id);
       } else {
-        state.updateItem('profiles', existing.id, { username, website: { ...existing.website, href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}` } });
+        state.updateItem('profiles', existing.id, {
+          username,
+          website: {
+            ...existing.website,
+            href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}`,
+          },
+        });
       }
     } else if (username) {
-      state.addItem('profiles', { 
-          network, 
-          username, 
-          icon: network.toLowerCase(), 
-          website: { label: '', href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}` } 
+      state.addItem('profiles', {
+        network,
+        username,
+        icon: network.toLowerCase(),
+        website: {
+          label: '',
+          href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}`,
+        },
       });
     }
   },
@@ -233,7 +278,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       resumeData: {
         ...state.resumeData,
         customSections: state.resumeData.customSections.map((section) =>
-          section.id === id ? { ...section, ...data } : section
+          section.id === id ? { ...section, ...data } : section,
         ),
       },
     })),

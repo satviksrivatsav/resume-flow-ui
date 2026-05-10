@@ -1,11 +1,12 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Users, Plus, Phone, Mail, User } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Mail, Phone, Plus, User, Users } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const ReferencesForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -56,7 +57,9 @@ export const ReferencesForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Name <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Name <span className="text-red-500">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       value={ref.name}
@@ -107,7 +110,9 @@ export const ReferencesForm = () => {
                   <Label className="font-medium">Summary / Context</Label>
                   <Textarea
                     value={ref.description}
-                    onChange={(e) => updateItem('references', ref.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('references', ref.id, { description: e.target.value })
+                    }
                     placeholder="Briefly describe how you worked together or what they can speak to."
                     className="min-h-[80px]"
                   />

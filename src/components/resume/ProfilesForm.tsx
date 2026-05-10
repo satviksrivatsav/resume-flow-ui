@@ -1,10 +1,11 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Github, Linkedin, Twitter, Globe, Plus, User } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Github, Globe, Linkedin, Plus, Twitter, User } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const ProfilesForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -63,16 +64,20 @@ export const ProfilesForm = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="font-medium">Network <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Network <span className="text-red-500">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       value={profile.network}
-                      onChange={(e) => updateItem('profiles', profile.id, { network: e.target.value })}
+                      onChange={(e) =>
+                        updateItem('profiles', profile.id, { network: e.target.value })
+                      }
                       placeholder="e.g. GitHub, LinkedIn"
                       className="pl-9"
                     />
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        {getNetworkIcon(profile.network)}
+                      {getNetworkIcon(profile.network)}
                     </div>
                   </div>
                 </div>
@@ -82,7 +87,9 @@ export const ProfilesForm = () => {
                   <div className="relative">
                     <Input
                       value={profile.username}
-                      onChange={(e) => updateItem('profiles', profile.id, { username: e.target.value })}
+                      onChange={(e) =>
+                        updateItem('profiles', profile.id, { username: e.target.value })
+                      }
                       placeholder="e.g. johndoe"
                       className="pl-9"
                     />
@@ -95,7 +102,11 @@ export const ProfilesForm = () => {
                   <div className="relative">
                     <Input
                       value={profile.website.href}
-                      onChange={(e) => updateItem('profiles', profile.id, { website: { ...profile.website, href: e.target.value } })}
+                      onChange={(e) =>
+                        updateItem('profiles', profile.id, {
+                          website: { ...profile.website, href: e.target.value },
+                        })
+                      }
                       placeholder="e.g. https://github.com/johndoe"
                       className="pl-9"
                     />

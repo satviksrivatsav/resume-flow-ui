@@ -1,11 +1,12 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Wrench, Plus } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { TechChipsInput } from "@/components/ui/TechChipsInput";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus, Wrench } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TechChipsInput } from '@/components/ui/TechChipsInput';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const SkillsForm = () => {
   const { resumeData, addSkill, updateSkill, deleteSkill } = useResumeStore();
@@ -56,7 +57,9 @@ export const SkillsForm = () => {
 
               <div className="space-y-6">
                 <div className="space-y-2 max-w-md">
-                  <Label className="font-medium">Category Name <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Category Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={skill.name}
                     onChange={(e) => updateSkill(skill.id, { name: e.target.value })}

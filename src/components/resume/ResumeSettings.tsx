@@ -1,22 +1,50 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { useResumeStore } from "@/stores/resumeStore";
-import { Pencil } from "lucide-react";
-import { motion } from "framer-motion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { motion } from 'framer-motion';
+import { Pencil } from 'lucide-react';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useResumeStore } from '@/stores/resumeStore';
 
 const THEME_COLORS = [
-  '#0f172a', '#1e293b', '#334155', // Col 1
-  '#475569', '#1e3a8a', '#1d4ed8', '#2563eb', // Col 2
-  '#3b82f6', '#0d9488', '#0891b2', '#059669', // Col 3 (surrounding custom)
-  '#16a34a', '#15803d', '#a16207', '#b45309', // Col 4
-  '#c2410c', '#dc2626', '#991b1b', // Col 5
+  '#0f172a',
+  '#1e293b',
+  '#334155', // Col 1
+  '#475569',
+  '#1e3a8a',
+  '#1d4ed8',
+  '#2563eb', // Col 2
+  '#3b82f6',
+  '#0d9488',
+  '#0891b2',
+  '#059669', // Col 3 (surrounding custom)
+  '#16a34a',
+  '#15803d',
+  '#a16207',
+  '#b45309', // Col 4
+  '#c2410c',
+  '#dc2626',
+  '#991b1b', // Col 5
 ];
 
 const FONT_FAMILIES = [
-  'Open Sans', 'Roboto', 'Lato', 'Montserrat', 'Raleway',
-  'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather',
+  'Open Sans',
+  'Roboto',
+  'Lato',
+  'Montserrat',
+  'Raleway',
+  'Caladea',
+  'Lora',
+  'Roboto Slab',
+  'Playfair Display',
+  'Merriweather',
 ];
 
 const FONT_SIZES = [
@@ -35,12 +63,12 @@ const ColorHexagon = ({ color, isActive, onClick }: ColorHexagonProps) => (
   <motion.button
     whileHover={{ y: -4, scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
-    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
     onClick={() => onClick(color)}
     className="w-16 h-14 relative transition-colors flex-shrink-0 drop-shadow-sm hover:drop-shadow-md border-none outline-none will-change-transform"
-    style={{ 
+    style={{
       backgroundColor: color,
-      clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+      clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
     }}
   >
     {isActive && (
@@ -49,7 +77,12 @@ const ColorHexagon = ({ color, isActive, onClick }: ColorHexagonProps) => (
         animate={{ scale: 1 }}
         className="absolute inset-0 flex items-center justify-center bg-black/10"
       >
-        <svg className="w-6 h-6 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          className="w-6 h-6 text-white drop-shadow-md"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
         </svg>
       </motion.div>
@@ -64,21 +97,27 @@ export const ResumeSettings = () => {
   const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
 
   // Sync local modal state when dialog opens
-  const handleDialogOpenChange = useCallback((open: boolean) => {
-    if (open) {
-      setModalColor(metadata.theme.primary);
-    }
-    setIsColorDialogOpen(open);
-  }, [metadata.theme.primary]);
+  const handleDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setModalColor(metadata.theme.primary);
+      }
+      setIsColorDialogOpen(open);
+    },
+    [metadata.theme.primary],
+  );
 
   const handleApplyColor = useCallback(() => {
     updateMetadata({ theme: { ...metadata.theme, primary: modalColor } });
     setIsColorDialogOpen(false);
   }, [modalColor, updateMetadata, metadata.theme]);
 
-  const handleColorClick = useCallback((color: string) => {
-    updateMetadata({ theme: { ...metadata.theme, primary: color } });
-  }, [updateMetadata, metadata.theme]);
+  const handleColorClick = useCallback(
+    (color: string) => {
+      updateMetadata({ theme: { ...metadata.theme, primary: color } });
+    },
+    [updateMetadata, metadata.theme],
+  );
 
   return (
     <motion.div
@@ -90,56 +129,58 @@ export const ResumeSettings = () => {
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-sm font-medium mb-1">Theme Color</h3>
-          <p className="text-xs font-mono text-muted-foreground uppercase">{metadata.theme.primary}</p>
+          <p className="text-xs font-mono text-muted-foreground uppercase">
+            {metadata.theme.primary}
+          </p>
         </div>
-        
+
         <div className="flex justify-center space-x-[-12px] pb-4 overflow-visible">
           {/* Col 1 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(0, 3).map(c => (
-              <ColorHexagon 
-                key={c} 
-                color={c} 
-                isActive={metadata.theme.primary === c} 
-                onClick={handleColorClick} 
+            {THEME_COLORS.slice(0, 3).map((c) => (
+              <ColorHexagon
+                key={c}
+                color={c}
+                isActive={metadata.theme.primary === c}
+                onClick={handleColorClick}
               />
             ))}
           </div>
 
           {/* Col 2 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(3, 7).map(c => (
-              <ColorHexagon 
-                key={c} 
-                color={c} 
-                isActive={metadata.theme.primary === c} 
-                onClick={handleColorClick} 
+            {THEME_COLORS.slice(3, 7).map((c) => (
+              <ColorHexagon
+                key={c}
+                color={c}
+                isActive={metadata.theme.primary === c}
+                onClick={handleColorClick}
               />
             ))}
           </div>
 
           {/* Col 3: Middle column with custom picker */}
           <div className="flex flex-col gap-1 justify-center">
-            <ColorHexagon 
-              color={THEME_COLORS[7]} 
-              isActive={metadata.theme.primary === THEME_COLORS[7]} 
-              onClick={handleColorClick} 
+            <ColorHexagon
+              color={THEME_COLORS[7]}
+              isActive={metadata.theme.primary === THEME_COLORS[7]}
+              onClick={handleColorClick}
             />
-            <ColorHexagon 
-              color={THEME_COLORS[8]} 
-              isActive={metadata.theme.primary === THEME_COLORS[8]} 
-              onClick={handleColorClick} 
+            <ColorHexagon
+              color={THEME_COLORS[8]}
+              isActive={metadata.theme.primary === THEME_COLORS[8]}
+              onClick={handleColorClick}
             />
-            
+
             <Dialog open={isColorDialogOpen} onOpenChange={handleDialogOpenChange}>
               <DialogTrigger asChild>
                 <motion.button
                   whileHover={{ y: -4, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   className="w-16 h-14 relative transition-colors bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
-                  style={{ 
-                    clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
+                  style={{
+                    clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
                   }}
                 >
                   <Pencil className="w-5 h-5 text-white" />
@@ -174,38 +215,38 @@ export const ResumeSettings = () => {
               </DialogContent>
             </Dialog>
 
-            <ColorHexagon 
-              color={THEME_COLORS[9]} 
-              isActive={metadata.theme.primary === THEME_COLORS[9]} 
-              onClick={handleColorClick} 
+            <ColorHexagon
+              color={THEME_COLORS[9]}
+              isActive={metadata.theme.primary === THEME_COLORS[9]}
+              onClick={handleColorClick}
             />
-            <ColorHexagon 
-              color={THEME_COLORS[10]} 
-              isActive={metadata.theme.primary === THEME_COLORS[10]} 
-              onClick={handleColorClick} 
+            <ColorHexagon
+              color={THEME_COLORS[10]}
+              isActive={metadata.theme.primary === THEME_COLORS[10]}
+              onClick={handleColorClick}
             />
           </div>
 
           {/* Col 4 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(11, 15).map(c => (
-              <ColorHexagon 
-                key={c} 
-                color={c} 
-                isActive={metadata.theme.primary === c} 
-                onClick={handleColorClick} 
+            {THEME_COLORS.slice(11, 15).map((c) => (
+              <ColorHexagon
+                key={c}
+                color={c}
+                isActive={metadata.theme.primary === c}
+                onClick={handleColorClick}
               />
             ))}
           </div>
 
           {/* Col 5 */}
           <div className="flex flex-col gap-1 justify-center">
-            {THEME_COLORS.slice(15, 18).map(c => (
-              <ColorHexagon 
-                key={c} 
-                color={c} 
-                isActive={metadata.theme.primary === c} 
-                onClick={handleColorClick} 
+            {THEME_COLORS.slice(15, 18).map((c) => (
+              <ColorHexagon
+                key={c}
+                color={c}
+                isActive={metadata.theme.primary === c}
+                onClick={handleColorClick}
               />
             ))}
           </div>
@@ -221,11 +262,14 @@ export const ResumeSettings = () => {
               key={font}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => updateMetadata({ typography: { ...metadata.typography, fontFamily: font } })}
-              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${metadata.typography.fontFamily === font
-                ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                : 'border-border bg-background hover:border-primary/50'
-                }`}
+              onClick={() =>
+                updateMetadata({ typography: { ...metadata.typography, fontFamily: font } })
+              }
+              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${
+                metadata.typography.fontFamily === font
+                  ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                  : 'border-border bg-background hover:border-primary/50'
+              }`}
               style={{ fontFamily: font }}
             >
               {font}
@@ -238,9 +282,7 @@ export const ResumeSettings = () => {
       <div className="space-y-3">
         <div>
           <h3 className="text-sm font-medium mb-1">Font Size (pt)</h3>
-          <p className="text-xs text-muted-foreground">
-            {metadata.typography.fontSize}pt
-          </p>
+          <p className="text-xs text-muted-foreground">{metadata.typography.fontSize}pt</p>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {FONT_SIZES.map((size) => (
@@ -248,11 +290,14 @@ export const ResumeSettings = () => {
               key={size.value}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => updateMetadata({ typography: { ...metadata.typography, fontSize: size.pt } })}
-              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${metadata.typography.fontSize === size.pt
-                ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                : 'border-border bg-background hover:border-primary/50'
-                }`}
+              onClick={() =>
+                updateMetadata({ typography: { ...metadata.typography, fontSize: size.pt } })
+              }
+              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${
+                metadata.typography.fontSize === size.pt
+                  ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                  : 'border-border bg-background hover:border-primary/50'
+              }`}
             >
               {size.label}
             </motion.button>

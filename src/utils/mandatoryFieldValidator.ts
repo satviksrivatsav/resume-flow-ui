@@ -1,42 +1,35 @@
-import { ResumeData } from "@/types/resume";
+import { ResumeData } from '@/types/resume';
 
 export const isBasicsComplete = (basics: ResumeData['basics']) => {
-  return !!(
-    basics.name?.trim() &&
-    basics.email?.trim() &&
-    basics.phone?.trim()
+  return !!(basics.name?.trim() && basics.email?.trim() && basics.phone?.trim());
+};
+
+export const isWorkExperienceComplete = (
+  workExperience: ResumeData['sections']['experience']['items'],
+) => {
+  return (
+    workExperience.length > 0 &&
+    workExperience.every((exp) => exp.position?.trim() && exp.company?.trim() && exp.period?.trim())
   );
 };
 
-export const isWorkExperienceComplete = (workExperience: ResumeData['sections']['experience']['items']) => {
-  return workExperience.length > 0 &&
-    workExperience.every(exp =>
-      exp.position?.trim() &&
-      exp.company?.trim() &&
-      exp.period?.trim()
-    );
-};
-
 export const isEducationComplete = (education: ResumeData['sections']['education']['items']) => {
-  return education.length > 0 &&
-    education.every(edu =>
-      edu.school?.trim() &&
-      edu.degree?.trim() &&
-      edu.period?.trim()
-    );
+  return (
+    education.length > 0 &&
+    education.every((edu) => edu.school?.trim() && edu.degree?.trim() && edu.period?.trim())
+  );
 };
 
 export const isProjectsComplete = (projects: ResumeData['sections']['projects']['items']) => {
-  return projects.length > 0 &&
-    projects.every(proj =>
-      proj.name?.trim() &&
-      proj.description?.trim()
-    );
+  return (
+    projects.length > 0 && projects.every((proj) => proj.name?.trim() && proj.description?.trim())
+  );
 };
 
 export const isSkillsComplete = (skills: ResumeData['sections']['skills']['items']) => {
-  return skills.length > 0 &&
-    skills.every(skill => skill.name?.trim() && skill.keywords.length > 0);
+  return (
+    skills.length > 0 && skills.every((skill) => skill.name?.trim() && skill.keywords.length > 0)
+  );
 };
 
 /**
@@ -53,23 +46,25 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
   const { sections } = resumeData;
 
   // Work Experience (if entries exist, they must be valid)
-  if (sections.experience.items.some(exp => 
-    !exp.position?.trim() || !exp.company?.trim() || !exp.period?.trim()
-  )) {
+  if (
+    sections.experience.items.some(
+      (exp) => !exp.position?.trim() || !exp.company?.trim() || !exp.period?.trim(),
+    )
+  ) {
     missingForms.push('Work Experience');
   }
 
   // Education (if entries exist, they must be valid)
-  if (sections.education.items.some(edu => 
-    !edu.school?.trim() || !edu.degree?.trim() || !edu.period?.trim()
-  )) {
+  if (
+    sections.education.items.some(
+      (edu) => !edu.school?.trim() || !edu.degree?.trim() || !edu.period?.trim(),
+    )
+  ) {
     missingForms.push('Education');
   }
 
   // Projects (if entries exist, they must be valid)
-  if (sections.projects.items.some(proj => 
-    !proj.name?.trim() || !proj.description?.trim()
-  )) {
+  if (sections.projects.items.some((proj) => !proj.name?.trim() || !proj.description?.trim())) {
     missingForms.push('Projects');
   }
 
@@ -82,37 +77,37 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
 export const getSectionCompletionStatus = (sectionId: string, resumeData: ResumeData): boolean => {
   const { basics, sections, customSections } = resumeData;
   switch (sectionId) {
-    case "personal":
+    case 'personal':
       return isBasicsComplete(basics);
-    case "work":
+    case 'work':
       return isWorkExperienceComplete(sections.experience.items);
-    case "education":
+    case 'education':
       return isEducationComplete(sections.education.items);
-    case "projects":
+    case 'projects':
       return isProjectsComplete(sections.projects.items);
-    case "skills":
+    case 'skills':
       return isSkillsComplete(sections.skills.items);
-    case "profiles":
+    case 'profiles':
       return sections.profiles.items.length > 0;
-    case "languages":
+    case 'languages':
       return sections.languages.items.length > 0;
-    case "interests":
+    case 'interests':
       return sections.interests.items.length > 0;
-    case "awards":
+    case 'awards':
       return sections.awards.items.length > 0;
-    case "certifications":
+    case 'certifications':
       return sections.certifications.items.length > 0;
-    case "publications":
+    case 'publications':
       return sections.publications.items.length > 0;
-    case "volunteer":
+    case 'volunteer':
       return sections.volunteer.items.length > 0;
-    case "references":
+    case 'references':
       return sections.references.items.length > 0;
-    case "settings":
+    case 'settings':
       return true;
     default:
       // Check if it's a custom section
-      const custom = customSections.find(s => s.id === sectionId);
+      const custom = customSections.find((s) => s.id === sectionId);
       return custom ? custom.items.length > 0 : false;
   }
 };

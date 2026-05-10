@@ -1,24 +1,26 @@
-import { useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
-import { AnimatePresence } from "framer-motion";
-import Index from "./pages/Index";
-import ResumeBuilder from "./pages/ResumeBuilder";
-import UploadResume from "./pages/UploadResume";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import AuthLayout from "./components/layout/AuthLayout";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import UpdatePasswordPage from "./pages/UpdatePasswordPage";
-import NotFound from "./pages/NotFound";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { useAuthStore } from "./stores/authStore";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AnimatePresence } from 'framer-motion';
+import { ThemeProvider } from 'next-themes';
+import { useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
+
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import AuthLayout from './components/layout/AuthLayout';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import Index from './pages/Index';
+import LoginPage from './pages/LoginPage';
+import NotFound from './pages/NotFound';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ResumeBuilder from './pages/ResumeBuilder';
+import SignUpPage from './pages/SignUpPage';
+import TermsOfService from './pages/TermsOfService';
+import UpdatePasswordPage from './pages/UpdatePasswordPage';
+import UploadResume from './pages/UploadResume';
+import { useAuthStore } from './stores/authStore';
 
 const queryClient = new QueryClient();
 
@@ -42,7 +44,15 @@ function AnimatedRoutes() {
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/update-password" element={<ProtectedRoute> <UpdatePasswordPage /> </ProtectedRoute>} />
+        <Route
+          path="/update-password"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <UpdatePasswordPage />{' '}
+            </ProtectedRoute>
+          }
+        />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />

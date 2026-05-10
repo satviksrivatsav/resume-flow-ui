@@ -1,18 +1,25 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Award, Plus, Calendar, Link as LinkIcon } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Award, Calendar, Link as LinkIcon, Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const CertificationsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
   const { items: certifications } = resumeData.sections.certifications;
 
   const handleAdd = () => {
-    addItem('certifications', { name: '', issuer: '', date: '', description: '', website: { label: '', href: '' } });
+    addItem('certifications', {
+      name: '',
+      issuer: '',
+      date: '',
+      description: '',
+      website: { label: '', href: '' },
+    });
   };
 
   return (
@@ -56,10 +63,14 @@ export const CertificationsForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Certification Name <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Certification Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={cert.name}
-                    onChange={(e) => updateItem('certifications', cert.id, { name: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('certifications', cert.id, { name: e.target.value })
+                    }
                     placeholder="e.g. AWS Certified Solutions Architect"
                   />
                 </div>
@@ -68,7 +79,9 @@ export const CertificationsForm = () => {
                   <Label className="font-medium">Issuer</Label>
                   <Input
                     value={cert.issuer}
-                    onChange={(e) => updateItem('certifications', cert.id, { issuer: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('certifications', cert.id, { issuer: e.target.value })
+                    }
                     placeholder="e.g. Amazon Web Services"
                   />
                 </div>
@@ -78,7 +91,9 @@ export const CertificationsForm = () => {
                   <div className="relative">
                     <Input
                       value={cert.date}
-                      onChange={(e) => updateItem('certifications', cert.id, { date: e.target.value })}
+                      onChange={(e) =>
+                        updateItem('certifications', cert.id, { date: e.target.value })
+                      }
                       placeholder="e.g. 2022-05"
                       className="pl-9"
                     />
@@ -91,7 +106,11 @@ export const CertificationsForm = () => {
                   <div className="relative">
                     <Input
                       value={cert.website.href}
-                      onChange={(e) => updateItem('certifications', cert.id, { website: { ...cert.website, href: e.target.value } })}
+                      onChange={(e) =>
+                        updateItem('certifications', cert.id, {
+                          website: { ...cert.website, href: e.target.value },
+                        })
+                      }
                       placeholder="e.g. https://aws.amazon.com/..."
                       className="pl-9"
                     />
@@ -103,7 +122,9 @@ export const CertificationsForm = () => {
                   <Label className="font-medium">Description</Label>
                   <Textarea
                     value={cert.description}
-                    onChange={(e) => updateItem('certifications', cert.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('certifications', cert.id, { description: e.target.value })
+                    }
                     placeholder="Optional details about the certification."
                     className="min-h-[80px]"
                   />

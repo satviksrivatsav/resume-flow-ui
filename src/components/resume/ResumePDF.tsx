@@ -1,20 +1,21 @@
 // src/components/resume/ResumePDF.tsx
 // Using local font files from public/fonts folder
 
-import React from 'react';
 import {
+  Circle,
   Document,
-  Page,
-  View,
-  Text,
-  StyleSheet,
   Font,
   Link,
-  Svg,
+  Page,
   Path,
-  Circle,
   Rect,
+  StyleSheet,
+  Svg,
+  Text,
+  View,
 } from '@react-pdf/renderer';
+import React from 'react';
+
 import { ResumeData } from '@/types/resume';
 
 interface ResumePDFProps {
@@ -22,7 +23,7 @@ interface ResumePDFProps {
 }
 
 // Register fonts from public/fonts folder
-Font.registerHyphenationCallback(word => [word]);
+Font.registerHyphenationCallback((word) => [word]);
 
 // Registering default fonts
 Font.register({
@@ -30,7 +31,7 @@ Font.register({
   fonts: [
     { src: '/fonts/Roboto-Regular.ttf', fontWeight: 400 },
     { src: '/fonts/Roboto-Bold.ttf', fontWeight: 700 },
-  ]
+  ],
 });
 
 Font.register({
@@ -38,7 +39,7 @@ Font.register({
   fonts: [
     { src: '/fonts/OpenSans-Regular.ttf', fontWeight: 400 },
     { src: '/fonts/OpenSans-Bold.ttf', fontWeight: 700 },
-  ]
+  ],
 });
 
 const MailIcon = () => (
@@ -50,13 +51,23 @@ const MailIcon = () => (
 
 const PhoneIcon = () => (
   <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
-    <Path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#000" strokeWidth={2} fill="none" />
+    <Path
+      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+      stroke="#000"
+      strokeWidth={2}
+      fill="none"
+    />
   </Svg>
 );
 
 const MapPinIcon = () => (
   <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
-    <Path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" stroke="#000" strokeWidth={2} fill="none" />
+    <Path
+      d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"
+      stroke="#000"
+      strokeWidth={2}
+      fill="none"
+    />
     <Circle cx="12" cy="10" r="3" stroke="#000" strokeWidth={2} fill="none" />
   </Svg>
 );
@@ -64,7 +75,12 @@ const MapPinIcon = () => (
 const WebsiteIcon = () => (
   <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
     <Circle cx="12" cy="12" r="10" stroke="#000" strokeWidth={2} fill="none" />
-    <Path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#000" strokeWidth={2} fill="none" />
+    <Path
+      d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+      stroke="#000"
+      strokeWidth={2}
+      fill="none"
+    />
   </Svg>
 );
 
@@ -85,42 +101,47 @@ const stripHtml = (html: string) => {
 
 const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any }) => {
   if (!text) return null;
-  
+
   const processedText = stripHtml(text);
   const lines = processedText.split('\n');
-  
+
   return (
     <View style={style}>
       {lines.map((line, i) => {
         const bulletMatch = line.match(/^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/);
-        
+
         if (bulletMatch) {
           const indent = bulletMatch[1];
           const bulletChar = bulletMatch[2];
           const content = bulletMatch[3];
-          
+
           return (
-            <View key={i} style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'flex-start' }}>
-              <Text style={{ width: 12, flexShrink: 0, marginLeft: indent ? indent.length * 4 : 0 }}>{bulletChar}</Text>
+            <View
+              key={i}
+              style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'flex-start' }}
+            >
+              <Text
+                style={{ width: 12, flexShrink: 0, marginLeft: indent ? indent.length * 4 : 0 }}
+              >
+                {bulletChar}
+              </Text>
               <Text style={{ flex: 1, hyphens: 'none' }}>{content}</Text>
             </View>
           );
         }
-        
-        return <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2, hyphens: 'none' }}>{line}</Text>;
+
+        return (
+          <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2, hyphens: 'none' }}>
+            {line}
+          </Text>
+        );
       })}
     </View>
   );
 };
 
 export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
-  const {
-    basics,
-    summary,
-    sections,
-    customSections,
-    metadata,
-  } = resumeData;
+  const { basics, summary, sections, customSections, metadata } = resumeData;
 
   const baseSize = metadata.typography.fontSize || 11;
   const sizes = {
@@ -246,7 +267,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     },
     gridCol: {
       flex: 1,
-    }
+    },
   });
 
   const contactInfo = [
@@ -265,16 +286,26 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           {basics.headline && <Text style={styles.headline}>{basics.headline}</Text>}
           <View style={styles.contactRow}>
             {contactInfo.map((item, index) => (
-              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
+              <View
+                key={index}
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+              >
                 <item.Icon />
                 <Text style={styles.contactItem}>{item.value}</Text>
               </View>
             ))}
-            {sections.profiles.items.filter(p => p.visible && (p.network || p.username)).map((profile, index) => (
-              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
-                <Text style={styles.contactItem}>{profile.network}: {profile.username}</Text>
-              </View>
-            ))}
+            {sections.profiles.items
+              .filter((p) => p.visible && (p.network || p.username))
+              .map((profile, index) => (
+                <View
+                  key={index}
+                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+                >
+                  <Text style={styles.contactItem}>
+                    {profile.network}: {profile.username}
+                  </Text>
+                </View>
+              ))}
           </View>
         </View>
 
@@ -294,19 +325,23 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
               <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
             </View>
-            {sections.experience.items.filter(i => i.visible).map((exp) => (
-              <View key={exp.id} style={styles.itemContainer} wrap={false}>
-                <View style={styles.itemHeader}>
-                  <View style={styles.itemHeaderLeft}>
-                    <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
-                    {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+            {sections.experience.items
+              .filter((i) => i.visible)
+              .map((exp) => (
+                <View key={exp.id} style={styles.itemContainer} wrap={false}>
+                  <View style={styles.itemHeader}>
+                    <View style={styles.itemHeaderLeft}>
+                      <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
+                      {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+                    </View>
+                    <Text style={styles.itemDate}>{exp.period}</Text>
                   </View>
-                  <Text style={styles.itemDate}>{exp.period}</Text>
+                  {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
+                  {exp.description && (
+                    <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
+                  )}
                 </View>
-                {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
-                {exp.description && <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />}
-              </View>
-            ))}
+              ))}
           </View>
         )}
 
@@ -316,18 +351,28 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
               <Text style={styles.sectionTitle}>{sections.education.name}</Text>
             </View>
-            {sections.education.items.filter(i => i.visible).map((edu) => (
-              <View key={edu.id} style={styles.itemContainer} wrap={false}>
-                <View style={styles.itemHeader}>
-                  <View style={styles.itemHeaderLeft}>
-                    <Text style={styles.itemTitle}>{edu.degree || 'Degree'}{edu.area && ` in ${edu.area}`}</Text>
-                    <Text style={styles.itemSubtitle}>{edu.school || 'School'}{edu.grade && ` • ${edu.grade}`}</Text>
+            {sections.education.items
+              .filter((i) => i.visible)
+              .map((edu) => (
+                <View key={edu.id} style={styles.itemContainer} wrap={false}>
+                  <View style={styles.itemHeader}>
+                    <View style={styles.itemHeaderLeft}>
+                      <Text style={styles.itemTitle}>
+                        {edu.degree || 'Degree'}
+                        {edu.area && ` in ${edu.area}`}
+                      </Text>
+                      <Text style={styles.itemSubtitle}>
+                        {edu.school || 'School'}
+                        {edu.grade && ` • ${edu.grade}`}
+                      </Text>
+                    </View>
+                    <Text style={styles.itemDate}>{edu.period}</Text>
                   </View>
-                  <Text style={styles.itemDate}>{edu.period}</Text>
+                  {edu.description && (
+                    <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
+                  )}
                 </View>
-                {edu.description && <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />}
-              </View>
-            ))}
+              ))}
           </View>
         )}
 
@@ -337,17 +382,32 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
               <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
             </View>
-            {sections.projects.items.filter(i => i.visible).map((proj) => (
-              <View key={proj.id} style={styles.itemContainer} wrap={false}>
-                <View style={styles.itemHeader}>
+            {sections.projects.items
+              .filter((i) => i.visible)
+              .map((proj) => (
+                <View key={proj.id} style={styles.itemContainer} wrap={false}>
+                  <View style={styles.itemHeader}>
                     <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
                     <Text style={styles.itemDate}>{proj.period}</Text>
+                  </View>
+                  {proj.website.href && (
+                    <Link src={proj.website.href} style={styles.link}>
+                      {proj.website.label || proj.website.href}
+                    </Link>
+                  )}
+                  {proj.description && (
+                    <PDFDescriptionRenderer
+                      text={proj.description}
+                      style={styles.itemDescription}
+                    />
+                  )}
+                  {proj.keywords && proj.keywords.length > 0 && (
+                    <Text style={styles.itemSubtitle}>
+                      Technologies: {proj.keywords.join(', ')}
+                    </Text>
+                  )}
                 </View>
-                {proj.website.href && <Link src={proj.website.href} style={styles.link}>{proj.website.label || proj.website.href}</Link>}
-                {proj.description && <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />}
-                {proj.keywords && proj.keywords.length > 0 && <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>}
-              </View>
-            ))}
+              ))}
           </View>
         )}
 
@@ -358,46 +418,64 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
               <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
             </View>
             <View style={styles.skillsContainer}>
-              {sections.skills.items.filter(i => i.visible).map((skill) => (
-                <View key={skill.id} style={styles.skillRow} wrap={false}>
-                  <Text style={styles.skillItems}>
-                    <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
-                    {skill.keywords && skill.keywords.length > 0 ? skill.keywords.join(', ') : (skill.description || '')}
-                  </Text>
-                </View>
-              ))}
+              {sections.skills.items
+                .filter((i) => i.visible)
+                .map((skill) => (
+                  <View key={skill.id} style={styles.skillRow} wrap={false}>
+                    <Text style={styles.skillItems}>
+                      <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
+                      {skill.keywords && skill.keywords.length > 0
+                        ? skill.keywords.join(', ')
+                        : skill.description || ''}
+                    </Text>
+                  </View>
+                ))}
             </View>
           </View>
         )}
 
         {/* Multi-column sections */}
         <View style={styles.grid}>
-            {/* Languages */}
-            {sections.languages.visible && sections.languages.items.length > 0 && (
-                <View style={[styles.section, styles.gridCol]}>
-                    <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
-                        <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
-                    </View>
-                    {sections.languages.items.filter(i => i.visible).map((lang) => (
-                        <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                            <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-                            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
-                        </View>
-                    ))}
-                </View>
-            )}
-
-            {/* Interests */}
-            {sections.interests.visible && sections.interests.items.length > 0 && (
-                <View style={[styles.section, styles.gridCol]}>
-                    <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
-                        <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
-                    </View>
-                    <Text style={styles.itemDescription}>
-                        {sections.interests.items.filter(i => i.visible).map(i => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : '')).join(', ')}
+          {/* Languages */}
+          {sections.languages.visible && sections.languages.items.length > 0 && (
+            <View style={[styles.section, styles.gridCol]}>
+              <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
+                <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
+              </View>
+              {sections.languages.items
+                .filter((i) => i.visible)
+                .map((lang) => (
+                  <View
+                    key={lang.id}
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginBottom: 4,
+                    }}
+                  >
+                    <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
+                    <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>
+                      {lang.description}
                     </Text>
-                </View>
-            )}
+                  </View>
+                ))}
+            </View>
+          )}
+
+          {/* Interests */}
+          {sections.interests.visible && sections.interests.items.length > 0 && (
+            <View style={[styles.section, styles.gridCol]}>
+              <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
+                <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
+              </View>
+              <Text style={styles.itemDescription}>
+                {sections.interests.items
+                  .filter((i) => i.visible)
+                  .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
+                  .join(', ')}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Awards */}
@@ -406,18 +484,22 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
               <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
             </View>
-            {sections.awards.items.filter(i => i.visible).map((award) => (
-              <View key={award.id} style={styles.itemContainer} wrap={false}>
-                <View style={styles.itemHeader}>
+            {sections.awards.items
+              .filter((i) => i.visible)
+              .map((award) => (
+                <View key={award.id} style={styles.itemContainer} wrap={false}>
+                  <View style={styles.itemHeader}>
                     <View style={styles.itemHeaderLeft}>
-                        <Text style={styles.itemTitle}>{award.title}</Text>
-                        <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+                      <Text style={styles.itemTitle}>{award.title}</Text>
+                      <Text style={styles.itemSubtitle}>{award.awarder}</Text>
                     </View>
                     <Text style={styles.itemDate}>{award.date}</Text>
+                  </View>
+                  {award.description && (
+                    <Text style={styles.itemDescription}>{award.description}</Text>
+                  )}
                 </View>
-                {award.description && <Text style={styles.itemDescription}>{award.description}</Text>}
-              </View>
-            ))}
+              ))}
           </View>
         )}
 
@@ -427,17 +509,19 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
               <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
             </View>
-            {sections.certifications.items.filter(i => i.visible).map((cert) => (
-              <View key={cert.id} style={styles.itemContainer} wrap={false}>
-                <View style={styles.itemHeader}>
+            {sections.certifications.items
+              .filter((i) => i.visible)
+              .map((cert) => (
+                <View key={cert.id} style={styles.itemContainer} wrap={false}>
+                  <View style={styles.itemHeader}>
                     <View style={styles.itemHeaderLeft}>
-                        <Text style={styles.itemTitle}>{cert.name}</Text>
-                        <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                      <Text style={styles.itemTitle}>{cert.name}</Text>
+                      <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
                     </View>
                     <Text style={styles.itemDate}>{cert.date}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))}
           </View>
         )}
 
@@ -448,31 +532,42 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
               <Text style={styles.sectionTitle}>{sections.references.name}</Text>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }}>
-                {sections.references.items.filter(i => i.visible).map((ref) => (
-                <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
+              {sections.references.items
+                .filter((i) => i.visible)
+                .map((ref) => (
+                  <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
                     <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
                     <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
-                    <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>{ref.email} {ref.phone && `| ${ref.phone}`}</Text>
-                </View>
+                    <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
+                      {ref.email} {ref.phone && `| ${ref.phone}`}
+                    </Text>
+                  </View>
                 ))}
             </View>
           </View>
         )}
 
         {/* Custom Sections */}
-        {customSections.filter(s => s.visible && s.items.length > 0).map(section => (
-          <View key={section.id} style={styles.section}>
-            <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
-              <Text style={styles.sectionTitle}>{section.name}</Text>
-            </View>
-            {section.items.map((item: any) => (
-              <View key={item.id} style={styles.itemContainer} wrap={false}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
-                {item.description && <PDFDescriptionRenderer text={item.description} style={styles.itemDescription} />}
+        {customSections
+          .filter((s) => s.visible && s.items.length > 0)
+          .map((section) => (
+            <View key={section.id} style={styles.section}>
+              <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+                <Text style={styles.sectionTitle}>{section.name}</Text>
               </View>
-            ))}
-          </View>
-        ))}
+              {section.items.map((item: any) => (
+                <View key={item.id} style={styles.itemContainer} wrap={false}>
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                  {item.description && (
+                    <PDFDescriptionRenderer
+                      text={item.description}
+                      style={styles.itemDescription}
+                    />
+                  )}
+                </View>
+              ))}
+            </View>
+          ))}
       </Page>
     </Document>
   );

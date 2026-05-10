@@ -1,15 +1,16 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Briefcase, Plus, ChevronDown, ChevronUp, MapPin, Calendar } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
-import { cn } from "@/lib/utils";
-import { FieldTip } from "@/components/ui/FieldTip";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Briefcase, Calendar, ChevronDown, ChevronUp, MapPin, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { Button } from '@/components/ui/button';
+import { FieldTip } from '@/components/ui/FieldTip';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { cn } from '@/lib/utils';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const WorkExperienceForm = () => {
   const { resumeData, addExperience, updateExperience, deleteExperience } = useResumeStore();
@@ -51,7 +52,7 @@ export const WorkExperienceForm = () => {
         <AnimatePresence mode="popLayout">
           {workExperience.map((exp, index) => {
             const isExpanded = expandedId === exp.id;
-            
+
             return (
               <motion.div
                 key={exp.id}
@@ -59,14 +60,16 @@ export const WorkExperienceForm = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className={cn(
-                  "group border rounded-xl overflow-hidden transition-all duration-200",
-                  isExpanded ? "ring-1 ring-primary/20 shadow-md bg-card" : "hover:border-primary/30 hover:shadow-sm bg-card/50"
+                  'group border rounded-xl overflow-hidden transition-all duration-200',
+                  isExpanded
+                    ? 'ring-1 ring-primary/20 shadow-md bg-card'
+                    : 'hover:border-primary/30 hover:shadow-sm bg-card/50',
                 )}
               >
-                <div 
+                <div
                   className={cn(
-                    "flex items-center justify-between p-4 cursor-pointer select-none",
-                    isExpanded && "border-b bg-muted/30"
+                    'flex items-center justify-between p-4 cursor-pointer select-none',
+                    isExpanded && 'border-b bg-muted/30',
                   )}
                   onClick={() => setExpandedId(isExpanded ? null : exp.id)}
                 >
@@ -75,7 +78,7 @@ export const WorkExperienceForm = () => {
                       <h3 className="font-semibold text-base truncate">
                         {exp.position || `Work Experience ${index + 1}`}
                       </h3>
-                      {exp.period.includes("Present") && (
+                      {exp.period.includes('Present') && (
                         <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-full">
                           Present
                         </span>
@@ -111,7 +114,11 @@ export const WorkExperienceForm = () => {
                       </Button>
                     </motion.div>
                     <div className="text-muted-foreground p-1">
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -120,9 +127,9 @@ export const WorkExperienceForm = () => {
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
+                      animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -152,7 +159,9 @@ export const WorkExperienceForm = () => {
                           <div className="relative">
                             <Input
                               value={exp.location}
-                              onChange={(e) => updateExperience(exp.id, { location: e.target.value })}
+                              onChange={(e) =>
+                                updateExperience(exp.id, { location: e.target.value })
+                              }
                               placeholder="e.g. San Francisco, CA"
                               className="pl-9"
                             />
@@ -175,23 +184,31 @@ export const WorkExperienceForm = () => {
 
                         <div className="md:col-span-2 space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label className="text-sm font-semibold">Key Achievements & Responsibilities</Label>
+                            <Label className="text-sm font-semibold">
+                              Key Achievements & Responsibilities
+                            </Label>
                             <AIWriterButton
                               fieldName="experience"
                               fieldLabel="Work Experience Description"
                               fieldValue={exp.description || ''}
-                              onUpdate={(newText) => updateExperience(exp.id, { description: newText })}
+                              onUpdate={(newText) =>
+                                updateExperience(exp.id, { description: newText })
+                              }
                             />
                           </div>
                           <Textarea
                             value={exp.description}
-                            onChange={(e) => updateExperience(exp.id, { description: e.target.value })}
+                            onChange={(e) =>
+                              updateExperience(exp.id, { description: e.target.value })
+                            }
                             placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
                             className="min-h-[150px] font-mono text-sm"
                             rows={6}
                           />
                           <FieldTip>
-                            Use bullet points and lead with strong action verbs. Quantify impact where possible — e.g., "Reduced load time by 40%" or "Shipped feature used by 10k users."
+                            Use bullet points and lead with strong action verbs. Quantify impact
+                            where possible — e.g., "Reduced load time by 40%" or "Shipped feature
+                            used by 10k users."
                           </FieldTip>
                         </div>
                       </div>

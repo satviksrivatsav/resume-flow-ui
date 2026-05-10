@@ -1,18 +1,26 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { HandHelping, Plus, MapPin, Calendar, Link as LinkIcon } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, HandHelping, Link as LinkIcon, MapPin, Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const VolunteerForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
   const { items: volunteer } = resumeData.sections.volunteer;
 
   const handleAdd = () => {
-    addItem('volunteer', { organization: '', position: '', location: '', period: '', description: '', website: { label: '', href: '' } });
+    addItem('volunteer', {
+      organization: '',
+      position: '',
+      location: '',
+      period: '',
+      description: '',
+      website: { label: '', href: '' },
+    });
   };
 
   return (
@@ -56,16 +64,22 @@ export const VolunteerForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Organization <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Organization <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={vol.organization}
-                    onChange={(e) => updateItem('volunteer', vol.id, { organization: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('volunteer', vol.id, { organization: e.target.value })
+                    }
                     placeholder="e.g. Red Cross, Local Shelter"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Role / Position <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Role / Position <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={vol.position}
                     onChange={(e) => updateItem('volunteer', vol.id, { position: e.target.value })}
@@ -78,7 +92,9 @@ export const VolunteerForm = () => {
                   <div className="relative">
                     <Input
                       value={vol.location}
-                      onChange={(e) => updateItem('volunteer', vol.id, { location: e.target.value })}
+                      onChange={(e) =>
+                        updateItem('volunteer', vol.id, { location: e.target.value })
+                      }
                       placeholder="e.g. Remote, New York, NY"
                       className="pl-9"
                     />
@@ -104,7 +120,11 @@ export const VolunteerForm = () => {
                   <div className="relative">
                     <Input
                       value={vol.website.href}
-                      onChange={(e) => updateItem('volunteer', vol.id, { website: { ...vol.website, href: e.target.value } })}
+                      onChange={(e) =>
+                        updateItem('volunteer', vol.id, {
+                          website: { ...vol.website, href: e.target.value },
+                        })
+                      }
                       placeholder="e.g. https://organization.org"
                       className="pl-9"
                     />
@@ -116,7 +136,9 @@ export const VolunteerForm = () => {
                   <Label className="font-medium">Description</Label>
                   <Textarea
                     value={vol.description}
-                    onChange={(e) => updateItem('volunteer', vol.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('volunteer', vol.id, { description: e.target.value })
+                    }
                     placeholder="Describe your responsibilities and the organization's mission."
                     className="min-h-[100px]"
                   />

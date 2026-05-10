@@ -1,19 +1,20 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { useUiStore } from "@/stores/uiStore";
-import { Plus, Trash2 } from "lucide-react";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus, Trash2 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
+import { useUiStore } from '@/stores/uiStore';
 
 export const CustomSectionForm = () => {
   const { resumeData, updateCustomSection, deleteCustomSection } = useResumeStore();
   const { activeTab, setActiveTab } = useUiStore();
 
-  const section = resumeData.customSections.find(s => s.id === activeTab);
+  const section = resumeData.customSections.find((s) => s.id === activeTab);
 
   if (!section) return null;
 
@@ -23,8 +24,8 @@ export const CustomSectionForm = () => {
   };
 
   const handleUpdateItem = (itemId: string, data: any) => {
-    const updatedItems = section.items.map((item: any) => 
-        item.id === itemId ? { ...item, ...data } : item
+    const updatedItems = section.items.map((item: any) =>
+      item.id === itemId ? { ...item, ...data } : item,
     );
     updateCustomSection(section.id, { items: updatedItems });
   };
@@ -53,7 +54,7 @@ export const CustomSectionForm = () => {
           />
         </div>
         <Button onClick={handleAddItem} className="gap-2 rounded-full">
-            <Plus className="w-4 h-4" /> Add Item
+          <Plus className="w-4 h-4" /> Add Item
         </Button>
       </div>
 

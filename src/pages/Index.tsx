@@ -1,30 +1,31 @@
-import LandingPage from "@/pages/LandingPage";
+import { useState } from 'react';
+
 import {
+  MobileNav,
+  MobileNavHeader,
+  MobileNavMenu,
+  MobileNavToggle,
   Navbar,
+  NavbarButton,
+  NavbarLogo,
   NavBody,
   NavItems,
-  MobileNav,
-  NavbarLogo,
-  NavbarButton,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from "@/components/ui/resizable-navbar";
-import { useState } from "react";
+} from '@/components/ui/resizable-navbar';
+import LandingPage from '@/pages/LandingPage';
 
 const Index = () => {
   const navItems = [
     {
-      name: "Features",
-      link: "#features",
+      name: 'Features',
+      link: '#features',
     },
     {
-      name: "Pricing",
-      link: "#pricing",
+      name: 'Pricing',
+      link: '#pricing',
     },
     {
-      name: "Login",
-      link: "/login",
+      name: 'Login',
+      link: '/login',
     },
   ];
 
@@ -49,10 +50,7 @@ const Index = () => {
             />
           </MobileNavHeader>
 
-          <MobileNavMenu
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
-          >
+          <MobileNavMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
             {navItems.map((item, idx) => (
               <a
                 key={`mobile-link-${idx}`}

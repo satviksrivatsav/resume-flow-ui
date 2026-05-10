@@ -1,16 +1,17 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { FolderGit2, Plus, ChevronDown, ChevronUp, Link as LinkIcon, Calendar } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
-import { TechChipsInput } from "@/components/ui/TechChipsInput";
-import { cn } from "@/lib/utils";
-import { FieldTip } from "@/components/ui/FieldTip";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, ChevronDown, ChevronUp, FolderGit2, Link as LinkIcon, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { Button } from '@/components/ui/button';
+import { FieldTip } from '@/components/ui/FieldTip';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TechChipsInput } from '@/components/ui/TechChipsInput';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { cn } from '@/lib/utils';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const ProjectsForm = () => {
   const { resumeData, addProject, updateProject, deleteProject } = useResumeStore();
@@ -52,7 +53,7 @@ export const ProjectsForm = () => {
         <AnimatePresence mode="popLayout">
           {projects.map((proj, index) => {
             const isExpanded = expandedId === proj.id;
-            
+
             return (
               <motion.div
                 key={proj.id}
@@ -60,14 +61,16 @@ export const ProjectsForm = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className={cn(
-                  "group border rounded-xl overflow-hidden transition-all duration-200",
-                  isExpanded ? "ring-1 ring-primary/20 shadow-md bg-card" : "hover:border-primary/30 hover:shadow-sm bg-card/50"
+                  'group border rounded-xl overflow-hidden transition-all duration-200',
+                  isExpanded
+                    ? 'ring-1 ring-primary/20 shadow-md bg-card'
+                    : 'hover:border-primary/30 hover:shadow-sm bg-card/50',
                 )}
               >
-                <div 
+                <div
                   className={cn(
-                    "flex items-center justify-between p-4 cursor-pointer select-none",
-                    isExpanded && "border-b bg-muted/30"
+                    'flex items-center justify-between p-4 cursor-pointer select-none',
+                    isExpanded && 'border-b bg-muted/30',
                   )}
                   onClick={() => setExpandedId(isExpanded ? null : proj.id)}
                 >
@@ -85,7 +88,7 @@ export const ProjectsForm = () => {
                       {proj.website.href && (
                         <span className="flex items-center gap-1.5">
                           <LinkIcon className="w-3.5 h-3.5" />
-                          {proj.website.label || "Link"}
+                          {proj.website.label || 'Link'}
                         </span>
                       )}
                     </div>
@@ -105,7 +108,11 @@ export const ProjectsForm = () => {
                       </Button>
                     </motion.div>
                     <div className="text-muted-foreground p-1">
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -114,14 +121,16 @@ export const ProjectsForm = () => {
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
+                      animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <div className="p-6 space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <Label className="font-medium">Project Name <span className="text-red-500">*</span></Label>
+                            <Label className="font-medium">
+                              Project Name <span className="text-red-500">*</span>
+                            </Label>
                             <Input
                               value={proj.name}
                               onChange={(e) => updateProject(proj.id, { name: e.target.value })}
@@ -143,7 +152,11 @@ export const ProjectsForm = () => {
                             <div className="relative">
                               <Input
                                 value={proj.website.href}
-                                onChange={(e) => updateProject(proj.id, { website: { ...proj.website, href: e.target.value } })}
+                                onChange={(e) =>
+                                  updateProject(proj.id, {
+                                    website: { ...proj.website, href: e.target.value },
+                                  })
+                                }
                                 placeholder="e.g. https://github.com/yourusername/project"
                                 className="pl-9"
                               />
@@ -161,23 +174,30 @@ export const ProjectsForm = () => {
 
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label className="text-sm font-semibold">Description / Key Features</Label>
+                            <Label className="text-sm font-semibold">
+                              Description / Key Features
+                            </Label>
                             <AIWriterButton
                               fieldName="projects"
                               fieldLabel="Project"
                               fieldValue={proj.description || ''}
-                              onUpdate={(newText) => updateProject(proj.id, { description: newText })}
+                              onUpdate={(newText) =>
+                                updateProject(proj.id, { description: newText })
+                              }
                             />
                           </div>
                           <Textarea
                             value={proj.description}
-                            onChange={(e) => updateProject(proj.id, { description: e.target.value })}
+                            onChange={(e) =>
+                              updateProject(proj.id, { description: e.target.value })
+                            }
                             placeholder="• Built a full-stack app using...&#10;• Implemented real-time updates with..."
                             className="min-h-[150px]"
                             rows={6}
                           />
                           <FieldTip>
-                            Briefly explain the project's purpose and highlight your technical contributions. Use bullet points for readability.
+                            Briefly explain the project's purpose and highlight your technical
+                            contributions. Use bullet points for readability.
                           </FieldTip>
                         </div>
                       </div>

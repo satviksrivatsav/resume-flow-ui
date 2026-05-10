@@ -1,18 +1,25 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { BookOpen, Plus, Calendar, Link as LinkIcon } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
+import { BookOpen, Calendar, Link as LinkIcon, Plus } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const PublicationsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
   const { items: publications } = resumeData.sections.publications;
 
   const handleAdd = () => {
-    addItem('publications', { name: '', publisher: '', date: '', description: '', website: { label: '', href: '' } });
+    addItem('publications', {
+      name: '',
+      publisher: '',
+      date: '',
+      description: '',
+      website: { label: '', href: '' },
+    });
   };
 
   return (
@@ -56,7 +63,9 @@ export const PublicationsForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Title <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Title <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={pub.name}
                     onChange={(e) => updateItem('publications', pub.id, { name: e.target.value })}
@@ -68,7 +77,9 @@ export const PublicationsForm = () => {
                   <Label className="font-medium">Publisher / Journal</Label>
                   <Input
                     value={pub.publisher}
-                    onChange={(e) => updateItem('publications', pub.id, { publisher: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('publications', pub.id, { publisher: e.target.value })
+                    }
                     placeholder="e.g. Tech Journal, Medium"
                   />
                 </div>
@@ -91,7 +102,11 @@ export const PublicationsForm = () => {
                   <div className="relative">
                     <Input
                       value={pub.website.href}
-                      onChange={(e) => updateItem('publications', pub.id, { website: { ...pub.website, href: e.target.value } })}
+                      onChange={(e) =>
+                        updateItem('publications', pub.id, {
+                          website: { ...pub.website, href: e.target.value },
+                        })
+                      }
                       placeholder="e.g. https://journal.com/..."
                       className="pl-9"
                     />
@@ -103,7 +118,9 @@ export const PublicationsForm = () => {
                   <Label className="font-medium">Description</Label>
                   <Textarea
                     value={pub.description}
-                    onChange={(e) => updateItem('publications', pub.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('publications', pub.id, { description: e.target.value })
+                    }
                     placeholder="Briefly explain the publication's topic or impact."
                     className="min-h-[100px]"
                   />

@@ -1,14 +1,15 @@
-import { useState } from 'react';
 import { pdf } from '@react-pdf/renderer';
-import { Button } from '@/components/ui/button';
-import { Download, Loader2 } from 'lucide-react';
-import { useResumeStore } from '@/stores/resumeStore';
-import { ResumePDF } from './ResumePDF';
-import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
+import { Download, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { useResumeStore } from '@/stores/resumeStore';
 import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
 
+import { ResumePDF } from './ResumePDF';
 
 export const DownloadButton = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -71,11 +72,7 @@ export const DownloadButton = () => {
 
   return (
     <motion.div whileHover="hover" whileTap="tap">
-      <Button
-        onClick={handleDownload}
-        disabled={isGenerating}
-        className="gap-2"
-      >
+      <Button onClick={handleDownload} disabled={isGenerating} className="gap-2">
         {isGenerating ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />

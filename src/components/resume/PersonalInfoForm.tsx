@@ -1,15 +1,16 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { User, MapPin, Mail, Phone, Globe, Linkedin, Github } from "lucide-react";
-import { motion } from "framer-motion";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
-import { PhoneInput } from "@/components/ui/PhoneInput";
-import { useEffect, useRef } from "react";
-import { detectCountryFromTimezone } from "@/lib/geolocation";
-import { getCountryByCode } from "@/lib/countries";
-import { FieldTip } from "@/components/ui/FieldTip";
+import { motion } from 'framer-motion';
+import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { FieldTip } from '@/components/ui/FieldTip';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { PhoneInput } from '@/components/ui/PhoneInput';
+import { Textarea } from '@/components/ui/textarea';
+import { getCountryByCode } from '@/lib/countries';
+import { detectCountryFromTimezone } from '@/lib/geolocation';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const PersonalInfoForm = () => {
   const { resumeData, updateBasics, updateSummary, updateProfileByNetwork } = useResumeStore();
@@ -36,7 +37,10 @@ export const PersonalInfoForm = () => {
   }, []);
 
   const getProfileUsername = (network: string) => {
-    return sections.profiles.items.find(p => p.network.toLowerCase() === network.toLowerCase())?.username || '';
+    return (
+      sections.profiles.items.find((p) => p.network.toLowerCase() === network.toLowerCase())
+        ?.username || ''
+    );
   };
 
   return (
@@ -96,7 +100,7 @@ export const PersonalInfoForm = () => {
             value={basics.phone}
             onChange={(value) => updateBasics({ phone: value })}
             countryCode="US" // Default to US for now
-            onCountryCodeChange={() => {}} 
+            onCountryCodeChange={() => {}}
             placeholder="Phone number"
           />
         </div>
@@ -156,7 +160,9 @@ export const PersonalInfoForm = () => {
 
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="summary" className="text-base font-semibold">Professional Summary</Label>
+          <Label htmlFor="summary" className="text-base font-semibold">
+            Professional Summary
+          </Label>
           <AIWriterButton
             fieldName="summary"
             fieldLabel="Summary"
@@ -173,7 +179,8 @@ export const PersonalInfoForm = () => {
           rows={4}
         />
         <FieldTip>
-          Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
+          Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end
+          with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
         </FieldTip>
       </div>
     </motion.div>

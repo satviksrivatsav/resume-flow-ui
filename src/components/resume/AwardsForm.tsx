@@ -1,12 +1,13 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Trophy, Plus, Calendar } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, Plus, Trophy } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { cn } from '@/lib/utils';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const AwardsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -57,7 +58,9 @@ export const AwardsForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="font-medium">Award Title <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Award Title <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={award.title}
                     onChange={(e) => updateItem('awards', award.id, { title: e.target.value })}
@@ -91,7 +94,9 @@ export const AwardsForm = () => {
                   <Label className="font-medium">Description</Label>
                   <Textarea
                     value={award.description}
-                    onChange={(e) => updateItem('awards', award.id, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateItem('awards', award.id, { description: e.target.value })
+                    }
                     placeholder="Briefly describe the award and why you received it."
                     className="min-h-[100px]"
                   />

@@ -1,10 +1,11 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import React from 'react';
+
+import { cn } from '@/lib/utils';
 
 export const MeshGradient = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("absolute inset-0 z-0 overflow-hidden bg-black", className)}>
+    <div className={cn('absolute inset-0 z-0 overflow-hidden bg-black', className)}>
       <motion.div
         animate={{
           x: [-100, 100, -50],
@@ -14,8 +15,8 @@ export const MeshGradient = ({ className }: { className?: string }) => {
         transition={{
           duration: 20,
           repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
+          repeatType: 'mirror',
+          ease: 'easeInOut',
         }}
         className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] rounded-full bg-zinc-800/30 blur-[120px]"
       />
@@ -28,8 +29,8 @@ export const MeshGradient = ({ className }: { className?: string }) => {
         transition={{
           duration: 25,
           repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
+          repeatType: 'mirror',
+          ease: 'easeInOut',
         }}
         className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-zinc-700/20 blur-[150px]"
       />
@@ -42,8 +43,8 @@ export const MeshGradient = ({ className }: { className?: string }) => {
         transition={{
           duration: 18,
           repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
+          repeatType: 'mirror',
+          ease: 'easeInOut',
         }}
         className="absolute top-[30%] right-[20%] w-[40%] h-[40%] rounded-full bg-zinc-900/40 blur-[100px]"
       />

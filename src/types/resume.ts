@@ -195,10 +195,10 @@ export interface CustomSection extends SectionBase {
 export interface ResumeMetadata {
   template: string;
   layout: {
-    pages: Array<{
+    pages: {
       main: string[];
       sidebar: string[];
-    }>;
+    }[];
   };
   typography: {
     fontFamily: string;
@@ -248,7 +248,13 @@ export const defaultResumeData: ResumeData = {
     languages: { name: 'Languages', items: [], visible: true, columns: 1, separate: false },
     interests: { name: 'Interests', items: [], visible: true, columns: 1, separate: false },
     awards: { name: 'Awards', items: [], visible: true, columns: 1, separate: false },
-    certifications: { name: 'Certifications', items: [], visible: true, columns: 1, separate: false },
+    certifications: {
+      name: 'Certifications',
+      items: [],
+      visible: true,
+      columns: 1,
+      separate: false,
+    },
     publications: { name: 'Publications', items: [], visible: true, columns: 1, separate: false },
     volunteer: { name: 'Volunteer', items: [], visible: true, columns: 1, separate: false },
     references: { name: 'References', items: [], visible: true, columns: 1, separate: false },
@@ -261,8 +267,8 @@ export const defaultResumeData: ResumeData = {
         {
           main: ['summary', 'experience', 'education', 'projects'],
           sidebar: ['skills', 'profiles'],
-        }
-      ]
+        },
+      ],
     },
     typography: {
       fontFamily: 'Open Sans',
