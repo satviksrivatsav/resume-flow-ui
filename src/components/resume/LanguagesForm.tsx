@@ -2,17 +2,17 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Wrench, Plus } from "lucide-react";
+import { Languages, Plus, Trash2 } from "lucide-react";
 import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
-import { TechChipsInput } from "@/components/ui/TechChipsInput";
+import { Slider } from "@/components/ui/slider";
 
-export const SkillsForm = () => {
-  const { resumeData, addSkill, updateSkill, deleteSkill } = useResumeStore();
-  const { items: skills } = resumeData.sections.skills;
+export const LanguagesForm = () => {
+  const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
+  const { items: languages } = resumeData.sections.languages;
 
   const handleAdd = () => {
-    addSkill();
+    addItem('languages', { name: '', description: '', level: 0 });
   };
 
   return (
@@ -23,19 +23,19 @@ export const SkillsForm = () => {
     >
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm text-muted-foreground">
-          Group your skills into categories like "Languages", "Frameworks", or "Tools".
+          List the languages you speak and your proficiency levels.
         </p>
         <Button onClick={handleAdd} className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
-          Add Skill Category
+          Add Language
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AnimatePresence mode="popLayout">
-          {skills.map((skill) => (
+          {languages.map((lang) => (
             <motion.div
-              key={skill.id}
+              key={lang.id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -46,7 +46,7 @@ export const SkillsForm = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteSkill(skill.id)}
+                    onClick={() => deleteItem('languages', lang.id)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                   >
                     <TrashAnimatedIcon className="w-4 h-4" />
@@ -54,42 +54,55 @@ export const SkillsForm = () => {
                 </motion.div>
               </div>
 
-              <div className="space-y-6">
-                <div className="space-y-2 max-w-md">
-                  <Label className="font-medium">Category Name <span className="text-red-500">*</span></Label>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="font-medium">Language Name <span className="text-red-500">*</span></Label>
                   <Input
-                    value={skill.name}
-                    onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-                    placeholder="e.g. Programming Languages, Tools, Soft Skills"
-                    className="font-medium"
+                    value={lang.name}
+                    onChange={(e) => updateItem('languages', lang.id, { name: e.target.value })}
+                    placeholder="e.g. English, Spanish, Japanese"
                   />
                 </div>
 
-                <TechChipsInput
-                  label="Skills"
-                  value={skill.keywords}
-                  onChange={(techs) => updateSkill(skill.id, { keywords: techs })}
-                  placeholder="Type a skill and press Enter"
-                  required
-                />
+                <div className="space-y-2">
+                  <Label className="font-medium">Fluency / Proficiency</Label>
+                  <Input
+                    value={lang.description}
+                    onChange={(e) => updateItem('languages', lang.id, { description: e.target.value })}
+                    placeholder="e.g. Native, Professional Working, Conversational"
+                  />
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="font-medium text-xs">Level ({lang.level}/5)</Label>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={5}
+                    step={1}
+                    value={[lang.level]}
+                    onValueChange={(val) => updateItem('languages', lang.id, { level: val[0] })}
+                  />
+                </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
 
-      {skills.length === 0 && (
+      {languages.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Wrench className="w-6 h-6 text-muted-foreground" />
+            <Languages className="w-6 h-6 text-muted-foreground" />
           </div>
-          <h3 className="font-medium text-lg">No skills added</h3>
+          <h3 className="font-medium text-lg">No languages added</h3>
           <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">
-            Categorize your expertise to help recruiters quickly scan your profile.
+            Add the languages you know to broaden your profile's appeal.
           </p>
           <Button onClick={handleAdd} variant="outline" className="gap-2">
             <Plus className="w-4 h-4" />
-            Add Skill Category
+            Add Language
           </Button>
         </div>
       )}

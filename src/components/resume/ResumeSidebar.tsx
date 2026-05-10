@@ -18,7 +18,13 @@ import {
   GraduationCap,
   FolderGit2,
   Wrench,
-  Layout,
+  Languages,
+  Heart,
+  Trophy,
+  Award,
+  BookOpen,
+  HandHelping,
+  Users,
   Settings,
   CheckCircle2,
   Circle,
@@ -34,6 +40,16 @@ import { UserMenu } from "@/components/ui/UserMenu";
 import { motion, Variants } from "framer-motion";
 import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 import { getSectionCompletionStatus } from "@/utils/mandatoryFieldValidator";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // Per-icon hover animation variants
 const iconVariants: Record<string, Variants> = {
@@ -57,10 +73,6 @@ const iconVariants: Record<string, Variants> = {
     hover: { rotate: 30, transition: { type: "spring", stiffness: 300, damping: 8 } },
     tap: { rotate: 0, scale: 0.9 },
   },
-  additional: {
-    hover: { scaleX: 1.2, transition: { type: "spring", stiffness: 300, damping: 10 } },
-    tap: { scaleX: 1, scale: 0.9 },
-  },
   settings: {
     hover: { rotate: 90, transition: { duration: 0.35, ease: "easeInOut" } },
     tap: { rotate: 0, scale: 0.9 },
@@ -73,23 +85,30 @@ const staticSections = [
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "projects", label: "Projects", icon: FolderGit2 },
   { id: "skills", label: "Skills", icon: Wrench },
+  { id: "languages", label: "Languages", icon: Languages },
+  { id: "interests", label: "Interests", icon: Heart },
+  { id: "awards", label: "Awards", icon: Trophy },
+  { id: "certifications", label: "Certifications", icon: Award },
+  { id: "publications", label: "Publications", icon: BookOpen },
+  { id: "volunteer", label: "Volunteer", icon: HandHelping },
+  { id: "references", label: "References", icon: Users },
 ];
 
 export const ResumeSidebar = () => {
   const { activeTab, setActiveTab } = useUiStore();
-  const { resumeData, addAdditionalSection } = useResumeStore();
+  const { resumeData, addCustomSection } = useResumeStore();
   const navigate = useNavigate();
+  const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
+  const [newSectionTitle, setNewSectionTitle] = useState("");
 
-  const handleAddAdditional = () => {
-    addAdditionalSection();
-    // Fetch the latest state to ensure we get the newly added section
-    setTimeout(() => {
-      const latestData = useResumeStore.getState().resumeData;
-      const lastSection = latestData.additionalSections[latestData.additionalSections.length - 1];
-      if (lastSection) {
-        setActiveTab(lastSection.id);
-      }
-    }, 0);
+  const handleAddCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newSectionTitle.trim()) {
+      const newId = addCustomSection(newSectionTitle.trim());
+      setActiveTab(newId);
+      setIsAddSectionOpen(false);
+      setNewSectionTitle("");
+    }
   };
 
   const renderMenuItem = (sectionId: string, label: string, Icon: any, variants: Variants, showCompletion: boolean = true) => {
@@ -167,18 +186,17 @@ export const ResumeSidebar = () => {
                 renderMenuItem(section.id, section.label, section.icon, iconVariants[section.id] || {})
               )}
 
-              {/* Dynamic Additional Sections */}
-              {resumeData.additionalSections.map((section) =>
-                renderMenuItem(section.id, section.title || "Untitled Section", Layout, iconVariants.additional)
+              {/* Custom Sections */}
+              {resumeData.customSections.map((section) =>
+                renderMenuItem(section.id, section.name, Plus, {})
               )}
 
-              {/* Add Additional Section Button */}
               <motion.div whileHover="hover" whileTap="tap">
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    onClick={handleAddAdditional}
+                    onClick={() => setIsAddSectionOpen(true)}
                     className="transition-all duration-200 h-10 px-4 text-primary hover:bg-primary/5 hover:text-primary"
-                    tooltip="Add Section"
+                    tooltip="Add Custom Section"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     <span>Add section</span>
@@ -204,9 +222,6 @@ export const ResumeSidebar = () => {
               <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">Upload Resume</span>
             </Button>
           </motion.div>
-          <p className="group-data-[collapsible=icon]:hidden mt-2 text-[10px] text-muted-foreground/60 leading-relaxed text-center px-1">
-            Upload an existing resume and we'll auto-fill your details.
-          </p>
         </div>
       </SidebarContent>
 
@@ -215,6 +230,36 @@ export const ResumeSidebar = () => {
           <UserMenu />
         </div>
       </SidebarFooter>
+
+      <Dialog open={isAddSectionOpen} onOpenChange={setIsAddSectionOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-border/50">
+          <DialogHeader>
+            <DialogTitle>Add Custom Section</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddCustomSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="section-title">Section Title</Label>
+                <Input
+                  id="section-title"
+                  placeholder="e.g. Volunteer Work, Projects..."
+                  value={newSectionTitle}
+                  onChange={(e) => setNewSectionTitle(e.target.value)}
+                  autoFocus
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsAddSectionOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={!newSectionTitle.trim()}>
+                Add Section
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Sidebar>
   );
 };

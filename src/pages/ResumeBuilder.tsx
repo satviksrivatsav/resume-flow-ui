@@ -4,7 +4,15 @@ import { WorkExperienceForm } from "@/components/resume/WorkExperienceForm";
 import { EducationForm } from "@/components/resume/EducationForm";
 import { ProjectsForm } from "@/components/resume/ProjectsForm";
 import { SkillsForm } from "@/components/resume/SkillsForm";
-import { AdditionalSectionForm } from "@/components/resume/AdditionalSectionForm";
+import { ProfilesForm } from "@/components/resume/ProfilesForm";
+import { LanguagesForm } from "@/components/resume/LanguagesForm";
+import { InterestsForm } from "@/components/resume/InterestsForm";
+import { AwardsForm } from "@/components/resume/AwardsForm";
+import { CertificationsForm } from "@/components/resume/CertificationsForm";
+import { PublicationsForm } from "@/components/resume/PublicationsForm";
+import { VolunteerForm } from "@/components/resume/VolunteerForm";
+import { ReferencesForm } from "@/components/resume/ReferencesForm";
+import { CustomSectionForm } from "@/components/resume/CustomSectionForm";
 import { ResumeSettings } from "@/components/resume/ResumeSettings";
 import { ResumePreview } from "@/components/resume/ResumePreview";
 import { DownloadButton } from "@/components/resume/DownloadButton";
@@ -32,7 +40,7 @@ type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab } = useUiStore();
-  const { resumeData, deleteAdditionalSection } = useResumeStore();
+  const { resumeData, deleteCustomSection } = useResumeStore();
   const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
@@ -101,10 +109,18 @@ const ResumeBuilder = () => {
       case "education": return "Education";
       case "projects": return "Projects";
       case "skills": return "Skills";
+      case "profiles": return "Profiles";
+      case "languages": return "Languages";
+      case "interests": return "Interests";
+      case "awards": return "Awards";
+      case "certifications": return "Certifications";
+      case "publications": return "Publications";
+      case "volunteer": return "Volunteer";
+      case "references": return "References";
       case "settings": return "Resume Settings";
       default: {
-        const section = resumeData.additionalSections.find(s => s.id === id);
-        return section ? section.title : "Additional Section";
+        const section = resumeData.customSections.find(s => s.id === id);
+        return section ? section.name : "Section";
       }
     }
   };
@@ -116,18 +132,21 @@ const ResumeBuilder = () => {
       case "education": return "List your academic qualifications and achievements.";
       case "projects": return "Showcase your best projects and technical contributions.";
       case "skills": return "Categorize your professional and technical expertise.";
+      case "profiles": return "Add links to your social and professional networks.";
+      case "languages": return "List languages you know and your fluency levels.";
+      case "interests": return "Share your hobbies and what you're passionate about.";
+      case "awards": return "Highlight honors and recognitions you've received.";
+      case "certifications": return "List certifications and licenses you hold.";
+      case "publications": return "Showcase your articles, books, or papers.";
+      case "volunteer": return "Detail your community service and volunteer work.";
+      case "references": return "List people who can vouch for your professional work.";
       case "settings": return "Customize your resume's layout, colors, and fonts.";
-      default: return "Add any other relevant information to your resume.";
+      default: return "Manage your custom resume section content.";
     }
   };
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
-  };
-
-  const handleResetZoom = () => {
-    if (isFullscreen) setFullscreenZoom(1.0);
-    else calculateZoom();
   };
 
   const previewContent = (
@@ -265,13 +284,13 @@ const ResumeBuilder = () => {
                         <p className="text-muted-foreground text-sm">{getSectionDescription(activeTab)}</p>
                       </div>
                       
-                      {resumeData.additionalSections.some(s => s.id === activeTab) && (
+                      {resumeData.customSections.some(s => s.id === activeTab) && (
                         <motion.div whileHover="hover" whileTap="tap">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              deleteAdditionalSection(activeTab);
+                              deleteCustomSection(activeTab);
                               setActiveTab('personal');
                             }}
                             className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 gap-2 shrink-0 h-10 px-4"
@@ -289,12 +308,20 @@ const ResumeBuilder = () => {
                       <TabsContent value="education"><EducationForm /></TabsContent>
                       <TabsContent value="projects"><ProjectsForm /></TabsContent>
                       <TabsContent value="skills"><SkillsForm /></TabsContent>
+                      <TabsContent value="profiles"><ProfilesForm /></TabsContent>
+                      <TabsContent value="languages"><LanguagesForm /></TabsContent>
+                      <TabsContent value="interests"><InterestsForm /></TabsContent>
+                      <TabsContent value="awards"><AwardsForm /></TabsContent>
+                      <TabsContent value="certifications"><CertificationsForm /></TabsContent>
+                      <TabsContent value="publications"><PublicationsForm /></TabsContent>
+                      <TabsContent value="volunteer"><VolunteerForm /></TabsContent>
+                      <TabsContent value="references"><ReferencesForm /></TabsContent>
                       <TabsContent value="settings"><ResumeSettings /></TabsContent>
                       
-                      {/* Dynamic Additional Sections Content */}
-                      {resumeData.additionalSections.map(section => (
+                      {/* Dynamic Custom Sections Content */}
+                      {resumeData.customSections.map(section => (
                         <TabsContent key={section.id} value={section.id}>
-                          <AdditionalSectionForm />
+                          <CustomSectionForm />
                         </TabsContent>
                       ))}
                     </Tabs>
@@ -366,7 +393,7 @@ const ResumeBuilder = () => {
                         
                         <div className="flex-1 flex justify-center">
                             <h2 className="text-lg font-bold text-white tracking-tight">
-                                {useResumeStore.getState().resumeData.personalInfo.name || "Untitled Resume"}
+                                {resumeData.basics.name || "Untitled Resume"}
                             </h2>
                         </div>
 

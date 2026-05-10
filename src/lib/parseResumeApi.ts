@@ -34,18 +34,18 @@ export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Prom
     // Merge parsed data with defaults to ensure all required fields exist
     const mergedData: ResumeData = {
         ...defaultResumeData,
-        personalInfo: {
-            ...defaultResumeData.personalInfo,
-            ...(result.data.personalInfo || {}),
+        ...result.data,
+        basics: {
+            ...defaultResumeData.basics,
+            ...(result.data.basics || {}),
         },
-        education: result.data.education || [],
-        workExperience: result.data.workExperience || [],
-        projects: result.data.projects || [],
-        skills: result.data.skills || [],
-        additionalSections: result.data.additionalSections || (result.data as any).customSections || [],
-        settings: {
-            ...defaultResumeData.settings,
-            ...(result.data.settings || {}),
+        sections: {
+            ...defaultResumeData.sections,
+            ...(result.data.sections || {}),
+        },
+        metadata: {
+            ...defaultResumeData.metadata,
+            ...(result.data.metadata || {}),
         },
     };
 

@@ -20,9 +20,9 @@ const FONT_FAMILIES = [
 ];
 
 const FONT_SIZES = [
-  { value: 'compact' as const, label: 'Compact', pt: 9 },
-  { value: 'standard' as const, label: 'Standard', pt: 11 },
-  { value: 'large' as const, label: 'Large', pt: 13 },
+  { value: 'compact', label: 'Compact', pt: 9 },
+  { value: 'standard', label: 'Standard', pt: 11 },
+  { value: 'large', label: 'Large', pt: 13 },
 ];
 
 interface ColorHexagonProps {
@@ -58,27 +58,27 @@ const ColorHexagon = ({ color, isActive, onClick }: ColorHexagonProps) => (
 );
 
 export const ResumeSettings = () => {
-  const { resumeData, updateSettings } = useResumeStore();
-  const { settings } = resumeData;
-  const [modalColor, setModalColor] = useState(settings.themeColor);
+  const { resumeData, updateMetadata } = useResumeStore();
+  const { metadata } = resumeData;
+  const [modalColor, setModalColor] = useState(metadata.theme.primary);
   const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
 
   // Sync local modal state when dialog opens
   const handleDialogOpenChange = useCallback((open: boolean) => {
     if (open) {
-      setModalColor(settings.themeColor);
+      setModalColor(metadata.theme.primary);
     }
     setIsColorDialogOpen(open);
-  }, [settings.themeColor]);
+  }, [metadata.theme.primary]);
 
   const handleApplyColor = useCallback(() => {
-    updateSettings({ themeColor: modalColor });
+    updateMetadata({ theme: { ...metadata.theme, primary: modalColor } });
     setIsColorDialogOpen(false);
-  }, [modalColor, updateSettings]);
+  }, [modalColor, updateMetadata, metadata.theme]);
 
   const handleColorClick = useCallback((color: string) => {
-    updateSettings({ themeColor: color });
-  }, [updateSettings]);
+    updateMetadata({ theme: { ...metadata.theme, primary: color } });
+  }, [updateMetadata, metadata.theme]);
 
   return (
     <motion.div
@@ -90,7 +90,7 @@ export const ResumeSettings = () => {
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-sm font-medium mb-1">Theme Color</h3>
-          <p className="text-xs font-mono text-muted-foreground uppercase">{settings.themeColor}</p>
+          <p className="text-xs font-mono text-muted-foreground uppercase">{metadata.theme.primary}</p>
         </div>
         
         <div className="flex justify-center space-x-[-12px] pb-4 overflow-visible">
@@ -100,7 +100,7 @@ export const ResumeSettings = () => {
               <ColorHexagon 
                 key={c} 
                 color={c} 
-                isActive={settings.themeColor === c} 
+                isActive={metadata.theme.primary === c} 
                 onClick={handleColorClick} 
               />
             ))}
@@ -112,7 +112,7 @@ export const ResumeSettings = () => {
               <ColorHexagon 
                 key={c} 
                 color={c} 
-                isActive={settings.themeColor === c} 
+                isActive={metadata.theme.primary === c} 
                 onClick={handleColorClick} 
               />
             ))}
@@ -122,12 +122,12 @@ export const ResumeSettings = () => {
           <div className="flex flex-col gap-1 justify-center">
             <ColorHexagon 
               color={THEME_COLORS[7]} 
-              isActive={settings.themeColor === THEME_COLORS[7]} 
+              isActive={metadata.theme.primary === THEME_COLORS[7]} 
               onClick={handleColorClick} 
             />
             <ColorHexagon 
               color={THEME_COLORS[8]} 
-              isActive={settings.themeColor === THEME_COLORS[8]} 
+              isActive={metadata.theme.primary === THEME_COLORS[8]} 
               onClick={handleColorClick} 
             />
             
@@ -176,12 +176,12 @@ export const ResumeSettings = () => {
 
             <ColorHexagon 
               color={THEME_COLORS[9]} 
-              isActive={settings.themeColor === THEME_COLORS[9]} 
+              isActive={metadata.theme.primary === THEME_COLORS[9]} 
               onClick={handleColorClick} 
             />
             <ColorHexagon 
               color={THEME_COLORS[10]} 
-              isActive={settings.themeColor === THEME_COLORS[10]} 
+              isActive={metadata.theme.primary === THEME_COLORS[10]} 
               onClick={handleColorClick} 
             />
           </div>
@@ -192,7 +192,7 @@ export const ResumeSettings = () => {
               <ColorHexagon 
                 key={c} 
                 color={c} 
-                isActive={settings.themeColor === c} 
+                isActive={metadata.theme.primary === c} 
                 onClick={handleColorClick} 
               />
             ))}
@@ -204,7 +204,7 @@ export const ResumeSettings = () => {
               <ColorHexagon 
                 key={c} 
                 color={c} 
-                isActive={settings.themeColor === c} 
+                isActive={metadata.theme.primary === c} 
                 onClick={handleColorClick} 
               />
             ))}
@@ -221,8 +221,8 @@ export const ResumeSettings = () => {
               key={font}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => updateSettings({ fontFamily: font })}
-              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${settings.fontFamily === font
+              onClick={() => updateMetadata({ typography: { ...metadata.typography, fontFamily: font } })}
+              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${metadata.typography.fontFamily === font
                 ? 'border-primary bg-primary text-primary-foreground shadow-md'
                 : 'border-border bg-background hover:border-primary/50'
                 }`}
@@ -239,7 +239,7 @@ export const ResumeSettings = () => {
         <div>
           <h3 className="text-sm font-medium mb-1">Font Size (pt)</h3>
           <p className="text-xs text-muted-foreground">
-            {FONT_SIZES.find(f => f.value === settings.fontSize)?.pt}
+            {metadata.typography.fontSize}pt
           </p>
         </div>
         <div className="grid grid-cols-3 gap-2">
@@ -248,8 +248,8 @@ export const ResumeSettings = () => {
               key={size.value}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => updateSettings({ fontSize: size.value })}
-              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${settings.fontSize === size.value
+              onClick={() => updateMetadata({ typography: { ...metadata.typography, fontSize: size.pt } })}
+              className={`px-4 py-2.5 rounded-full border-2 text-sm font-medium transition-all ${metadata.typography.fontSize === size.pt
                 ? 'border-primary bg-primary text-primary-foreground shadow-md'
                 : 'border-border bg-background hover:border-primary/50'
                 }`}

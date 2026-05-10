@@ -3,31 +3,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Briefcase, Plus, ChevronDown, ChevronUp, MapPin, Calendar } from "lucide-react";
 import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
+import { AIWriterButton } from "@/components/ui/AIWriterButton";
 import { cn } from "@/lib/utils";
 import { FieldTip } from "@/components/ui/FieldTip";
 
 export const WorkExperienceForm = () => {
-  const { resumeData, addWorkExperience, updateWorkExperience, deleteWorkExperience } = useResumeStore();
+  const { resumeData, addExperience, updateExperience, deleteExperience } = useResumeStore();
+  const { items: workExperience } = resumeData.sections.experience;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (resumeData.workExperience.length > 0 && !expandedId) {
-      setExpandedId(resumeData.workExperience[resumeData.workExperience.length - 1].id);
+    if (workExperience.length > 0 && !expandedId) {
+      setExpandedId(workExperience[workExperience.length - 1].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeData.workExperience]);
+  }, [workExperience]);
 
   const handleAdd = () => {
-    addWorkExperience();
+    addExperience();
     setTimeout(() => {
-      const lastExp = resumeData.workExperience[resumeData.workExperience.length - 1];
+      const lastExp = workExperience[workExperience.length - 1];
       if (lastExp) setExpandedId(lastExp.id);
     }, 0);
   };
@@ -50,7 +49,7 @@ export const WorkExperienceForm = () => {
 
       <div className="space-y-3">
         <AnimatePresence mode="popLayout">
-          {resumeData.workExperience.map((exp, index) => {
+          {workExperience.map((exp, index) => {
             const isExpanded = expandedId === exp.id;
             
             return (
@@ -76,7 +75,7 @@ export const WorkExperienceForm = () => {
                       <h3 className="font-semibold text-base truncate">
                         {exp.position || `Work Experience ${index + 1}`}
                       </h3>
-                      {exp.current && (
+                      {exp.period.includes("Present") && (
                         <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-full">
                           Present
                         </span>
@@ -89,10 +88,10 @@ export const WorkExperienceForm = () => {
                           {exp.company}
                         </span>
                       )}
-                      {(exp.startDate || exp.endDate) && (
+                      {exp.period && (
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
-                          {exp.startDate || "Start"} — {exp.current ? "Present" : (exp.endDate || "End")}
+                          {exp.period}
                         </span>
                       )}
                     </div>
@@ -104,7 +103,7 @@ export const WorkExperienceForm = () => {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          deleteWorkExperience(exp.id);
+                          deleteExperience(exp.id);
                         }}
                         className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                       >
@@ -132,7 +131,7 @@ export const WorkExperienceForm = () => {
                           </Label>
                           <Input
                             value={exp.position}
-                            onChange={(e) => updateWorkExperience(exp.id, { position: e.target.value })}
+                            onChange={(e) => updateExperience(exp.id, { position: e.target.value })}
                             placeholder="e.g. Senior Software Engineer"
                           />
                         </div>
@@ -143,7 +142,7 @@ export const WorkExperienceForm = () => {
                           </Label>
                           <Input
                             value={exp.company}
-                            onChange={(e) => updateWorkExperience(exp.id, { company: e.target.value })}
+                            onChange={(e) => updateExperience(exp.id, { company: e.target.value })}
                             placeholder="e.g. Google"
                           />
                         </div>
@@ -153,7 +152,7 @@ export const WorkExperienceForm = () => {
                           <div className="relative">
                             <Input
                               value={exp.location}
-                              onChange={(e) => updateWorkExperience(exp.id, { location: e.target.value })}
+                              onChange={(e) => updateExperience(exp.id, { location: e.target.value })}
                               placeholder="e.g. San Francisco, CA"
                               className="pl-9"
                             />
@@ -161,52 +160,32 @@ export const WorkExperienceForm = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
-                          <MonthYearPicker
-                            label={<span>Start Date <span className="text-red-500">*</span></span>}
-                            value={exp.startDate}
-                            onChange={(value) => updateWorkExperience(exp.id, { startDate: value })}
-                          />
-
-                          <div className="space-y-2">
-                            <MonthYearPicker
-                              label={<span>End Date {!exp.current && <span className="text-red-500">*</span>}</span>}
-                              value={exp.endDate}
-                              onChange={(value) => updateWorkExperience(exp.id, { endDate: value })}
-                              disabled={exp.current}
+                        <div className="space-y-2">
+                          <Label className="font-medium">Period</Label>
+                          <div className="relative">
+                            <Input
+                              value={exp.period}
+                              onChange={(e) => updateExperience(exp.id, { period: e.target.value })}
+                              placeholder="e.g. 2022-06 - Present"
+                              className="pl-9"
                             />
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           </div>
-                        </div>
-
-                        <div className="md:col-span-2 flex items-center space-x-2 bg-muted/30 p-3 rounded-2xl border border-dashed">
-                          <Checkbox
-                            id={`current-${exp.id}`}
-                            checked={exp.current}
-                            onCheckedChange={(checked) =>
-                              updateWorkExperience(exp.id, { current: checked as boolean })
-                            }
-                          />
-                          <label
-                            htmlFor={`current-${exp.id}`}
-                            className="text-sm font-medium leading-none cursor-pointer select-none"
-                          >
-                            I am currently working in this role
-                          </label>
                         </div>
 
                         <div className="md:col-span-2 space-y-3">
                           <div className="flex items-center justify-between">
                             <Label className="text-sm font-semibold">Key Achievements & Responsibilities</Label>
                             <AIWriterButton
-                              fieldName="description"
+                              fieldName="experience"
                               fieldLabel="Work Experience Description"
                               fieldValue={exp.description || ''}
-                              onUpdate={(newText) => updateWorkExperience(exp.id, { description: newText })}
+                              onUpdate={(newText) => updateExperience(exp.id, { description: newText })}
                             />
                           </div>
                           <Textarea
                             value={exp.description}
-                            onChange={(e) => updateWorkExperience(exp.id, { description: e.target.value })}
+                            onChange={(e) => updateExperience(exp.id, { description: e.target.value })}
                             placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
                             className="min-h-[150px] font-mono text-sm"
                             rows={6}
@@ -225,7 +204,7 @@ export const WorkExperienceForm = () => {
         </AnimatePresence>
       </div>
 
-      {resumeData.workExperience.length === 0 && (
+      {workExperience.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <Briefcase className="w-6 h-6 text-muted-foreground" />

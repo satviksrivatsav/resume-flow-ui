@@ -1,14 +1,6 @@
 import { useResumeStore } from "@/stores/resumeStore";
 import { forwardRef } from "react";
-import { format } from "date-fns";
-import { Phone, Mail, Globe, Github, Linkedin, MapPin } from "lucide-react";
-import { getCountryByCode } from "@/lib/countries";
-
-const fontSizeMap = {
-  compact: { base: '9pt', heading: '11pt', name: '18pt' },
-  standard: { base: '11pt', heading: '13pt', name: '22pt' },
-  large: { base: '13pt', heading: '15pt', name: '26pt' },
-};
+import { Phone, Mail, Globe, MapPin, Github, Linkedin, Twitter } from "lucide-react";
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
 const A4_WIDTH = '794px';
@@ -26,7 +18,6 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
   return (
     <div style={style}>
       {lines.map((line, i) => {
-        // Detect manual bullets: •, -, *, or similar with at least one space after
         const bulletMatch = line.match(/^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/);
         
         if (bulletMatch) {
@@ -35,267 +26,293 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
           const content = bulletMatch[3];
           
           return (
-            <div key={i} style={{ display: 'flex', marginBottom: '2px', alignItems: 'flex-start', hyphens: 'none' }}>
-              <span style={{ width: '1.2em', flexShrink: 0, marginLeft: indent ? `${indent.length * 8}px` : 0, color: '#000' }}>{bulletChar}</span>
-              <span style={{ flex: 1, color: '#000' }}>{content}</span>
+            <div key={i} style={{ display: 'flex', marginBottom: '2px', alignItems: 'flex-start' }}>
+              <span style={{ width: '1.2em', flexShrink: 0, marginLeft: indent ? `${indent.length * 8}px` : 0 }}>{bulletChar}</span>
+              <span style={{ flex: 1 }}>{content}</span>
             </div>
           );
         }
         
-        return <div key={i} style={{ minHeight: '1.2em', color: '#000', hyphens: 'none' }}>{line}</div>;
+        return <div key={i} style={{ minHeight: '1.2em' }}>{line}</div>;
       })}
     </div>
   );
 };
 
 interface ResumeContentProps {
-  personalInfo: { name?: string; email?: string; phone?: string; phoneCountryCode?: string; location?: string; linkedin?: string; website?: string; github?: string; summary?: string };
-  education: Array<{ id: string; school?: string; degree?: string; field?: string; startDate?: string; endDate?: string; grade?: string; description?: string }>;
-  workExperience: Array<{ id: string; position?: string; company?: string; startDate?: string; endDate?: string; current?: boolean; location?: string; description?: string }>;
-  projects: Array<{ id: string; name?: string; startDate?: string; endDate?: string; ongoing?: boolean; link?: string; role?: string; technologies?: string | string[]; description?: string }>;
-  skills: Array<{ id: string; category?: string; items?: string }>;
-  additionalSections: Array<{ id: string; title?: string; description?: string }>;
-  settings: { themeColor: string; fontSize: string; fontFamily: string };
+  basics: any;
+  summary: any;
+  sections: any;
+  customSections: any[];
+  metadata: any;
   sizes: { base: string; heading: string; name: string };
-  formatDate: (date: string) => string;
 }
 
+const SectionHeader = ({ title, color, sizes }: { title: string, color: string, sizes: any }) => (
+  <div style={{ borderBottom: `1px solid ${color}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid' }}>
+    <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: color, margin: 0 }}>
+      {title.toUpperCase()}
+    </h2>
+  </div>
+);
+
 const ResumeContent = ({
-  personalInfo,
-  education,
-  workExperience,
-  projects,
-  skills,
-  additionalSections,
-  settings,
+  basics,
+  summary,
+  sections,
+  customSections,
+  metadata,
   sizes,
-  formatDate
 }: ResumeContentProps) => {
-  // Filter entries to only show ones with mandatory content
-  const validWork = workExperience.filter((exp) => exp.position || exp.company);
-  const validEducation = education.filter((edu) => edu.school || edu.degree);
-  const validProjects = projects.filter((proj) => proj.name);
-  const validSkills = skills.filter((skill) => skill.category || skill.items);
-  const validAdditional = additionalSections.filter((section) => 
-    section && 
-    section.title && 
-    section.description && 
-    section.description !== '<p><br></p>'
-  );
+  const themeColor = metadata.theme.primary;
+
+  const getNetworkIcon = (network: string) => {
+    const n = network.toLowerCase();
+    if (n.includes('github')) return <Github size={12} />;
+    if (n.includes('linkedin')) return <Linkedin size={12} />;
+    if (n.includes('twitter') || n.includes('x')) return <Twitter size={12} />;
+    return <Globe size={12} />;
+  };
 
   return (
     <>
       {/* Header */}
-      <div className="resume-header" style={{ marginBottom: '16px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h1 style={{ fontSize: sizes.name, fontWeight: 'bold', color: settings.themeColor, margin: '0 0 8px 0' }}>
-          {personalInfo.name || 'Your Name'}
+      <div style={{ marginBottom: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <h1 style={{ fontSize: sizes.name, fontWeight: 'bold', color: themeColor, margin: '0 0 4px 0' }}>
+          {basics.name || 'Your Name'}
         </h1>
+        {basics.headline && (
+          <p style={{ fontSize: sizes.heading, color: '#444', margin: '0 0 8px 0' }}>{basics.headline}</p>
+        )}
         <div style={{ fontSize: sizes.base, display: 'flex', flexWrap: 'wrap', gap: '8px 16px', color: '#000', justifyContent: 'center' }}>
-          {personalInfo.email && <IconWrapper><Mail size={12} /><span>{personalInfo.email}</span></IconWrapper>}
-          {personalInfo.phone && <IconWrapper><Phone size={12} /><span>{getCountryByCode(personalInfo.phoneCountryCode)?.dialCode || ''} {personalInfo.phone}</span></IconWrapper>}
-          {personalInfo.location && <IconWrapper><MapPin size={12} /><span>{personalInfo.location}</span></IconWrapper>}
-          {personalInfo.linkedin && <IconWrapper><Linkedin size={12} /><span>{personalInfo.linkedin}</span></IconWrapper>}
-          {personalInfo.website && <IconWrapper><Globe size={12} /><span>{personalInfo.website}</span></IconWrapper>}
-          {personalInfo.github && <IconWrapper><Github size={12} /><span>{personalInfo.github}</span></IconWrapper>}
+          {basics.email && <IconWrapper><Mail size={12} /><span>{basics.email}</span></IconWrapper>}
+          {basics.phone && <IconWrapper><Phone size={12} /><span>{basics.phone}</span></IconWrapper>}
+          {basics.location && <IconWrapper><MapPin size={12} /><span>{basics.location}</span></IconWrapper>}
+          {basics.url.href && <IconWrapper><Globe size={12} /><span>{basics.url.label || basics.url.href}</span></IconWrapper>}
         </div>
+        
+        {/* Social Profiles */}
+        {sections.profiles.items.length > 0 && sections.profiles.visible && (
+            <div style={{ fontSize: sizes.base, display: 'flex', flexWrap: 'wrap', gap: '8px 16px', color: '#000', justifyContent: 'center', marginTop: '4px' }}>
+                {sections.profiles.items.filter((p: any) => p.visible).map((p: any) => (
+                    <IconWrapper key={p.id}>
+                        {getNetworkIcon(p.network)}
+                        <span>{p.username}</span>
+                    </IconWrapper>
+                ))}
+            </div>
+        )}
       </div>
 
       {/* Summary */}
-      {personalInfo.summary && (
-        <div className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              PROFESSIONAL SUMMARY
-            </h2>
-          </div>
+      {summary.content && summary.visible && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title="Summary" color={themeColor} sizes={sizes} />
           <DescriptionRenderer 
-            text={personalInfo.summary} 
-            style={{ color: '#000', lineHeight: '1.5', margin: 0, wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none' }} 
+            text={summary.content} 
+            style={{ color: '#000', lineHeight: '1.5', margin: 0 }} 
           />
         </div>
       )}
 
-      {/* Work Experience */}
-      {validWork.length > 0 && (
-        <div className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              WORK EXPERIENCE
-            </h2>
-          </div>
-          {validWork.map((exp) => (
-            <div key={exp.id} className="resume-item" style={{ marginBottom: '12px', breakInside: 'avoid' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+      {/* Experience */}
+      {sections.experience.visible && sections.experience.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.experience.name} color={themeColor} sizes={sizes} />
+          {sections.experience.items.filter((i:any) => i.visible).map((exp: any) => (
+            <div key={exp.id} style={{ marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
                 <div>
                   <strong style={{ color: '#000' }}>{exp.position}</strong>
                   {exp.company && <span style={{ color: '#000' }}>, {exp.company}</span>}
                 </div>
-                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap', paddingLeft: '16px' }}>
-                  {formatDate(exp.startDate)} - {exp.current ? 'Present' : formatDate(exp.endDate)}
+                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
+                  {exp.period}
                 </span>
               </div>
-              {exp.location && (
-                <div style={{ fontSize: sizes.base, color: '#000', marginBottom: '4px' }}>
-                  {exp.location}
-                </div>
-              )}
-              {exp.description && (
-                <DescriptionRenderer 
-                  text={exp.description} 
-                  style={{ color: '#000', lineHeight: '1.5', wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none' }} 
-                />
-              )}
+              {exp.location && <div style={{ fontSize: '0.9em', color: '#666', marginBottom: '4px' }}>{exp.location}</div>}
+              {exp.description && <DescriptionRenderer text={exp.description} style={{ color: '#000', lineHeight: '1.5' }} />}
             </div>
           ))}
         </div>
       )}
 
       {/* Education */}
-      {validEducation.length > 0 && (
-        <div className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              EDUCATION
-            </h2>
-          </div>
-          {validEducation.map((edu) => (
-            <div key={edu.id} className="resume-item" style={{ marginBottom: '12px', breakInside: 'avoid' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+      {sections.education.visible && sections.education.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.education.name} color={themeColor} sizes={sizes} />
+          {sections.education.items.filter((i:any) => i.visible).map((edu: any) => (
+            <div key={edu.id} style={{ marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
                 <div>
                   <strong style={{ color: '#000' }}>{edu.degree}</strong>
-                  {edu.field && <span style={{ color: '#000' }}> in {edu.field}</span>}
+                  {edu.area && <span style={{ color: '#000' }}> in {edu.area}</span>}
                 </div>
-                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap', paddingLeft: '16px' }}>
-                  {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
+                  {edu.period}
                 </span>
               </div>
-              <div style={{ color: '#000' }}>
-                {edu.school}
-                {edu.grade && <span style={{ color: '#000' }}> • {edu.grade}</span>}
-              </div>
-              {edu.description && (
-                <DescriptionRenderer 
-                  text={edu.description} 
-                  style={{ color: '#000', lineHeight: '1.5', marginTop: '4px', wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none' }} 
-                />
-              )}
+              <div style={{ color: '#000' }}>{edu.school}{edu.grade && <span> • {edu.grade}</span>}</div>
+              {edu.description && <DescriptionRenderer text={edu.description} style={{ color: '#000', lineHeight: '1.5', marginTop: '2px' }} />}
             </div>
           ))}
         </div>
       )}
 
       {/* Projects */}
-      {validProjects.length > 0 && (
-        <div className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              PROJECTS
-            </h2>
-          </div>
-          {validProjects.map((proj) => (
-            <div key={proj.id} className="resume-item" style={{ marginBottom: '12px', breakInside: 'avoid' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+      {sections.projects.visible && sections.projects.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.projects.name} color={themeColor} sizes={sizes} />
+          {sections.projects.items.filter((i:any) => i.visible).map((proj: any) => (
+            <div key={proj.id} style={{ marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
                 <strong style={{ color: '#000' }}>{proj.name}</strong>
-                {(proj.startDate || proj.endDate || proj.ongoing) && (
-                  <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap', paddingLeft: '16px' }}>
-                    {formatDate(proj.startDate)} - {proj.ongoing ? 'Ongoing' : formatDate(proj.endDate)}
-                  </span>
-                )}
+                {proj.period && <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>{proj.period}</span>}
               </div>
-              {proj.link && (
-                <a href={proj.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: sizes.base, color: settings.themeColor, display: 'block', marginBottom: '4px' }}>
-                  {proj.link}
-                </a>
-              )}
-              {proj.role && (
-                <div style={{ fontSize: '0.9em', color: '#000', marginBottom: '4px' }}>
-                  <strong>Role:</strong> {proj.role}
-                </div>
-              )}
-              {proj.technologies && (Array.isArray(proj.technologies) ? proj.technologies.length > 0 : proj.technologies) && (
-                <div style={{ fontSize: '0.9em', color: '#000', marginBottom: '4px' }}>
-                  <strong>Technologies:</strong> {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
-                </div>
-              )}
-              {proj.description && (
-                <DescriptionRenderer 
-                  text={proj.description} 
-                  style={{ color: '#000', lineHeight: '1.5', wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none' }} 
-                />
-              )}
+              {proj.website.href && <div style={{ fontSize: '0.9em', color: themeColor, marginBottom: '4px' }}>{proj.website.label || proj.website.href}</div>}
+              {proj.description && <DescriptionRenderer text={proj.description} style={{ color: '#000', lineHeight: '1.5' }} />}
+              {proj.keywords && proj.keywords.length > 0 && <div style={{ fontSize: '0.8em', color: '#666', marginTop: '4px' }}><strong>Tech:</strong> {proj.keywords.join(', ')}</div>}
             </div>
           ))}
         </div>
       )}
 
       {/* Skills */}
-      {validSkills.length > 0 && (
-        <div className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              SKILLS
-            </h2>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {validSkills.map((skill) => (
-              <div key={skill.id} className="resume-item" style={{ color: '#000', wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none', breakInside: 'avoid' }}>
-                <strong style={{ color: '#000' }}>{skill.category}:</strong> {skill.items}
+      {sections.skills.visible && sections.skills.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.skills.name} color={themeColor} sizes={sizes} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {sections.skills.items.filter((i:any) => i.visible).map((skill: any) => (
+              <div key={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
+                <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Additional Sections */}
-      {validAdditional.map((section) => (
-        <div key={section.id} className="resume-section" style={{ marginBottom: '16px' }}>
-          <div style={{ borderBottom: `1px solid ${settings.themeColor}`, paddingBottom: '2px', marginBottom: '10px', pageBreakAfter: 'avoid', breakAfter: 'avoid' }}>
-            <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: settings.themeColor, margin: 0 }}>
-              {(section.title || '').toUpperCase()}
-            </h2>
+      {/* Languages & Interests */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {sections.languages.visible && sections.languages.items.length > 0 && (
+          <div>
+            <SectionHeader title={sections.languages.name} color={themeColor} sizes={sizes} />
+            {sections.languages.items.filter((i:any) => i.visible).map((lang: any) => (
+              <div key={lang.id} style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 'bold' }}>{lang.name}</span>
+                <span style={{ fontSize: '0.9em', color: '#666' }}>{lang.description}</span>
+              </div>
+            ))}
           </div>
-          <div
-            className="resume-item"
-            style={{ color: '#000', lineHeight: '1.5', wordBreak: 'normal', overflowWrap: 'break-word', hyphens: 'none' }}
-            dangerouslySetInnerHTML={{ __html: section.description || '' }}
-          />
+        )}
+        {sections.interests.visible && sections.interests.items.length > 0 && (
+          <div>
+            <SectionHeader title={sections.interests.name} color={themeColor} sizes={sizes} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              {sections.interests.items.filter((i:any) => i.visible).map((interest: any) => (
+                <span key={interest.id} style={{ fontSize: sizes.base }}>
+                    {interest.name}{interest.keywords.length > 0 ? ` (${interest.keywords.join(', ')})` : ''}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Awards & Certifications */}
+      {sections.awards.visible && sections.awards.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.awards.name} color={themeColor} sizes={sizes} />
+          {sections.awards.items.filter((i:any) => i.visible).map((award: any) => (
+            <div key={award.id} style={{ marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <strong style={{ color: '#000' }}>{award.title}</strong>
+                <span>{award.date}</span>
+              </div>
+              <div style={{ fontSize: '0.9em', color: '#666' }}>{award.awarder}</div>
+              {award.description && <div style={{ fontSize: sizes.base }}>{award.description}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {sections.certifications.visible && sections.certifications.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
+          {sections.certifications.items.filter((i:any) => i.visible).map((cert: any) => (
+            <div key={cert.id} style={{ marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <strong style={{ color: '#000' }}>{cert.name}</strong>
+                <span>{cert.date}</span>
+              </div>
+              <div style={{ fontSize: '0.9em', color: '#666' }}>{cert.issuer}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Volunteer & Publications */}
+      {sections.volunteer.visible && sections.volunteer.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.volunteer.name} color={themeColor} sizes={sizes} />
+          {sections.volunteer.items.filter((i:any) => i.visible).map((vol: any) => (
+            <div key={vol.id} style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <strong style={{ color: '#000' }}>{vol.position}</strong>
+                <span>{vol.period}</span>
+              </div>
+              <div style={{ fontStyle: 'italic' }}>{vol.organization}</div>
+              {vol.description && <DescriptionRenderer text={vol.description} style={{ color: '#000', lineHeight: '1.4' }} />}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* References */}
+      {sections.references.visible && sections.references.items.length > 0 && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader title={sections.references.name} color={themeColor} sizes={sizes} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            {sections.references.items.filter((i:any) => i.visible).map((ref: any) => (
+              <div key={ref.id} style={{ fontSize: sizes.base }}>
+                <div style={{ fontWeight: 'bold' }}>{ref.name}</div>
+                <div>{ref.position}</div>
+                <div style={{ color: '#666' }}>{ref.email} {ref.phone && `| ${ref.phone}`}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Custom Sections */}
+      {customSections.filter(s => s.visible && s.items.length > 0).map(section => (
+        <div key={section.id} style={{ marginBottom: '16px' }}>
+          <SectionHeader title={section.name} color={themeColor} sizes={sizes} />
+          {section.items.map((item: any) => (
+            <div key={item.id} style={{ marginBottom: '8px' }}>
+                <div style={{ fontWeight: 'bold' }}>{item.title}</div>
+                <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
+            </div>
+          ))}
         </div>
       ))}
     </>
-
-  )
-}
+  );
+};
 
 export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
   const { resumeData } = useResumeStore();
-  const { personalInfo, education, workExperience, projects, skills, additionalSections, settings } = resumeData;
+  const { basics, summary, sections, customSections, metadata } = resumeData;
 
-  const sizes = fontSizeMap[settings.fontSize];
+  const baseSize = metadata.typography.fontSize || 11;
+  const sizes = {
+    base: `${baseSize}pt`,
+    heading: `${baseSize + 2}pt`,
+    name: `${baseSize * 2}pt`,
+  };
+
   const pageWidth = A4_WIDTH;
   const pageHeight = A4_HEIGHT;
   const pageMargin = '0.5in';
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    try {
-      const [year, month] = dateStr.split('-');
-      return format(new Date(parseInt(year), parseInt(month) - 1), 'MMM yyyy');
-    } catch {
-      return dateStr;
-    }
-  };
-
-  const contentProps = {
-    personalInfo,
-    education,
-    workExperience,
-    projects,
-    skills,
-    additionalSections,
-    settings,
-    sizes,
-    formatDate
-  };
 
   return (
     <div
@@ -305,7 +322,7 @@ export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         width: pageWidth,
         minHeight: pageHeight,
         overflow: 'hidden',
-        fontFamily: settings.fontFamily,
+        fontFamily: metadata.typography.fontFamily,
         fontSize: sizes.base,
         backgroundColor: 'white',
         color: '#000',
@@ -314,7 +331,7 @@ export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
       }}
     >
-      <ResumeContent {...contentProps} />
+      <ResumeContent basics={basics} summary={summary} sections={sections} customSections={customSections} metadata={metadata} sizes={sizes} />
     </div>
   );
 });

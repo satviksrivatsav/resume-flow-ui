@@ -5,7 +5,6 @@ import { Download, Loader2 } from 'lucide-react';
 import { useResumeStore } from '@/stores/resumeStore';
 import { ResumePDF } from './ResumePDF';
 import { useToast } from '@/hooks/use-toast';
-import { ResumeData } from '@/types/resume';
 import { motion } from 'framer-motion';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
@@ -43,7 +42,7 @@ export const DownloadButton = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${resumeData.personalInfo.name || 'Resume'}.pdf`;
+      link.download = `${resumeData.basics.name || 'Resume'}.pdf`;
 
       // Trigger download
       document.body.appendChild(link);

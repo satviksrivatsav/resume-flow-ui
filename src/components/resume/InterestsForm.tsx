@@ -2,17 +2,17 @@ import { useResumeStore } from "@/stores/resumeStore";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Wrench, Plus } from "lucide-react";
+import { Heart, Plus } from "lucide-react";
 import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { TechChipsInput } from "@/components/ui/TechChipsInput";
 
-export const SkillsForm = () => {
-  const { resumeData, addSkill, updateSkill, deleteSkill } = useResumeStore();
-  const { items: skills } = resumeData.sections.skills;
+export const InterestsForm = () => {
+  const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
+  const { items: interests } = resumeData.sections.interests;
 
   const handleAdd = () => {
-    addSkill();
+    addItem('interests', { name: '', keywords: [] });
   };
 
   return (
@@ -23,19 +23,19 @@ export const SkillsForm = () => {
     >
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm text-muted-foreground">
-          Group your skills into categories like "Languages", "Frameworks", or "Tools".
+          Add your hobbies and personal interests to show your personality.
         </p>
         <Button onClick={handleAdd} className="gap-2 shadow-sm">
           <Plus className="w-4 h-4" />
-          Add Skill Category
+          Add Interest
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AnimatePresence mode="popLayout">
-          {skills.map((skill) => (
+          {interests.map((interest) => (
             <motion.div
-              key={skill.id}
+              key={interest.id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -46,7 +46,7 @@ export const SkillsForm = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteSkill(skill.id)}
+                    onClick={() => deleteItem('interests', interest.id)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
                   >
                     <TrashAnimatedIcon className="w-4 h-4" />
@@ -55,22 +55,20 @@ export const SkillsForm = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="space-y-2 max-w-md">
-                  <Label className="font-medium">Category Name <span className="text-red-500">*</span></Label>
+                <div className="space-y-2">
+                  <Label className="font-medium">Interest / Hobby <span className="text-red-500">*</span></Label>
                   <Input
-                    value={skill.name}
-                    onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-                    placeholder="e.g. Programming Languages, Tools, Soft Skills"
-                    className="font-medium"
+                    value={interest.name}
+                    onChange={(e) => updateItem('interests', interest.id, { name: e.target.value })}
+                    placeholder="e.g. Photography, Hiking, Open Source"
                   />
                 </div>
 
                 <TechChipsInput
-                  label="Skills"
-                  value={skill.keywords}
-                  onChange={(techs) => updateSkill(skill.id, { keywords: techs })}
-                  placeholder="Type a skill and press Enter"
-                  required
+                  label="Keywords"
+                  value={interest.keywords}
+                  onChange={(keywords) => updateItem('interests', interest.id, { keywords })}
+                  placeholder="Type a tag and press Enter"
                 />
               </div>
             </motion.div>
@@ -78,18 +76,18 @@ export const SkillsForm = () => {
         </AnimatePresence>
       </div>
 
-      {skills.length === 0 && (
+      {interests.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Wrench className="w-6 h-6 text-muted-foreground" />
+            <Heart className="w-6 h-6 text-muted-foreground" />
           </div>
-          <h3 className="font-medium text-lg">No skills added</h3>
+          <h3 className="font-medium text-lg">No interests added</h3>
           <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">
-            Categorize your expertise to help recruiters quickly scan your profile.
+            Share what you're passionate about outside of work.
           </p>
           <Button onClick={handleAdd} variant="outline" className="gap-2">
             <Plus className="w-4 h-4" />
-            Add Skill Category
+            Add Interest
           </Button>
         </div>
       )}
