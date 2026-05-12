@@ -7,9 +7,11 @@ import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
 import { MeshGradient } from '@/components/ui/MeshGradient';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   return (
     <PageTransition className="w-full bg-black relative">
@@ -40,7 +42,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-start gap-8">
               <div className="flex flex-row flex-wrap items-center gap-4">
                 <button
-                  onClick={() => navigate('/resume-builder')}
+                  onClick={() => navigate(user ? '/dashboard' : '/login')}
                   className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all text-sm"
                 >
                   Build now

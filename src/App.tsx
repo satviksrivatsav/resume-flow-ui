@@ -10,6 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
+import Dashboard from './pages/Dashboard';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Index from './pages/Index';
 import LoginPage from './pages/LoginPage';
@@ -50,6 +51,14 @@ function AnimatedRoutes() {
             <ProtectedRoute>
               {' '}
               <UpdatePasswordPage />{' '}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />

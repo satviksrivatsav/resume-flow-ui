@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
+import { supabase } from '@/lib/supabase';
 import {
   defaultResumeData,
   EducationItem,
@@ -11,9 +12,20 @@ import {
   SkillItem,
 } from '@/types/resume';
 
+interface ResumeRow {
+  id: string;
+  user_id: string;
+  name: string;
+  data: ResumeData;
+  created_at: string;
+  updated_at: string;
+}
+
 interface ResumeStore {
   resumeData: ResumeData;
   setResumeData: (data: ResumeData) => void;
+  setResumeName: (name: string) => void;
+  loadResume: (id: string) => Promise<void>;
 
   // Basics
   updateBasics: (data: Partial<ResumeData['basics']>) => void;
@@ -65,13 +77,55 @@ interface ResumeStore {
   updateCustomSection: (id: string, data: any) => void;
   deleteCustomSection: (id: string) => void;
 
+  // Save Status
+  isSaving: boolean;
+  lastSaved: Date | null;
+  setIsSaving: (isSaving: boolean) => void;
+  setLastSaved: (lastSaved: Date | null) => void;
+
   resetResume: () => void;
 }
 
 export const useResumeStore = create<ResumeStore>((set, get) => ({
   resumeData: defaultResumeData,
+  isSaving: false,
+  lastSaved: null,
+
+  setIsSaving: (isSaving) => set({ isSaving }),
+  setLastSaved: (lastSaved) => set({ lastSaved }),
 
   setResumeData: (data) => set({ resumeData: data }),
+
+  setResumeName: (name) =>
+    set((state) => ({
+      resumeData: { ...state.resumeData, name },
+    })),
+
+  loadResume: async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from('resumes')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        const row = data as unknown as ResumeRow;
+        set({
+          resumeData: {
+            ...row.data,
+            id: row.id,
+            name: row.name,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error loading resume:', error);
+      throw error;
+    }
+  },
 
   updateBasics: (data) =>
     set((state) => ({

@@ -43,11 +43,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       // Listen for auth changes
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange(async (event, session) => {
         set({
           session,
           user: session?.user ?? null,
         });
+
+        if (event === 'SIGNED_IN' && session?.user) {
+          await promoteAnonymousResume(session.user.id);
+        }
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Auth initialization failed';
@@ -72,6 +76,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
       });
 
+      if (data.user) {
+        await promoteAnonymousResume(data.user.id);
+      }
+
       return {};
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Sign up failed';
@@ -95,6 +103,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         session: data.session,
         isLoading: false,
       });
+
+      if (data.user) {
+        await promoteAnonymousResume(data.user.id);
+      }
 
       return {};
     } catch (error: unknown) {
@@ -176,3 +188,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   clearError: () => set({ error: null }),
 }));
+
+const promoteAnonymousResume = async (userId: string) => {
+  const anonymousResume = sessionStorage.getItem('rf-anonymous-resume');
+  if (anonymousResume) {
+    try {
+      const resumeData = JSON.parse(anonymousResume);
+      const upsertData: any = {
+        user_id: userId,
+        name: resumeData.name || 'Untitled Resume',
+        data: resumeData,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (resumeData.id) {
+        upsertData.id = resumeData.id;
+      }
+
+      const { error } = await supabase.from('resumes').upsert(upsertData);
+
+      if (error) throw error;
+
+      sessionStorage.removeItem('rf-anonymous-resume');
+    } catch (error) {
+      console.error('Error promoting anonymous resume:', error);
+    }
+  }
+};

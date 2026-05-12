@@ -474,8 +474,9 @@ const ResumeContent = ({
   );
 };
 
-export const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
-  const { resumeData } = useResumeStore();
+export const ResumePreview = forwardRef<HTMLDivElement, { data?: any }>((props, ref) => {
+  const { resumeData: storeData } = useResumeStore();
+  const resumeData = props.data || storeData;
   const { basics, summary, sections, customSections, metadata } = resumeData;
 
   const baseSize = metadata.typography.fontSize || 11;

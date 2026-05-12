@@ -1,0 +1,139 @@
+import { pdf } from '@react-pdf/renderer';
+import { Download, FileJson, FileText, Loader2, MoreVertical, FileCode } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { saveAs } from 'file-saver';
+
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { useResumeStore } from '@/stores/resumeStore';
+import { useAuthStore } from '@/stores/authStore';
+import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
+import { generateDocx } from '@/utils/export/docxGenerator';
+import { ResumePDF } from './ResumePDF';
+
+export const ExportMenu = () => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { resumeData } = useResumeStore();
+  const { user } = useAuthStore();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const validateAndAuth = () => {
+    // 1. Check Auth
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to export your resume.',
+        variant: 'destructive',
+      });
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return false;
+    }
+
+    // 2. Validate mandatory fields
+    const missingForms = getMissingMandatorySections(resumeData);
+    if (missingForms.length > 0) {
+      toast({
+        title: 'Missing Required Fields',
+        description: `Please fill the mandatory fields in the form(s): ${missingForms.join(', ')}`,
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleExportPDF = async () => {
+    if (!validateAndAuth()) return;
+
+    setIsGenerating(true);
+    try {
+      const blob = await pdf(<ResumePDF resumeData={resumeData} />).toBlob();
+      saveAs(blob, `${resumeData.basics.name || 'Resume'}.pdf`);
+      toast({ title: 'Success!', description: 'PDF downloaded.' });
+    } catch (error) {
+      console.error('PDF export error:', error);
+      toast({ title: 'Error', description: 'Failed to generate PDF.', variant: 'destructive' });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleExportDocx = async () => {
+    if (!validateAndAuth()) return;
+
+    setIsGenerating(true);
+    try {
+      const blob = await generateDocx(resumeData);
+      saveAs(blob, `${resumeData.basics.name || 'Resume'}.docx`);
+      toast({ title: 'Success!', description: 'DOCX downloaded.' });
+    } catch (error) {
+      console.error('DOCX export error:', error);
+      toast({ title: 'Error', description: 'Failed to generate DOCX.', variant: 'destructive' });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleExportJSON = () => {
+    if (!validateAndAuth()) return;
+
+    try {
+      const blob = new Blob([JSON.stringify(resumeData, null, 2)], { type: 'application/json' });
+      saveAs(blob, `${resumeData.basics.name || 'Resume'}.json`);
+      toast({ title: 'Success!', description: 'JSON downloaded.' });
+    } catch (error) {
+      console.error('JSON export error:', error);
+      toast({ title: 'Error', description: 'Failed to export JSON.', variant: 'destructive' });
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="gap-2" disabled={isGenerating}>
+          {isGenerating ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          Export
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem onClick={handleExportPDF} className="justify-between">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            <span>PDF</span>
+          </div>
+          <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+            Recommended
+          </Badge>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleExportDocx}>
+          <div className="flex items-center gap-2">
+            <FileCode className="w-4 h-4" />
+            <span>Word (.docx)</span>
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleExportJSON}>
+          <div className="flex items-center gap-2">
+            <FileJson className="w-4 h-4" />
+            <span>JSON</span>
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};

@@ -210,6 +210,8 @@ export interface ResumeMetadata {
 }
 
 export interface ResumeData {
+  id?: string;
+  name?: string;
   picture: Picture;
   basics: Basics;
   summary: Summary;

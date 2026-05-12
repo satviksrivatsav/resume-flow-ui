@@ -173,13 +173,13 @@ export const ResumeSidebar = () => {
           >
             <Button
               variant="ghost"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/dashboard')}
               className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
-              title="Back to Home"
+              title="Back to Dashboard"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
               <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">
-                Home
+                Dashboard
               </span>
             </Button>
           </motion.div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import {
   MobileNav,
@@ -12,9 +12,13 @@ import {
   NavItems,
 } from '@/components/ui/resizable-navbar';
 import LandingPage from '@/pages/LandingPage';
+import { useAuthStore } from '@/stores/authStore';
 
 const Index = () => {
-  const navItems = [
+  const { user } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = useMemo(() => [
     {
       name: 'Features',
       link: '#features',
@@ -24,12 +28,10 @@ const Index = () => {
       link: '#pricing',
     },
     {
-      name: 'Login',
-      link: '/login',
+      name: user ? 'Dashboard' : 'Login',
+      link: user ? '/dashboard' : '/login',
     },
-  ];
-
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  ], [user]);
 
   return (
     <main className="min-h-screen dark bg-black">

@@ -6,18 +6,19 @@ import {
   MoveHorizontal,
   MoveVertical,
   RotateCcw,
+  Save,
   X,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Logo from '@/assets/logo.png';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
 import { CustomSectionForm } from '@/components/resume/CustomSectionForm';
-import { DownloadButton } from '@/components/resume/DownloadButton';
+import { ExportMenu } from '@/components/resume/ExportMenu';
 import { EducationForm } from '@/components/resume/EducationForm';
 import { InterestsForm } from '@/components/resume/InterestsForm';
 import { LanguagesForm } from '@/components/resume/LanguagesForm';
@@ -29,6 +30,7 @@ import { ReferencesForm } from '@/components/resume/ReferencesForm';
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
+import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
@@ -43,12 +45,14 @@ import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab } = useUiStore();
-  const { resumeData, deleteCustomSection } = useResumeStore();
+  const { resumeData, deleteCustomSection, isSaving, loadResume, setResumeData } = useResumeStore();
+  const { saveNow } = useAutoSave();
   const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
@@ -56,6 +60,27 @@ const ResumeBuilder = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const resumeId = searchParams.get('id');
+    if (resumeId) {
+      loadResume(resumeId).catch(() => {
+        navigate('/dashboard');
+      });
+    } else {
+      // Load from session storage for anonymous users on refresh
+      const saved = sessionStorage.getItem('rf-anonymous-resume');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setResumeData(parsed);
+        } catch (e) {
+          console.error('Failed to parse saved resume', e);
+        }
+      }
+    }
+  }, [searchParams, loadResume, setResumeData, navigate]);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
@@ -254,7 +279,7 @@ const ResumeBuilder = () => {
                   <SidebarTrigger />
                   <div
                     className="flex items-center gap-3 group/logo cursor-pointer"
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/dashboard')}
                   >
                     <img
                       src={Logo}
@@ -265,9 +290,29 @@ const ResumeBuilder = () => {
                       Resume Flow
                     </h1>
                   </div>
+                  <div className="hidden md:block">
+                    <SaveStatus />
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3">
+                  <motion.div whileHover="hover" whileTap="tap">
+                    <Button
+                      variant="ghost"
+                      onClick={() => saveNow()}
+                      disabled={isSaving}
+                      className="gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full hover:bg-primary/10 hover:border-primary/20"
+                    >
+                      <AnimatedIcon
+                        icon={Save}
+                        className={cn("w-4 h-4", isSaving && "animate-spin")}
+                      />
+                      <span className="hidden sm:inline font-medium">
+                        {isSaving ? "Saving..." : "Save"}
+                      </span>
+                    </Button>
+                  </motion.div>
+                  <div className="w-[1px] h-6 bg-border mx-1" />
                   <motion.div whileHover="hover" whileTap="tap">
                     <Button
                       variant="ghost"
@@ -308,7 +353,7 @@ const ResumeBuilder = () => {
                     </Button>
                   </motion.div>
                   <div className="w-[1px] h-6 bg-border mx-1" />
-                  <DownloadButton />
+                  <ExportMenu />
                 </div>
               </div>
             </div>
