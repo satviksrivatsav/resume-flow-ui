@@ -13,10 +13,18 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { parseResumeFromPdf } from '@/lib/parseResumeApi';
+import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error';
+
+const ALLOWED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/png',
+  'image/jpeg',
+  'text/plain',
+];
 
 export default function UploadResume() {
   const navigate = useNavigate();
@@ -27,8 +35,8 @@ export default function UploadResume() {
 
   const handleFile = useCallback(
     async (file: File) => {
-      if (!file || file.type !== 'application/pdf') {
-        setError('Please upload a PDF file');
+      if (!file || !ALLOWED_TYPES.includes(file.type)) {
+        setError('Please upload a valid file (PDF, DOCX, Image, or TXT)');
         setUploadState('error');
         return;
       }
@@ -45,10 +53,10 @@ export default function UploadResume() {
       const abortController = new AbortController();
       const timeoutId = setTimeout(() => {
         abortController.abort(new Error('TimeoutError'));
-      }, 30000); // 30 second timeout for parsing
+      }, 45000); // 45 second timeout for multi-format parsing (OCR can be slow)
 
       try {
-        const parsedData = await parseResumeFromPdf(file, abortController.signal);
+        const parsedData = await parseResume(file, abortController.signal);
 
         clearTimeout(timeoutId);
         setResumeData(parsedData);
@@ -132,7 +140,7 @@ export default function UploadResume() {
         >
           <input
             type="file"
-            accept=".pdf"
+            accept=".pdf,.docx,.png,.jpg,.jpeg,.txt"
             onChange={handleInputChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             disabled={uploadState === 'uploading'}
@@ -150,9 +158,7 @@ export default function UploadResume() {
                 <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                   <Upload className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <p className="text-lg font-medium text-foreground mb-1">
-                  Drop your PDF resume here
-                </p>
+                <p className="text-lg font-medium text-foreground mb-1">Drop your resume here</p>
                 <p className="text-sm text-muted-foreground">or click to browse</p>
               </motion.div>
             )}
@@ -221,7 +227,7 @@ export default function UploadResume() {
         {/* Supported formats */}
         <div className="flex items-center justify-center gap-2 mt-6 text-muted-foreground text-sm">
           <FileText className="w-4 h-4" />
-          <span>Supported format: PDF (max 10MB)</span>
+          <span>Supported: PDF, DOCX, Images, TXT (max 10MB)</span>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ export interface ParseResponse {
   error?: string;
 }
 
-export async function parseResumeFromPdf(file: File, signal?: AbortSignal): Promise<ResumeData> {
+export async function parseResume(file: File, signal?: AbortSignal): Promise<ResumeData> {
   const formData = new FormData();
   formData.append('file', file);
 
