@@ -36,6 +36,7 @@ interface ResumeStore {
 
   // Metadata
   updateMetadata: (metadata: Partial<ResumeData['metadata']>) => void;
+  reorderSections: (orderedIds: string[]) => void;
 
   // Sections
   updateSection: (
@@ -156,6 +157,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       resumeData: {
         ...state.resumeData,
         metadata: { ...state.resumeData.metadata, ...metadata },
+      },
+    })),
+
+  reorderSections: (orderedIds) =>
+    set((state) => ({
+      resumeData: {
+        ...state.resumeData,
+        metadata: { ...state.resumeData.metadata, sectionOrder: orderedIds },
       },
     })),
 

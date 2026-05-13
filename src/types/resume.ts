@@ -192,6 +192,22 @@ export interface CustomSection extends SectionBase {
   items: any[];
 }
 
+export const DEFAULT_SECTION_ORDER: string[] = [
+  'summary',
+  'experience',
+  'education',
+  'projects',
+  'skills',
+  'profiles',
+  'languages',
+  'interests',
+  'awards',
+  'certifications',
+  'publications',
+  'volunteer',
+  'references',
+];
+
 export interface ResumeMetadata {
   template: string;
   layout: {
@@ -207,6 +223,7 @@ export interface ResumeMetadata {
   theme: {
     primary: string;
   };
+  sectionOrder?: string[];
 }
 
 export interface ResumeData {
@@ -279,5 +296,6 @@ export const defaultResumeData: ResumeData = {
     theme: {
       primary: '#1f2937',
     },
+    sectionOrder: DEFAULT_SECTION_ORDER,
   },
 };
