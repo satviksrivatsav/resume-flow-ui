@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Copy, Edit3, MoreVertical, Trash2 } from 'lucide-react';
+import { Copy, Edit3, MoreVertical, Trash2, FileSearch } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -36,8 +36,22 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   const [newName, setNewName] = useState(resume.name);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.25); // Default fallback scale
+  const [hasReport, setHasReport] = useState(false);
 
   useEffect(() => {
+    const checkReport = async () => {
+      const { data } = await supabase
+        .from('ats_reports')
+        .select('id')
+        .eq('resume_id', resume.id)
+        .limit(1)
+        .maybeSingle();
+      
+      if (data) setHasReport(true);
+    };
+
+    checkReport();
+
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -186,6 +200,17 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {hasReport && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/ats?resumeId=${resume.id}&view=true`);
+                }}
+              >
+                <FileSearch className="w-4 h-4 mr-2" />
+                View ATS Report
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setIsRenaming(true); }}>
               <Edit3 className="w-4 h-4 mr-2" />
               Rename

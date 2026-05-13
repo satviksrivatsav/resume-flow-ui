@@ -21,6 +21,7 @@ import SignUpPage from './pages/SignUpPage';
 import TermsOfService from './pages/TermsOfService';
 import UpdatePasswordPage from './pages/UpdatePasswordPage';
 import UploadResume from './pages/UploadResume';
+import AtsChecker from './pages/AtsChecker';
 import { useAuthStore } from './stores/authStore';
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ function AnimatedRoutes() {
         />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
+        <Route path="/ats" element={<AtsChecker />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
 

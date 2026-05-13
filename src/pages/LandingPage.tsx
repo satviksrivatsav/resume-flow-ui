@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { FeaturesCarousel } from '@/components/landing/FeaturesCarousel';
@@ -8,10 +8,12 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
 import { MeshGradient } from '@/components/ui/MeshGradient';
 import { useAuthStore } from '@/stores/authStore';
+import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
 
-export default function LandingPage() {
+export default React.memo(function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const [isResumeSelectionModalOpen, setIsResumeSelectionModalOpen] = useState(false);
 
   return (
     <PageTransition className="w-full bg-black relative">
@@ -48,10 +50,16 @@ export default function LandingPage() {
                   Build now
                 </button>
                 <button
-                  onClick={() => navigate('/upload')}
+                  onClick={() => {
+                    if (user) {
+                      setIsResumeSelectionModalOpen(true);
+                    } else {
+                      navigate('/ats');
+                    }
+                  }}
                   className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm text-sm"
                 >
-                  Create from existing resume
+                  ATS Checker
                 </button>
               </div>
             </div>
@@ -72,6 +80,11 @@ export default function LandingPage() {
       <div className="w-full relative z-20 bg-black">
         <LandingFooter />
       </div>
+
+      <ResumeSelectionModal
+        isOpen={isResumeSelectionModalOpen}
+        onClose={() => setIsResumeSelectionModalOpen(false)}
+      />
     </PageTransition>
   );
-}
+});

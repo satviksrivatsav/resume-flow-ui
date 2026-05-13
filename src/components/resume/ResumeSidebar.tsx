@@ -13,6 +13,7 @@ import {
   Languages,
   Plus,
   Settings,
+  Sparkles,
   Trophy,
   Upload,
   User,
@@ -234,7 +235,25 @@ export const ResumeSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto px-4 pb-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2">
+        <div className="mt-auto px-4 pb-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2 space-y-2">
+          <motion.div whileHover="hover" whileTap="tap">
+            <Button
+              variant="outline"
+              onClick={() => setActiveTab('tailor')}
+              className={cn(
+                'w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0 transition-all duration-300',
+                activeTab === 'tailor'
+                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]'
+                  : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10',
+              )}
+            >
+              <AnimatedIcon icon={Sparkles} preset="pulse" className="w-4 h-4" />
+              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap font-semibold">
+                Tailor Resume
+              </span>
+            </Button>
+          </motion.div>
+
           <motion.div whileHover="hover" whileTap="tap">
             <Button
               variant="outline"

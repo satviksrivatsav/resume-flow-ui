@@ -34,6 +34,8 @@ import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
+import { TailorForm } from '@/components/resume/TailorForm';
+import { TailorDiffView } from '@/components/resume/TailorDiffView';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
@@ -45,12 +47,14 @@ import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';
+import { useTailorStore } from '@/stores/tailorStore';
 import { useAutoSave } from '@/hooks/useAutoSave';
 
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab } = useUiStore();
+  const { viewMode: tailorViewMode } = useTailorStore();
   const { resumeData, deleteCustomSection, isSaving, loadResume, setResumeData } = useResumeStore();
   const { saveNow } = useAutoSave();
   const [showPreview, setShowPreview] = useState(false);
@@ -165,6 +169,8 @@ const ResumeBuilder = () => {
         return 'References';
       case 'settings':
         return 'Resume Settings';
+      case 'tailor':
+        return 'AI Resume Tailoring';
       default: {
         const section = resumeData.customSections.find((s) => s.id === id);
         return section ? section.name : 'Section';
@@ -202,6 +208,8 @@ const ResumeBuilder = () => {
         return 'List people who can vouch for your professional work.';
       case 'settings':
         return "Customize your resume's layout, colors, and fonts.";
+      case 'tailor':
+        return 'Align your resume content perfectly with your target job description using our AI-powered assistant.';
       default:
         return 'Manage your custom resume section content.';
     }
@@ -446,6 +454,10 @@ const ResumeBuilder = () => {
                       </TabsContent>
                       <TabsContent value="settings">
                         <ResumeSettings />
+                      </TabsContent>
+
+                      <TabsContent value="tailor">
+                        {tailorViewMode === 'form' ? <TailorForm /> : <TailorDiffView />}
                       </TabsContent>
 
                       {/* Dynamic Custom Sections Content */}
