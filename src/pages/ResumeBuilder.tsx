@@ -217,7 +217,7 @@ const ResumeBuilder = () => {
   };
 
   const previewContent = (
-    <div className="flex-1 flex flex-col items-center justify-start pt-6 pb-12">
+    <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-12">
       <div
         className="flex flex-col transition-all duration-200 ease-out"
         style={{
@@ -282,7 +282,7 @@ const ResumeBuilder = () => {
                   showPreview ? 'w-full lg:w-[55%] xl:w-[60%]' : 'w-full',
                 )}
               >
-                <div className="max-w-3xl mx-auto space-y-6 pt-6 pb-20">
+                <div className="max-w-3xl mx-auto space-y-6 pt-24 pb-20">
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, x: -10 }}

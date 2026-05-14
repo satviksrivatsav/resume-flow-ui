@@ -122,9 +122,9 @@ export default function UploadResume() {
 
   return (
     <SidebarProvider>
-      <div className="h-screen flex flex-col bg-background w-full overflow-hidden">
+      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
         <Topbar />
-        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8">
+        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8 pt-24">
           <div className="max-w-xl w-full">
             <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
               Upload Your Resume

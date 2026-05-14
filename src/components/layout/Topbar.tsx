@@ -26,7 +26,7 @@ export const Topbar = () => {
   if (isHomePage) return null;
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-card/40 backdrop-blur-md overflow-hidden shrink-0">
+    <header className="absolute top-0 left-0 right-0 z-40 border-b bg-card/40 backdrop-blur-md overflow-hidden shrink-0">
       {/* Decorative background */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute inset-[-100%] opacity-[0.03] dark:opacity-[0.05] animate-[gradient-flow_20s_ease_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(var(--primary-rgb),0.5)_25%,rgba(var(--primary-rgb),1)_50%,rgba(var(--primary-rgb),0.5)_75%,transparent_100%)] bg-[length:400%_100%]" />

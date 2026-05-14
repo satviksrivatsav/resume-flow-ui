@@ -189,7 +189,7 @@ export default function AtsChecker() {
 
   return (
     <SidebarProvider>
-      <div className="h-screen flex flex-col bg-background w-full overflow-hidden">
+      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
         <Topbar />
 
       {/* Body */}
@@ -201,7 +201,7 @@ export default function AtsChecker() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="flex-1 overflow-y-auto px-6 py-8"
+            className="flex-1 overflow-y-auto px-6 pb-8 pt-24"
           >
             <AtsSetup
               onAnalyze={handleAnalyze}
@@ -229,7 +229,7 @@ export default function AtsChecker() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.35 }}
-              className="flex-1 flex flex-col min-h-0"
+              className="flex-1 flex flex-col min-h-0 pt-20"
             >
               {/* Action Bar */}
               <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border/40 bg-background/60 backdrop-blur-sm">
