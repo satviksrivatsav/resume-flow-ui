@@ -10,18 +10,20 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
+import AtsChecker from './pages/AtsChecker';
+import AtsReports from './pages/AtsReports';
 import Dashboard from './pages/Dashboard';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Index from './pages/Index';
 import LoginPage from './pages/LoginPage';
 import NotFound from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ProfilePage from './pages/ProfilePage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import SignUpPage from './pages/SignUpPage';
 import TermsOfService from './pages/TermsOfService';
 import UpdatePasswordPage from './pages/UpdatePasswordPage';
 import UploadResume from './pages/UploadResume';
-import AtsChecker from './pages/AtsChecker';
 import { useAuthStore } from './stores/authStore';
 
 const queryClient = new QueryClient();
@@ -63,6 +65,22 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/dashboard/reports"
+          element={
+            <ProtectedRoute>
+              <AtsReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/upload" element={<UploadResume />} />
         <Route path="/ats" element={<AtsChecker />} />
@@ -80,12 +98,14 @@ function AppContent() {
   const { initialize } = useAuthStore();
 
   useEffect(() => {
-    initialize();
+    void initialize();
   }, [initialize]);
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AnimatedRoutes />
+      <div className="min-h-screen font-sans antialiased">
+        <AnimatedRoutes />
+      </div>
     </BrowserRouter>
   );
 }
