@@ -1,10 +1,10 @@
-import { AlertCircle, LayoutGrid } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { CreateNewCard, ResumeCard } from '@/components/dashboard/ResumeCard';
+import { CreateNewCard, ParseResumeCard, ResumeCard } from '@/components/dashboard/ResumeCard';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
@@ -85,10 +85,18 @@ export default function Dashboard() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           <CreateNewCard />
+          <ParseResumeCard />
 
           {isActuallyLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="aspect-[794/1123] rounded-xl bg-muted/30 animate-pulse" />
+                <div key={i} className="flex flex-col bg-muted/10 border border-border/50 rounded-[24px] overflow-hidden">
+                  <div className="aspect-[1/1.414] bg-muted/20 m-2 rounded-[18px] animate-pulse" />
+                  <div className="p-4 pt-2">
+                    <div className="h-4 w-3/4 bg-muted/20 rounded animate-pulse mb-2" />
+                    <div className="h-3 w-1/3 bg-muted/20 rounded animate-pulse mb-2" />
+                    <div className="h-3 w-1/2 bg-muted/20 rounded animate-pulse" />
+                  </div>
+                </div>
               ))
             : resumes.map((resume) => (
                 <ResumeCard key={resume.id} resume={resume} onRefresh={fetchResumes} />
@@ -96,15 +104,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {!loading && !error && resumes.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-xl mt-6">
-          <LayoutGrid className="w-12 h-12 mb-4 opacity-20" />
-          <h2 className="text-xl font-medium mb-1">Welcome to your Dashboard!</h2>
-          <p className="text-sm">
-            You haven't saved any resumes yet. Click "Create New" to get started.
-          </p>
-        </div>
-      )}
+
     </DashboardLayout>
   );
 }

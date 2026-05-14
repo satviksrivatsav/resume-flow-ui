@@ -7,13 +7,13 @@ import { toast } from 'sonner';
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
+import { Topbar } from '@/components/layout/Topbar';
 import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAtsStore } from '@/stores/atsStore';
 import { useAuthStore } from '@/stores/authStore';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { Topbar } from '@/components/layout/Topbar';
 
 export default function AtsChecker() {
   const navigate = useNavigate();
@@ -192,77 +192,77 @@ export default function AtsChecker() {
       <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
         <Topbar />
 
-      {/* Body */}
-      <AnimatePresence mode="wait">
-        {phase === 'setup' ? (
-          <motion.main
-            key="setup"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="flex-1 overflow-y-auto px-6 pb-8 pt-24"
-          >
-            <AtsSetup
-              onAnalyze={handleAnalyze}
-              onCancel={handleCancel}
-              isAnalyzing={status === 'analyzing'}
-              hasExistingReport={!!existingReport}
-              onViewExistingReport={loadExistingReport}
-            />
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive flex items-center gap-2"
-              >
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
-              </motion.div>
-            )}
-          </motion.main>
-        ) : (
-          report && (
-            <motion.div
-              key="results"
+        {/* Body */}
+        <AnimatePresence mode="wait">
+          {phase === 'setup' ? (
+            <motion.main
+              key="setup"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-              className="flex-1 flex flex-col min-h-0 pt-20"
+              transition={{ duration: 0.25 }}
+              className="flex-1 overflow-y-auto px-6 pb-8 pt-24"
             >
-              {/* Action Bar */}
-              <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border/40 bg-background/60 backdrop-blur-sm">
-                <Button variant="outline" size="sm" onClick={handleBackToSetup} className="gap-2">
-                  ← Back to Setup
-                </Button>
-                <div className="flex items-center gap-3">
-                  <Button variant="outline" size="sm" onClick={handleGoToBuilder}>
-                    Open in Builder →
+              <AtsSetup
+                onAnalyze={handleAnalyze}
+                onCancel={handleCancel}
+                isAnalyzing={status === 'analyzing'}
+                hasExistingReport={!!existingReport}
+                onViewExistingReport={loadExistingReport}
+              />
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {error}
+                </motion.div>
+              )}
+            </motion.main>
+          ) : (
+            report && (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                className="flex-1 flex flex-col min-h-0 pt-20"
+              >
+                {/* Action Bar */}
+                <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border/40 bg-background/60 backdrop-blur-sm">
+                  <Button variant="outline" size="sm" onClick={handleBackToSetup} className="gap-2">
+                    ← Back to Setup
                   </Button>
-                  <Button size="sm" onClick={handleSaveReport} disabled={isSaving}>
-                    {isSaving ? 'Saving...' : 'Save to Dashboard'}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Two-column body: left fixed, right scrolls */}
-              <div className="flex-1 flex min-h-0 overflow-hidden">
-                {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
-                <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
-                  <AtsResultsSidebar report={report} />
+                  <div className="flex items-center gap-3">
+                    <Button variant="outline" size="sm" onClick={handleGoToBuilder}>
+                      Open in Builder →
+                    </Button>
+                    <Button size="sm" onClick={handleSaveReport} disabled={isSaving}>
+                      {isSaving ? 'Saving...' : 'Save to Dashboard'}
+                    </Button>
+                  </div>
                 </div>
 
-                {/* RIGHT MAIN — 70%, scrollable */}
-                <div className="flex-1 overflow-y-auto">
-                  <AtsResultsMain report={report} />
+                {/* Two-column body: left fixed, right scrolls */}
+                <div className="flex-1 flex min-h-0 overflow-hidden">
+                  {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
+                  <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
+                    <AtsResultsSidebar report={report} />
+                  </div>
+
+                  {/* RIGHT MAIN — 70%, scrollable */}
+                  <div className="flex-1 overflow-y-auto">
+                    <AtsResultsMain report={report} />
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )
-        )}
-      </AnimatePresence>
-    </div>
+              </motion.div>
+            )
+          )}
+        </AnimatePresence>
+      </div>
     </SidebarProvider>
   );
 }

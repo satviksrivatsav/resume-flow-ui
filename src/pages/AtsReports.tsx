@@ -1,4 +1,4 @@
-import { AlertCircle, FileText } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -92,7 +92,14 @@ export default function AtsReports() {
 
           {isActuallyLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="aspect-[1/1.414] rounded-xl bg-muted/30 animate-pulse" />
+                <div key={i} className="flex flex-col bg-muted/10 border border-border/50 rounded-[24px] overflow-hidden">
+                  <div className="aspect-[1/1.414] bg-muted/20 m-2 rounded-[18px] animate-pulse" />
+                  <div className="p-4 pt-2">
+                    <div className="h-4 w-3/4 bg-muted/20 rounded animate-pulse mb-2" />
+                    <div className="h-3 w-1/3 bg-muted/20 rounded animate-pulse mb-2" />
+                    <div className="h-3 w-1/2 bg-muted/20 rounded animate-pulse" />
+                  </div>
+                </div>
               ))
             : reports.map((report) => (
                 <ReportCard key={report.id} report={report} onRefresh={fetchReports} />
@@ -100,13 +107,7 @@ export default function AtsReports() {
         </div>
       )}
 
-      {!loading && !error && reports.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-xl mt-6">
-          <FileText className="w-12 h-12 mb-4 opacity-20" />
-          <h2 className="text-xl font-medium mb-1">No reports yet</h2>
-          <p className="text-sm">Analyze your first resume to see reports here.</p>
-        </div>
-      )}
+
     </DashboardLayout>
   );
 }

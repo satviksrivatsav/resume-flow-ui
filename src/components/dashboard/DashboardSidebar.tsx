@@ -1,5 +1,13 @@
 import { motion, Variants } from 'framer-motion';
-import { AlertTriangle, ArrowLeft, BarChart3, FileText, LogOut, Settings, User } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  BarChart3,
+  FileText,
+  LogOut,
+  Settings,
+  User,
+} from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
@@ -180,7 +188,11 @@ export function DashboardSidebar() {
         </div>
 
         {/* Sign out */}
-        <motion.div whileHover="hover" whileTap="tap" className="group-data-[collapsible=icon]:hidden">
+        <motion.div
+          whileHover="hover"
+          whileTap="tap"
+          className="group-data-[collapsible=icon]:hidden"
+        >
           <button
             onClick={handleSignOut}
             className="flex items-center justify-center gap-3 w-full h-10 px-4 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
@@ -191,7 +203,11 @@ export function DashboardSidebar() {
         </motion.div>
 
         {/* Collapsed sign-out icon-only */}
-        <motion.div whileHover="hover" whileTap="tap" className="hidden group-data-[collapsible=icon]:flex justify-center">
+        <motion.div
+          whileHover="hover"
+          whileTap="tap"
+          className="hidden group-data-[collapsible=icon]:flex justify-center"
+        >
           <button
             onClick={handleSignOut}
             title="Sign Out"
@@ -207,7 +223,10 @@ export function DashboardSidebar() {
           <div className="space-y-1.5">
             <p className="text-[10px] text-muted-foreground/60 leading-tight">
               Licensed under{' '}
-              <span className="underline decoration-muted-foreground/30 underline-offset-2">MIT</span>.
+              <span className="underline decoration-muted-foreground/30 underline-offset-2">
+                MIT
+              </span>
+              .
             </p>
             <p className="text-[10px] text-muted-foreground/60 leading-tight">
               By the community, for the community.

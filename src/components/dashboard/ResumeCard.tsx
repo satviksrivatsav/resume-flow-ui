@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Copy, Edit3, FileSearch, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { Copy, Edit3, FileSearch, FileText, Layout, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -145,10 +145,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         onClick={handleOpen}
       >
         <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner">
-          <div
-            ref={containerRef}
-            className="absolute inset-0 overflow-hidden pointer-events-none"
-          >
+          <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
             <div
               className="absolute top-0 left-0 origin-top-left"
               style={{ width: '794px', height: '1123px', transform: `scale(${scale})` }}
@@ -224,6 +221,14 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          <div className="flex items-center gap-1.5 mb-2">
+            <Layout className="w-3 h-3 text-muted-foreground" />
+            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+              Modern Professional
+            </p>
+          </div>
+
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-muted-foreground/60 font-medium">
               Updated {formatDistanceToNow(new Date(resume.updated_at))} ago
@@ -258,26 +263,85 @@ export function CreateNewCard() {
   return (
     <motion.div
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="group flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300 h-full"
+      className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
       onClick={handleCreate}
     >
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
+      {/* Invisible structure to match ResumeCard height exactly */}
+      <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
+        <div className="aspect-[1/1.414] m-2 rounded-[18px]" />
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm">Placeholder</h3>
+            <div className="p-1">
+              <div className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-3 h-3" />
+            <p className="text-[11px]">Placeholder Template</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium">Updated 1 month ago</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Centered Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
         <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
           <Plus className="w-8 h-8 text-primary" />
         </div>
         <div className="text-center">
-          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg leading-tight">
             New Masterpiece
           </p>
-          <p className="text-xs text-muted-foreground/60 font-medium mt-1">
-            From scratch
-          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">From scratch</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function ParseResumeCard() {
+  const navigate = useNavigate();
+
+  return (
+    <motion.div
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
+      onClick={() => navigate('/upload')}
+    >
+      {/* Invisible structure to match ResumeCard height exactly */}
+      <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
+        <div className="aspect-[1/1.414] m-2 rounded-[18px]" />
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm">Placeholder</h3>
+            <div className="p-1">
+              <div className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-3 h-3" />
+            <p className="text-[11px]">Placeholder Template</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium">Updated 1 month ago</span>
+          </div>
         </div>
       </div>
 
-      {/* Footer spacer to match ResumeCard height exactly */}
-      <div className="p-4 pt-2 invisible select-none">
-        <div className="h-[38px]" />
+      {/* Centered Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
+        <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
+          <FileText className="w-8 h-8 text-primary" />
+        </div>
+        <div className="text-center">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg leading-tight">
+            Parse Existing Resume
+          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">AI-powered extraction</p>
+        </div>
       </div>
     </motion.div>
   );

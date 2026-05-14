@@ -12,12 +12,12 @@ import {
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Topbar } from '@/components/layout/Topbar';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { Topbar } from '@/components/layout/Topbar';
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error';
 
@@ -162,7 +162,9 @@ export default function UploadResume() {
                     <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                       <Upload className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <p className="text-lg font-medium text-foreground mb-1">Drop your resume here</p>
+                    <p className="text-lg font-medium text-foreground mb-1">
+                      Drop your resume here
+                    </p>
                     <p className="text-sm text-muted-foreground">or click to browse</p>
                   </motion.div>
                 )}

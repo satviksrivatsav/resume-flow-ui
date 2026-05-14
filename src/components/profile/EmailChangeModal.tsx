@@ -30,8 +30,8 @@ export function EmailChangeModal({ isOpen, onClose, onConfirm, newEmail }: Email
             Confirm Email Change
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
-            Changing your email to <span className="text-foreground font-bold">{newEmail}</span> will
-            require you to re-verify your account. A verification link will be sent to the new
+            Changing your email to <span className="text-foreground font-bold">{newEmail}</span>{' '}
+            will require you to re-verify your account. A verification link will be sent to the new
             address.
           </AlertDialogDescription>
         </AlertDialogHeader>

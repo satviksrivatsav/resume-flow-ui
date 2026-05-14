@@ -135,14 +135,23 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
           </DropdownMenu>
         </div>
 
-        {report.job_description && (
-          <div className="flex items-center gap-1.5 mb-2">
-            <Briefcase className="w-3 h-3 text-muted-foreground" />
-            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-              {report.job_description}
-            </p>
-          </div>
-        )}
+        <div className="flex items-center gap-1.5 mb-2">
+          {report.job_description ? (
+            <>
+              <Briefcase className="w-3 h-3 text-muted-foreground" />
+              <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                {report.job_description}
+              </p>
+            </>
+          ) : (
+            <>
+              <FileSearch className="w-3 h-3 text-muted-foreground" />
+              <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                General Analysis
+              </p>
+            </>
+          )}
+        </div>
 
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-muted-foreground/60 font-medium">
@@ -160,25 +169,41 @@ export function ScanCard() {
   return (
     <motion.div
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="group flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300 h-full"
+      className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
       onClick={() => navigate('/ats')}
     >
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
+      {/* Invisible structure to match ReportCard height exactly */}
+      <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
+        <div className="aspect-[1/1.414] m-2 rounded-[18px]" />
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm">Placeholder</h3>
+            <div className="p-1">
+              <div className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-3 h-3" />
+            <p className="text-[11px]">Placeholder JD</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium">Updated 1 month ago</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Centered Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
         <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all relative overflow-hidden">
           <FileText className="w-8 h-8 text-primary" />
           <div className="absolute inset-x-2 top-1/2 h-0.5 bg-primary/40 animate-scan shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
         </div>
         <div className="text-center">
-          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg leading-tight">
             Scan Resume
           </p>
           <p className="text-xs text-muted-foreground/60 font-medium mt-1">Analyze with AI</p>
         </div>
-      </div>
-
-      {/* Footer spacer to match ReportCard height exactly */}
-      <div className="p-4 pt-2 invisible select-none">
-        <div className="h-[38px]" />
       </div>
     </motion.div>
   );
