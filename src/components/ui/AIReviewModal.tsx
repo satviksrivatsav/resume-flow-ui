@@ -1,23 +1,9 @@
-import { motion } from 'framer-motion';
-import Lottie from 'lottie-react';
 import { AlertTriangle, ServerCrash, Timer } from 'lucide-react';
 
-import aiSearchAnimation from '@/assets/AI Searching.json';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAIWriterStore } from '@/stores/aiWriterStore';
 import { AIDiffViewer } from './AIDiffViewer';
-
-// ── Portal loading animation ─────────────────────────────────────────────────
-function PortalLoader() {
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="w-32 h-32 flex items-center justify-center">
-        <Lottie animationData={aiSearchAnimation} loop={true} />
-      </div>
-      <p className="text-sm text-muted-foreground font-medium">Generating content…</p>
-    </div>
-  );
-}
+import { AILoader } from './AILoader';
 
 // ── Modal ────────────────────────────────────────────────────────────────────
 export function AIReviewModal() {
@@ -55,7 +41,7 @@ export function AIReviewModal() {
         <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-6 custom-scrollbar">
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <PortalLoader />
+              <AILoader message="Generating content..." />
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3">
