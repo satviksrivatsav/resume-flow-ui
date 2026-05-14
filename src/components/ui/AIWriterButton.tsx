@@ -3,7 +3,7 @@ import Lottie from 'lottie-react';
 import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
-import aiSearchAnimation from '@/assets/AI Searching.json';
+import aiSearchAnimation from '@/assets/ai-searching.json';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import {
