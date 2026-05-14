@@ -30,6 +30,7 @@ import { ReferencesForm } from '@/components/resume/ReferencesForm';
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
+import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
 import { TailorDiffView } from '@/components/resume/TailorDiffView';
@@ -40,7 +41,8 @@ import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { Topbar } from '@/components/layout/Topbar';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
@@ -53,15 +55,15 @@ import { useUiStore } from '@/stores/uiStore';
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
-  const { activeTab, setActiveTab } = useUiStore();
+  const { activeTab, setActiveTab, showPreview, setShowPreview } = useUiStore();
   const { viewMode: tailorViewMode } = useTailorStore();
   const { resumeData, deleteCustomSection, isSaving, loadResume, setResumeData } = useResumeStore();
   const { saveNow } = useAutoSave();
-  const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -86,11 +88,6 @@ const ResumeBuilder = () => {
     }
   }, [searchParams, loadResume, setResumeData, navigate]);
 
-  useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setShowPreview(true);
-    }
-  }, []);
 
   const calculateZoom = useCallback(() => {
     if (!previewPanelRef.current) return;
@@ -220,7 +217,7 @@ const ResumeBuilder = () => {
   };
 
   const previewContent = (
-    <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-12">
+    <div className="flex-1 flex flex-col items-center justify-start pt-6 pb-12">
       <div
         className="flex flex-col transition-all duration-200 ease-out"
         style={{
@@ -274,98 +271,7 @@ const ResumeBuilder = () => {
         <ResumeSidebar />
 
         <div className="flex flex-col flex-1 overflow-hidden relative">
-          <header className="absolute top-0 left-0 right-0 z-40 border-b bg-card/40 backdrop-blur-md overflow-hidden group">
-            <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-              <div className="absolute inset-[-100%] opacity-[0.03] dark:opacity-[0.05] animate-[gradient-flow_20s_ease_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(var(--primary-rgb),0.5)_25%,rgba(var(--primary-rgb),1)_50%,rgba(var(--primary-rgb),0.5)_75%,transparent_100%)] bg-[length:400%_100%]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.05),transparent_70%)]" />
-              <div className="absolute inset-0 bg-grid-white/[0.02]" />
-            </div>
-
-            <div className="mx-auto px-6 py-4 relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <SidebarTrigger />
-                  <div
-                    className="flex items-center gap-3 group/logo cursor-pointer"
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    <img
-                      src={Logo}
-                      alt="Resume Flow"
-                      className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110 brightness-0 dark:invert"
-                    />
-                    <h1 className="text-xl font-bold text-foreground hidden sm:block tracking-tight">
-                      Resume Flow
-                    </h1>
-                  </div>
-                  <div className="hidden md:block">
-                    <SaveStatus />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <motion.div whileHover="hover" whileTap="tap">
-                    <Button
-                      variant="ghost"
-                      onClick={() => saveNow()}
-                      disabled={isSaving}
-                      className="gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full hover:bg-primary/10 hover:border-primary/20"
-                    >
-                      <AnimatedIcon
-                        icon={Save}
-                        className={cn('w-4 h-4', isSaving && 'animate-spin')}
-                      />
-                      <span className="hidden sm:inline font-medium">
-                        {isSaving ? 'Saving...' : 'Save'}
-                      </span>
-                    </Button>
-                  </motion.div>
-                  <div className="w-[1px] h-6 bg-border mx-1" />
-                  <motion.div whileHover="hover" whileTap="tap">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setShowPreview(!showPreview)}
-                      className={cn(
-                        'gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full',
-                        showPreview
-                          ? 'text-primary border-primary/20 bg-primary/5'
-                          : 'hover:bg-primary/10 hover:border-primary/20',
-                      )}
-                    >
-                      <div className="relative w-4 h-4 flex items-center justify-center">
-                        <AnimatePresence mode="popLayout" initial={false}>
-                          <motion.div
-                            key={showPreview ? 'closed' : 'open'}
-                            initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                            exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                            transition={{
-                              duration: 0.2,
-                              type: 'spring',
-                              stiffness: 300,
-                              damping: 20,
-                            }}
-                            className="absolute inset-0"
-                          >
-                            {showPreview ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </motion.div>
-                        </AnimatePresence>
-                      </div>
-                      <span className="hidden sm:inline font-medium">
-                        {showPreview ? 'Hide' : 'Show'} Preview
-                      </span>
-                    </Button>
-                  </motion.div>
-                  <div className="w-[1px] h-6 bg-border mx-1" />
-                  <ExportMenu />
-                </div>
-              </div>
-            </div>
-          </header>
+          <Topbar />
 
           <main className="flex-1 overflow-hidden relative">
             <div className="flex h-full w-full">
@@ -376,7 +282,7 @@ const ResumeBuilder = () => {
                   showPreview ? 'w-full lg:w-[55%] xl:w-[60%]' : 'w-full',
                 )}
               >
-                <div className="max-w-3xl mx-auto space-y-6 pt-24 pb-20">
+                <div className="max-w-3xl mx-auto space-y-6 pt-6 pb-20">
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, x: -10 }}
@@ -399,10 +305,7 @@ const ResumeBuilder = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => {
-                              deleteCustomSection(activeTab);
-                              setActiveTab('personal');
-                            }}
+                            onClick={() => setShowDeleteModal(true)}
                             className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 gap-2 shrink-0 h-10 px-4"
                           >
                             <TrashAnimatedIcon className="w-4 h-4" />
@@ -477,7 +380,7 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-2">
+                  <div className="sticky top-2 z-30 flex justify-center w-full pointer-events-none mb-2">
                     <motion.div
                       initial={{ y: -20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
@@ -656,9 +559,20 @@ const ResumeBuilder = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
         <AIInstructionModal />
         <AIReviewModal />
+        <DeleteSectionModal
+          isOpen={showDeleteModal}
+          sectionName={
+            resumeData.customSections.find((s) => s.id === activeTab)?.name ?? 'this section'
+          }
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            deleteCustomSection(activeTab);
+            setActiveTab('personal');
+            setShowDeleteModal(false);
+          }}
+        />
       </div>
     </SidebarProvider>
   );

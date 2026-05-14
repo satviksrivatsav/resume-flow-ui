@@ -7,8 +7,8 @@ interface Profile {
   id: string;
   name: string | null;
   username: string | null;
-  theme: string;
-  language: string;
+  theme: string;     // 'light' | 'dark' | 'system'
+  language: string;  // BCP-47, e.g. 'en'
 }
 
 interface AuthState {
@@ -268,10 +268,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
+      // Use upsert so the call succeeds even if a profile row doesn't exist yet
+      // (e.g. for users created before the profiles table migration).
       const { data, error } = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
+        .upsert(
+          { id: user.id, ...updates, updated_at: new Date().toISOString() },
+          { onConflict: 'id' },
+        )
         .select()
         .single();
 

@@ -64,6 +64,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { UserMenu } from '@/components/ui/UserMenu';
@@ -306,7 +307,7 @@ export const ResumeSidebar = () => {
               </span>
             </Button>
           </motion.div>
-          <ThemeToggle />
+          <SidebarTrigger />
         </div>
       </SidebarHeader>
 

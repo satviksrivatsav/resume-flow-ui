@@ -25,7 +25,7 @@ export function AILoadingModal({
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <div className="relative bg-background/80 backdrop-blur-xl border border-primary/20 rounded-3xl p-12 w-full flex flex-col items-center shadow-2xl">
+        <div className="relative bg-background backdrop-blur-xl border border-primary/20 rounded-3xl p-12 w-full flex flex-col items-center shadow-2xl">
           {/* Header context if provided */}
           {title && (
             <h3 className="text-xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">

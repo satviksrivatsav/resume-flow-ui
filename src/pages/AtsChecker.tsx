@@ -12,6 +12,8 @@ import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAtsStore } from '@/stores/atsStore';
 import { useAuthStore } from '@/stores/authStore';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { Topbar } from '@/components/layout/Topbar';
 
 export default function AtsChecker() {
   const navigate = useNavigate();
@@ -186,26 +188,9 @@ export default function AtsChecker() {
   }, [navigate]);
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
-      {/* Header — always visible */}
-      <header className="shrink-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="flex items-center justify-between h-14 px-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/')}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            ← Back
-          </Button>
-          <h1 className="text-base font-semibold tracking-tight">
-            {phase === 'setup' ? 'ATS Checker' : 'Analysis Results'}
-          </h1>
-          <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
-            Reset
-          </Button>
-        </div>
-      </header>
+    <SidebarProvider>
+      <div className="h-screen flex flex-col bg-background w-full overflow-hidden">
+        <Topbar />
 
       {/* Body */}
       <AnimatePresence mode="wait">
@@ -278,5 +263,6 @@ export default function AtsChecker() {
         )}
       </AnimatePresence>
     </div>
+    </SidebarProvider>
   );
 }

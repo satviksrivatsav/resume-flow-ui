@@ -16,6 +16,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -81,25 +82,31 @@ export function DashboardSidebar() {
   const displayName = profile?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0];
 
   return (
-    <Sidebar collapsible="none" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className="p-4 border-b">
-        <div className="flex items-center gap-2">
-          <motion.div whileHover="hover" whileTap="tap" className="flex-1">
+    <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2 border-b">
+        <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
+          <motion.div
+            whileHover="hover"
+            whileTap="tap"
+            className="flex-1 group-data-[collapsible=icon]:flex-none"
+          >
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
-              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors"
+              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
               title="Back to Homepage"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
-              <span className="font-medium whitespace-nowrap">Homepage</span>
+              <span className="font-medium group-data-[collapsible=icon]:hidden whitespace-nowrap">
+                Homepage
+              </span>
             </Button>
           </motion.div>
-          <ThemeToggle />
+          <SidebarTrigger />
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="py-3">
+      <SidebarContent className="py-3 overflow-y-auto">
         {navItems.map((group) => (
           <SidebarGroup key={group.group}>
             <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">
@@ -153,42 +160,50 @@ export function DashboardSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t space-y-6">
-        <div className="space-y-4">
-          {/* User info */}
-          <div className="flex items-center gap-3 px-2">
-            <Avatar className="w-10 h-10 border border-border/50 shrink-0">
-              <AvatarImage src={user?.user_metadata?.avatar_url} />
-              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs uppercase">
-                {displayName?.substring(0, 2)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-sm font-bold truncate text-foreground leading-tight">
-                {displayName}
-              </span>
-              <span className="text-[11px] text-muted-foreground truncate leading-tight">
-                {user?.email}
-              </span>
-            </div>
+      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 border-t">
+        {/* User info — hide text in icon mode */}
+        <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+          <Avatar className="w-10 h-10 border border-border/50 shrink-0">
+            <AvatarImage src={user?.user_metadata?.avatar_url} />
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs uppercase">
+              {displayName?.substring(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
+            <span className="text-sm font-bold truncate text-foreground leading-tight">
+              {displayName}
+            </span>
+            <span className="text-[11px] text-muted-foreground truncate leading-tight">
+              {user?.email}
+            </span>
           </div>
-
-          {/* Sign out */}
-          <motion.div whileHover="hover" whileTap="tap">
-            <button
-              onClick={handleSignOut}
-              className="flex items-center justify-center gap-3 w-full h-10 px-4 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
-            >
-              <AnimatedIcon icon={LogOut} preset="slideLeft" className="w-4 h-4" />
-              Sign Out
-            </button>
-          </motion.div>
         </div>
 
-        {/* License */}
-        <div className="px-2 space-y-4">
-          <div className="h-[1px] bg-border/50 w-full" />
+        {/* Sign out */}
+        <motion.div whileHover="hover" whileTap="tap" className="group-data-[collapsible=icon]:hidden">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center justify-center gap-3 w-full h-10 px-4 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+          >
+            <AnimatedIcon icon={LogOut} preset="slideLeft" className="w-4 h-4" />
+            Sign Out
+          </button>
+        </motion.div>
 
+        {/* Collapsed sign-out icon-only */}
+        <motion.div whileHover="hover" whileTap="tap" className="hidden group-data-[collapsible=icon]:flex justify-center">
+          <button
+            onClick={handleSignOut}
+            title="Sign Out"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </motion.div>
+
+        {/* License — hidden in icon mode */}
+        <div className="px-2 space-y-4 group-data-[collapsible=icon]:hidden">
+          <div className="h-[1px] bg-border/50 w-full" />
           <div className="space-y-1.5">
             <p className="text-[10px] text-muted-foreground/60 leading-tight">
               Licensed under{' '}
@@ -202,7 +217,6 @@ export function DashboardSidebar() {
               <span className="text-foreground/70 font-medium">Satvik Srivatsav</span>.
             </p>
           </div>
-
           <p className="text-[11px] font-semibold text-muted-foreground/30 tracking-tight">
             Resume Flow v1.0
           </p>
