@@ -1,12 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Eye,
-  EyeOff,
   Maximize2,
   MoveHorizontal,
   MoveVertical,
   RotateCcw,
-  Save,
   X,
   ZoomIn,
   ZoomOut,
@@ -15,11 +12,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Logo from '@/assets/logo.png';
+import { Topbar } from '@/components/layout/Topbar';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
 import { CustomSectionForm } from '@/components/resume/CustomSectionForm';
+import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { EducationForm } from '@/components/resume/EducationForm';
-import { ExportMenu } from '@/components/resume/ExportMenu';
 import { InterestsForm } from '@/components/resume/InterestsForm';
 import { LanguagesForm } from '@/components/resume/LanguagesForm';
 import { PersonalInfoForm } from '@/components/resume/PersonalInfoForm';
@@ -30,8 +28,6 @@ import { ReferencesForm } from '@/components/resume/ReferencesForm';
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
-import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
-import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
 import { TailorDiffView } from '@/components/resume/TailorDiffView';
 import { TailorForm } from '@/components/resume/TailorForm';
@@ -42,11 +38,9 @@ import { AIReviewModal } from '@/components/ui/AIReviewModal';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Topbar } from '@/components/layout/Topbar';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
-import { useAutoSave } from '@/hooks/useAutoSave';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
@@ -57,8 +51,15 @@ type ViewMode = 'fit-width' | 'fit-height';
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab, showPreview, setShowPreview } = useUiStore();
   const { viewMode: tailorViewMode } = useTailorStore();
-  const { resumeData, deleteCustomSection, isSaving, loadResume, setResumeData } = useResumeStore();
-  const { saveNow } = useAutoSave();
+  const {
+    resumeData,
+    deleteCustomSection,
+    loadResume,
+    setResumeData,
+    setLastSavedData,
+    startAutoSave,
+    stopAutoSave,
+  } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
@@ -68,6 +69,7 @@ const ResumeBuilder = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Initialize resume data
   useEffect(() => {
     const resumeId = searchParams.get('id');
     if (resumeId) {
@@ -81,13 +83,23 @@ const ResumeBuilder = () => {
         try {
           const parsed = JSON.parse(saved);
           setResumeData(parsed);
+          setLastSavedData(saved);
         } catch (e) {
           console.error('Failed to parse saved resume', e);
         }
+      } else {
+        // Brand new resume: set lastSavedData to current state to prevent immediate save
+        const currentData = useResumeStore.getState().resumeData;
+        setLastSavedData(JSON.stringify(currentData));
       }
     }
-  }, [searchParams, loadResume, setResumeData, navigate]);
+  }, [searchParams, loadResume, setResumeData, setLastSavedData, navigate]);
 
+  // Manage Autosave Lifecycle
+  useEffect(() => {
+    startAutoSave();
+    return () => stopAutoSave();
+  }, [startAutoSave, stopAutoSave]);
 
   const calculateZoom = useCallback(() => {
     if (!previewPanelRef.current) return;

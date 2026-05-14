@@ -12,6 +12,8 @@ import {
   SkillItem,
 } from '@/types/resume';
 
+import { useAuthStore } from './authStore';
+
 interface ResumeRow {
   id: string;
   user_id: string;
@@ -80,27 +82,149 @@ interface ResumeStore {
 
   // Save Status
   isSaving: boolean;
+  isSavingInProgress: boolean;
   lastSaved: Date | null;
+  lastSavedData: string;
+  autoSaveTimer: any;
   setIsSaving: (isSaving: boolean) => void;
+  setIsSavingInProgress: (isSaving: boolean) => void;
   setLastSaved: (lastSaved: Date | null) => void;
+  setLastSavedData: (data: string) => void;
 
+  saveResume: (userId?: string) => Promise<void>;
+  startAutoSave: (userId?: string) => void;
+  stopAutoSave: () => void;
   resetResume: () => void;
 }
 
 export const useResumeStore = create<ResumeStore>((set, get) => ({
   resumeData: defaultResumeData,
   isSaving: false,
+  isSavingInProgress: false,
   lastSaved: null,
+  lastSavedData: '',
 
   setIsSaving: (isSaving) => set({ isSaving }),
+  setIsSavingInProgress: (isSavingInProgress) => set({ isSavingInProgress }),
   setLastSaved: (lastSaved) => set({ lastSaved }),
+  setLastSavedData: (lastSavedData) => set({ lastSavedData }),
 
   setResumeData: (data) => set({ resumeData: data }),
 
-  setResumeName: (name) =>
-    set((state) => ({
-      resumeData: { ...state.resumeData, name },
-    })),
+  saveResume: async (userId) => {
+    const state = get();
+    // If already in progress, don't start another but ensure UI reflects it
+    if (state.isSavingInProgress) {
+      set({ isSaving: true });
+      return;
+    }
+
+    const currentResumeData = state.resumeData;
+    const currentDataString = JSON.stringify(currentResumeData);
+    const finalUserId = userId || useAuthStore.getState().user?.id;
+
+    set({ isSaving: true, isSavingInProgress: true });
+
+    try {
+      if (finalUserId) {
+        let finalName = currentResumeData.name;
+
+        if (!currentResumeData.id) {
+          const baseName =
+            currentResumeData.name && currentResumeData.name !== 'Untitled Resume'
+              ? currentResumeData.name
+              : currentResumeData.basics.name || 'Untitled Resume';
+
+          const { data: existingResumes } = await supabase
+            .from('resumes')
+            .select('name')
+            .eq('user_id', finalUserId);
+
+          const existingNames = existingResumes?.map((r) => r.name) || [];
+
+          finalName = baseName;
+          if (existingNames.includes(baseName)) {
+            let counter = 1;
+            while (existingNames.includes(`${baseName} ${counter}`)) {
+              counter++;
+            }
+            finalName = `${baseName} ${counter}`;
+          }
+        }
+
+        const upsertData: any = {
+          user_id: finalUserId,
+          name: finalName || 'Untitled Resume',
+          data: { ...currentResumeData, name: finalName },
+          updated_at: new Date().toISOString(),
+        };
+
+        if (currentResumeData.id) {
+          upsertData.id = currentResumeData.id;
+        }
+
+        const { data, error } = await supabase
+          .from('resumes')
+          .upsert(upsertData)
+          .select('id, name')
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          const updatedResume = { ...currentResumeData, id: data.id, name: data.name };
+          set({
+            resumeData: updatedResume,
+            lastSavedData: JSON.stringify(updatedResume),
+          });
+        }
+      } else {
+        sessionStorage.setItem('rf-anonymous-resume', currentDataString);
+        set({ lastSavedData: currentDataString });
+      }
+
+      set({ lastSaved: new Date() });
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      set({ isSavingInProgress: false });
+      // Keep isSaving true for at least 500ms to avoid flicker and show "Saved" state properly
+      setTimeout(() => {
+        set({ isSaving: false });
+      }, 500);
+
+      // Reschedule the next autosave check
+      get().startAutoSave(finalUserId);
+    }
+  },
+
+  startAutoSave: (userId) => {
+    const { stopAutoSave, saveResume } = get();
+    stopAutoSave();
+
+    const timer = setTimeout(async () => {
+      const state = get();
+      const currentDataString = JSON.stringify(state.resumeData);
+
+      if (currentDataString !== state.lastSavedData) {
+        console.log('Autosaving...');
+        await saveResume(userId);
+      } else {
+        // No changes, just schedule the next check
+        get().startAutoSave(userId);
+      }
+    }, 30000);
+
+    set({ autoSaveTimer: timer });
+  },
+
+  stopAutoSave: () => {
+    const { autoSaveTimer } = get();
+    if (autoSaveTimer) {
+      clearTimeout(autoSaveTimer);
+    }
+    set({ autoSaveTimer: null });
+  },
 
   loadResume: async (id) => {
     try {
@@ -110,12 +234,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
 
       if (data) {
         const row = data as unknown as ResumeRow;
+        const loadedData = {
+          ...row.data,
+          id: row.id,
+          name: row.name,
+        };
         set({
-          resumeData: {
-            ...row.data,
-            id: row.id,
-            name: row.name,
-          },
+          resumeData: loadedData,
+          lastSavedData: JSON.stringify(loadedData),
         });
       }
     } catch (error) {

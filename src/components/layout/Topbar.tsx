@@ -4,11 +4,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import Logo from '@/assets/logo.png';
 import { ExportMenu } from '@/components/resume/ExportMenu';
-import { SaveStatus } from '@/components/resume/SaveStatus';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { useAutoSave } from '@/hooks/useAutoSave';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';
@@ -16,8 +14,7 @@ import { useUiStore } from '@/stores/uiStore';
 export const Topbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isSaving } = useResumeStore();
-  const { saveNow } = useAutoSave();
+  const { isSaving, saveResume } = useResumeStore();
   const { showPreview, setShowPreview } = useUiStore();
 
   const isBuilderPage = location.pathname === '/resume-builder';
@@ -36,7 +33,7 @@ export const Topbar = () => {
 
       <div className="px-6 py-4 relative">
         <div className="flex items-center justify-between">
-          {/* Left: Logo + brand + save status */}
+          {/* Left: Logo + brand */}
           <div className="flex items-center gap-4">
             <div
               className="flex items-center gap-3 group/logo cursor-pointer"
@@ -51,12 +48,6 @@ export const Topbar = () => {
                 Resume Flow
               </h1>
             </div>
-
-            {isBuilderPage && (
-              <div className="hidden md:block">
-                <SaveStatus />
-              </div>
-            )}
           </div>
 
           {/* Right: Builder actions + Theme toggle */}
@@ -66,7 +57,7 @@ export const Topbar = () => {
                 <motion.div whileHover="hover" whileTap="tap">
                   <Button
                     variant="ghost"
-                    onClick={() => saveNow()}
+                    onClick={() => saveResume()}
                     disabled={isSaving}
                     className="gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full hover:bg-primary/10 hover:border-primary/20"
                   >
@@ -100,10 +91,19 @@ export const Topbar = () => {
                           initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
                           animate={{ opacity: 1, scale: 1, rotate: 0 }}
                           exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                          transition={{ duration: 0.2, type: 'spring', stiffness: 300, damping: 20 }}
+                          transition={{
+                            duration: 0.2,
+                            type: 'spring',
+                            stiffness: 300,
+                            damping: 20,
+                          }}
                           className="absolute inset-0"
                         >
-                          {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {showPreview ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
                         </motion.div>
                       </AnimatePresence>
                     </div>
