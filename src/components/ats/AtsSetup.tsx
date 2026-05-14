@@ -7,9 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { UploadCloud, FileText, X } from 'lucide-react';
 
 import { useAtsStore } from '@/stores/atsStore';
+import { AILoadingModal } from '@/components/ui/AILoadingModal';
 
 interface AtsSetupProps {
   onAnalyze: (file: File | null, jdText: string) => Promise<void>;
+  onCancel: () => void;
   isAnalyzing: boolean;
   hasExistingReport?: boolean;
   onViewExistingReport?: () => void;
@@ -18,7 +20,7 @@ interface AtsSetupProps {
 
 const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/png', 'image/jpeg', 'text/plain'];
 
-export function AtsSetup({ onAnalyze, isAnalyzing, hasExistingReport, onViewExistingReport }: AtsSetupProps) {
+export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, onViewExistingReport }: AtsSetupProps) {
   const navigate = useNavigate();
   const { resumeFile, resumeId, jdText, setResumeFile, setResumeId, setJdText } = useAtsStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -225,15 +227,16 @@ export function AtsSetup({ onAnalyze, isAnalyzing, hasExistingReport, onViewExis
           disabled={isAnalyzing || (!resumeFile && !resumeId)}
           className="px-8"
         >
-          {isAnalyzing ? (
-            <>
-              <span className="animate-spin mr-2">⏳</span> Analyzing...
-            </>
-          ) : (
-            'Analyze Resume'
-          )}
+          Analyze Resume
         </Button>
       </div>
+
+      <AILoadingModal
+        isOpen={isAnalyzing}
+        onCancel={onCancel}
+        message="Analyzing your resume against the JD..."
+        title="ATS Analysis"
+      />
     </motion.div>
   );
 }

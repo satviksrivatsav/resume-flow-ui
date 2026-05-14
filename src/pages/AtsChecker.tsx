@@ -159,6 +159,11 @@ export default function AtsChecker() {
     }
   };
 
+  const handleCancel = useCallback(() => {
+    abortControllerRef.current?.abort();
+    setStatus('idle');
+  }, [setStatus]);
+
   const handleBackToSetup = useCallback(() => {
     setPhase('setup');
     setReport(null);
@@ -216,6 +221,7 @@ export default function AtsChecker() {
           >
             <AtsSetup
               onAnalyze={handleAnalyze}
+              onCancel={handleCancel}
               isAnalyzing={status === 'analyzing'}
               hasExistingReport={!!existingReport}
               onViewExistingReport={loadExistingReport}
