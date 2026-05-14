@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { FeaturesCarousel } from '@/components/landing/FeaturesCarousel';
+import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
@@ -73,7 +73,7 @@ export default React.memo(function LandingPage() {
 
       {/* Features Section */}
       <div id="features" className="w-full relative z-10 bg-black border-t border-white/5 -mt-24">
-        <FeaturesCarousel />
+        <FeaturesSection />
       </div>
 
       {/* Footer Section */}
