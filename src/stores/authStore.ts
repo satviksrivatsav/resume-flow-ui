@@ -176,7 +176,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/resume-builder`,
+          redirectTo: `${window.location.origin}/dashboard`,
         },
       });
 

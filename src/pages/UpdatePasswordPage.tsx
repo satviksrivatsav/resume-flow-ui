@@ -36,7 +36,7 @@ export default function UpdatePasswordPage() {
 
     const result = await updatePassword(password);
     if (result.message) {
-      navigate('/resume-builder');
+      navigate('/dashboard');
     }
   };
 
