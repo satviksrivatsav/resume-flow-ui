@@ -1,17 +1,17 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
-import { useAtsStore } from '@/stores/atsStore';
-import { useAuthStore } from '@/stores/authStore';
+import { Button } from '@/components/ui/button';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { useAtsStore } from '@/stores/atsStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function AtsChecker() {
   const navigate = useNavigate();
@@ -105,7 +105,11 @@ export default function AtsChecker() {
           if (supabaseError) throw new Error('Failed to fetch resume data from dashboard');
           if (!data?.data) throw new Error('Resume data is empty');
 
-          response = await analyzeResumeJsonAts(data.data, jdTextValue || undefined, controller.signal);
+          response = await analyzeResumeJsonAts(
+            data.data,
+            jdTextValue || undefined,
+            controller.signal,
+          );
         } else {
           throw new Error('No resume selected');
         }
@@ -122,7 +126,7 @@ export default function AtsChecker() {
         setStatus('error');
       }
     },
-    [storeResumeId, setStatus, setError, setReport]
+    [storeResumeId, setStatus, setError, setReport],
   );
 
   const handleSaveReport = async () => {
@@ -197,12 +201,7 @@ export default function AtsChecker() {
           <h1 className="text-base font-semibold tracking-tight">
             {phase === 'setup' ? 'ATS Checker' : 'Analysis Results'}
           </h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="text-muted-foreground"
-          >
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
             Reset
           </Button>
         </div>

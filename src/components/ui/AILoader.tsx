@@ -1,4 +1,5 @@
 import Lottie from 'lottie-react';
+
 import aiSearchAnimation from '@/assets/ai-searching.json';
 
 interface AILoaderProps {
@@ -19,9 +20,7 @@ export function AILoader({ message, size = 'md' }: AILoaderProps) {
         <Lottie animationData={aiSearchAnimation} loop={true} />
       </div>
       {message && (
-        <p className="text-sm text-muted-foreground font-medium animate-pulse">
-          {message}
-        </p>
+        <p className="text-sm text-muted-foreground font-medium animate-pulse">{message}</p>
       )}
     </div>
   );

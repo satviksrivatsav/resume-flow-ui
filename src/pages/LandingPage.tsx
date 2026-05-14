@@ -2,13 +2,13 @@ import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
 import { MeshGradient } from '@/components/ui/MeshGradient';
 import { useAuthStore } from '@/stores/authStore';
-import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
 
 export default React.memo(function LandingPage() {
   const navigate = useNavigate();

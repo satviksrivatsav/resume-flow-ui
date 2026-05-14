@@ -145,35 +145,24 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -4 }}
       className="group relative flex flex-col bg-accent/20 border border-border/50 rounded-[24px] overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300"
       onClick={handleOpen}
     >
       <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner">
         {/* Preview Area */}
-        <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 group-hover:opacity-60 transition-opacity">
-          <div 
+        <div
+          ref={containerRef}
+          className="absolute inset-0 overflow-hidden pointer-events-none"
+        >
+          <div
             className="absolute top-0 left-0 origin-top-left"
             style={{ width: '794px', height: '1123px', transform: `scale(${scale})` }}
           >
             <ResumePreview data={resume.data} />
           </div>
         </div>
-        
-        {/* Floating Badge */}
-        {hasReport && (
-          <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-background/80 backdrop-blur-md border border-border/50 text-[9px] font-bold flex items-center gap-1.5 shadow-sm">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            ATS READY
-          </div>
-        )}
 
-        {/* Hover Action Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <Button variant="secondary" className="rounded-xl font-bold px-6 shadow-xl bg-white text-black hover:bg-zinc-100">
-            Edit
-          </Button>
-        </div>
+
       </div>
 
       <div className="p-4 pt-2">
@@ -243,8 +232,8 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           </DropdownMenu>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
-            {formatDistanceToNow(new Date(resume.updated_at))} ago
+          <span className="text-[10px] text-muted-foreground/60 font-medium">
+            Updated {formatDistanceToNow(new Date(resume.updated_at))} ago
           </span>
         </div>
       </div>
@@ -264,17 +253,27 @@ export function CreateNewCard() {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -4 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="group aspect-[1/1.414] bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
+      className="group flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300 h-full"
       onClick={handleCreate}
     >
-      <div className="w-16 h-16 rounded-3xl bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
-        <Plus className="w-8 h-8 text-primary" />
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
+        <div className="w-16 h-16 rounded-3xl bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
+          <Plus className="w-8 h-8 text-primary" />
+        </div>
+        <div className="text-center">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg">
+            New Masterpiece
+          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">
+            From scratch
+          </p>
+        </div>
       </div>
-      <div className="text-center">
-        <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors">New Masterpiece</p>
-        <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider mt-1">From Scratch</p>
+      
+      {/* Footer spacer to match ResumeCard height exactly */}
+      <div className="p-4 pt-2 invisible select-none">
+        <div className="h-[38px]" />
       </div>
     </motion.div>
   );

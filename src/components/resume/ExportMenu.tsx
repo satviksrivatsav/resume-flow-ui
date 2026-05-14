@@ -1,23 +1,24 @@
 import { pdf } from '@react-pdf/renderer';
-import { Download, FileJson, FileText, Loader2, MoreVertical, FileCode } from 'lucide-react';
+import { saveAs } from 'file-saver';
+import { Download, FileCode, FileJson, FileText, Loader2, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveAs } from 'file-saver';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { useResumeStore } from '@/stores/resumeStore';
 import { useAuthStore } from '@/stores/authStore';
-import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
+import { useResumeStore } from '@/stores/resumeStore';
 import { generateDocx } from '@/utils/export/docxGenerator';
+import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
+
 import { ResumePDF } from './ResumePDF';
 
 export const ExportMenu = () => {
@@ -116,7 +117,10 @@ export const ExportMenu = () => {
             <FileText className="w-4 h-4" />
             <span>PDF</span>
           </div>
-          <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+          <Badge
+            variant="secondary"
+            className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20"
+          >
             Recommended
           </Badge>
         </DropdownMenuItem>

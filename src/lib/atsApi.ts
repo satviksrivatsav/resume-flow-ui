@@ -1,14 +1,13 @@
+import { config } from '@/config/config';
 import { AtsReport } from '@/types/ats';
 import { ResumeData } from '@/types/resume';
-import { config } from '@/config/config';
 
 const API_BASE_URL = config.aiApiUrl;
-
 
 export async function analyzeResumeAts(
   file: File,
   jdText?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<{ parsed_resume: ResumeData; ats_report: AtsReport }> {
   const formData = new FormData();
   formData.append('file', file);
@@ -39,7 +38,7 @@ export async function analyzeResumeAts(
 export async function analyzeResumeJsonAts(
   resumeData: ResumeData,
   jdText?: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<{ parsed_resume: ResumeData; ats_report: AtsReport }> {
   const response = await fetch(`${API_BASE_URL}/resume/ats/json`, {
     method: 'POST',

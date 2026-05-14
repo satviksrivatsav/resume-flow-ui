@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { useAuthStore } from '@/stores/authStore';
+
 import { FeatureRow } from './FeatureRow';
 import { AIMockup } from './mockups/AIMockup';
-import { ParserMockup } from './mockups/ParserMockup';
 import { ATSMockup } from './mockups/ATSMockup';
+import { ParserMockup } from './mockups/ParserMockup';
 import { TailorMockup } from './mockups/TailorMockup';
 
 export const FeaturesSection = () => {
@@ -13,57 +15,61 @@ export const FeaturesSection = () => {
 
   const featuresData = [
     {
-      title: "AI Resume Writer.",
-      description: "Drastically speed up your resume writing process. Thanks to artificial intelligence, generating high-impact bullet points is effortless.",
+      title: 'AI Resume Writer.',
+      description:
+        'Drastically speed up your resume writing process. Thanks to artificial intelligence, generating high-impact bullet points is effortless.',
       bullets: [
-        "Transform raw notes into professional achievements",
-        "Tone matching for your specific industry",
-        "Beat writer's block instantly"
+        'Transform raw notes into professional achievements',
+        'Tone matching for your specific industry',
+        "Beat writer's block instantly",
       ],
-      ctaText: "Try AI Writer",
+      ctaText: 'Try AI Writer',
       mockup: <AIMockup />,
       reverse: false,
-      link: "/resume-builder"
+      link: '/resume-builder',
     },
     {
-      title: "Resume Parser.",
-      description: "Upload your old PDF or Word document and let our parser instantly extract your experience, education, and skills.",
+      title: 'Resume Parser.',
+      description:
+        'Upload your old PDF or Word document and let our parser instantly extract your experience, education, and skills.',
       bullets: [
-        "Supports PDF, DOCX, and LinkedIn exports",
-        "Accurate data extraction and categorization",
-        "Start with your existing data, zero typing"
+        'Supports PDF, DOCX, and LinkedIn exports',
+        'Accurate data extraction and categorization',
+        'Start with your existing data, zero typing',
       ],
-      ctaText: "Resume Parser",
+      ctaText: 'Resume Parser',
       mockup: <ParserMockup />,
       reverse: true,
-      link: "/upload"
+      link: '/upload',
     },
     {
-      title: "ATS Resume Checker.",
-      description: "Find out if your resume can pass the Applicant Tracking Systems used by top employers before you even apply.",
+      title: 'ATS Resume Checker.',
+      description:
+        'Find out if your resume can pass the Applicant Tracking Systems used by top employers before you even apply.',
       bullets: [
-        "Real-time ATS score and feedback",
-        "Identify missing keywords",
-        "Fix formatting issues automatically"
+        'Real-time ATS score and feedback',
+        'Identify missing keywords',
+        'Fix formatting issues automatically',
       ],
-      ctaText: "Check My Resume",
+      ctaText: 'Check My Resume',
       mockup: <ATSMockup />,
       reverse: false,
-      link: "/ats"
+      link: '/ats',
     },
     {
-      title: "Job Description Tailor.",
-      description: "Align your resume perfectly with the job you want. Paste the job description, and we'll tailor your resume to match exactly what recruiters want.",
+      title: 'Job Description Tailor.',
+      description:
+        "Align your resume perfectly with the job you want. Paste the job description, and we'll tailor your resume to match exactly what recruiters want.",
       bullets: [
-        "Highlight exactly what recruiters want to see",
-        "Re-order skills and experience for maximum impact",
-        "Increase your interview chances significantly"
+        'Highlight exactly what recruiters want to see',
+        'Re-order skills and experience for maximum impact',
+        'Increase your interview chances significantly',
       ],
-      ctaText: "Tailor My Resume",
+      ctaText: 'Tailor My Resume',
       mockup: <TailorMockup />,
       reverse: true,
-      link: "/resume-builder"
-    }
+      link: '/resume-builder',
+    },
   ];
 
   return (
@@ -80,9 +86,9 @@ export const FeaturesSection = () => {
 
         <div className="flex flex-col">
           {featuresData.map((feature, idx) => (
-            <FeatureRow 
-              key={idx} 
-              {...feature} 
+            <FeatureRow
+              key={idx}
+              {...feature}
               onClick={() => navigate(user ? feature.link : '/login')}
             />
           ))}
@@ -91,4 +97,3 @@ export const FeaturesSection = () => {
     </section>
   );
 };
-

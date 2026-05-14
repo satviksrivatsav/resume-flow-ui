@@ -1,20 +1,21 @@
-import { motion, animate } from 'framer-motion';
+import { animate, motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export const AIMockup = () => {
-  const fullText = "Spearheaded comprehensive marketing initiatives, driving a 45% year-over-year increase in overall sales revenue.";
-  const [displayText, setDisplayText] = useState("");
+  const fullText =
+    'Spearheaded comprehensive marketing initiatives, driving a 45% year-over-year increase in overall sales revenue.';
+  const [displayText, setDisplayText] = useState('');
 
   useEffect(() => {
     const controls = animate(0, fullText.length, {
       duration: 3,
-      ease: "linear",
+      ease: 'linear',
       repeat: Infinity,
       repeatDelay: 2,
       onUpdate: (latest) => {
         setDisplayText(fullText.slice(0, Math.round(latest)));
-      }
+      },
     });
     return controls.stop;
   }, []);
@@ -34,8 +35,15 @@ export const AIMockup = () => {
               Did marketing stuff and increased sales a lot last year.
             </div>
             <div className="flex justify-center">
-              <motion.button 
-                animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 0 0 rgba(255,255,255,0)", "0 0 15px 0 rgba(255,255,255,0.1)", "0 0 0 0 rgba(255,255,255,0)"] }}
+              <motion.button
+                animate={{
+                  scale: [1, 1.05, 1],
+                  boxShadow: [
+                    '0 0 0 0 rgba(255,255,255,0)',
+                    '0 0 15px 0 rgba(255,255,255,0.1)',
+                    '0 0 0 0 rgba(255,255,255,0)',
+                  ],
+                }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-black text-xs font-semibold"
               >
@@ -43,21 +51,19 @@ export const AIMockup = () => {
               </motion.button>
             </div>
             <div className="p-3 rounded bg-zinc-800 border border-zinc-700 text-xs text-zinc-200 font-mono relative min-h-[60px] leading-relaxed">
-               {displayText}
-               <motion.span
-                 animate={{ opacity: [1, 0, 1] }}
-                 transition={{ duration: 0.8, repeat: Infinity }}
-                 className="inline-block w-1.5 h-3 bg-zinc-400 ml-0.5 align-middle"
-               />
+              {displayText}
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="inline-block w-1.5 h-3 bg-zinc-400 ml-0.5 align-middle"
+              />
             </div>
           </div>
         </div>
       </div>
-      
+
       {/* Decorative background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-white/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
     </div>
   );
 };
-
-

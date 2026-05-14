@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { AtsReport } from '@/types/ats';
 
 interface AtsState {
@@ -32,5 +33,13 @@ export const useAtsStore = create<AtsState>((set) => ({
   setStatus: (status) => set({ status }),
   setReport: (report) => set({ report }),
   setError: (error) => set({ error }),
-  reset: () => set({ resumeFile: null, resumeId: null, jdText: '', status: 'idle', report: null, error: null }),
+  reset: () =>
+    set({
+      resumeFile: null,
+      resumeId: null,
+      jdText: '',
+      status: 'idle',
+      report: null,
+      error: null,
+    }),
 }));

@@ -1,5 +1,5 @@
 import { Github, Globe, Linkedin, Mail, MapPin } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import LogoImage from '@/assets/logo.png';
@@ -11,8 +11,10 @@ const SystemStatus = () => {
 
   useEffect(() => {
     const checkHealth = async () => {
+      // Don't ping if the tab is hidden to save resources
+      if (document.hidden) return;
+
       try {
-        // Ping the root health endpoint (e.g., http://localhost:8001/health)
         const baseUrl = new URL(config.aiApiUrl).origin;
         const res = await fetch(`${baseUrl}/health`, { method: 'GET' });
         if (res.ok) setStatus('ok');
@@ -21,19 +23,30 @@ const SystemStatus = () => {
         setStatus('error');
       }
     };
+
+    // Initial check
     checkHealth();
+
+    // Continuous ping every 5 seconds
+    const interval = setInterval(checkHealth, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="flex items-center gap-2">
-      <div className={cn(
-        "w-2 h-2 rounded-full",
-        status === 'loading' ? "bg-zinc-500" :
-        status === 'ok' ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" :
-        "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"
-      )} />
+      <div
+        className={cn(
+          'w-2 h-2 rounded-full',
+          status === 'loading' ? 'bg-zinc-600' : status === 'ok' ? 'bg-emerald-400' : 'bg-red-500',
+        )}
+      />
       <span className="text-xs font-medium text-zinc-500">
-        {status === 'loading' ? 'Checking API...' : status === 'ok' ? '200 OK — API Online' : 'API Offline'}
+        {status === 'loading'
+          ? 'Checking API...'
+          : status === 'ok'
+            ? '200 OK — API Online'
+            : 'API Offline'}
       </span>
     </div>
   );
@@ -237,4 +250,3 @@ export const LandingFooter = () => {
     </footer>
   );
 };
-

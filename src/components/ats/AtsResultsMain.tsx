@@ -1,22 +1,23 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  CheckCircle2,
   AlertCircle,
   AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
   Lightbulb,
+  MessageSquare,
   Target,
   UserSearch,
-  ChevronRight,
-  MessageSquare,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { RecruiterSimulation as RecruiterSimType } from '@/types/ats';
 
-import { AtsReport } from '@/types/ats';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import type { RecruiterSimulation as RecruiterSimType } from '@/types/ats';
+import { AtsReport } from '@/types/ats';
+
 import { BulletReviewCard } from './BulletReviewCard';
 import { JdMatchSection } from './JdMatchSection';
-import { cn } from '@/lib/utils';
 
 interface AtsResultsMainProps {
   report: AtsReport;
@@ -52,7 +53,7 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                   'relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors',
                   isActive
                     ? 'text-foreground bg-muted/60'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30',
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -91,10 +92,12 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                         'flex items-center justify-between px-4 py-3 rounded-xl border text-sm',
                         passed
                           ? 'bg-green-500/5 border-green-500/20'
-                          : 'bg-red-500/5 border-red-500/20'
+                          : 'bg-red-500/5 border-red-500/20',
                       )}
                     >
-                      <span className="capitalize text-foreground/90">{key.replace(/_/g, ' ')}</span>
+                      <span className="capitalize text-foreground/90">
+                        {key.replace(/_/g, ' ')}
+                      </span>
                       {passed ? (
                         <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[11px]">
                           ✓ Pass
@@ -142,7 +145,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                 <Section title="Parser Feedback" icon={MessageSquare}>
                   <ul className="space-y-2">
                     {report.feedback.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground leading-relaxed">
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-sm text-muted-foreground leading-relaxed"
+                      >
                         <ChevronRight className="w-4 h-4 mt-0.5 shrink-0 text-muted-foreground/50" />
                         {item}
                       </li>
@@ -167,7 +173,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                 <Section title="Optimization Suggestions" icon={Lightbulb}>
                   <ul className="space-y-3">
                     {report.suggestions.map((suggestion, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm bg-muted/30 border border-border/30 p-3.5 rounded-xl">
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-sm bg-muted/30 border border-border/30 p-3.5 rounded-xl"
+                      >
                         <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-bold shrink-0 mt-0.5">
                           {i + 1}
                         </span>
@@ -195,7 +204,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                   <Section title="Strong Keywords" icon={CheckCircle2} titleClass="text-green-500">
                     <div className="flex flex-wrap gap-2">
                       {report.strong_keywords.map((kw, i) => (
-                        <Badge key={i} className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[11px]">
+                        <Badge
+                          key={i}
+                          className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[11px]"
+                        >
                           {kw}
                         </Badge>
                       ))}
@@ -206,7 +218,11 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                   <Section title="Missing Keywords" icon={AlertCircle} titleClass="text-red-500">
                     <div className="flex flex-wrap gap-2">
                       {report.missing_keywords.map((kw, i) => (
-                        <Badge key={i} variant="outline" className="text-[11px] text-red-500 border-red-400/30">
+                        <Badge
+                          key={i}
+                          variant="outline"
+                          className="text-[11px] text-red-500 border-red-400/30"
+                        >
                           {kw}
                         </Badge>
                       ))}
@@ -307,13 +323,18 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">Likely Concerns</p>
+              <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+                Likely Concerns
+              </p>
               <p className="text-[11px] text-muted-foreground">Red flags a recruiter may raise</p>
             </div>
           </div>
           <ul className="space-y-2.5">
             {sim.likely_concerns.map((concern, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-yellow-800 dark:text-yellow-200/80">
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm text-yellow-800 dark:text-yellow-200/80"
+              >
                 <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500" />
                 {concern}
               </li>

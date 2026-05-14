@@ -1,4 +1,4 @@
-import { AlertCircle, LayoutGrid, RefreshCcw, Search } from 'lucide-react';
+import { AlertCircle, LayoutGrid } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -20,14 +20,18 @@ interface ResumeRow {
 }
 
 export default function Dashboard() {
-  const { user, isLoading: authLoading } = useAuthStore();
+  const { user, isInitialized } = useAuthStore();
   const [resumes, setResumes] = useState<ResumeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchResumes = useCallback(async () => {
-    if (authLoading) return;
+    // Wait until the auth store has finished its initial session check.
+    // Using isInitialized (a permanent flag) prevents an infinite-loading
+    // race where the effect fires while authLoading is still true and
+    // returns early, but then authLoading never flips again in a way that
+    // re-triggers the effect.
+    if (!isInitialized) return;
 
     if (!user) {
       setLoading(false);
@@ -52,46 +56,22 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user, authLoading]);
+  }, [user, isInitialized]);
 
   useEffect(() => {
     fetchResumes();
   }, [fetchResumes]);
 
-  const isActuallyLoading = authLoading || (loading && resumes.length === 0);
-
-  const filteredResumes = resumes.filter((resume) =>
-    resume.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const isActuallyLoading = !isInitialized || (loading && resumes.length === 0);
 
   return (
     <DashboardLayout>
       <header className="flex items-end justify-between mb-12">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight mb-2">My Resumes</h1>
-          <p className="text-muted-foreground font-medium italic">Crafting your professional narrative.</p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search resumes..."
-              className="bg-accent/50 border border-border/50 rounded-2xl pl-11 pr-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-72 transition-all"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={fetchResumes}
-            disabled={loading}
-            className="rounded-2xl h-11 w-11 border-border/50"
-          >
-            <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
+          <p className="text-muted-foreground font-medium italic">
+            Crafting your professional narrative.
+          </p>
         </div>
       </header>
 
@@ -110,20 +90,13 @@ export default function Dashboard() {
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="aspect-[794/1123] rounded-xl bg-muted/30 animate-pulse" />
               ))
-            : filteredResumes.map((resume) => (
+            : resumes.map((resume) => (
                 <ResumeCard key={resume.id} resume={resume} onRefresh={fetchResumes} />
               ))}
         </div>
       )}
 
-      {!loading && !error && filteredResumes.length === 0 && searchQuery && (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <Search className="w-12 h-12 mb-4 opacity-20" />
-          <p className="text-lg font-medium">No resumes found matching "{searchQuery}"</p>
-        </div>
-      )}
-
-      {!loading && !error && resumes.length === 0 && !searchQuery && (
+      {!loading && !error && resumes.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-xl mt-6">
           <LayoutGrid className="w-12 h-12 mb-4 opacity-20" />
           <h2 className="text-xl font-medium mb-1">Welcome to your Dashboard!</h2>

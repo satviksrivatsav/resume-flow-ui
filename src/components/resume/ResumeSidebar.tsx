@@ -341,7 +341,12 @@ export const ResumeSidebar = () => {
                           className="mr-2 inline-flex items-center justify-center"
                           style={{ display: 'inline-flex' }}
                         >
-                          <User className={cn('w-4 h-4 transition-colors duration-200', isActive ? 'text-primary' : '')} />
+                          <User
+                            className={cn(
+                              'w-4 h-4 transition-colors duration-200',
+                              isActive ? 'text-primary' : '',
+                            )}
+                          />
                         </motion.span>
                         <span className="truncate flex-1">Personal Info</span>
                         {isCompleted ? (
@@ -361,10 +366,7 @@ export const ResumeSidebar = () => {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
               >
-                <SortableContext
-                  items={orderedStaticIds}
-                  strategy={verticalListSortingStrategy}
-                >
+                <SortableContext items={orderedStaticIds} strategy={verticalListSortingStrategy}>
                   {orderedStaticIds.map((id) => {
                     const meta = STATIC_SIDEBAR_SECTIONS.find((s) => s.id === id);
                     if (!meta) return null;

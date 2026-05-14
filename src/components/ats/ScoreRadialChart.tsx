@@ -19,7 +19,7 @@ const GRADE_CONFIG: Record<string, { color: string; label: string; bg: string }>
 
 export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartProps) {
   const [animated, setAnimated] = useState(false);
-  const gradeConfig = GRADE_CONFIG[grade] || GRADE_CONFIG['F'];
+  const gradeConfig = GRADE_CONFIG[grade] || GRADE_CONFIG.F;
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 100);
@@ -89,7 +89,7 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
           transition={{ delay: 0.3, duration: 0.5 }}
           className={cn(
             'text-5xl font-bold tabular-nums leading-none',
-            score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'
+            score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400',
           )}
         >
           {Math.round(score)}

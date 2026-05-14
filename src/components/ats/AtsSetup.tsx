@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
+import { FileText, UploadCloud, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, FileText, X } from 'lucide-react';
-
 import { useAtsStore } from '@/stores/atsStore';
-import { AILoadingModal } from '@/components/ui/AILoadingModal';
 
 interface AtsSetupProps {
   onAnalyze: (file: File | null, jdText: string) => Promise<void>;
@@ -17,10 +16,21 @@ interface AtsSetupProps {
   onViewExistingReport?: () => void;
 }
 
+const ALLOWED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/png',
+  'image/jpeg',
+  'text/plain',
+];
 
-const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/png', 'image/jpeg', 'text/plain'];
-
-export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, onViewExistingReport }: AtsSetupProps) {
+export function AtsSetup({
+  onAnalyze,
+  onCancel,
+  isAnalyzing,
+  hasExistingReport,
+  onViewExistingReport,
+}: AtsSetupProps) {
   const navigate = useNavigate();
   const { resumeFile, resumeId, jdText, setResumeFile, setResumeId, setJdText } = useAtsStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,7 +77,7 @@ export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, 
 
   const handleAnalyze = async () => {
     if (!resumeFile && !resumeId) return;
-    await onAnalyze(resumeFile!, jdText);
+    await onAnalyze(resumeFile, jdText);
   };
 
   const handleClearResume = () => {
@@ -108,7 +118,9 @@ export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, 
                       {resumeId ? `Resume #${resumeId.slice(0, 8)}...` : fileName}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {resumeFile ? `${(resumeFile.size / 1024).toFixed(1)} KB` : 'Loaded from dashboard'}
+                      {resumeFile
+                        ? `${(resumeFile.size / 1024).toFixed(1)} KB`
+                        : 'Loaded from dashboard'}
                     </p>
                   </div>
                 </div>
@@ -145,7 +157,9 @@ export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, 
               </div>
               <p className="text-lg font-medium text-foreground mb-1">Drop your resume here</p>
               <p className="text-sm text-muted-foreground">or click to browse</p>
-              <p className="text-xs text-muted-foreground/60 mt-2">PDF, DOCX, Images, TXT (max 10MB)</p>
+              <p className="text-xs text-muted-foreground/60 mt-2">
+                PDF, DOCX, Images, TXT (max 10MB)
+              </p>
             </div>
           )}
 
@@ -166,7 +180,8 @@ export function AtsSetup({ onAnalyze, onCancel, isAnalyzing, hasExistingReport, 
         <div className="flex-1">
           <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            Job Description <span className="text-sm font-normal text-muted-foreground">(optional)</span>
+            Job Description{' '}
+            <span className="text-sm font-normal text-muted-foreground">(optional)</span>
           </h2>
 
           <div className="space-y-3">

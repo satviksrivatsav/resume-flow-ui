@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
+
+import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import { useResumeStore } from '@/stores/resumeStore';
-import { supabase } from '@/lib/supabase';
 
 const DEBOUNCE_DELAY = 10000; // 10 seconds
 
@@ -11,13 +12,13 @@ export const useAutoSave = () => {
   const setIsSaving = useResumeStore((state) => state.setIsSaving);
   const setLastSaved = useResumeStore((state) => state.setLastSaved);
   const user = useAuthStore((state) => state.user);
-  
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedDataRef = useRef<string>('');
 
   const saveNow = useCallback(async () => {
     const currentDataString = JSON.stringify(resumeData);
-    
+
     // Clear any pending auto-save timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -25,16 +26,17 @@ export const useAutoSave = () => {
     }
 
     setIsSaving(true);
-    
+
     try {
       if (user) {
         let finalName = resumeData.name;
 
         // If it's a new resume, figure out a smart, unique name
         if (!resumeData.id) {
-          const baseName = (resumeData.name && resumeData.name !== 'Untitled Resume') 
-            ? resumeData.name 
-            : (resumeData.basics.name || 'Untitled Resume');
+          const baseName =
+            resumeData.name && resumeData.name !== 'Untitled Resume'
+              ? resumeData.name
+              : resumeData.basics.name || 'Untitled Resume';
 
           // Fetch existing names to ensure uniqueness
           const { data: existingResumes } = await supabase
@@ -43,7 +45,7 @@ export const useAutoSave = () => {
             .eq('user_id', user.id);
 
           const existingNames = existingResumes?.map((r) => r.name) || [];
-          
+
           finalName = baseName;
           if (existingNames.includes(baseName)) {
             let counter = 1;
@@ -73,19 +75,23 @@ export const useAutoSave = () => {
           .single();
 
         if (error) throw error;
-        
+
         let finalId = resumeData.id;
         if (data && (data.id !== resumeData.id || data.name !== resumeData.name)) {
-           finalId = data.id;
-           setResumeData({ ...resumeData, id: data.id, name: data.name });
+          finalId = data.id;
+          setResumeData({ ...resumeData, id: data.id, name: data.name });
         }
-        lastSavedDataRef.current = JSON.stringify({ ...resumeData, id: finalId, name: data?.name || finalName });
+        lastSavedDataRef.current = JSON.stringify({
+          ...resumeData,
+          id: finalId,
+          name: data?.name || finalName,
+        });
       } else {
         // Anonymous: save to sessionStorage
         sessionStorage.setItem('rf-anonymous-resume', currentDataString);
         lastSavedDataRef.current = currentDataString;
       }
-      
+
       setLastSaved(new Date());
     } catch (error) {
       console.error('Error saving:', error);

@@ -12,8 +12,8 @@ import {
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button } from '@/components/ui/button';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
+import { Button } from '@/components/ui/button';
 import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -59,7 +59,7 @@ export default function UploadResume() {
 
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
-      
+
       const timeoutId = setTimeout(() => {
         abortController.abort(new Error('TimeoutError'));
       }, 45000); // 45 second timeout for multi-format parsing (OCR can be slow)

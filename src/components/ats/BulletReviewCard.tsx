@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { AlertCircle, Check, Copy } from 'lucide-react';
+import { useState } from 'react';
 
-import { BulletReview } from '@/types/ats';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { BulletReview } from '@/types/ats';
 
 interface BulletReviewCardProps {
   review: BulletReview;
@@ -51,12 +51,7 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
               AI Improved
             </span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className="text-xs h-7 px-2"
-          >
+          <Button variant="ghost" size="sm" onClick={handleCopy} className="text-xs h-7 px-2">
             {copied ? (
               <>
                 <Check className="w-3.5 h-3.5 mr-1" />

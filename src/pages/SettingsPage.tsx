@@ -34,7 +34,8 @@ export default function SettingsPage() {
       } else {
         toast.success(`Theme updated to ${newTheme}`);
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Failed to update theme:', error);
       toast.error('Failed to update theme preference');
     }
   };
@@ -48,7 +49,8 @@ export default function SettingsPage() {
       } else {
         toast.success('Language preference updated');
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Failed to update language:', error);
       toast.error('Failed to update language preference');
     }
   };

@@ -12,6 +12,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
 import AtsChecker from './pages/AtsChecker';
 import AtsReports from './pages/AtsReports';
+import DangerZonePage from './pages/DangerZonePage';
 import Dashboard from './pages/Dashboard';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Index from './pages/Index';
@@ -87,6 +88,14 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/danger"
+          element={
+            <ProtectedRoute>
+              <DangerZonePage />
             </ProtectedRoute>
           }
         />

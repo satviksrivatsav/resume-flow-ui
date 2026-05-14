@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
-import { FileText, Database } from 'lucide-react';
+import { Database, FileText } from 'lucide-react';
 
 export const ParserMockup = () => {
   return (
     <div className="w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-square xl:aspect-[4/3] relative flex items-center justify-center overflow-hidden p-4">
-      
       <div className="flex gap-8 w-full max-w-md items-center relative z-10">
         {/* Left Side: Document with Scanner */}
         <div className="flex-1 relative">
@@ -20,11 +19,11 @@ export const ParserMockup = () => {
               <div className="h-1.5 w-full bg-zinc-800/50 rounded" />
               <div className="h-1.5 w-5/6 bg-zinc-800/50 rounded" />
             </div>
-            
+
             {/* Scanning line */}
-            <motion.div 
-              animate={{ top: ["-10%", "110%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            <motion.div
+              animate={{ top: ['-10%', '110%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               className="absolute left-0 right-0 h-10 bg-gradient-to-b from-transparent via-white/5 to-transparent w-full border-b border-white/10 z-10"
             />
           </div>
@@ -35,39 +34,41 @@ export const ParserMockup = () => {
 
         {/* Middle: Transfer arrows */}
         <div className="flex flex-col gap-2">
-           {[0, 1, 2].map((i) => (
-             <motion.div
-               key={i}
-               animate={{ opacity: [0.2, 1, 0.2], x: [0, 10, 0] }}
-               transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-               className="w-4 h-0.5 bg-zinc-700"
-             />
-           ))}
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              animate={{ opacity: [0.2, 1, 0.2], x: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              className="w-4 h-0.5 bg-zinc-700"
+            />
+          ))}
         </div>
 
         {/* Right Side: Extracted Data */}
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-2 mb-4">
             <Database className="w-4 h-4 text-zinc-500" />
-            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Structured Data</span>
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+              Structured Data
+            </span>
           </div>
-          
+
           {[
-            { label: "Experience", value: "Software Engineer at TechCorp", delay: 0.5 },
-            { label: "Education", value: "BS in Computer Science", delay: 1.2 },
-            { label: "Skills", value: "React, Node.js, Python", delay: 2.0 }
+            { label: 'Experience', value: 'Software Engineer at TechCorp', delay: 0.5 },
+            { label: 'Education', value: 'BS in Computer Science', delay: 1.2 },
+            { label: 'Skills', value: 'React, Node.js, Python', delay: 2.0 },
           ].map((field, idx) => (
-            <motion.div 
-               key={idx}
-               initial={{ opacity: 0, x: 20 }}
-               animate={{ opacity: [0, 1, 1, 0], x: [20, 0, 0, -10] }}
-               transition={{ 
-                 duration: 4, 
-                 repeat: Infinity, 
-                 delay: field.delay,
-                 times: [0, 0.1, 0.9, 1]
-               }}
-               className="p-2.5 rounded bg-zinc-900 border border-zinc-800 space-y-1 shadow-lg"
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: [0, 1, 1, 0], x: [20, 0, 0, -10] }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: field.delay,
+                times: [0, 0.1, 0.9, 1],
+              }}
+              className="p-2.5 rounded bg-zinc-900 border border-zinc-800 space-y-1 shadow-lg"
             >
               <div className="h-1.5 w-12 bg-zinc-700 rounded"></div>
               <div className="text-[10px] text-zinc-300 font-mono truncate">{field.value}</div>
@@ -80,6 +81,3 @@ export const ParserMockup = () => {
     </div>
   );
 };
-
-
-

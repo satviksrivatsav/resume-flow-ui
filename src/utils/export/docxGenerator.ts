@@ -1,4 +1,13 @@
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, ExternalHyperlink } from 'docx';
+import {
+  AlignmentType,
+  Document,
+  ExternalHyperlink,
+  HeadingLevel,
+  Packer,
+  Paragraph,
+  TextRun,
+} from 'docx';
+
 import { ResumeData } from '@/types/resume';
 
 export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
@@ -21,23 +30,25 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           }),
         ],
       }),
-      ...(resumeData.basics.url?.href ? [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [
-            new ExternalHyperlink({
+      ...(resumeData.basics.url?.href
+        ? [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
               children: [
-                new TextRun({
-                  text: resumeData.basics.url.label || resumeData.basics.url.href,
-                  style: "Hyperlink",
+                new ExternalHyperlink({
+                  children: [
+                    new TextRun({
+                      text: resumeData.basics.url.label || resumeData.basics.url.href,
+                      style: 'Hyperlink',
+                    }),
+                  ],
+                  link: resumeData.basics.url.href,
                 }),
               ],
-              link: resumeData.basics.url.href,
             }),
-          ],
-        }),
-      ] : []),
-      new Paragraph({ text: "", spacing: { after: 200 } }),
+          ]
+        : []),
+      new Paragraph({ text: '', spacing: { after: 200 } }),
     ],
   });
 
@@ -45,14 +56,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   if (resumeData.summary.visible && resumeData.summary.content) {
     sections[0].children.push(
       new Paragraph({
-        text: "Professional Summary",
+        text: 'Professional Summary',
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 200, after: 100 },
       }),
       new Paragraph({
         text: resumeData.summary.content,
         spacing: { after: 200 },
-      })
+      }),
     );
   }
 
@@ -60,10 +71,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   if (resumeData.sections.experience.visible && resumeData.sections.experience.items.length > 0) {
     sections[0].children.push(
       new Paragraph({
-        text: "Work Experience",
+        text: 'Work Experience',
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 200, after: 100 },
-      })
+      }),
     );
 
     resumeData.sections.experience.items.forEach((item) => {
@@ -86,7 +97,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         new Paragraph({
           text: item.description,
           spacing: { after: 120 },
-        })
+        }),
       );
 
       if (item.roles && item.roles.length > 0) {
@@ -101,7 +112,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
             new Paragraph({
               text: `    ${role.description}`,
               spacing: { after: 120 },
-            })
+            }),
           );
         });
       }
@@ -112,10 +123,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   if (resumeData.sections.education.visible && resumeData.sections.education.items.length > 0) {
     sections[0].children.push(
       new Paragraph({
-        text: "Education",
+        text: 'Education',
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 200, after: 100 },
-      })
+      }),
     );
 
     resumeData.sections.education.items.forEach((item) => {
@@ -137,7 +148,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         new Paragraph({
           text: `${item.degree}${item.area ? ` in ${item.area}` : ''}${item.grade ? ` (Grade: ${item.grade})` : ''}`,
           spacing: { after: 120 },
-        })
+        }),
       );
     });
   }
@@ -146,22 +157,22 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   if (resumeData.sections.skills.visible && resumeData.sections.skills.items.length > 0) {
     sections[0].children.push(
       new Paragraph({
-        text: "Skills",
+        text: 'Skills',
         heading: HeadingLevel.HEADING_2,
         spacing: { before: 200, after: 100 },
-      })
+      }),
     );
 
     const skillsText = resumeData.sections.skills.items
-      .filter(item => item.visible)
-      .map(item => `${item.name}${item.description ? ` (${item.description})` : ''}`)
+      .filter((item) => item.visible)
+      .map((item) => `${item.name}${item.description ? ` (${item.description})` : ''}`)
       .join(', ');
 
     sections[0].children.push(
       new Paragraph({
         text: skillsText,
         spacing: { after: 200 },
-      })
+      }),
     );
   }
 

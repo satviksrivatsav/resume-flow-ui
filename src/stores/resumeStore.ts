@@ -104,11 +104,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
 
   loadResume: async (id) => {
     try {
-      const { data, error } = await supabase
-        .from('resumes')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from('resumes').select('*').eq('id', id).single();
 
       if (error) throw error;
 

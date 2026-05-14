@@ -1,7 +1,9 @@
+import { X } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+
 import { AILoader } from './AILoader';
-import { X } from 'lucide-react';
 
 interface AILoadingModalProps {
   isOpen: boolean;
@@ -10,10 +12,15 @@ interface AILoadingModalProps {
   title?: string;
 }
 
-export function AILoadingModal({ isOpen, onCancel, message = 'Processing...', title }: AILoadingModalProps) {
+export function AILoadingModal({
+  isOpen,
+  onCancel,
+  message = 'Processing...',
+  title,
+}: AILoadingModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-[400px] p-0 overflow-hidden border-none bg-transparent shadow-none flex flex-col items-center justify-center gap-6 outline-none"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
@@ -27,10 +34,10 @@ export function AILoadingModal({ isOpen, onCancel, message = 'Processing...', ti
           )}
 
           <AILoader message={message} size="lg" />
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
+
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onCancel}
             className="mt-8 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full px-6 transition-all"
           >

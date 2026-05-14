@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 
-import { JdMatch } from '@/types/ats';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { JdMatch } from '@/types/ats';
 
 interface JdMatchSectionProps {
   jdMatch: JdMatch;

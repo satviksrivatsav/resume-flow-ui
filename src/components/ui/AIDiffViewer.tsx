@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Sparkles } from 'lucide-react';
 
 // ── Hand-drawn X icon ────────────────────────────────────────────────────────
 export function DrawableX({ draw }: { draw: boolean }) {
@@ -90,7 +91,7 @@ export function AIDiffViewer({
           </div>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
-        
+
         {showActions && (
           <div className="flex gap-3">
             <motion.div
@@ -103,10 +104,10 @@ export function AIDiffViewer({
                 size="lg"
                 onClick={onReject}
                 className={cn(
-                  "gap-2 rounded-full px-6 h-12 transition-all duration-300",
-                  decision === 'reject' 
-                    ? "shadow-lg shadow-destructive/20 border-destructive" 
-                    : "border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive"
+                  'gap-2 rounded-full px-6 h-12 transition-all duration-300',
+                  decision === 'reject'
+                    ? 'shadow-lg shadow-destructive/20 border-destructive'
+                    : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
                 )}
               >
                 <DrawableX draw={rejectHovered} />
@@ -123,10 +124,10 @@ export function AIDiffViewer({
                 size="lg"
                 onClick={onAccept}
                 className={cn(
-                  "gap-2 rounded-full px-6 h-12 transition-all duration-300",
+                  'gap-2 rounded-full px-6 h-12 transition-all duration-300',
                   decision === 'accept'
-                    ? "bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0"
-                    : "bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0"
+                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0'
+                    : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
                 )}
               >
                 <DrawableCheck draw={acceptHovered} />
@@ -141,24 +142,24 @@ export function AIDiffViewer({
         {/* Original Text */}
         <div className="flex flex-col min-h-0">
           <div className="px-8 py-4 bg-muted/20 border-b border-primary/5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Original Version</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Original Version
+            </span>
           </div>
           <div className="flex-1 p-8 overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-muted-foreground whitespace-pre-wrap">
-            {originalText || (
-              <span className="italic opacity-50">No original content</span>
-            )}
+            {originalText || <span className="italic opacity-50">No original content</span>}
           </div>
         </div>
 
         {/* Tailored Text */}
         <div className="flex flex-col min-h-0 bg-primary/[0.01]">
           <div className="px-8 py-4 bg-primary/5 border-b border-primary/10">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Tailored Version</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+              Tailored Version
+            </span>
           </div>
           <div className="flex-1 p-8 overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-foreground font-medium whitespace-pre-wrap">
-            {newText || (
-              <span className="italic opacity-50">No content generated</span>
-            )}
+            {newText || <span className="italic opacity-50">No content generated</span>}
           </div>
         </div>
       </div>

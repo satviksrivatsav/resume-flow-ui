@@ -16,22 +16,22 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
-      setName(profile.name || '');
-      setUsername(profile.username || '');
+      setName(profile.name ?? '');
+      setUsername(profile.username ?? '');
     }
     if (user) {
-      setEmail(user.email || '');
+      setEmail(user.email ?? '');
     }
   }, [profile, user]);
 
   const handleSave = async () => {
     try {
       // 1. Update profile (Name, Username)
-      const profileResult = await updateProfile({ 
-        name: name.trim() || null, 
-        username: username.trim() || null 
+      const profileResult = await updateProfile({
+        name: name.trim() ?? null,
+        username: username.trim() ?? null,
       });
-      
+
       if (profileResult.error) {
         toast.error(profileResult.error);
         return;
@@ -40,25 +40,25 @@ export default function ProfilePage() {
       // 2. Update email if changed
       if (email.trim().toLowerCase() !== user?.email?.toLowerCase()) {
         const confirmChange = window.confirm(
-          "Changing your email address will require you to re-verify it. You will receive a verification link at the new address. Continue?"
+          'Changing your email address will require you to re-verify it. You will receive a verification link at the new address. Continue?',
         );
-        
+
         if (confirmChange) {
           const emailResult = await updateEmail(email.trim().toLowerCase());
           if (emailResult.error) {
             toast.error(emailResult.error);
             return;
           }
-          toast.success("Verification email sent to " + email.trim());
+          toast.success(`Verification email sent to ${email.trim()}`);
         } else {
-          setEmail(user?.email || '');
+          setEmail(user?.email ?? '');
         }
       } else {
-        toast.success("Profile updated successfully");
+        toast.success('Profile updated successfully');
       }
     } catch (error) {
       console.error('Error saving profile:', error);
-      toast.error("An unexpected error occurred");
+      toast.error('An unexpected error occurred');
     }
   };
 
@@ -167,9 +167,10 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            
+
             <p className="text-xs text-center text-muted-foreground px-6 italic">
-              "Your profile is your digital handshake. Keep it updated to make the best impression."
+              &quot;Your profile is your digital handshake. Keep it updated to make the best
+              impression.&quot;
             </p>
           </div>
         </div>

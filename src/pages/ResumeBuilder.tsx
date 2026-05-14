@@ -18,8 +18,8 @@ import Logo from '@/assets/logo.png';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
 import { CustomSectionForm } from '@/components/resume/CustomSectionForm';
-import { ExportMenu } from '@/components/resume/ExportMenu';
 import { EducationForm } from '@/components/resume/EducationForm';
+import { ExportMenu } from '@/components/resume/ExportMenu';
 import { InterestsForm } from '@/components/resume/InterestsForm';
 import { LanguagesForm } from '@/components/resume/LanguagesForm';
 import { PersonalInfoForm } from '@/components/resume/PersonalInfoForm';
@@ -32,10 +32,10 @@ import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
 import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
+import { TailorDiffView } from '@/components/resume/TailorDiffView';
+import { TailorForm } from '@/components/resume/TailorForm';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
-import { TailorForm } from '@/components/resume/TailorForm';
-import { TailorDiffView } from '@/components/resume/TailorDiffView';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
@@ -44,11 +44,11 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useAutoSave } from '@/hooks/useAutoSave';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
-import { useUiStore } from '@/stores/uiStore';
 import { useTailorStore } from '@/stores/tailorStore';
-import { useAutoSave } from '@/hooks/useAutoSave';
+import { useUiStore } from '@/stores/uiStore';
 
 type ViewMode = 'fit-width' | 'fit-height';
 
@@ -313,10 +313,10 @@ const ResumeBuilder = () => {
                     >
                       <AnimatedIcon
                         icon={Save}
-                        className={cn("w-4 h-4", isSaving && "animate-spin")}
+                        className={cn('w-4 h-4', isSaving && 'animate-spin')}
                       />
                       <span className="hidden sm:inline font-medium">
-                        {isSaving ? "Saving..." : "Save"}
+                        {isSaving ? 'Saving...' : 'Save'}
                       </span>
                     </Button>
                   </motion.div>

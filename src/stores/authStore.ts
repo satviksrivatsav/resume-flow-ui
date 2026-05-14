@@ -17,6 +17,7 @@ interface AuthState {
   profile: Profile | null;
   isLoading: boolean;
   error: string | null;
+  isInitialized: boolean;
 
   // Actions
   initialize: () => Promise<void>;
@@ -38,10 +39,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   profile: null,
   isLoading: true,
   error: null,
+  isInitialized: false,
 
   initialize: async () => {
+    if (get().isInitialized) return;
+
+    console.log('[AuthStore] initialize: starting');
     try {
-      // Get initial session
+      // 1. Get initial session
       const {
         data: { session },
         error,
@@ -49,27 +54,51 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (error) throw error;
 
+      console.log('[AuthStore] initialize: session found', !!session);
+
       set({
         session,
         user: session?.user ?? null,
-        isLoading: false,
+        isInitialized: true,
       });
 
       if (session?.user) {
         await get().fetchProfile();
       }
 
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        set({
-          session,
-          user: session?.user ?? null,
-          profile: session?.user ? get().profile : null,
-        });
+      // Mark loading as done BEFORE registering the listener so that when
+      // onAuthStateChange fires INITIAL_SESSION synchronously, the app is
+      // already unblocked and won't get stuck in a perpetual loading state.
+      set({ isLoading: false });
 
-        if (event === 'SIGNED_IN' && session?.user) {
-          await promoteAnonymousResume(session.user.id);
-          await get().fetchProfile();
+      // 2. Listen for ongoing auth changes (sign-in, sign-out, token refresh)
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('[AuthStore] onAuthStateChange:', event, !!session);
+
+        const currentUser = get().user;
+        const newUser = session?.user ?? null;
+
+        // Always sync the latest session/user from Supabase
+        set({ session, user: newUser });
+
+        if (event === 'SIGNED_IN') {
+          // Only re-fetch profile if the user identity actually changed, or
+          // the profile hasn't been loaded yet (avoids a redundant fetch when
+          // INITIAL_SESSION fires right after our own initialization above).
+          if (newUser && (newUser.id !== currentUser?.id || !get().profile)) {
+            console.log('[AuthStore] SIGNED_IN: fetching profile for', newUser.id);
+            await promoteAnonymousResume(newUser.id);
+            await get().fetchProfile();
+          }
+        }
+
+        if (event === 'INITIAL_SESSION' && session?.user) {
+          // Profile was already fetched during initialize(); only re-fetch if
+          // somehow missing (e.g. fetchProfile failed earlier).
+          if (!get().profile) {
+            console.log('[AuthStore] INITIAL_SESSION: profile missing, re-fetching');
+            await get().fetchProfile();
+          }
         }
 
         if (event === 'SIGNED_OUT') {
@@ -78,8 +107,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Auth initialization failed';
-      console.error('Auth initialization error:', message);
-      set({ isLoading: false, error: message });
+      console.error('[AuthStore] initialize error:', message);
+      set({ isLoading: false, isInitialized: true, error: message });
     }
   },
 
@@ -216,14 +245,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { user } = get();
     if (!user) return;
 
+    console.log('[AuthStore] fetchProfile: fetching for', user.id);
     try {
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle(); // Use maybeSingle to avoid errors if profile doesn't exist yet
 
       if (error) throw error;
 
+      console.log('[AuthStore] fetchProfile: result', !!data);
       set({ profile: data });
     } catch (error: unknown) {
-      console.error('Error fetching profile:', error);
+      console.error('[AuthStore] fetchProfile error:', error);
     }
   },
 
