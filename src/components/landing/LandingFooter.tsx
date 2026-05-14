@@ -1,8 +1,43 @@
-import { ArrowRight, Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import React from 'react';
+import { Github, Globe, Linkedin, Mail, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import LogoImage from '@/assets/logo.png';
+import { config } from '@/config/config';
+import { cn } from '@/lib/utils';
+
+const SystemStatus = () => {
+  const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        // Ping the root health endpoint (e.g., http://localhost:8001/health)
+        const baseUrl = new URL(config.aiApiUrl).origin;
+        const res = await fetch(`${baseUrl}/health`, { method: 'GET' });
+        if (res.ok) setStatus('ok');
+        else setStatus('error');
+      } catch (err) {
+        setStatus('error');
+      }
+    };
+    checkHealth();
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className={cn(
+        "w-2 h-2 rounded-full",
+        status === 'loading' ? "bg-zinc-500" :
+        status === 'ok' ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" :
+        "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"
+      )} />
+      <span className="text-xs font-medium text-zinc-500">
+        {status === 'loading' ? 'Checking API...' : status === 'ok' ? '200 OK — API Online' : 'API Offline'}
+      </span>
+    </div>
+  );
+};
 
 export const LandingFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -27,24 +62,32 @@ export const LandingFooter = () => {
               Empowering job seekers with AI-driven optimization and modern design. Craft your
               future with precision.
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
               <a
-                href="#"
-                className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300"
+                href="https://github.com/satviksrivatsav/resume-flow-ui"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
               >
-                <Twitter className="w-4 h-4" />
+                <Github className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">UI</span>
               </a>
               <a
-                href="#"
-                className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300"
+                href="https://github.com/satviksrivatsav/resume-flow-ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
               >
-                <Github className="w-4 h-4" />
+                <Github className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">API</span>
               </a>
               <a
-                href="#"
-                className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300"
+                href="https://www.linkedin.com/company/resume-flow7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-white dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white transition-all duration-300 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
               >
-                <Linkedin className="w-4 h-4" />
+                <Linkedin className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
@@ -68,24 +111,24 @@ export const LandingFooter = () => {
                   to="/upload"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
-                  Import Resume
+                  Resume Parser
                 </Link>
               </li>
               <li>
-                <a
-                  href="#features"
+                <Link
+                  to="/ats"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
-                  Features
-                </a>
+                  ATS Checker
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/resume-builder"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
-                  Templates
-                </a>
+                  Job Tailor
+                </Link>
               </li>
             </ul>
           </div>
@@ -98,7 +141,9 @@ export const LandingFooter = () => {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="#"
+                  href="https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
                   Writing Guide
@@ -106,26 +151,12 @@ export const LandingFooter = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="https://career.uci.edu/wp-content/uploads/2025/03/2025-Mastering-ATS-Career-Guide-8.5x11.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
                   ATS Secrets
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm hover:text-black dark:hover:text-white transition-colors"
-                >
-                  Career Blog
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm hover:text-black dark:hover:text-white transition-colors"
-                >
-                  Help Center
                 </a>
               </li>
             </ul>
@@ -161,14 +192,6 @@ export const LandingFooter = () => {
                   About Us
                 </a>
               </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm hover:text-black dark:hover:text-white transition-colors"
-                >
-                  Careers
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -181,21 +204,15 @@ export const LandingFooter = () => {
               <li className="flex items-center gap-3 text-sm">
                 <Mail className="w-4 h-4 text-zinc-400" />
                 <a
-                  href="mailto:support@resumeflow.com"
+                  href="mailto:satviksrivatsav@gmail.com"
                   className="hover:text-black dark:hover:text-white transition-colors"
                 >
-                  support@resumeflow.com
+                  satviksrivatsav@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <MapPin className="w-4 h-4 text-zinc-400" />
-                <span className="text-zinc-500 dark:text-zinc-400">San Francisco, CA</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-zinc-200 dark:text-white font-medium">
-                <span>Developer:</span>
-                <a href="mailto:dev@resumeflow.com" className="underline underline-offset-4">
-                  dev@resumeflow.com
-                </a>
+                <span className="text-zinc-500 dark:text-zinc-400">IN</span>
               </li>
             </ul>
           </div>
@@ -203,10 +220,10 @@ export const LandingFooter = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <div className="flex items-center gap-4 text-xs text-zinc-500">
             <span>© {currentYear} Resume Flow Inc.</span>
             <span className="hidden md:inline text-zinc-800 dark:text-zinc-800">|</span>
-            <span className="hidden md:inline">Built with passion for builders.</span>
+            <SystemStatus />
           </div>
 
           <div className="flex items-center gap-6">
@@ -214,12 +231,10 @@ export const LandingFooter = () => {
               <Globe className="w-3.5 h-3.5" />
               <span>English (US)</span>
             </div>
-            <button className="text-xs font-semibold px-4 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all">
-              System Status
-            </button>
           </div>
         </div>
       </div>
     </footer>
   );
 };
+

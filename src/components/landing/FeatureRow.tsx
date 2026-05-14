@@ -10,9 +10,10 @@ interface FeatureRowProps {
   ctaText: string;
   mockup: ReactNode;
   reverse?: boolean;
+  onClick?: () => void;
 }
 
-export const FeatureRow = ({ title, description, bullets, ctaText, mockup, reverse = false }: FeatureRowProps) => {
+export const FeatureRow = ({ title, description, bullets, ctaText, mockup, reverse = false, onClick }: FeatureRowProps) => {
   return (
     <div className={cn("flex flex-col gap-12 items-center mb-32 last:mb-0", reverse ? "lg:flex-row-reverse" : "lg:flex-row")}>
       <motion.div 
@@ -38,7 +39,10 @@ export const FeatureRow = ({ title, description, bullets, ctaText, mockup, rever
           ))}
         </ul>
 
-        <button className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-colors text-sm">
+        <button 
+          onClick={onClick}
+          className="px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-colors text-sm"
+        >
           {ctaText}
         </button>
       </motion.div>

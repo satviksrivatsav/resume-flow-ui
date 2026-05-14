@@ -222,6 +222,11 @@ All colors MUST be HSL.
   .gradient-bg {
     background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-mid)), hsl(var(--gradient-end)));
   }
+
+  .animate-gradient-flow {
+    background-size: 200% 200%;
+    animation: gradient-flow 5s ease infinite;
+  }
 }
 
 /* Print styles for resume */
