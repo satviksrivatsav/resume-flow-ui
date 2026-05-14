@@ -392,17 +392,17 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  <div className="sticky top-2 z-30 flex justify-center w-full pointer-events-none mb-2">
+                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-4">
                     <motion.div
                       initial={{ y: -20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto mt-2"
+                      className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto"
                     >
                       <motion.div whileHover="hover" whileTap="tap">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 rounded-full gap-2 text-xs font-medium px-3"
+                          className="h-8 rounded-full gap-2 text-xs font-medium px-3 text-primary border-primary/20 bg-primary/5"
                           onClick={() =>
                             setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')
                           }
