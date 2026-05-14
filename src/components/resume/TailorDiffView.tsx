@@ -11,13 +11,15 @@ import { Button } from '@/components/ui/button';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
 import { cn } from '@/lib/utils';
-import { AIDiffViewer } from '@/components/ui/AIDiffViewer';
+import { AIDiffViewer, DrawableCheck, DrawableX } from '@/components/ui/AIDiffViewer';
 import { formatSectionContent } from '@/utils/formatters';
 
 export const TailorDiffView = () => {
   const { tailoredSections, updateDecision, setViewMode, reset } = useTailorStore();
   const { resumeData, updateSummary, updateSection, updateCustomSection, setResumeData } = useResumeStore();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [rejectHovered, setRejectHovered] = useState(false);
+  const [acceptHovered, setAcceptHovered] = useState(false);
 
   const currentSection = tailoredSections[currentIndex];
   const totalSections = tailoredSections.length;
@@ -150,37 +152,52 @@ export const TailorDiffView = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button
-                      variant={currentSection.decision === 'reject' ? 'destructive' : 'outline'}
-                      size="lg"
-                      onClick={() => {
-                        updateDecision(currentSection.sectionId, 'reject');
-                        if (currentIndex < totalSections - 1) setTimeout(nextSection, 300);
-                      }}
-                      className={cn(
-                        "gap-2 rounded-full px-8 h-12 transition-all duration-300",
-                        currentSection.decision === 'reject' 
-                          ? "shadow-lg shadow-destructive/20 border-destructive" 
-                          : "border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive"
-                      )}
+                    <motion.div
+                      whileTap={{ scale: 0.95 }}
+                      onHoverStart={() => setRejectHovered(true)}
+                      onHoverEnd={() => setRejectHovered(false)}
                     >
-                      Reject
-                    </Button>
-                    <Button
-                      size="lg"
-                      onClick={() => {
-                        updateDecision(currentSection.sectionId, 'accept');
-                        if (currentIndex < totalSections - 1) setTimeout(nextSection, 300);
-                      }}
-                      className={cn(
-                        "gap-2 rounded-full px-8 h-12 transition-all duration-300",
-                        currentSection.decision === 'accept'
-                          ? "bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0"
-                          : "bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0"
-                      )}
+                      <Button
+                        variant={currentSection.decision === 'reject' ? 'destructive' : 'outline'}
+                        size="lg"
+                        onClick={() => {
+                          updateDecision(currentSection.sectionId, 'reject');
+                          if (currentIndex < totalSections - 1) setTimeout(nextSection, 300);
+                        }}
+                        className={cn(
+                          "gap-2 rounded-full px-8 h-12 transition-all duration-300",
+                          currentSection.decision === 'reject' 
+                            ? "shadow-lg shadow-destructive/20 border-destructive" 
+                            : "border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive"
+                        )}
+                      >
+                        <DrawableX draw={rejectHovered} />
+                        Reject
+                      </Button>
+                    </motion.div>
+
+                    <motion.div
+                      whileTap={{ scale: 0.95 }}
+                      onHoverStart={() => setAcceptHovered(true)}
+                      onHoverEnd={() => setAcceptHovered(false)}
                     >
-                      Accept
-                    </Button>
+                      <Button
+                        size="lg"
+                        onClick={() => {
+                          updateDecision(currentSection.sectionId, 'accept');
+                          if (currentIndex < totalSections - 1) setTimeout(nextSection, 300);
+                        }}
+                        className={cn(
+                          "gap-2 rounded-full px-8 h-12 transition-all duration-300",
+                          currentSection.decision === 'accept'
+                            ? "bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0"
+                            : "bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0"
+                        )}
+                      >
+                        <DrawableCheck draw={acceptHovered} />
+                        Accept
+                      </Button>
+                    </motion.div>
                   </div>
 
                   <Button
