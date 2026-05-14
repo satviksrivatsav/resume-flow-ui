@@ -1,9 +1,23 @@
 import { motion, Variants } from 'framer-motion';
-import { AlertTriangle, BarChart3, FileText, LogOut, Settings, User } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft, BarChart3, FileText, LogOut, Settings, User } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -48,7 +62,7 @@ const navItems = [
         label: 'Danger Zone',
         icon: AlertTriangle,
         href: '/dashboard/danger',
-        variant: 'destructive',
+        variant: 'destructive' as const,
       },
     ],
   },
@@ -67,66 +81,79 @@ export function DashboardSidebar() {
   const displayName = profile?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0];
 
   return (
-    <aside className="w-64 bg-card/50 backdrop-blur-sm border-r flex flex-col h-screen sticky top-0">
-      {/* Logo */}
-      <div className="p-4 border-b flex items-center gap-3 h-[65px]">
-        <div className="w-8 h-8 bg-foreground rounded flex items-center justify-center shrink-0">
-          <span className="text-background font-bold text-xl tracking-tighter italic">Rx</span>
+    <Sidebar collapsible="none" className="border-r bg-card/50 backdrop-blur-sm">
+      <SidebarHeader className="p-4 border-b">
+        <div className="flex items-center gap-2">
+          <motion.div whileHover="hover" whileTap="tap" className="flex-1">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/')}
+              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors"
+              title="Back to Homepage"
+            >
+              <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
+              <span className="font-medium whitespace-nowrap">Homepage</span>
+            </Button>
+          </motion.div>
+          <ThemeToggle />
         </div>
-        <span className="font-bold text-lg tracking-tight">Resume Flow</span>
-      </div>
+      </SidebarHeader>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-3 space-y-6 overflow-y-auto">
+      <SidebarContent className="py-3">
         {navItems.map((group) => (
-          <div key={group.group}>
-            <h3 className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">
+          <SidebarGroup key={group.group}>
+            <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1">
               {group.group}
-            </h3>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const isActive = pathname === item.href;
-                const variants = iconVariants[item.label] ?? {};
-                const isDestructive = item.variant === 'destructive';
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-1">
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href;
+                  const variants = iconVariants[item.label] ?? {};
+                  const isDestructive = item.variant === 'destructive';
 
-                return (
-                  <motion.div key={item.label} whileHover="hover" whileTap="tap">
-                    <Link
-                      to={item.href}
-                      className={cn(
-                        'flex items-center gap-3 h-10 px-4 rounded-full text-sm font-medium transition-all duration-200',
-                        isActive && !isDestructive
-                          ? 'bg-primary/10 text-primary font-semibold'
-                          : isDestructive
-                            ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                            : 'text-muted-foreground hover:bg-accent hover:text-foreground',
-                      )}
-                    >
-                      <motion.span
-                        variants={variants}
-                        initial={false}
-                        className="inline-flex items-center justify-center"
-                        style={{ display: 'inline-flex' }}
-                      >
-                        <item.icon
+                  return (
+                    <motion.div key={item.label} whileHover="hover" whileTap="tap">
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          isActive={isActive}
+                          onClick={() => navigate(item.href)}
+                          tooltip={item.label}
                           className={cn(
-                            'w-4 h-4 transition-colors duration-200',
-                            isActive && !isDestructive ? 'text-primary' : '',
+                            'transition-all duration-200 h-10 px-4 rounded-full',
+                            isActive && !isDestructive
+                              ? 'bg-primary/10 text-primary font-semibold'
+                              : isDestructive
+                                ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                                : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                           )}
-                        />
-                      </motion.span>
-                      {item.label}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+                        >
+                          <motion.span
+                            variants={variants}
+                            initial={false}
+                            className="mr-2 inline-flex items-center justify-center"
+                            style={{ display: 'inline-flex' }}
+                          >
+                            <item.icon
+                              className={cn(
+                                'w-4 h-4 transition-colors duration-200',
+                                isActive && !isDestructive ? 'text-primary' : '',
+                              )}
+                            />
+                          </motion.span>
+                          <span className="truncate flex-1">{item.label}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </motion.div>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         ))}
-      </nav>
+      </SidebarContent>
 
-      {/* Footer */}
-      <div className="p-4 border-t space-y-6">
+      <SidebarFooter className="p-4 border-t space-y-6">
         <div className="space-y-4">
           {/* User info */}
           <div className="flex items-center gap-3 px-2">
@@ -180,7 +207,7 @@ export function DashboardSidebar() {
             Resume Flow v1.0
           </p>
         </div>
-      </div>
-    </aside>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

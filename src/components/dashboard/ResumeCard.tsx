@@ -258,7 +258,7 @@ export function CreateNewCard() {
       onClick={handleCreate}
     >
       <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
-        <div className="w-16 h-16 rounded-3xl bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
+        <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
           <Plus className="w-8 h-8 text-primary" />
         </div>
         <div className="text-center">
