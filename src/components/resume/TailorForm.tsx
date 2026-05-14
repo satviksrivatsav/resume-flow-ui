@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles, Loader2, AlertCircle, FileText, ChevronDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,6 +28,12 @@ export const TailorForm = () => {
   } = useTailorStore();
 
   const [tailorEntire, setTailorEntire] = useState(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const handleCancel = () => {
+    abortControllerRef.current?.abort();
+    setIsTailoring(false);
+  };
 
   const getAvailableSections = () => {
     const sections: { id: string; label: string }[] = [];
@@ -125,12 +132,16 @@ export const TailorForm = () => {
     setIsTailoring(true);
     setError(null);
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const response = await fetch(`${config.aiApiUrl}/resume/tailor`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: controller.signal,
         body: JSON.stringify({
           resume_data: resumeData,
           job_description: jobDescription,
@@ -147,6 +158,7 @@ export const TailorForm = () => {
         setError(result.detail || 'Failed to tailor resume. Please try again.');
       }
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return;
       console.error('Tailoring error:', err);
       setError('A network error occurred. Please check your connection and try again.');
     } finally {
@@ -271,19 +283,17 @@ export const TailorForm = () => {
           onClick={handleTailor}
           disabled={isTailoring || !jobDescription.trim()}
         >
-          {isTailoring ? (
-            <>
-              <Loader2 className="w-6 h-6 animate-spin" />
-              Tailoring your resume...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-6 h-6" />
-              Tailor Content Now
-            </>
-          )}
+          <Sparkles className="w-6 h-6" />
+          Tailor Content Now
         </Button>
       </div>
+
+      <AILoadingModal
+        isOpen={isTailoring}
+        onCancel={handleCancel}
+        message="Tailoring your resume sections for the job description..."
+        title="AI Tailor"
+      />
     </div>
   );
 };
