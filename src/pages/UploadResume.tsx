@@ -9,10 +9,11 @@ import {
   Timer,
   Upload,
 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -32,6 +33,12 @@ export default function UploadResume() {
   const [error, setError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const setResumeData = useResumeStore((state) => state.setResumeData);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const handleCancel = useCallback(() => {
+    abortControllerRef.current?.abort();
+    setUploadState('idle');
+  }, []);
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -51,6 +58,8 @@ export default function UploadResume() {
       setError(null);
 
       const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      
       const timeoutId = setTimeout(() => {
         abortController.abort(new Error('TimeoutError'));
       }, 45000); // 45 second timeout for multi-format parsing (OCR can be slow)
@@ -171,9 +180,8 @@ export default function UploadResume() {
                 exit={{ opacity: 0, y: -10 }}
                 className="flex flex-col items-center"
               >
-                <Loader2 className="w-12 h-12 text-zinc-500 animate-spin mb-4" />
-                <p className="text-lg font-medium text-foreground mb-1">Parsing your resume...</p>
-                <p className="text-sm text-muted-foreground">This may take a few seconds</p>
+                <p className="text-lg font-medium text-foreground mb-1">Upload initiated...</p>
+                <p className="text-sm text-muted-foreground">Preparing to parse your resume</p>
               </motion.div>
             )}
 
@@ -230,6 +238,13 @@ export default function UploadResume() {
           <span>Supported: PDF, DOCX, Images, TXT (max 10MB)</span>
         </div>
       </div>
+
+      <AILoadingModal
+        isOpen={uploadState === 'uploading'}
+        onCancel={handleCancel}
+        message="Parsing your resume content with AI..."
+        title="Resume Parser"
+      />
     </div>
   );
 }
