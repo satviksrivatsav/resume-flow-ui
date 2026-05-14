@@ -3,9 +3,18 @@ import { create } from 'zustand';
 
 import { supabase } from '@/lib/supabase';
 
+interface Profile {
+  id: string;
+  name: string | null;
+  username: string | null;
+  theme: string;
+  language: string;
+}
+
 interface AuthState {
   user: User | null;
   session: Session | null;
+  profile: Profile | null;
   isLoading: boolean;
   error: string | null;
 
@@ -17,12 +26,16 @@ interface AuthState {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error?: string; message?: string }>;
   updatePassword: (password: string) => Promise<{ error?: string; message?: string }>;
+  fetchProfile: () => Promise<void>;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error?: string }>;
+  updateEmail: (email: string) => Promise<{ error?: string }>;
   clearError: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   session: null,
+  profile: null,
   isLoading: true,
   error: null,
 
@@ -42,15 +55,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
       });
 
+      if (session?.user) {
+        await get().fetchProfile();
+      }
+
       // Listen for auth changes
       supabase.auth.onAuthStateChange(async (event, session) => {
         set({
           session,
           user: session?.user ?? null,
+          profile: session?.user ? get().profile : null,
         });
 
         if (event === 'SIGNED_IN' && session?.user) {
           await promoteAnonymousResume(session.user.id);
+          await get().fetchProfile();
+        }
+
+        if (event === 'SIGNED_OUT') {
+          set({ profile: null });
         }
       });
     } catch (error: unknown) {
@@ -78,6 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (data.user) {
         await promoteAnonymousResume(data.user.id);
+        await get().fetchProfile();
       }
 
       return {};
@@ -106,6 +130,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (data.user) {
         await promoteAnonymousResume(data.user.id);
+        await get().fetchProfile();
       }
 
       return {};
@@ -178,11 +203,66 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         user: null,
         session: null,
+        profile: null,
         isLoading: false,
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Sign out failed';
       set({ isLoading: false, error: message });
+    }
+  },
+
+  fetchProfile: async () => {
+    const { user } = get();
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+
+      if (error) throw error;
+
+      set({ profile: data });
+    } catch (error: unknown) {
+      console.error('Error fetching profile:', error);
+    }
+  },
+
+  updateProfile: async (updates) => {
+    const { user } = get();
+    if (!user) return { error: 'No user found' };
+
+    set({ isLoading: true, error: null });
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      set({ profile: data, isLoading: false });
+      return {};
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Update profile failed';
+      set({ isLoading: false, error: message });
+      return { error: message };
+    }
+  },
+
+  updateEmail: async (email) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { error } = await supabase.auth.updateUser({ email });
+      if (error) throw error;
+
+      set({ isLoading: false });
+      return {};
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Update email failed';
+      set({ isLoading: false, error: message });
+      return { error: message };
     }
   },
 
