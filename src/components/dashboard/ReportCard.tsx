@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Briefcase, FileSearch, MoreVertical, Trash2 } from 'lucide-react';
+import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -72,23 +72,26 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -4 }}
       className="group relative flex flex-col bg-accent/20 border border-border/50 rounded-[24px] overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300"
       onClick={handleView}
     >
-      <div className="aspect-[1/0.8] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner flex flex-col items-center justify-center gap-2">
+      <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner flex flex-col items-center justify-center gap-4">
         <div
           className={cn(
-            'w-20 h-20 rounded-full border-4 flex items-center justify-center',
+            'w-24 h-24 rounded-full border-8 flex items-center justify-center shadow-lg',
             scoreBg,
             scoreBorder,
           )}
         >
-          <span className={cn('text-2xl font-black', scoreColor)}>{score}</span>
+          <span className={cn('text-3xl font-black', scoreColor)}>{score}</span>
         </div>
         <div className="text-center">
           <span
-            className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', scoreBg, scoreColor)}
+            className={cn(
+              'text-xs font-black px-4 py-1 rounded-full shadow-sm',
+              scoreBg,
+              scoreColor,
+            )}
           >
             GRADE {grade}
           </span>
@@ -98,7 +101,7 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <Button
             variant="secondary"
-            className="rounded-xl font-bold px-6 shadow-xl bg-white text-black hover:bg-zinc-100"
+            className="rounded-full font-bold px-8 shadow-xl bg-white text-black hover:bg-zinc-100 h-12"
           >
             View Report
           </Button>
@@ -142,10 +145,40 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
         )}
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
-            {formatDistanceToNow(new Date(report.created_at))} ago
+          <span className="text-[10px] text-muted-foreground/60 font-medium">
+            Updated {formatDistanceToNow(new Date(report.created_at))} ago
           </span>
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function ScanCard() {
+  const navigate = useNavigate();
+
+  return (
+    <motion.div
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="group flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300 h-full"
+      onClick={() => navigate('/ats')}
+    >
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
+        <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all relative overflow-hidden">
+          <FileText className="w-8 h-8 text-primary" />
+          <div className="absolute inset-x-2 top-1/2 h-0.5 bg-primary/40 animate-scan shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
+        </div>
+        <div className="text-center">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg">
+            Scan Resume
+          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">Analyze with AI</p>
+        </div>
+      </div>
+
+      {/* Footer spacer to match ReportCard height exactly */}
+      <div className="p-4 pt-2 invisible select-none">
+        <div className="h-[38px]" />
       </div>
     </motion.div>
   );
