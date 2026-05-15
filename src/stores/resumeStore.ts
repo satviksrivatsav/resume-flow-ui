@@ -104,6 +104,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   isSavingInProgress: false,
   lastSaved: null,
   lastSavedData: '',
+  autoSaveTimer: null,
 
   setIsSaving: (isSaving) => set({ isSaving }),
   setIsSavingInProgress: (isSavingInProgress) => set({ isSavingInProgress }),
@@ -111,6 +112,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   setLastSavedData: (lastSavedData) => set({ lastSavedData }),
 
   setResumeData: (data) => set({ resumeData: sanitizeResumeData(data) }),
+
+  setResumeName: (name) =>
+    set((state) => ({
+      resumeData: {
+        ...state.resumeData,
+        name,
+      },
+    })),
 
   saveResume: async (userId) => {
     const state = get();
