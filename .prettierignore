@@ -1,0 +1,8 @@
+dist
+node_modules
+public
+.idx
+.superpowers
+bun.lockb
+package-lock.json
+*.md

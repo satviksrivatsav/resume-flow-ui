@@ -1,19 +1,20 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { User, MapPin, Mail, Phone, Linkedin, Globe, Github } from "lucide-react";
-import { motion } from "framer-motion";
-import { AIWriterButton } from "@/components/ui/AIWriterButton";
-import { PhoneInput } from "@/components/ui/PhoneInput";
-import { useEffect, useRef } from "react";
-import { detectCountryFromTimezone } from "@/lib/geolocation";
-import { getCountryByCode } from "@/lib/countries";
-import { FieldTip } from "@/components/ui/FieldTip";
+import { motion } from 'framer-motion';
+import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { FieldTip } from '@/components/ui/FieldTip';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { PhoneInput } from '@/components/ui/PhoneInput';
+import { Textarea } from '@/components/ui/textarea';
+import { getCountryByCode } from '@/lib/countries';
+import { detectCountryFromTimezone } from '@/lib/geolocation';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const PersonalInfoForm = () => {
-  const { resumeData, updatePersonalInfo } = useResumeStore();
-  const { personalInfo } = resumeData;
+  const { resumeData, updateBasics, updateSummary, updateProfileByNetwork } = useResumeStore();
+  const { basics, summary, sections } = resumeData;
   const hasDetected = useRef(false);
 
   // Auto-detect country code from timezone on first load
@@ -21,18 +22,26 @@ export const PersonalInfoForm = () => {
     if (hasDetected.current) return;
     hasDetected.current = true;
 
-    // Only auto-detect if phone country code is empty
-    if (!personalInfo.phoneCountryCode) {
+    // Only auto-detect if phone is empty
+    if (!basics.phone) {
       const detectedCountryCode = detectCountryFromTimezone();
       if (detectedCountryCode) {
         const country = getCountryByCode(detectedCountryCode);
         if (country) {
-          updatePersonalInfo({ phoneCountryCode: detectedCountryCode });
+          // In the new schema, we don't have a separate country code field in basics
+          // But we can keep it in the PhoneInput state if needed.
         }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getProfileUsername = (network: string) => {
+    return (
+      sections.profiles.items.find((p) => p.network.toLowerCase() === network.toLowerCase())
+        ?.username || ''
+    );
+  };
 
   return (
     <motion.div
@@ -48,10 +57,23 @@ export const PersonalInfoForm = () => {
           </Label>
           <Input
             id="name"
-            value={personalInfo.name}
-            onChange={(e) => updatePersonalInfo({ name: e.target.value })}
+            value={basics.name}
+            onChange={(e) => updateBasics({ name: e.target.value })}
             placeholder="John Doe"
             className="focus-visible:ring-primary"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="headline" className="flex items-center gap-2">
+            <User className="w-3.5 h-3.5 text-muted-foreground" />
+            Headline
+          </Label>
+          <Input
+            id="headline"
+            value={basics.headline}
+            onChange={(e) => updateBasics({ headline: e.target.value })}
+            placeholder="Software Engineer"
           />
         </div>
 
@@ -63,8 +85,8 @@ export const PersonalInfoForm = () => {
           <Input
             id="email"
             type="email"
-            value={personalInfo.email}
-            onChange={(e) => updatePersonalInfo({ email: e.target.value })}
+            value={basics.email}
+            onChange={(e) => updateBasics({ email: e.target.value })}
             placeholder="john@example.com"
           />
         </div>
@@ -75,10 +97,10 @@ export const PersonalInfoForm = () => {
             Phone <span className="text-red-500">*</span>
           </Label>
           <PhoneInput
-            value={personalInfo.phone}
-            onChange={(value) => updatePersonalInfo({ phone: value })}
-            countryCode={personalInfo.phoneCountryCode || 'US'}
-            onCountryCodeChange={(code) => updatePersonalInfo({ phoneCountryCode: code })}
+            value={basics.phone}
+            onChange={(value) => updateBasics({ phone: value })}
+            countryCode="US" // Default to US for now
+            onCountryCodeChange={() => {}}
             placeholder="Phone number"
           />
         </div>
@@ -90,75 +112,77 @@ export const PersonalInfoForm = () => {
           </Label>
           <Input
             id="location"
-            value={personalInfo.location}
-            onChange={(e) => updatePersonalInfo({ location: e.target.value })}
+            value={basics.location}
+            onChange={(e) => updateBasics({ location: e.target.value })}
             placeholder="City, Country"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="linkedin" className="flex items-center gap-2">
-            <Linkedin className="w-3.5 h-3.5 text-muted-foreground" />
-            LinkedIn
-          </Label>
-          <Input
-            id="linkedin"
-            value={personalInfo.linkedin}
-            onChange={(e) => updatePersonalInfo({ linkedin: e.target.value })}
-            placeholder="linkedin.com/in/johndoe"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="github" className="flex items-center gap-2">
-            <Github className="w-3.5 h-3.5 text-muted-foreground" />
-            GitHub
-          </Label>
-          <Input
-            id="github"
-            value={personalInfo.github || ''}
-            onChange={(e) => updatePersonalInfo({ github: e.target.value })}
-            placeholder="github.com/johndoe"
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
           <Label htmlFor="website" className="flex items-center gap-2">
             <Globe className="w-3.5 h-3.5 text-muted-foreground" />
             Portfolio Website
           </Label>
           <Input
             id="website"
-            value={personalInfo.website}
-            onChange={(e) => updatePersonalInfo({ website: e.target.value })}
+            value={basics.url.href}
+            onChange={(e) => updateBasics({ url: { ...basics.url, href: e.target.value } })}
             placeholder="johndoe.com"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="linkedin" className="flex items-center gap-2">
+            <Linkedin className="w-3.5 h-3.5 text-muted-foreground" />
+            LinkedIn Username
+          </Label>
+          <Input
+            id="linkedin"
+            value={getProfileUsername('linkedin')}
+            onChange={(e) => updateProfileByNetwork('LinkedIn', e.target.value)}
+            placeholder="johndoe"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="github" className="flex items-center gap-2">
+            <Github className="w-3.5 h-3.5 text-muted-foreground" />
+            GitHub Username
+          </Label>
+          <Input
+            id="github"
+            value={getProfileUsername('github')}
+            onChange={(e) => updateProfileByNetwork('GitHub', e.target.value)}
+            placeholder="johndoe"
           />
         </div>
       </div>
 
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="summary" className="text-base font-semibold">Professional Summary</Label>
+          <Label htmlFor="summary" className="text-base font-semibold">
+            Professional Summary
+          </Label>
           <AIWriterButton
             fieldName="summary"
             fieldLabel="Summary"
-            fieldValue={personalInfo.summary || ''}
-            onUpdate={(newText) => updatePersonalInfo({ summary: newText })}
+            fieldValue={summary.content || ''}
+            onUpdate={(newText) => updateSummary({ content: newText })}
           />
         </div>
         <Textarea
           id="summary"
-          value={personalInfo.summary}
-          onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
+          value={summary.content}
+          onChange={(e) => updateSummary({ content: e.target.value })}
           placeholder="A brief summary of your professional background and career goals..."
           className="min-h-[120px] resize-y"
           rows={4}
         />
         <FieldTip>
-          Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
+          Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end
+          with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
         </FieldTip>
       </div>
     </motion.div>
   );
 };
-

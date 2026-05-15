@@ -1,26 +1,19 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Wrench, Plus } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { TechChipsInput } from "@/components/ui/TechChipsInput";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus, Wrench } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { TechChipsInput } from '@/components/ui/TechChipsInput';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const SkillsForm = () => {
   const { resumeData, addSkill, updateSkill, deleteSkill } = useResumeStore();
+  const { items: skills } = resumeData.sections.skills;
 
   const handleAdd = () => {
     addSkill();
-  };
-
-  const handleSkillsChange = (id: string, techs: string[]) => {
-    updateSkill(id, { items: techs.join(", ") });
-  };
-
-  const getSkillsArray = (items: string) => {
-    if (!items) return [];
-    return items.split(",").map(s => s.trim()).filter(Boolean);
   };
 
   return (
@@ -41,7 +34,7 @@ export const SkillsForm = () => {
 
       <div className="grid grid-cols-1 gap-6">
         <AnimatePresence mode="popLayout">
-          {resumeData.skills.map((skill) => (
+          {skills.map((skill) => (
             <motion.div
               key={skill.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -64,10 +57,12 @@ export const SkillsForm = () => {
 
               <div className="space-y-6">
                 <div className="space-y-2 max-w-md">
-                  <Label className="font-medium">Category Name <span className="text-red-500">*</span></Label>
+                  <Label className="font-medium">
+                    Category Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    value={skill.category}
-                    onChange={(e) => updateSkill(skill.id, { category: e.target.value })}
+                    value={skill.name}
+                    onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
                     placeholder="e.g. Programming Languages, Tools, Soft Skills"
                     className="font-medium"
                   />
@@ -75,8 +70,8 @@ export const SkillsForm = () => {
 
                 <TechChipsInput
                   label="Skills"
-                  value={getSkillsArray(skill.items)}
-                  onChange={(techs) => handleSkillsChange(skill.id, techs)}
+                  value={skill.keywords}
+                  onChange={(techs) => updateSkill(skill.id, { keywords: techs })}
                   placeholder="Type a skill and press Enter"
                   required
                 />
@@ -86,7 +81,7 @@ export const SkillsForm = () => {
         </AnimatePresence>
       </div>
 
-      {resumeData.skills.length === 0 && (
+      {skills.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <Wrench className="w-6 h-6 text-muted-foreground" />

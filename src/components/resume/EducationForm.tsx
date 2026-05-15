@@ -1,30 +1,31 @@
-import { useResumeStore } from "@/stores/resumeStore";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { GraduationCap, Plus, ChevronDown, ChevronUp, Calendar } from "lucide-react";
-import { TrashAnimatedIcon } from "@/components/ui/TrashAnimatedIcon";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-import { MonthYearPicker } from "@/components/ui/MonthYearPicker";
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, ChevronDown, ChevronUp, GraduationCap, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { cn } from '@/lib/utils';
+import { useResumeStore } from '@/stores/resumeStore';
 
 export const EducationForm = () => {
   const { resumeData, addEducation, updateEducation, deleteEducation } = useResumeStore();
+  const { items: education } = resumeData.sections.education;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (resumeData.education.length > 0 && !expandedId) {
-      setExpandedId(resumeData.education[resumeData.education.length - 1].id);
+    if (education.length > 0 && !expandedId) {
+      setExpandedId(education[education.length - 1].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeData.education]);
+  }, [education]);
 
   const handleAdd = () => {
     addEducation();
     setTimeout(() => {
-      const lastEdu = resumeData.education[resumeData.education.length - 1];
+      const lastEdu = education[education.length - 1];
       if (lastEdu) setExpandedId(lastEdu.id);
     }, 0);
   };
@@ -47,7 +48,7 @@ export const EducationForm = () => {
 
       <div className="space-y-3">
         <AnimatePresence mode="popLayout">
-          {resumeData.education.map((edu, index) => {
+          {education.map((edu, index) => {
             const isExpanded = expandedId === edu.id;
 
             return (
@@ -57,20 +58,24 @@ export const EducationForm = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className={cn(
-                  "group border rounded-xl overflow-hidden transition-all duration-200",
-                  isExpanded ? "ring-1 ring-primary/20 shadow-md bg-card" : "hover:border-primary/30 hover:shadow-sm bg-card/50"
+                  'group border rounded-xl overflow-hidden transition-all duration-200',
+                  isExpanded
+                    ? 'ring-1 ring-primary/20 shadow-md bg-card'
+                    : 'hover:border-primary/30 hover:shadow-sm bg-card/50',
                 )}
               >
-                <div 
+                <div
                   className={cn(
-                    "flex items-center justify-between p-4 cursor-pointer select-none",
-                    isExpanded && "border-b bg-muted/30"
+                    'flex items-center justify-between p-4 cursor-pointer select-none',
+                    isExpanded && 'border-b bg-muted/30',
                   )}
                   onClick={() => setExpandedId(isExpanded ? null : edu.id)}
                 >
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-base truncate">
-                      {edu.degree ? `${edu.degree}${edu.field ? ` in ${edu.field}` : ''}` : `Education ${index + 1}`}
+                      {edu.degree
+                        ? `${edu.degree}${edu.area ? ` in ${edu.area}` : ''}`
+                        : `Education ${index + 1}`}
                     </h3>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
                       {edu.school && (
@@ -79,10 +84,10 @@ export const EducationForm = () => {
                           {edu.school}
                         </span>
                       )}
-                      {(edu.startDate || edu.endDate) && (
+                      {edu.period && (
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
-                          {edu.startDate || "Start"} — {edu.endDate || "End"}
+                          {edu.period}
                         </span>
                       )}
                     </div>
@@ -102,7 +107,11 @@ export const EducationForm = () => {
                       </Button>
                     </motion.div>
                     <div className="text-muted-foreground p-1">
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -111,9 +120,9 @@ export const EducationForm = () => {
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
+                      animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 md:col-span-2">
@@ -139,31 +148,31 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-medium">
-Field of Study</Label>
+                          <Label className="font-medium">Field of Study</Label>
                           <Input
-                            value={edu.field}
-                            onChange={(e) => updateEducation(edu.id, { field: e.target.value })}
+                            value={edu.area}
+                            onChange={(e) => updateEducation(edu.id, { area: e.target.value })}
                             placeholder="e.g. Computer Science"
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
-                          <MonthYearPicker
-                            label={<span>Start Date <span className="text-red-500">*</span></span>}
-                            value={edu.startDate}
-                            onChange={(value) => updateEducation(edu.id, { startDate: value })}
-                          />
-                          <MonthYearPicker
-                            label={<span>End Date <span className="text-red-500">*</span></span>}
-                            value={edu.endDate}
-                            onChange={(value) => updateEducation(edu.id, { endDate: value })}
-                          />
+                        <div className="space-y-2">
+                          <Label className="font-medium">Period</Label>
+                          <div className="relative">
+                            <Input
+                              value={edu.period}
+                              onChange={(e) => updateEducation(edu.id, { period: e.target.value })}
+                              placeholder="e.g. 2018-08 - 2022-05"
+                              className="pl-9"
+                            />
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          </div>
                         </div>
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-Grade / GPA <span className="text-red-500">*</span></Label>
+                            Grade / GPA <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={edu.grade}
                             onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
@@ -172,10 +181,14 @@ Grade / GPA <span className="text-red-500">*</span></Label>
                         </div>
 
                         <div className="md:col-span-2 space-y-3">
-                          <Label className="text-sm font-semibold">Description / Achievements</Label>
+                          <Label className="text-sm font-semibold">
+                            Description / Achievements
+                          </Label>
                           <Textarea
                             value={edu.description}
-                            onChange={(e) => updateEducation(edu.id, { description: e.target.value })}
+                            onChange={(e) =>
+                              updateEducation(edu.id, { description: e.target.value })
+                            }
                             placeholder="• Relevant coursework: Data Structures, Algorithms&#10;• Dean's List for 4 semesters"
                             className="min-h-[120px]"
                             rows={4}
@@ -191,7 +204,7 @@ Grade / GPA <span className="text-red-500">*</span></Label>
         </AnimatePresence>
       </div>
 
-      {resumeData.education.length === 0 && (
+      {education.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
           <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <GraduationCap className="w-6 h-6 text-muted-foreground" />

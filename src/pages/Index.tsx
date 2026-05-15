@@ -1,34 +1,37 @@
-import LandingPage from "@/pages/LandingPage";
+import { useState, useMemo } from 'react';
+
 import {
+  MobileNav,
+  MobileNavHeader,
+  MobileNavMenu,
+  MobileNavToggle,
   Navbar,
+  NavbarButton,
+  NavbarLogo,
   NavBody,
   NavItems,
-  MobileNav,
-  NavbarLogo,
-  NavbarButton,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from "@/components/ui/resizable-navbar";
-import { useState } from "react";
+} from '@/components/ui/resizable-navbar';
+import LandingPage from '@/pages/LandingPage';
+import { useAuthStore } from '@/stores/authStore';
 
 const Index = () => {
-  const navItems = [
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Pricing",
-      link: "#pricing",
-    },
-    {
-      name: "Login",
-      link: "/login",
-    },
-  ];
-
+  const { user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = useMemo(() => [
+    {
+      name: 'Features',
+      link: '#features',
+    },
+    {
+      name: 'Pricing',
+      link: '#pricing',
+    },
+    {
+      name: user ? 'Dashboard' : 'Login',
+      link: user ? '/dashboard' : '/login',
+    },
+  ], [user]);
 
   return (
     <main className="min-h-screen dark bg-black">
@@ -49,10 +52,7 @@ const Index = () => {
             />
           </MobileNavHeader>
 
-          <MobileNavMenu
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
-          >
+          <MobileNavMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
             {navItems.map((item, idx) => (
               <a
                 key={`mobile-link-${idx}`}
