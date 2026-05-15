@@ -1,7 +1,8 @@
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 
 import { useResumeStore } from '@/stores/resumeStore';
+import { sanitizeResumeData } from '@/lib/utils';
 import { DEFAULT_SECTION_ORDER } from '@/types/resume';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
@@ -557,7 +558,10 @@ const ResumeContent = ({
 
 export const ResumePreview = forwardRef<HTMLDivElement, { data?: any }>((props, ref) => {
   const { resumeData: storeData } = useResumeStore();
-  const resumeData = props.data || storeData;
+  const rawData = props.data || storeData;
+
+  const resumeData = useMemo(() => sanitizeResumeData(rawData), [rawData]);
+
   const { basics, summary, sections, customSections, metadata } = resumeData;
 
   const baseSize = metadata.typography.fontSize || 11;

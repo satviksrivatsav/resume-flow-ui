@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/lib/supabase';
 import { useResumeStore } from '@/stores/resumeStore';
+import { sanitizeResumeData } from '@/lib/utils';
 import { ResumeData } from '@/types/resume';
 
 interface ResumeRow {
@@ -120,7 +121,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         counter++;
       }
 
-      const newData = { ...resume.data, name: finalName };
+      const newData = sanitizeResumeData({ ...resume.data, name: finalName });
       delete newData.id;
 
       const { error } = await supabase.from('resumes').insert({

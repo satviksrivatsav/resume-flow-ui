@@ -11,6 +11,7 @@ import {
   ResumeData,
   SkillItem,
 } from '@/types/resume';
+import { sanitizeResumeData } from '@/lib/utils';
 
 import { useAuthStore } from './authStore';
 
@@ -109,7 +110,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   setLastSaved: (lastSaved) => set({ lastSaved }),
   setLastSavedData: (lastSavedData) => set({ lastSavedData }),
 
-  setResumeData: (data) => set({ resumeData: data }),
+  setResumeData: (data) => set({ resumeData: sanitizeResumeData(data) }),
 
   saveResume: async (userId) => {
     const state = get();
@@ -234,11 +235,11 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
 
       if (data) {
         const row = data as unknown as ResumeRow;
-        const loadedData = {
+        const loadedData = sanitizeResumeData({
           ...row.data,
           id: row.id,
           name: row.name,
-        };
+        });
         set({
           resumeData: loadedData,
           lastSavedData: JSON.stringify(loadedData),
