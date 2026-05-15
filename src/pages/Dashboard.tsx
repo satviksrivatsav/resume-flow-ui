@@ -68,8 +68,8 @@ export default function Dashboard() {
     <DashboardLayout>
       <header className="flex items-end justify-between mb-12">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">My Resumes</h1>
-          <p className="text-muted-foreground font-medium italic">
+          <h1 className="text-xl font-bold tracking-tight mb-0.5">My Resumes</h1>
+          <p className="text-[13px] text-muted-foreground/80">
             Crafting your professional narrative.
           </p>
         </div>

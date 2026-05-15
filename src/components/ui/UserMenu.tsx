@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useSidebar } from '@/components/ui/sidebar-context';
-import { cn } from '@/lib/utils';
+
 import { useAuthStore } from '@/stores/authStore';
 
 export function UserMenu() {
@@ -73,11 +73,11 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className={cn('relative rounded-full', state === 'collapsed' ? 'h-8 w-8' : 'h-10 w-10')}
+          className="relative rounded-full h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 p-0"
         >
-          <Avatar className={cn(state === 'collapsed' ? 'h-8 w-8' : 'h-10 w-10')}>
+          <Avatar className="h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 border border-border/50 shrink-0">
             <AvatarImage src={userAvatar} alt={userName} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs group-data-[collapsible=icon]:text-[10px] uppercase">
               {initials}
             </AvatarFallback>
           </Avatar>

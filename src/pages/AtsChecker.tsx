@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAtsStore } from '@/stores/atsStore';
 import { useResumeStore } from '@/stores/resumeStore';
+import { cn } from '@/lib/utils';
 import { AtsReport } from '@/types/ats';
 import { ResumeData } from '@/types/resume';
 
@@ -37,7 +38,9 @@ export default function AtsChecker() {
 
   const setResumeData = useResumeStore((state) => state.setResumeData);
 
-  const [phase, setPhase] = useState<'setup' | 'results'>('setup');
+  const [phase, setPhase] = useState<'setup' | 'results'>(
+    searchParams.get('view') === 'true' ? 'results' : 'setup'
+  );
   const [existingReport, setExistingReport] = useState<AtsReport | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -145,10 +148,18 @@ export default function AtsChecker() {
 
   const handleReset = useCallback(() => {
     abortControllerRef.current?.abort();
-    reset();
-    setExistingReport(null);
-    setPhase('setup');
-  }, [reset]);
+    
+    if (viewParam === 'true') {
+      // If we came from the reports list, go back there
+      navigate(-1);
+    } else {
+      // If we just did a fresh analysis, go back to setup
+      reset();
+      setExistingReport(null);
+      setPhase('setup');
+      navigate('/dashboard/ats', { replace: true });
+    }
+  }, [reset, navigate, viewParam]);
 
   const handleSaveReport = async () => {
     if (!report || !storeResumeId || isSaving) return;
@@ -186,18 +197,9 @@ export default function AtsChecker() {
   }, [navigate, storeResumeId, parsedResume, setResumeData]);
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-col w-full relative">
-        <div className="mb-6 flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-10"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span className="text-sm font-semibold">Back</span>
-          </Button>
-        </div>
+    <DashboardLayout fullWidth={phase === 'results'}>
+      <div className={cn("flex flex-col w-full relative", phase === 'results' && "h-full")}>
+
 
         <AnimatePresence mode="wait">
           {phase === 'setup' ? (
@@ -207,9 +209,18 @@ export default function AtsChecker() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex-1 w-full"
+              className="flex-1 w-full pb-20"
             >
-              <div className="max-w-[1100px] mx-auto">
+              <div className="mb-6 flex items-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate(-1)}
+                  className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-10"
+                >
+                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                  <span className="text-sm font-semibold">Back</span>
+                </Button>
+              </div>
                 <AtsSetup
                   onAnalyze={handleAnalyze}
                   onCancel={handleCancel}
@@ -217,7 +228,6 @@ export default function AtsChecker() {
                   hasExistingReport={!!existingReport}
                   onViewExistingReport={loadExistingReport}
                 />
-              </div>
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -230,7 +240,7 @@ export default function AtsChecker() {
               )}
             </motion.div>
           ) : (
-            report && (
+            report ? (
               <motion.div
                 key="results"
                 initial={{ opacity: 0 }}
@@ -257,6 +267,10 @@ export default function AtsChecker() {
                   </div>
                 </div>
               </motion.div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center h-full min-h-[400px]">
+                <Loader2 className="w-8 h-8 animate-spin text-primary/40" />
+              </div>
             )
           )}
         </AnimatePresence>

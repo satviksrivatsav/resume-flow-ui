@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { Briefcase, CloudUpload, FileText, Layout, X } from 'lucide-react';
+import { Briefcase, CloudUpload, Database, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ export function AtsSetup({
   hasExistingReport,
   onViewExistingReport,
 }: AtsSetupProps) {
-  const navigate = useNavigate();
+
   const {
     resumeFile,
     resumeId,
@@ -107,8 +107,8 @@ export function AtsSetup({
         className="max-w-xl mx-auto w-full space-y-6"
       >
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight mb-2">ATS Check</h1>
-          <p className="text-muted-foreground text-sm italic">
+          <h1 className="text-xl font-bold tracking-tight mb-0.5">ATS Check</h1>
+          <p className="text-[13px] text-muted-foreground/80">
             Compare your resume with a job description.
           </p>
         </div>
@@ -176,7 +176,7 @@ export function AtsSetup({
             onClick={() => setIsSelectModalOpen(true)}
             className="w-full rounded-full h-12 text-xs font-bold uppercase tracking-wider gap-2 border-border/50 bg-background/50 hover:bg-primary/5 transition-all"
           >
-            <Layout className="w-4 h-4" />
+            <Database className="w-4 h-4" />
             Load from saved
           </Button>
         </div>

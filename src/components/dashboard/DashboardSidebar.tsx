@@ -194,10 +194,10 @@ export function DashboardSidebar() {
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 border-t">
         {/* User info — hide text in icon mode */}
-        <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
-          <Avatar className="w-10 h-10 border border-border/50 shrink-0">
+        <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center mb-1">
+          <Avatar className="w-10 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 border border-border/50 shrink-0">
             <AvatarImage src={user?.user_metadata?.avatar_url} />
-            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs uppercase">
+            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs group-data-[collapsible=icon]:text-[10px] uppercase">
               {displayName?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
@@ -215,9 +215,11 @@ export function DashboardSidebar() {
         <NavItemWrapper className="group-data-[collapsible=icon]:hidden">
           <button
             onClick={handleSignOut}
-            className="flex items-center justify-center gap-3 w-full h-10 px-4 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+            className="flex items-center justify-start gap-3 w-full h-10 px-3 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
           >
-            <AnimatedIcon icon={LogOut} preset="slideLeft" className="w-4 h-4" />
+            <div className="w-10 flex justify-center shrink-0">
+              <AnimatedIcon icon={LogOut} preset="slideLeft" className="w-4 h-4" />
+            </div>
             Sign Out
           </button>
         </NavItemWrapper>

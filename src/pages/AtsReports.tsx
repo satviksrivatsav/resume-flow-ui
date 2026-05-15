@@ -66,8 +66,8 @@ export default function AtsReports() {
     <DashboardLayout>
       <header className="flex items-end justify-between mb-12">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">ATS Reports</h1>
-          <p className="text-muted-foreground font-medium italic">
+          <h1 className="text-xl font-bold tracking-tight mb-0.5">ATS Reports</h1>
+          <p className="text-[13px] text-muted-foreground/80">
             Your historical analysis and optimizations.
           </p>
         </div>
