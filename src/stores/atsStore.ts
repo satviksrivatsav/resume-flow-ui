@@ -11,6 +11,7 @@ interface AtsState {
   jdFile: File | null;
   status: 'idle' | 'analyzing' | 'success' | 'error';
   report: AtsReport | null;
+  savedReportId: string | null;
   parsedResume: ResumeData | null;
   error: string | null;
 
@@ -19,7 +20,7 @@ interface AtsState {
   setJdText: (text: string) => void;
   setJdFile: (file: File | null) => void;
   setStatus: (status: AtsState['status']) => void;
-  setReport: (report: AtsReport | null) => void;
+  setReport: (report: AtsReport | null, id?: string | null) => void;
   setParsedResume: (resume: ResumeData | null) => void;
   setError: (error: string | null) => void;
   reset: () => void;
@@ -33,6 +34,7 @@ export const useAtsStore = create<AtsState>((set) => ({
   jdFile: null,
   status: 'idle',
   report: null,
+  savedReportId: null,
   parsedResume: null,
   error: null,
 
@@ -41,7 +43,7 @@ export const useAtsStore = create<AtsState>((set) => ({
   setJdText: (jdText) => set({ jdText, jdFile: null }),
   setJdFile: (jdFile) => set({ jdFile, jdText: '' }),
   setStatus: (status) => set({ status }),
-  setReport: (report) => set({ report }),
+  setReport: (report, id = null) => set({ report, savedReportId: id }),
   setParsedResume: (parsedResume) => set({ parsedResume }),
   setError: (error) => set({ error }),
   reset: () =>
@@ -53,6 +55,7 @@ export const useAtsStore = create<AtsState>((set) => ({
       jdFile: null,
       status: 'idle',
       report: null,
+      savedReportId: null,
       parsedResume: null,
       error: null,
     }),

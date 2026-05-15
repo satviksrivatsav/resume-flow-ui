@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
@@ -10,9 +11,10 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
+import { useAuthStore } from '@/stores/authStore';
 import { useAtsStore } from '@/stores/atsStore';
 import { useResumeStore } from '@/stores/resumeStore';
-import { cn } from '@/lib/utils';
+import { cn, sanitizeResumeData } from '@/lib/utils';
 import { AtsReport } from '@/types/ats';
 import { ResumeData } from '@/types/resume';
 
@@ -26,6 +28,7 @@ export default function AtsChecker() {
     resumeId: storeResumeId,
     status,
     report,
+    savedReportId,
     parsedResume,
     error,
     setResumeId,
@@ -37,7 +40,7 @@ export default function AtsChecker() {
   } = useAtsStore();
 
   const setResumeData = useResumeStore((state) => state.setResumeData);
-
+  const user = useAuthStore((state) => state.user);
   const [phase, setPhase] = useState<'setup' | 'results'>(
     searchParams.get('view') === 'true' ? 'results' : 'setup'
   );
@@ -45,11 +48,94 @@ export default function AtsChecker() {
   const [isSaving, setIsSaving] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  const getResumeContentSignature = (data: any) => {
+    return JSON.stringify(data, (key, value) => {
+      if (['id', 'updated_at', 'created_at', 'user_id', 'name', 'metadata'].includes(key)) {
+        return undefined;
+      }
+      return value;
+    });
+  };
+
+  const autoSaveReport = async (reportData: AtsReport, resumeData: ResumeData) => {
+    if (!user) return;
+
+    try {
+      setIsSaving(true);
+      let targetResumeId = storeResumeId;
+
+      // If we don't have a linked resume ID, check if this resume content already exists
+      if (!targetResumeId) {
+        const { data: existingResumes } = await supabase
+          .from('resumes')
+          .select('id, data, name')
+          .eq('user_id', user.id);
+
+        const newSignature = getResumeContentSignature(resumeData);
+        const duplicate = existingResumes?.find(r => 
+          getResumeContentSignature(r.data) === newSignature
+        );
+
+        if (duplicate) {
+          targetResumeId = duplicate.id;
+          setResumeId(duplicate.id, duplicate.name);
+        } else {
+          // Save as a new resume
+          const resumeName = resumeData.basics.name 
+            ? `${resumeData.basics.name}'s Resume` 
+            : `Resume ${new Date().toLocaleDateString()}`;
+          
+          const { data: newResume, error: resumeError } = await supabase
+            .from('resumes')
+            .insert({
+              user_id: user.id,
+              name: resumeName,
+              data: sanitizeResumeData(resumeData),
+            })
+            .select('id')
+            .single();
+
+          if (resumeError) throw resumeError;
+          targetResumeId = newResume.id;
+          setResumeId(targetResumeId, resumeName);
+        }
+      }
+
+      // Now save the report
+      const upsertData: any = {
+        resume_id: targetResumeId,
+        user_id: user.id,
+        data: reportData,
+      };
+
+      if (savedReportId) {
+        upsertData.id = savedReportId;
+      }
+
+      const { data: savedReport, error: reportError } = await supabase
+        .from('ats_reports')
+        .upsert(upsertData)
+        .select('id')
+        .single();
+
+      if (reportError) throw reportError;
+      
+      if (savedReport) {
+        setReport(reportData, savedReport.id);
+      }
+      setExistingReport(reportData);
+    } catch (err) {
+      console.error('Auto-save failed:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const checkExistingReport = useCallback(async (id: string, autoLoad = false) => {
     try {
       const { data, error } = await supabase
         .from('ats_reports')
-        .select('data')
+        .select('id, data')
         .eq('resume_id', id)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -57,12 +143,12 @@ export default function AtsChecker() {
 
       if (error && error.code !== 'PGRST116') throw error;
 
-      if (data?.data) {
+      if (data) {
         const reportData = data.data as AtsReport;
         setExistingReport(reportData);
         
         if (autoLoad) {
-          setReport(reportData);
+          setReport(reportData, data.id);
           setPhase('results');
         }
       }
@@ -96,12 +182,21 @@ export default function AtsChecker() {
     }
   }, [resumeIdParam, viewParam, reset, setResumeId, checkExistingReport]);
 
-  const loadExistingReport = useCallback(() => {
+  const loadExistingReport = useCallback(async () => {
     if (existingReport) {
-      setReport(existingReport);
+      // Re-fetch the latest report ID to ensure we have it
+      const { data } = await supabase
+        .from('ats_reports')
+        .select('id')
+        .eq('resume_id', storeResumeId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+        
+      setReport(existingReport, data?.id);
       setPhase('results');
     }
-  }, [existingReport, setReport]);
+  }, [existingReport, setReport, storeResumeId]);
 
   const handleAnalyze = async (file: File | null, jd: string) => {
     try {
@@ -132,6 +227,11 @@ export default function AtsChecker() {
       setParsedResume(result.parsed_resume);
       setPhase('results');
       setStatus('success');
+
+      // Trigger auto-save
+      if (user) {
+        autoSaveReport(result.ats_report, result.parsed_resume);
+      }
     } catch (err: any) {
       if (err.name === 'AbortError') return;
       console.error('ATS Analysis Error:', err);
@@ -166,16 +266,29 @@ export default function AtsChecker() {
 
     try {
       setIsSaving(true);
-      const { error } = await supabase.from('ats_reports').upsert({
+      const upsertData: any = {
         resume_id: storeResumeId,
+        user_id: user?.id,
         data: report,
-        score: report.overall_score,
-        target_role: report.jd_match?.role_match || 'General',
-      });
+      };
+
+      if (savedReportId) {
+        upsertData.id = savedReportId;
+      }
+
+      const { data: savedReport, error } = await supabase
+        .from('ats_reports')
+        .upsert(upsertData)
+        .select('id')
+        .single();
 
       if (error) throw error;
+      
+      if (savedReport) {
+        setReport(report, savedReport.id);
+      }
       setExistingReport(report);
-      // Optional: show success toast
+      toast.success('Report saved to dashboard');
     } catch (err) {
       console.error('Error saving report:', err);
       // Optional: show error toast
