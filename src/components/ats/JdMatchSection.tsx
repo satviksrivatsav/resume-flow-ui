@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Target } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,76 +16,90 @@ export function JdMatchSection({ jdMatch }: JdMatchSectionProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="border-0 shadow-none">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <span>🎯</span>
-            JD Match Score
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Match Score */}
-          <div className="flex items-center gap-3">
+      <div className="rounded-2xl border border-border/40 bg-card/50 overflow-hidden">
+        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-border/30 bg-muted/20">
+          <Target className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">JD Match Score</h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row items-stretch min-h-[300px]">
+          {/* Left: Score (Centered Vertically) */}
+          <div className="md:w-1/3 p-10 flex flex-col items-center justify-center text-center gap-4 bg-muted/5">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold ${
+              className={`w-24 h-24 rounded-full flex items-center justify-center text-2xl font-black shadow-lg ${
                 jdMatch.match_score >= 70
-                  ? 'bg-green-500/10 text-green-600'
+                  ? 'bg-green-500/10 text-green-500 border border-green-500/20'
                   : jdMatch.match_score >= 50
-                    ? 'bg-yellow-500/10 text-yellow-600'
-                    : 'bg-red-500/10 text-red-600'
+                    ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                    : 'bg-red-500/10 text-red-500 border border-red-500/20'
               }`}
             >
               {jdMatch.match_score}%
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-xl font-black text-foreground tracking-tight">
                 {jdMatch.match_score >= 70
                   ? 'Strong Match'
                   : jdMatch.match_score >= 50
                     ? 'Partial Match'
                     : 'Weak Match'}
               </p>
-              <p className="text-xs text-muted-foreground">with job description</p>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] opacity-60 mt-1">
+                JD Fit Score
+              </p>
             </div>
           </div>
 
-          {/* Matched Skills */}
-          {jdMatch.matched_skills.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2">Matched Skills</p>
-              <div className="flex flex-wrap gap-2">
-                {jdMatch.matched_skills.map((skill, i) => (
-                  <Badge
-                    key={i}
-                    variant="default"
-                    className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20"
-                  >
-                    ✓ {skill}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Vertical Separator */}
+          <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-border/40 to-transparent" />
+          <div className="md:hidden h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
 
-          {/* Missing Skills */}
-          {jdMatch.missing_skills.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2">Missing Skills</p>
-              <div className="flex flex-wrap gap-2">
-                {jdMatch.missing_skills.map((skill, i) => (
-                  <Badge
-                    key={i}
-                    variant="outline"
-                    className="text-xs text-red-600 border-red-300 dark:border-red-800"
-                  >
-                    ✗ {skill}
-                  </Badge>
-                ))}
+          {/* Right: Skills Stack */}
+          <div className="flex-1 p-10 flex flex-col justify-center gap-8">
+            {/* Matched Skills */}
+            {jdMatch.matched_skills.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Matched Skills</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {jdMatch.matched_skills.map((skill, i) => (
+                    <Badge
+                      key={i}
+                      variant="default"
+                      className="text-[11px] font-medium py-1 px-3 bg-green-500/5 text-green-500 border border-green-500/10 rounded-full hover:bg-green-500/10 transition-colors"
+                    >
+                      ✓ {skill}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+
+            {/* Missing Skills */}
+            {jdMatch.missing_skills.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Missing Skills</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {jdMatch.missing_skills.map((skill, i) => (
+                    <Badge
+                      key={i}
+                      variant="outline"
+                      className="text-[11px] font-medium py-1 px-3 text-red-400 border border-red-500/10 rounded-full bg-red-500/5 hover:bg-red-500/10 transition-colors"
+                    >
+                      ✗ {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }

@@ -30,12 +30,15 @@ export default function AtsChecker() {
     status,
     report,
     error,
+    parsedResume,
     setResumeId,
     setStatus,
     setReport,
     setError,
+    setParsedResume,
     reset,
   } = useAtsStore();
+  const { setResumeData } = useResumeStore();
 
   const [phase, setPhase] = useState<'setup' | 'results'>('setup');
   const [isSaving, setIsSaving] = useState(false);
@@ -132,6 +135,7 @@ export default function AtsChecker() {
         }
 
         setReport(response.ats_report);
+        setParsedResume(response.parsed_resume);
         setStatus('success');
 
         await new Promise((resolve) => setTimeout(resolve, 400));
@@ -199,8 +203,16 @@ export default function AtsChecker() {
   }, [reset]);
 
   const handleGoToBuilder = useCallback(() => {
-    navigate('/resume-builder');
-  }, [navigate]);
+    if (storeResumeId) {
+      navigate(`/resume-builder?id=${storeResumeId}`);
+    } else if (parsedResume) {
+      // If we have parsed data from a file upload, set it in the builder store
+      setResumeData(parsedResume);
+      navigate('/resume-builder');
+    } else {
+      navigate('/resume-builder');
+    }
+  }, [navigate, storeResumeId, parsedResume, setResumeData]);
 
   return (
     <SidebarProvider>
@@ -260,31 +272,23 @@ export default function AtsChecker() {
                 transition={{ duration: 0.35 }}
                 className="flex-1 flex flex-col min-h-0 pt-20"
               >
-                {/* Action Bar */}
-                <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border/40 bg-background/60 backdrop-blur-sm">
-                  <Button variant="outline" size="sm" onClick={handleBackToSetup} className="gap-2">
-                    ← Back to Setup
-                  </Button>
-                  <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" onClick={handleGoToBuilder}>
-                      Open in Builder →
-                    </Button>
-                    <Button size="sm" onClick={handleSaveReport} disabled={isSaving}>
-                      {isSaving ? 'Saving...' : 'Save to Dashboard'}
-                    </Button>
-                  </div>
-                </div>
+
 
                 {/* Two-column body: left fixed, right scrolls */}
                 <div className="flex-1 flex min-h-0 overflow-hidden">
                   {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
                   <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
-                    <AtsResultsSidebar report={report} />
+                    <AtsResultsSidebar report={report} onBack={handleBackToSetup} />
                   </div>
 
                   {/* RIGHT MAIN — 70%, scrollable */}
                   <div className="flex-1 overflow-y-auto">
-                    <AtsResultsMain report={report} />
+                    <AtsResultsMain 
+                      report={report} 
+                      onGoToBuilder={handleGoToBuilder}
+                      onSaveReport={handleSaveReport}
+                      isSaving={isSaving}
+                    />
                   </div>
                 </div>
               </motion.div>

@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
 
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AtsReport } from '@/types/ats';
 
@@ -9,6 +10,7 @@ import { ScoreRadialChart } from './ScoreRadialChart';
 
 interface AtsResultsSidebarProps {
   report: AtsReport;
+  onBack: () => void;
 }
 
 const SECTION_LABELS: Record<keyof AtsReport['scores'], string> = {
@@ -23,7 +25,7 @@ const SECTION_LABELS: Record<keyof AtsReport['scores'], string> = {
   parse_rate: 'Parse Rate',
 };
 
-export function AtsResultsSidebar({ report }: AtsResultsSidebarProps) {
+export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
   const gradeLetter = report.grade.charAt(0).toUpperCase();
 
   const gradeConfig = (
@@ -92,35 +94,26 @@ export function AtsResultsSidebar({ report }: AtsResultsSidebarProps) {
       transition={{ duration: 0.45, ease: 'easeOut' }}
       className="flex flex-col gap-5 p-5"
     >
-      {/* Score wheel */}
-      <div className="flex flex-col items-center pt-2 pb-1">
-        <ScoreRadialChart score={report.overall_score} grade={gradeLetter} size={160} />
-        <p className="text-[11px] text-muted-foreground mt-2 tracking-wider uppercase">ATS Score</p>
-      </div>
-
-      {/* Grade + Pass Probability side by side */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Grade */}
-        <div
-          className={cn('rounded-xl p-3 text-center border', gradeConfig.bg, gradeConfig.border)}
+      {/* Back Button */}
+      <div className="mb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-9"
         >
-          <p className={cn('text-2xl font-black tracking-wider leading-none', gradeConfig.color)}>
-            {report.grade}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-wider">Grade</p>
-        </div>
-
-        {/* Pass Probability */}
-        <div className="rounded-xl p-3 text-center border border-border/40 bg-muted/20">
-          <div className="flex items-center justify-center gap-1">
-            <ProbIcon className={cn('w-3.5 h-3.5', probColor)} />
-            <p className={cn('text-2xl font-black leading-none', probColor)}>{passProbability}%</p>
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-wider">
-            Pass Prob.
-          </p>
-        </div>
+          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+          <span className="text-[11px] font-semibold tracking-wide">Back</span>
+        </Button>
       </div>
+
+      {/* Score wheel */}
+      <div className="flex flex-col items-center pt-4 pb-2">
+        <ScoreRadialChart score={report.overall_score} grade={gradeLetter} size={220} />
+        <p className="text-[11px] text-muted-foreground mt-4 font-bold uppercase tracking-[0.2em]">ATS Score</p>
+      </div>
+
+
 
       {/* Section Scores */}
       <div className="rounded-xl border border-border/40 bg-muted/10 p-4">

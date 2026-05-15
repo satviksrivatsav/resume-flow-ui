@@ -238,6 +238,15 @@ All colors MUST be HSL.
   .animate-scan {
     animation: scan 2s linear infinite;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Print styles for resume */
