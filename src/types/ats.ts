@@ -23,6 +23,7 @@ export interface RecruiterSimulation {
 
 export interface JdMatch {
   match_score: number;
+  role_match: string;
   missing_skills: string[];
   matched_skills: string[];
 }

@@ -13,6 +13,7 @@ import { supabase } from '@/lib/supabase';
 import { useAtsStore } from '@/stores/atsStore';
 import { useResumeStore } from '@/stores/resumeStore';
 import { AtsReport } from '@/types/ats';
+import { ResumeData } from '@/types/resume';
 
 export default function AtsChecker() {
   const [searchParams] = useSearchParams();
@@ -21,9 +22,7 @@ export default function AtsChecker() {
   const navigate = useNavigate();
 
   const {
-    resumeFile,
     resumeId: storeResumeId,
-    jdText,
     status,
     report,
     parsedResume,
@@ -109,7 +108,7 @@ export default function AtsChecker() {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      let result: AtsReport;
+      let result: { parsed_resume: ResumeData; ats_report: AtsReport };
       if (file) {
         result = await analyzeResumeAts(file, jd, abortController.signal);
       } else if (storeResumeId) {
@@ -126,7 +125,7 @@ export default function AtsChecker() {
         throw new Error('No resume provided');
       }
 
-      setReport(result);
+      setReport(result.ats_report);
       setParsedResume(result.parsed_resume);
       setPhase('results');
       setStatus('success');
@@ -143,11 +142,6 @@ export default function AtsChecker() {
     setStatus('idle');
   }, [setStatus]);
 
-  const handleBackToSetup = useCallback(() => {
-    setPhase('setup');
-    setReport(null);
-    setStatus('idle');
-  }, [setReport, setStatus]);
 
   const handleReset = useCallback(() => {
     abortControllerRef.current?.abort();

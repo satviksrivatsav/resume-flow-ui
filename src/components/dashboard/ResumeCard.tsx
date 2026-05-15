@@ -1,13 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Copy, Edit3, FileSearch, FileText, Layout, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { Copy, Edit3, FileSearch, FileText, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { ResumePreview } from '@/components/resume/ResumePreview';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
