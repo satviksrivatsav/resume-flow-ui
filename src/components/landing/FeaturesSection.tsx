@@ -97,3 +97,9 @@ export const FeaturesSection = () => {
     </section>
   );
 };
+
+        </div>
+      </div>
+    </section>
+  );
+};
