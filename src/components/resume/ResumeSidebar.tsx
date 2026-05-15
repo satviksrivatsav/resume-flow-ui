@@ -65,8 +65,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { UserMenu } from '@/components/ui/UserMenu';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -103,22 +103,6 @@ const iconVariants: Record<string, Variants> = {
 };
 
 // Metadata for every static section
-const SECTION_META: Record<string, { label: string; icon: React.ElementType }> = {
-  summary: { label: 'Summary', icon: User },
-  personal: { label: 'Personal Info', icon: User },
-  work: { label: 'Work Experience', icon: Briefcase },
-  education: { label: 'Education', icon: GraduationCap },
-  projects: { label: 'Projects', icon: FolderGit2 },
-  skills: { label: 'Skills', icon: Wrench },
-  profiles: { label: 'Profiles', icon: User },
-  languages: { label: 'Languages', icon: Languages },
-  interests: { label: 'Interests', icon: Heart },
-  awards: { label: 'Awards', icon: Trophy },
-  certifications: { label: 'Certifications', icon: Award },
-  publications: { label: 'Publications', icon: BookOpen },
-  volunteer: { label: 'Volunteer', icon: HandHelping },
-  references: { label: 'References', icon: Users },
-};
 
 // Sidebar navigation sections — personal is always pinned at the top separately
 const STATIC_SIDEBAR_SECTIONS = [
@@ -244,6 +228,7 @@ const SortableMenuItem = ({
 // ── Main sidebar ──────────────────────────────────────────────────────────────
 
 export const ResumeSidebar = () => {
+  const { state } = useSidebar();
   const { activeTab, setActiveTab } = useUiStore();
   const { resumeData, addCustomSection, reorderSections } = useResumeStore();
   const navigate = useNavigate();
@@ -288,7 +273,10 @@ export const ResumeSidebar = () => {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2 border-b">
+      <SidebarHeader className={cn(
+        "px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out",
+        state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
+      )}>
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           <motion.div
             whileHover="hover"
@@ -490,7 +478,7 @@ export const ResumeSidebar = () => {
                   : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10',
               )}
             >
-              <AnimatedIcon icon={Sparkles} preset="pulse" className="w-4 h-4" />
+              <AnimatedIcon icon={Sparkles} preset="sparkle" className="w-4 h-4" />
               <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap font-semibold">
                 Tailor Resume
               </span>

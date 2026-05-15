@@ -229,7 +229,7 @@ const ResumeBuilder = () => {
   };
 
   const previewContent = (
-    <div className="flex-1 flex flex-col items-center justify-start pt-24 pb-12">
+    <div className="flex-1 flex flex-col items-center justify-start pt-[calc(var(--header-height)+1rem)] pb-12">
       <div
         className="flex flex-col transition-all duration-200 ease-out"
         style={{
@@ -294,7 +294,7 @@ const ResumeBuilder = () => {
                   showPreview ? 'w-full lg:w-[55%] xl:w-[60%]' : 'w-full',
                 )}
               >
-                <div className="max-w-3xl mx-auto space-y-6 pt-24 pb-20">
+                <div className="max-w-3xl mx-auto space-y-6 pt-[calc(var(--header-height)+1rem)] pb-20">
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, x: -10 }}
@@ -392,7 +392,7 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-4">
+                  <div className="sticky top-[var(--header-height)] z-30 flex justify-center w-full pointer-events-none mb-4">
                     <motion.div
                       initial={{ y: -20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}

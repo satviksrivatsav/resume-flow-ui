@@ -3,7 +3,6 @@ import {
   AlertTriangle,
   ArrowLeft,
   BarChart3,
-  FileSearch,
   FileText,
   LogOut,
   Settings,
@@ -26,8 +25,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -79,6 +78,7 @@ const navItems = [
 ];
 
 export function DashboardSidebar() {
+  const { state } = useSidebar();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { user, profile, signOut } = useAuthStore();
@@ -92,7 +92,10 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className="h-20 px-4 border-b flex flex-col justify-center">
+      <SidebarHeader className={cn(
+        "px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out",
+        state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
+      )}>
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
           <motion.div
             whileHover="hover"

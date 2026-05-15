@@ -1,6 +1,5 @@
-import { AlertCircle, FileSearch } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
@@ -63,8 +62,6 @@ export default function AtsReports() {
 
   const isActuallyLoading = !isInitialized || (loading && reports.length === 0);
 
-  const navigate = useNavigate();
-
   return (
     <DashboardLayout>
       <header className="flex items-end justify-between mb-12">
@@ -74,13 +71,6 @@ export default function AtsReports() {
             Your historical analysis and optimizations.
           </p>
         </div>
-        <Button
-          onClick={() => navigate('/dashboard/ats')}
-          className="rounded-full px-6 h-12 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-[0.98]"
-        >
-          <FileSearch className="w-4 h-4" />
-          New Scan
-        </Button>
       </header>
 
       {error ? (
