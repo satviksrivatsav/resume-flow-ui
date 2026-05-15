@@ -13,7 +13,7 @@ import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button);
 
 export default function DangerZonePage() {
   const { signOut } = useAuthStore();

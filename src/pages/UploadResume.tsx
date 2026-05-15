@@ -12,10 +12,9 @@ import {
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Topbar } from '@/components/layout/Topbar';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -133,23 +132,20 @@ export default function UploadResume() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
-        <Topbar />
-        
-        {/* Back Button */}
-        <div className="absolute left-8 top-24 z-20">
+    <DashboardLayout>
+      <div className="flex flex-col w-full relative">
+        <div className="mb-6 flex items-center">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
+            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-10"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span className="text-sm font-medium">Back</span>
+            <span className="text-sm font-semibold">Back</span>
           </Button>
         </div>
 
-        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8 pt-24 relative">
+        <div className="flex-1 flex items-center justify-center p-8 relative">
           <div className="max-w-xl w-full">
             <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
               Upload Your Resume
@@ -261,7 +257,7 @@ export default function UploadResume() {
               <span>Supported: PDF, DOCX, Images, TXT (max 10MB)</span>
             </div>
           </div>
-        </main>
+        </div>
 
         <AILoadingModal
           isOpen={uploadState === 'uploading'}
@@ -270,6 +266,6 @@ export default function UploadResume() {
           title="Resume Parser"
         />
       </div>
-    </SidebarProvider>
+    </DashboardLayout>
   );
 }

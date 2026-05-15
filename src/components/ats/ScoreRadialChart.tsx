@@ -53,7 +53,7 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
 
 
         {/* Main progress arc */}
-        <circle
+        <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -61,9 +61,10 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
           stroke={gradeConfig.color}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
           strokeLinecap="round"
-          className="transition-all duration-1000 ease-out"
           opacity={0.95}
         />
       </svg>

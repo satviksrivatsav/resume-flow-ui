@@ -36,6 +36,7 @@ export function AtsSetup({
   const {
     resumeFile,
     resumeId,
+    resumeName,
     jdText,
     jdFile,
     setResumeFile,
@@ -44,7 +45,6 @@ export function AtsSetup({
     setJdFile,
   } = useAtsStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
 
@@ -54,7 +54,6 @@ export function AtsSetup({
     const file = e.dataTransfer.files[0];
     if (file && ALLOWED_TYPES.includes(file.type)) {
       setResumeFile(file);
-      setFileName(file.name);
     }
   };
 
@@ -69,7 +68,6 @@ export function AtsSetup({
     const file = e.target.files?.[0];
     if (file) {
       setResumeFile(file);
-      setFileName(file.name);
     }
   };
 
@@ -87,7 +85,6 @@ export function AtsSetup({
 
   const handleClearResume = () => {
     setResumeFile(null);
-    setFileName(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -96,8 +93,7 @@ export function AtsSetup({
   };
 
   const handleSelectResume = (id: string, name: string) => {
-    setResumeId(id);
-    setFileName(name);
+    setResumeId(id, name);
     setIsSelectModalOpen(false);
   };
 
@@ -129,7 +125,7 @@ export function AtsSetup({
                 <div className="flex items-center gap-3">
                   <div>
                     <p className="font-bold text-foreground text-sm truncate max-w-[240px]">
-                      {fileName}
+                      {resumeName}
                     </p>
                     <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">
                       {resumeFile ? `${(resumeFile.size / 1024).toFixed(1)} KB` : 'Linked'}

@@ -49,7 +49,7 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
         : 'border-red-500/20';
 
   const handleView = () => {
-    navigate(`/ats?resumeId=${report.resume_id}&view=true`);
+    navigate(`/dashboard/ats?resumeId=${report.resume_id}&view=true`);
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
@@ -170,7 +170,7 @@ export function ScanCard() {
     <motion.div
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
-      onClick={() => navigate('/ats')}
+      onClick={() => navigate('/dashboard/ats')}
     >
       {/* Invisible structure to match ReportCard height exactly */}
       <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">

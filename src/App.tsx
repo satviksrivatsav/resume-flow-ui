@@ -100,8 +100,22 @@ function AnimatedRoutes() {
           }
         />
         <Route path="/resume-builder" element={<ResumeBuilder />} />
-        <Route path="/upload" element={<UploadResume />} />
-        <Route path="/ats" element={<AtsChecker />} />
+        <Route
+          path="/dashboard/upload"
+          element={
+            <ProtectedRoute>
+              <UploadResume />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/ats"
+          element={
+            <ProtectedRoute>
+              <AtsChecker />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
 

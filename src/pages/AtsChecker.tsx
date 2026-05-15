@@ -2,57 +2,48 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
 
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
-import { Topbar } from '@/components/layout/Topbar';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAtsStore } from '@/stores/atsStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useResumeStore } from '@/stores/resumeStore';
+import { AtsReport } from '@/types/ats';
 
 export default function AtsChecker() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resumeIdParam = searchParams.get('resumeId');
   const viewParam = searchParams.get('view');
-  const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     resumeFile,
     resumeId: storeResumeId,
     jdText,
-    jdFile,
     status,
     report,
-    error,
     parsedResume,
+    error,
     setResumeId,
     setStatus,
     setReport,
-    setError,
     setParsedResume,
+    setError,
     reset,
   } = useAtsStore();
-  const { setResumeData } = useResumeStore();
+
+  const setResumeData = useResumeStore((state) => state.setResumeData);
 
   const [phase, setPhase] = useState<'setup' | 'results'>('setup');
-  const [isSaving, setIsSaving] = useState(false);
   const [existingReport, setExistingReport] = useState<AtsReport | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
-    if (resumeIdParam) {
-      setResumeId(resumeIdParam);
-      checkExistingReport(resumeIdParam, viewParam === 'true');
-    }
-  }, [resumeIdParam, viewParam, setResumeId]);
-
-  const checkExistingReport = async (id: string, autoLoad = false) => {
+  const checkExistingReport = useCallback(async (id: string, autoLoad = false) => {
     try {
       const { data, error } = await supabase
         .from('ats_reports')
@@ -60,127 +51,90 @@ export default function AtsChecker() {
         .eq('resume_id', id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .maybeSingle();
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
 
       if (data?.data) {
         const reportData = data.data as AtsReport;
         setExistingReport(reportData);
+        
         if (autoLoad) {
           setReport(reportData);
           setPhase('results');
-          setStatus('success');
         }
       }
     } catch (err) {
       console.error('Error checking existing report:', err);
     }
-  };
+  }, [setReport]);
 
-  const loadExistingReport = () => {
+  // Clear the form and handle parameters whenever the user navigates to the ATS page
+  useEffect(() => {
+    reset();
+    
+    if (resumeIdParam) {
+      // Fetch the resume name if it's not already in the store
+      const fetchResumeName = async () => {
+        const { data } = await supabase
+          .from('resumes')
+          .select('name')
+          .eq('id', resumeIdParam)
+          .single();
+        
+        if (data?.name) {
+          setResumeId(resumeIdParam, data.name);
+        } else {
+          setResumeId(resumeIdParam);
+        }
+      };
+      
+      fetchResumeName();
+      checkExistingReport(resumeIdParam, viewParam === 'true');
+    }
+  }, [resumeIdParam, viewParam, reset, setResumeId, checkExistingReport]);
+
+  const loadExistingReport = useCallback(() => {
     if (existingReport) {
       setReport(existingReport);
       setPhase('results');
-      setStatus('success');
     }
-  };
+  }, [existingReport, setReport]);
 
-  const handleAnalyze = useCallback(
-    async (file: File | null, jdTextValue: string) => {
-      const activeResumeId = file ? null : storeResumeId;
-      if (!file && !activeResumeId) return;
-
-      abortControllerRef.current?.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
+  const handleAnalyze = async (file: File | null, jd: string) => {
+    try {
       setStatus('analyzing');
       setError(null);
 
-      try {
-        let finalJdText = jdTextValue;
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
-        // If there's a JD file, we need to extract its text
-        if (jdFile) {
-          if (jdFile.type === 'text/plain') {
-            finalJdText = await jdFile.text();
-          } else {
-            // For PDF/DOCX, we might need a separate parsing step
-            // For now, we'll try to read it, but warn that it might be suboptimal
-            // Ideally, the backend should handle multi-file uploads
-            finalJdText = await jdFile.text();
-          }
-        }
+      let result: AtsReport;
+      if (file) {
+        result = await analyzeResumeAts(file, jd, abortController.signal);
+      } else if (storeResumeId) {
+        // Fetch resume data from supabase
+        const { data: resumeData, error: resumeError } = await supabase
+          .from('resumes')
+          .select('data')
+          .eq('id', storeResumeId)
+          .single();
 
-        let response;
-        if (file) {
-          response = await analyzeResumeAts(file, finalJdText || undefined, controller.signal);
-        } else if (activeResumeId) {
-          // Fetch resume data from Supabase
-          const { data, error: supabaseError } = await supabase
-            .from('resumes')
-            .select('data')
-            .eq('id', activeResumeId)
-            .single();
-
-          if (supabaseError) throw new Error('Failed to fetch resume data from dashboard');
-          if (!data?.data) throw new Error('Resume data is empty');
-
-          response = await analyzeResumeJsonAts(
-            data.data,
-            finalJdText || undefined,
-            controller.signal,
-          );
-        } else {
-          throw new Error('No resume selected');
-        }
-
-        setReport(response.ats_report);
-        setParsedResume(response.parsed_resume);
-        setStatus('success');
-
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        setPhase('results');
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name === 'AbortError') return;
-        const message = err instanceof Error ? err.message : 'Analysis failed. Please try again.';
-        setError(message);
-        setStatus('error');
+        if (resumeError) throw resumeError;
+        result = await analyzeResumeJsonAts(resumeData.data, jd, abortController.signal);
+      } else {
+        throw new Error('No resume provided');
       }
-    },
-    [storeResumeId, setStatus, setError, setReport, jdFile],
-  );
 
-  const handleSaveReport = async () => {
-    if (!user) {
-      toast.error('Please sign in to save reports');
-      return;
-    }
-
-    if (!storeResumeId) {
-      toast.error('Please save your resume first before saving the ATS report');
-      return;
-    }
-
-    if (!report) return;
-
-    setIsSaving(true);
-    try {
-      const { error: saveError } = await supabase.from('ats_reports').insert({
-        resume_id: storeResumeId,
-        user_id: user.id,
-        data: report,
-        job_description: jdText || null,
-      });
-
-      if (saveError) throw saveError;
-
-      toast.success('ATS Report saved to dashboard');
-      setExistingReport(report);
-    } catch (err) {
-      console.error('Failed to save report:', err);
-      toast.error('Failed to save report to dashboard');
-    } finally {
-      setIsSaving(false);
+      setReport(result);
+      setParsedResume(result.parsed_resume);
+      setPhase('results');
+      setStatus('success');
+    } catch (err: any) {
+      if (err.name === 'AbortError') return;
+      console.error('ATS Analysis Error:', err);
+      setError(err.message || 'Failed to analyze resume');
+      setStatus('error');
     }
   };
 
@@ -202,6 +156,29 @@ export default function AtsChecker() {
     setPhase('setup');
   }, [reset]);
 
+  const handleSaveReport = async () => {
+    if (!report || !storeResumeId || isSaving) return;
+
+    try {
+      setIsSaving(true);
+      const { error } = await supabase.from('ats_reports').upsert({
+        resume_id: storeResumeId,
+        data: report,
+        score: report.overall_score,
+        target_role: report.jd_match?.role_match || 'General',
+      });
+
+      if (error) throw error;
+      setExistingReport(report);
+      // Optional: show success toast
+    } catch (err) {
+      console.error('Error saving report:', err);
+      // Optional: show error toast
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleGoToBuilder = useCallback(() => {
     if (storeResumeId) {
       navigate(`/resume-builder?id=${storeResumeId}`);
@@ -215,33 +192,29 @@ export default function AtsChecker() {
   }, [navigate, storeResumeId, parsedResume, setResumeData]);
 
   return (
-    <SidebarProvider>
-      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
-        <Topbar />
+    <DashboardLayout>
+      <div className="flex flex-col w-full relative">
+        <div className="mb-6 flex items-center">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-10"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span className="text-sm font-semibold">Back</span>
+          </Button>
+        </div>
 
-        {/* Body */}
         <AnimatePresence mode="wait">
           {phase === 'setup' ? (
-            <motion.main
+            <motion.div
               key="setup"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex-1 overflow-y-auto px-6 pb-8 pt-32"
+              className="flex-1 w-full"
             >
-              {/* Back Button */}
-              <div className="absolute left-8 top-24 z-20">
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate(-1)}
-                  className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
-                >
-                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                  <span className="text-sm font-medium">Back</span>
-                </Button>
-              </div>
-
               <div className="max-w-[1100px] mx-auto">
                 <AtsSetup
                   onAnalyze={handleAnalyze}
@@ -261,7 +234,7 @@ export default function AtsChecker() {
                   {error}
                 </motion.div>
               )}
-            </motion.main>
+            </motion.div>
           ) : (
             report && (
               <motion.div
@@ -270,15 +243,13 @@ export default function AtsChecker() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35 }}
-                className="flex-1 flex flex-col min-h-0 pt-20"
+                className="flex-1 flex flex-col min-h-[600px]"
               >
-
-
                 {/* Two-column body: left fixed, right scrolls */}
                 <div className="flex-1 flex min-h-0 overflow-hidden">
                   {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
                   <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
-                    <AtsResultsSidebar report={report} onBack={handleBackToSetup} />
+                    <AtsResultsSidebar report={report} onBack={handleReset} />
                   </div>
 
                   {/* RIGHT MAIN — 70%, scrollable */}
@@ -296,6 +267,6 @@ export default function AtsChecker() {
           )}
         </AnimatePresence>
       </div>
-    </SidebarProvider>
+    </DashboardLayout>
   );
 }

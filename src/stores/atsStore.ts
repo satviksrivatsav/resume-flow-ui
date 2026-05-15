@@ -6,6 +6,7 @@ import { ResumeData } from '@/types/resume';
 interface AtsState {
   resumeFile: File | null;
   resumeId: string | null;
+  resumeName: string | null;
   jdText: string;
   jdFile: File | null;
   status: 'idle' | 'analyzing' | 'success' | 'error';
@@ -14,7 +15,7 @@ interface AtsState {
   error: string | null;
 
   setResumeFile: (file: File | null) => void;
-  setResumeId: (id: string | null) => void;
+  setResumeId: (id: string | null, name?: string | null) => void;
   setJdText: (text: string) => void;
   setJdFile: (file: File | null) => void;
   setStatus: (status: AtsState['status']) => void;
@@ -27,6 +28,7 @@ interface AtsState {
 export const useAtsStore = create<AtsState>((set) => ({
   resumeFile: null,
   resumeId: null,
+  resumeName: null,
   jdText: '',
   jdFile: null,
   status: 'idle',
@@ -34,8 +36,8 @@ export const useAtsStore = create<AtsState>((set) => ({
   parsedResume: null,
   error: null,
 
-  setResumeFile: (resumeFile) => set({ resumeFile, resumeId: null }),
-  setResumeId: (resumeId) => set({ resumeId, resumeFile: null }),
+  setResumeFile: (resumeFile) => set({ resumeFile, resumeId: null, resumeName: resumeFile?.name || null }),
+  setResumeId: (resumeId, resumeName = null) => set({ resumeId, resumeName, resumeFile: null }),
   setJdText: (jdText) => set({ jdText, jdFile: null }),
   setJdFile: (jdFile) => set({ jdFile, jdText: '' }),
   setStatus: (status) => set({ status }),
@@ -46,6 +48,7 @@ export const useAtsStore = create<AtsState>((set) => ({
     set({
       resumeFile: null,
       resumeId: null,
+      resumeName: null,
       jdText: '',
       jdFile: null,
       status: 'idle',

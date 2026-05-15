@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   BarChart3,
+  FileSearch,
   FileText,
   LogOut,
   Settings,

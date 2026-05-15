@@ -183,7 +183,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
                   <DropdownMenuItem
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/ats?resumeId=${resume.id}&view=true`);
+                      navigate(`/dashboard/ats?resumeId=${resume.id}&view=true`);
                     }}
                   >
                     <FileSearch className="w-4 h-4 mr-2" />
@@ -220,13 +220,6 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-
-          <div className="flex items-center gap-1.5 mb-2">
-            <Layout className="w-3 h-3 text-muted-foreground" />
-            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-              Modern Professional
-            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -276,10 +269,6 @@ export function CreateNewCard() {
               <div className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-3 h-3" />
-            <p className="text-[11px]">Placeholder Template</p>
-          </div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-medium">Updated 1 month ago</span>
           </div>
@@ -309,7 +298,7 @@ export function ParseResumeCard() {
     <motion.div
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
-      onClick={() => navigate('/upload')}
+      onClick={() => navigate('/dashboard/upload')}
     >
       {/* Invisible structure to match ResumeCard height exactly */}
       <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
@@ -320,10 +309,6 @@ export function ParseResumeCard() {
             <div className="p-1">
               <div className="w-4 h-4" />
             </div>
-          </div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-3 h-3" />
-            <p className="text-[11px]">Placeholder Template</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-medium">Updated 1 month ago</span>
