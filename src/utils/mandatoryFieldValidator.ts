@@ -79,7 +79,7 @@ export const getSectionCompletionStatus = (sectionId: string, resumeData: Resume
   switch (sectionId) {
     case 'personal':
       return isBasicsComplete(basics);
-    case 'work':
+    case 'experience':
       return isWorkExperienceComplete(sections.experience.items);
     case 'education':
       return isEducationComplete(sections.education.items);

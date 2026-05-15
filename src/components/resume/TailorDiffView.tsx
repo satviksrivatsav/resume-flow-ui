@@ -86,9 +86,9 @@ export const TailorDiffView = () => {
         <Button
           variant="ghost"
           onClick={() => setViewMode('form')}
-          className="gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="gap-2 rounded-full px-5 h-10 text-muted-foreground hover:text-foreground transition-all group"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           Back to JD
         </Button>
         <div className="flex items-center gap-3">
@@ -213,16 +213,16 @@ export const TailorDiffView = () => {
                     </motion.div>
                   </div>
 
-                  <Button
-                    size="lg"
-                    className={cn(
-                      'h-12 px-8 rounded-2xl font-bold gap-3 transition-all duration-500',
-                      tailoredSections.every((s) => s.decision)
-                        ? 'bg-primary hover:scale-105 shadow-xl shadow-primary/20'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80',
-                    )}
-                    onClick={handleApply}
-                  >
+                    <Button
+                      size="lg"
+                      className={cn(
+                        'h-12 px-8 rounded-full font-bold gap-3 transition-all duration-500',
+                        tailoredSections.every((s) => s.decision)
+                          ? 'bg-primary'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                      )}
+                      onClick={handleApply}
+                    >
                     {tailoredSections.every((s) => s.decision) ? (
                       <>
                         <CheckCircle2 className="w-5 h-5" />

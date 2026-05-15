@@ -127,13 +127,13 @@ const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any })
               >
                 {bulletChar}
               </Text>
-              <Text style={{ flex: 1, hyphens: 'none' }}>{content}</Text>
+              <Text style={{ flex: 1 }}>{content}</Text>
             </View>
           );
         }
 
         return (
-          <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2, hyphens: 'none' }}>
+          <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2 }}>
             {line}
           </Text>
         );
@@ -240,7 +240,6 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
       fontSize: sizes.base,
       color: '#000000',
       lineHeight: 1.5,
-      hyphens: 'none',
     },
     skillsContainer: {
       flexDirection: 'column',
@@ -602,8 +601,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
 
         {/* Dynamic body — respects sectionOrder */}
         {sectionOrder.map((key) => {
-          const dataKey = key === 'work' ? 'experience' : key;
-          const renderer = sectionRenderers[dataKey];
+          const renderer = sectionRenderers[key];
           return renderer ? renderer() : null;
         })}
 

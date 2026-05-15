@@ -12,9 +12,12 @@ import { config } from '@/config/config';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { extractTextFromFile } from '@/lib/atsApi';
 
 export const TailorForm = () => {
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const [isButtonAnimating, setIsButtonAnimating] = useState(false);
   const { resumeData } = useResumeStore();
   const {
     jobDescription,
@@ -196,50 +199,100 @@ export const TailorForm = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+    <div className="max-w-xl mx-auto w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <FileText className="w-5 h-5" />
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-primary/10 text-primary">
+              <FileText className="w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-bold">Job Description</h3>
           </div>
-          <h3 className="text-lg font-semibold">Job Description</h3>
+
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="tailor-jd-upload"
+              className={cn(
+                'inline-flex items-center gap-2 px-5 h-10 bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all cursor-pointer uppercase tracking-wider hover:text-foreground hover:border-primary/30',
+                (isExtractingJd || isTailoring) && 'opacity-50 cursor-not-allowed pointer-events-none',
+              )}
+            >
+              {isExtractingJd ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <CloudUpload className="w-3.5 h-3.5" />
+              )}
+              {isExtractingJd ? 'Extracting...' : 'Upload File'}
+            </label>
+            <input
+              id="tailor-jd-upload"
+              type="file"
+              accept=".txt,.pdf,.docx"
+              className="hidden"
+              onChange={handleJdFileUpload}
+              disabled={isExtractingJd || isTailoring}
+            />
+            {(jdFile || jobDescription.trim()) && !isExtractingJd && !isTailoring && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearJdFile}
+                className="h-10 rounded-full text-[10px] font-bold text-muted-foreground hover:text-destructive gap-1.5 px-3 transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Paste the job description you want to tailor your resume for. The AI will analyze it and
-          suggest improvements to your content.
-        </p>
-        <Textarea
-          placeholder="Paste the job description here..."
-          className="min-h-[300px] bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary transition-all resize-none rounded-2xl p-6"
-          value={jobDescription}
-          onChange={(e) => setJobDescription(e.target.value)}
-        />
+
+        <div className="relative">
+          <Textarea
+            placeholder={
+              isExtractingJd
+                ? 'Extracting text from file...'
+                : 'Paste the job description here or upload a file above...'
+            }
+            className={cn(
+              'min-h-[260px] bg-background border-border/50 focus:border-primary/30 focus:ring-primary/5 transition-all resize-none rounded-[2rem] p-8 text-sm leading-relaxed scrollbar-hide',
+              isExtractingJd && 'opacity-50 cursor-not-allowed',
+            )}
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            disabled={isExtractingJd || isTailoring}
+          />
+          {isExtractingJd && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <Loader2 className="w-10 h-10 animate-spin text-primary/40" />
+            </div>
+          )}
+          {jdFile && !isExtractingJd && (
+            <div className="absolute top-6 right-6 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
+              File: {jdFile.name}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
+        <div className="flex items-center gap-3 px-2">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
             <Sparkles className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-semibold">Tailoring Options</h3>
+          <h3 className="text-lg font-bold">Tailoring Options</h3>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           <div
-            className={cn(
-              'flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer',
-              tailorEntire
-                ? 'bg-primary/5 border-primary/40 shadow-sm'
-                : 'bg-card/50 border-border',
-            )}
+            className="flex items-center justify-between px-4 py-2 transition-all cursor-pointer group"
             onClick={() => setTailorEntire(!tailorEntire)}
           >
             <div className="space-y-0.5">
-              <Label className="text-base font-semibold cursor-pointer">
-                Tailor the entire resume
+              <Label className="text-base font-bold cursor-pointer group-hover:text-primary transition-colors">
+                Tailor Entire Resume
               </Label>
-              <p className="text-xs text-muted-foreground">
-                Modify all sections to align with the JD.
+              <p className="text-[11px] text-muted-foreground/60 font-medium">
+                AI will optimize every section for the JD.
               </p>
             </div>
             <Switch
@@ -258,42 +311,30 @@ export const TailorForm = () => {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="overflow-hidden"
               >
-                <div className="pt-2 space-y-2 pl-2">
-                  <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 px-2">
+                <div className="pt-2 space-y-4 px-2">
+                  <div className="flex items-center gap-2 mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/40 px-2">
                     <ChevronDown className="w-3 h-3" />
                     Select Specific Sections
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {availableSections.map((section) => {
                       const isSelected = sectionsToTailor.includes(section.id);
                       return (
-                        <motion.div
+                        <motion.button
                           key={section.id}
-                          initial={{ scale: 0.95, opacity: 0 }}
+                          initial={{ scale: 0.98, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
-                          whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className={cn(
-                            'relative group flex items-center justify-center p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden',
-                            isSelected
-                              ? 'bg-primary/10 border-primary'
-                              : 'bg-card/50 border-border hover:border-primary/30 hover:bg-primary/[0.02]',
-                          )}
                           onClick={() => handleToggleSection(section.id)}
+                          className={cn(
+                            'px-6 py-2.5 rounded-full border text-[13px] font-bold transition-all duration-300',
+                            isSelected
+                              ? 'bg-primary/10 border-primary/40 text-primary'
+                              : 'bg-background border-border/50 text-muted-foreground hover:border-primary/20 hover:text-foreground',
+                          )}
                         >
-                          <div className="flex flex-col items-center gap-1">
-                            <Label
-                              className={cn(
-                                'font-bold text-sm cursor-pointer transition-colors duration-300',
-                                isSelected
-                                  ? 'text-primary'
-                                  : 'text-muted-foreground group-hover:text-foreground',
-                              )}
-                            >
-                              {section.label}
-                            </Label>
-                          </div>
-                        </motion.div>
+                          {section.label}
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -315,16 +356,27 @@ export const TailorForm = () => {
         </motion.div>
       )}
 
-      <div className="pt-4">
-        <Button
-          className="w-full h-14 rounded-2xl text-lg font-bold gap-3 transition-all hover:scale-[1.01]"
-          size="lg"
-          onClick={handleTailor}
-          disabled={isTailoring || !jobDescription.trim()}
+      <div className="pt-2">
+        <motion.div
+          onHoverStart={() => {
+            setIsButtonHovered(true);
+            setIsButtonAnimating(true);
+          }}
+          onHoverEnd={() => setIsButtonHovered(false)}
+          animate={isButtonHovered || isButtonAnimating ? 'hover' : 'initial'}
+          onAnimationComplete={() => setIsButtonAnimating(false)}
+          whileTap="tap"
         >
-          <Sparkles className="w-6 h-6" />
-          Tailor Content Now
-        </Button>
+          <Button
+            className="w-full h-14 rounded-full text-lg font-bold gap-3 transition-all"
+            size="lg"
+            onClick={handleTailor}
+            disabled={isTailoring || !jobDescription.trim()}
+          >
+            <AnimatedIcon icon={Sparkles} preset="sparkle" className="w-6 h-6" />
+            Tailor Resume Now
+          </Button>
+        </motion.div>
       </div>
 
       <AILoadingModal

@@ -49,7 +49,7 @@ import { useUiStore } from '@/stores/uiStore';
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
-  const { activeTab, setActiveTab, showPreview, setShowPreview } = useUiStore();
+  const { activeTab, setActiveTab, showPreview } = useUiStore();
   const { viewMode: tailorViewMode } = useTailorStore();
   const {
     resumeData,
@@ -152,7 +152,7 @@ const ResumeBuilder = () => {
     switch (id) {
       case 'personal':
         return 'Personal Information';
-      case 'work':
+      case 'experience':
         return 'Work Experience';
       case 'education':
         return 'Education';
@@ -191,7 +191,7 @@ const ResumeBuilder = () => {
     switch (id) {
       case 'personal':
         return 'Provide your contact details and a professional summary.';
-      case 'work':
+      case 'experience':
         return 'Detail your professional background and accomplishments.';
       case 'education':
         return 'List your academic qualifications and achievements.';
@@ -331,7 +331,7 @@ const ResumeBuilder = () => {
                       <TabsContent value="personal">
                         <PersonalInfoForm />
                       </TabsContent>
-                      <TabsContent value="work">
+                      <TabsContent value="experience">
                         <WorkExperienceForm />
                       </TabsContent>
                       <TabsContent value="education">

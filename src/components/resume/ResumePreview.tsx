@@ -532,9 +532,7 @@ const ResumeContent = ({
 
       {/* Dynamic section body — respects sectionOrder from metadata */}
       {sectionOrder.map((key) => {
-        // sidebar uses 'work' as the id, but the section key in data is 'experience'
-        const dataKey = key === 'work' ? 'experience' : key;
-        const renderer = sectionRenderers[dataKey];
+        const renderer = sectionRenderers[key];
         return renderer ? renderer() : null;
       })}
 

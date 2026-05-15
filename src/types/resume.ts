@@ -193,8 +193,8 @@ export interface CustomSection extends SectionBase {
 }
 
 export const DEFAULT_SECTION_ORDER: string[] = [
-  'summary',
   'experience',
+  'summary',
   'education',
   'projects',
   'skills',

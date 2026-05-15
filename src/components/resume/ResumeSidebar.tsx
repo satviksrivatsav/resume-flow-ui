@@ -82,7 +82,7 @@ const iconVariants: Record<string, Variants> = {
     hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
     tap: { y: 0, scale: 0.9 },
   },
-  work: {
+  experience: {
     initial: { rotate: 0 },
     hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
     tap: { scale: 0.9 },
@@ -131,7 +131,7 @@ const NavItemWrapper = ({ children, className }: { children: React.ReactNode; cl
 
 // Sidebar navigation sections — personal is always pinned at the top separately
 const STATIC_SIDEBAR_SECTIONS = [
-  { id: 'work', label: 'Work Experience', icon: Briefcase },
+  { id: 'experience', label: 'Work Experience', icon: Briefcase },
   { id: 'education', label: 'Education', icon: GraduationCap },
   { id: 'projects', label: 'Projects', icon: FolderGit2 },
   { id: 'skills', label: 'Skills', icon: Wrench },
@@ -144,10 +144,7 @@ const STATIC_SIDEBAR_SECTIONS = [
   { id: 'references', label: 'References', icon: Users },
 ];
 
-// Map from sidebar id → resume section key (for completion check)
-const SIDEBAR_TO_SECTION_KEY: Record<string, string> = {
-  work: 'experience',
-};
+const SIDEBAR_TO_SECTION_KEY: Record<string, string> = {};
 
 // ── Sortable row ──────────────────────────────────────────────────────────────
 
