@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthStore } from '@/stores/authStore';
@@ -98,8 +97,3 @@ export const FeaturesSection = () => {
   );
 };
 
-        </div>
-      </div>
-    </section>
-  );
-};
