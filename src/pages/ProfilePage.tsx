@@ -75,7 +75,10 @@ export default function ProfilePage() {
     setEmail(user?.email ?? '');
   };
 
-  const isEmailVerified = !!user?.email_confirmed_at;
+  const hasChanges =
+    name.trim() !== (profile?.name ?? '') ||
+    username.trim() !== (profile?.username ?? '') ||
+    email.trim().toLowerCase() !== (user?.email?.toLowerCase() ?? '');
 
   return (
     <DashboardLayout>
@@ -155,7 +158,7 @@ export default function ProfilePage() {
               <Button
                 onClick={handleSave}
                 className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98]"
-                disabled={isLoading}
+                disabled={isLoading || !hasChanges}
               >
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </Button>

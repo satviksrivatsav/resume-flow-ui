@@ -77,29 +77,53 @@ import { getSectionCompletionStatus } from '@/utils/mandatoryFieldValidator';
 // Per-icon hover animation variants
 const iconVariants: Record<string, Variants> = {
   personal: {
+    initial: { y: 0 },
     hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
     tap: { y: 0, scale: 0.9 },
   },
   work: {
+    initial: { rotate: 0 },
     hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
     tap: { scale: 0.9 },
   },
   education: {
+    initial: { rotate: 0 },
     hover: { rotate: 12, transition: { type: 'spring', stiffness: 300, damping: 8 } },
     tap: { rotate: 0, scale: 0.9 },
   },
   projects: {
+    initial: { scale: 1 },
     hover: { scale: 1.25, transition: { type: 'spring', stiffness: 400, damping: 10 } },
     tap: { scale: 0.9 },
   },
   skills: {
+    initial: { rotate: 0 },
     hover: { rotate: 30, transition: { type: 'spring', stiffness: 300, damping: 8 } },
     tap: { rotate: 0, scale: 0.9 },
   },
   settings: {
+    initial: { rotate: 0 },
     hover: { rotate: 90, transition: { duration: 0.35, ease: 'easeInOut' } },
     tap: { rotate: 0, scale: 0.9 },
   },
+};
+
+// Helper for one-shot hover animations that must complete before returning to initial state
+const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  return (
+    <motion.div
+      onMouseEnter={() => setIsAnimating(true)}
+      animate={isAnimating ? 'hover' : 'initial'}
+      onAnimationComplete={() => {
+        if (isAnimating) setIsAnimating(false);
+      }}
+      whileTap="tap"
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 // Metadata for every static section
@@ -162,7 +186,7 @@ const SortableMenuItem = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <motion.div whileHover="hover" whileTap="tap">
+      <NavItemWrapper>
         <SidebarMenuItem>
           <SidebarMenuButton
             isActive={isActive}
@@ -220,7 +244,7 @@ const SortableMenuItem = ({
             )}
           </SidebarMenuButton>
         </SidebarMenuItem>
-      </motion.div>
+      </NavItemWrapper>
     </div>
   );
 };
@@ -278,11 +302,7 @@ export const ResumeSidebar = () => {
         state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
       )}>
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
-          <motion.div
-            whileHover="hover"
-            whileTap="tap"
-            className="flex-1 group-data-[collapsible=icon]:flex-none"
-          >
+          <NavItemWrapper className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
               variant="ghost"
               onClick={() => navigate('/dashboard')}
@@ -294,7 +314,7 @@ export const ResumeSidebar = () => {
                 Dashboard
               </span>
             </Button>
-          </motion.div>
+          </NavItemWrapper>
           <SidebarTrigger />
         </div>
       </SidebarHeader>
@@ -311,7 +331,7 @@ export const ResumeSidebar = () => {
                 const isActive = activeTab === 'personal';
                 const isCompleted = getSectionCompletionStatus('personal', resumeData);
                 return (
-                  <motion.div whileHover="hover" whileTap="tap">
+                  <NavItemWrapper>
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         isActive={isActive}
@@ -345,7 +365,7 @@ export const ResumeSidebar = () => {
                         )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  </motion.div>
+                  </NavItemWrapper>
                 );
               })()}
 
@@ -384,7 +404,7 @@ export const ResumeSidebar = () => {
               {resumeData.customSections.map((section) => {
                 const isActive = activeTab === section.id;
                 return (
-                  <motion.div key={section.id} whileHover="hover" whileTap="tap">
+                  <NavItemWrapper key={section.id}>
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         isActive={isActive}
@@ -406,12 +426,12 @@ export const ResumeSidebar = () => {
                         <span className="truncate">{section.name}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  </motion.div>
+                  </NavItemWrapper>
                 );
               })}
 
               {/* Add custom section button */}
-              <motion.div whileHover="hover" whileTap="tap">
+              <NavItemWrapper>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={() => setIsAddSectionOpen(true)}
@@ -422,7 +442,7 @@ export const ResumeSidebar = () => {
                     <span>Add section</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              </motion.div>
+              </NavItemWrapper>
 
               <div className="my-2 border-t border-border/50" />
 
@@ -430,7 +450,7 @@ export const ResumeSidebar = () => {
               {(() => {
                 const isActive = activeTab === 'settings';
                 return (
-                  <motion.div whileHover="hover" whileTap="tap">
+                  <NavItemWrapper>
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         isActive={isActive}
@@ -459,7 +479,7 @@ export const ResumeSidebar = () => {
                         <span className="truncate">Resume Settings</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  </motion.div>
+                  </NavItemWrapper>
                 );
               })()}
             </SidebarMenu>
@@ -467,7 +487,7 @@ export const ResumeSidebar = () => {
         </SidebarGroup>
 
         <div className="mt-auto px-4 pb-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2 space-y-2">
-          <motion.div whileHover="hover" whileTap="tap">
+          <NavItemWrapper>
             <Button
               variant="outline"
               onClick={() => setActiveTab('tailor')}
@@ -483,9 +503,9 @@ export const ResumeSidebar = () => {
                 Tailor Resume
               </span>
             </Button>
-          </motion.div>
+          </NavItemWrapper>
 
-          <motion.div whileHover="hover" whileTap="tap">
+          <NavItemWrapper>
             <Button
               variant="outline"
               onClick={() => navigate('/upload')}
@@ -496,7 +516,7 @@ export const ResumeSidebar = () => {
                 Upload Resume
               </span>
             </Button>
-          </motion.div>
+          </NavItemWrapper>
         </div>
       </SidebarContent>
 

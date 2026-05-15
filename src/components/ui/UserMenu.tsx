@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LogOut, User, UserCircle } from 'lucide-react';
+import { LogOut, UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
@@ -21,6 +22,7 @@ export function UserMenu() {
   const navigate = useNavigate();
   const { user, signOut } = useAuthStore();
   const { state } = useSidebar();
+  const [isAnimating, setIsAnimating] = useState(false);
 
   if (!user) {
     if (state === 'collapsed') {
@@ -94,7 +96,14 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <motion.div whileHover="hover" whileTap="tap">
+        <motion.div
+          onMouseEnter={() => setIsAnimating(true)}
+          animate={isAnimating ? 'hover' : 'initial'}
+          onAnimationComplete={() => {
+            if (isAnimating) setIsAnimating(false);
+          }}
+          whileTap="tap"
+        >
           <DropdownMenuItem
             onClick={handleSignOut}
             className="text-destructive focus:text-destructive"

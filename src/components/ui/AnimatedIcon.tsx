@@ -127,7 +127,10 @@ interface AnimatedIconProps {
 export function AnimatedIcon({ icon: Icon, preset, className, style }: AnimatedIconProps) {
   return (
     <motion.span
-      variants={presets[preset]}
+      variants={{
+        initial: { x: 0, y: 0, scale: 1, rotate: 0, opacity: 1 },
+        ...(presets[preset] as any),
+      }}
       initial={false}
       className="inline-flex items-center justify-center"
       style={{ display: 'inline-flex', ...style }}

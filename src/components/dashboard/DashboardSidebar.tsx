@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
-  BarChart3,
   FileText,
   LogOut,
   Settings,
+  ShieldCheck,
   User,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,22 +34,27 @@ import { useAuthStore } from '@/stores/authStore';
 // Per-icon hover animation variants — matching ResumeSidebar's pattern
 const iconVariants: Record<string, Variants> = {
   Resumes: {
+    initial: { y: 0 },
     hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
     tap: { y: 0, scale: 0.9 },
   },
   'ATS Reports': {
+    initial: { rotate: 0 },
     hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
     tap: { scale: 0.9 },
   },
   Profile: {
+    initial: { y: 0 },
     hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
     tap: { y: 0, scale: 0.9 },
   },
   Settings: {
+    initial: { rotate: 0 },
     hover: { rotate: 90, transition: { duration: 0.35, ease: 'easeInOut' } },
     tap: { rotate: 0, scale: 0.9 },
   },
   'Danger Zone': {
+    initial: { rotate: 0 },
     hover: { rotate: [0, -10, 10, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
     tap: { scale: 0.9 },
   },
@@ -59,7 +65,7 @@ const navItems = [
     group: 'Workspace',
     items: [
       { label: 'Resumes', icon: FileText, href: '/dashboard' },
-      { label: 'ATS Reports', icon: BarChart3, href: '/dashboard/reports' },
+      { label: 'ATS Reports', icon: ShieldCheck, href: '/dashboard/reports' },
     ],
   },
   {
@@ -76,6 +82,24 @@ const navItems = [
     ],
   },
 ];
+
+// Helper for one-shot hover animations that must complete before returning to initial state
+const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  return (
+    <motion.div
+      onMouseEnter={() => setIsAnimating(true)}
+      animate={isAnimating ? 'hover' : 'initial'}
+      onAnimationComplete={() => {
+        if (isAnimating) setIsAnimating(false);
+      }}
+      whileTap="tap"
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
@@ -97,11 +121,7 @@ export function DashboardSidebar() {
         state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
       )}>
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
-          <motion.div
-            whileHover="hover"
-            whileTap="tap"
-            className="flex-1 group-data-[collapsible=icon]:flex-none"
-          >
+          <NavItemWrapper className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
@@ -113,7 +133,7 @@ export function DashboardSidebar() {
                 Homepage
               </span>
             </Button>
-          </motion.div>
+          </NavItemWrapper>
           <SidebarTrigger className="group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8" />
         </div>
       </SidebarHeader>
@@ -132,7 +152,7 @@ export function DashboardSidebar() {
                   const isDestructive = item.variant === 'destructive';
 
                   return (
-                    <motion.div key={item.label} whileHover="hover" whileTap="tap">
+                    <NavItemWrapper key={item.label}>
                       <SidebarMenuItem>
                         <SidebarMenuButton
                           isActive={isActive}
@@ -163,7 +183,7 @@ export function DashboardSidebar() {
                           <span className="truncate flex-1">{item.label}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    </motion.div>
+                    </NavItemWrapper>
                   );
                 })}
               </SidebarMenu>
@@ -192,11 +212,7 @@ export function DashboardSidebar() {
         </div>
 
         {/* Sign out */}
-        <motion.div
-          whileHover="hover"
-          whileTap="tap"
-          className="group-data-[collapsible=icon]:hidden"
-        >
+        <NavItemWrapper className="group-data-[collapsible=icon]:hidden">
           <button
             onClick={handleSignOut}
             className="flex items-center justify-center gap-3 w-full h-10 px-4 rounded-full text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
@@ -204,14 +220,10 @@ export function DashboardSidebar() {
             <AnimatedIcon icon={LogOut} preset="slideLeft" className="w-4 h-4" />
             Sign Out
           </button>
-        </motion.div>
+        </NavItemWrapper>
 
         {/* Collapsed sign-out icon-only */}
-        <motion.div
-          whileHover="hover"
-          whileTap="tap"
-          className="hidden group-data-[collapsible=icon]:flex justify-center"
-        >
+        <NavItemWrapper className="hidden group-data-[collapsible=icon]:flex justify-center">
           <button
             onClick={handleSignOut}
             title="Sign Out"
@@ -219,7 +231,7 @@ export function DashboardSidebar() {
           >
             <LogOut className="w-4 h-4" />
           </button>
-        </motion.div>
+        </NavItemWrapper>
 
         {/* License — hidden in icon mode */}
         <div className="px-2 space-y-4 group-data-[collapsible=icon]:hidden">
