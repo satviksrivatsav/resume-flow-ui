@@ -1,25 +1,30 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  CheckCircle2,
   AlertCircle,
   AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
   Lightbulb,
+  MessageSquare,
   Target,
   UserSearch,
-  ChevronRight,
-  MessageSquare,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { RecruiterSimulation as RecruiterSimType } from '@/types/ats';
 
-import { AtsReport } from '@/types/ats';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { RecruiterSimulation as RecruiterSimType } from '@/types/ats';
+import { AtsReport } from '@/types/ats';
+
 import { BulletReviewCard } from './BulletReviewCard';
 import { JdMatchSection } from './JdMatchSection';
-import { cn } from '@/lib/utils';
 
 interface AtsResultsMainProps {
   report: AtsReport;
+  onGoToBuilder: () => void;
+  onSaveReport: () => void;
+  isSaving: boolean;
 }
 
 type Tab = 'ats' | 'optimization' | 'jd' | 'recruiter';
@@ -31,14 +36,19 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'recruiter', label: 'Recruiter View', icon: UserSearch },
 ];
 
-export function AtsResultsMain({ report }: AtsResultsMainProps) {
+export function AtsResultsMain({ 
+  report, 
+  onGoToBuilder, 
+  onSaveReport, 
+  isSaving 
+}: AtsResultsMainProps) {
   const [activeTab, setActiveTab] = useState<Tab>('ats');
 
   return (
     <div className="flex flex-col min-h-full">
-      {/* Tab Bar */}
-      <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-sm border-b border-border/40 px-6">
-        <div className="flex gap-1 pt-3">
+      {/* Tab Bar + Actions */}
+      <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-sm border-b border-border/40 px-6 flex items-center justify-between h-14">
+        <div className="flex gap-1 h-full pt-2">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -49,10 +59,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors',
+                  'relative flex items-center gap-2 px-4 text-sm font-medium rounded-t-xl transition-colors h-full',
                   isActive
                     ? 'text-foreground bg-muted/60'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30',
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -66,6 +76,25 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
               </button>
             );
           })}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onGoToBuilder}
+            className="h-8 rounded-full text-[11px] font-medium tracking-wide text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+          >
+            Open in Builder →
+          </Button>
+          <Button 
+            size="sm" 
+            onClick={onSaveReport} 
+            disabled={isSaving}
+            className="h-8 rounded-full text-[11px] font-medium tracking-wide px-5 shadow-sm"
+          >
+            {isSaving ? 'Saving...' : 'Save to Dashboard'}
+          </Button>
         </div>
       </div>
 
@@ -91,10 +120,12 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                         'flex items-center justify-between px-4 py-3 rounded-xl border text-sm',
                         passed
                           ? 'bg-green-500/5 border-green-500/20'
-                          : 'bg-red-500/5 border-red-500/20'
+                          : 'bg-red-500/5 border-red-500/20',
                       )}
                     >
-                      <span className="capitalize text-foreground/90">{key.replace(/_/g, ' ')}</span>
+                      <span className="capitalize text-foreground/90">
+                        {key.replace(/_/g, ' ')}
+                      </span>
                       {passed ? (
                         <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[11px]">
                           ✓ Pass
@@ -142,7 +173,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                 <Section title="Parser Feedback" icon={MessageSquare}>
                   <ul className="space-y-2">
                     {report.feedback.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground leading-relaxed">
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-sm text-muted-foreground leading-relaxed"
+                      >
                         <ChevronRight className="w-4 h-4 mt-0.5 shrink-0 text-muted-foreground/50" />
                         {item}
                       </li>
@@ -167,7 +201,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                 <Section title="Optimization Suggestions" icon={Lightbulb}>
                   <ul className="space-y-3">
                     {report.suggestions.map((suggestion, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm bg-muted/30 border border-border/30 p-3.5 rounded-xl">
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-sm bg-muted/30 border border-border/30 p-3.5 rounded-xl"
+                      >
                         <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[10px] font-bold shrink-0 mt-0.5">
                           {i + 1}
                         </span>
@@ -195,7 +232,10 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                   <Section title="Strong Keywords" icon={CheckCircle2} titleClass="text-green-500">
                     <div className="flex flex-wrap gap-2">
                       {report.strong_keywords.map((kw, i) => (
-                        <Badge key={i} className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[11px]">
+                        <Badge
+                          key={i}
+                          className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[11px]"
+                        >
                           {kw}
                         </Badge>
                       ))}
@@ -206,7 +246,11 @@ export function AtsResultsMain({ report }: AtsResultsMainProps) {
                   <Section title="Missing Keywords" icon={AlertCircle} titleClass="text-red-500">
                     <div className="flex flex-wrap gap-2">
                       {report.missing_keywords.map((kw, i) => (
-                        <Badge key={i} variant="outline" className="text-[11px] text-red-500 border-red-400/30">
+                        <Badge
+                          key={i}
+                          variant="outline"
+                          className="text-[11px] text-red-500 border-red-400/30"
+                        >
                           {kw}
                         </Badge>
                       ))}
@@ -265,7 +309,37 @@ function Section({
         <Icon className={cn('w-4 h-4', titleClass ?? 'text-muted-foreground')} />
         <h2 className={cn('text-sm font-semibold', titleClass ?? 'text-foreground')}>{title}</h2>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-6">{children}</div>
+    </div>
+  );
+}
+
+/* ─── Helper Components ─── */
+function AtsCard({
+  title,
+  subtitle,
+  icon: Icon,
+  titleClass,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  icon: React.ElementType;
+  titleClass?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-border/40 bg-card/50 overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-border/30 bg-muted/20">
+        <div className="flex items-center gap-2.5">
+          <Icon className={cn('w-4 h-4', titleClass ?? 'text-muted-foreground')} />
+          <div>
+            <h2 className={cn('text-sm font-semibold', titleClass ?? 'text-foreground')}>{title}</h2>
+            {subtitle && <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{subtitle}</p>}
+          </div>
+        </div>
+      </div>
+      <div className="p-6">{children}</div>
     </div>
   );
 }
@@ -282,59 +356,50 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* First Impression */}
-      <div className="rounded-2xl border border-border/40 bg-card/50 p-6">
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-            <UserSearch className="w-4 h-4 text-blue-500" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">First Impression</p>
-            <p className="text-[11px] text-muted-foreground">What a recruiter sees in 6 seconds</p>
-          </div>
-        </div>
+      <AtsCard 
+        title="First Impression" 
+        subtitle="What a recruiter sees in 6 seconds"
+        icon={UserSearch}
+        titleClass="text-blue-500"
+      >
         <p className="text-sm text-foreground/85 leading-relaxed bg-muted/30 rounded-xl p-4 border border-border/30 italic">
           "{sim.first_impression}"
         </p>
-      </div>
+      </AtsCard>
 
       {/* Likely Concerns */}
       {sim.likely_concerns.length > 0 && (
-        <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-6">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
-              <AlertTriangle className="w-4 h-4 text-yellow-500" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">Likely Concerns</p>
-              <p className="text-[11px] text-muted-foreground">Red flags a recruiter may raise</p>
-            </div>
-          </div>
-          <ul className="space-y-2.5">
+        <AtsCard 
+          title="Likely Concerns" 
+          subtitle="Red flags a recruiter may raise"
+          icon={AlertTriangle}
+          titleClass="text-yellow-500"
+        >
+          <ul className="space-y-3">
             {sim.likely_concerns.map((concern, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-yellow-800 dark:text-yellow-200/80">
-                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500" />
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm text-foreground/85"
+              >
+                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500/70" />
                 {concern}
               </li>
             ))}
           </ul>
-        </div>
+        </AtsCard>
       )}
 
       {/* Likely Outcome */}
-      <div className="rounded-2xl border border-border/40 bg-card/50 p-6">
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <ChevronRight className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Likely Outcome</p>
-            <p className="text-[11px] text-muted-foreground">Predicted recruiter decision</p>
-          </div>
-        </div>
+      <AtsCard 
+        title="Likely Outcome" 
+        subtitle="Predicted recruiter decision"
+        icon={ChevronRight}
+        titleClass="text-primary"
+      >
         <p className="text-sm text-foreground/85 leading-relaxed">{sim.likely_outcome}</p>
-      </div>
+      </AtsCard>
     </div>
   );
 }

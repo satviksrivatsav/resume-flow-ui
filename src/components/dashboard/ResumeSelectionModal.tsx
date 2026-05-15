@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Loader2, UploadCloud } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
@@ -92,11 +92,7 @@ export function ResumeSelectionModal({ isOpen, onClose }: ResumeSelectionModalPr
           </div>
         )}
 
-        {error && (
-          <div className="p-4 text-center text-destructive">
-            {error}
-          </div>
-        )}
+        {error && <div className="p-4 text-center text-destructive">{error}</div>}
 
         {!loading && !error && (
           <>
@@ -119,7 +115,9 @@ export function ResumeSelectionModal({ isOpen, onClose }: ResumeSelectionModalPr
                 </div>
               </ScrollArea>
             ) : (
-              <p className="text-center text-muted-foreground p-4">No resumes found. Upload a new one!</p>
+              <p className="text-center text-muted-foreground p-4">
+                No resumes found. Upload a new one!
+              </p>
             )}
 
             <div className="flex justify-end pt-4 border-t border-border mt-4">

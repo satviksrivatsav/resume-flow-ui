@@ -1,12 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Eye,
-  EyeOff,
   Maximize2,
   MoveHorizontal,
   MoveVertical,
   RotateCcw,
-  Save,
   X,
   ZoomIn,
   ZoomOut,
@@ -15,10 +12,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Logo from '@/assets/logo.png';
+import { Topbar } from '@/components/layout/Topbar';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
 import { CustomSectionForm } from '@/components/resume/CustomSectionForm';
-import { ExportMenu } from '@/components/resume/ExportMenu';
+import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { EducationForm } from '@/components/resume/EducationForm';
 import { InterestsForm } from '@/components/resume/InterestsForm';
 import { LanguagesForm } from '@/components/resume/LanguagesForm';
@@ -30,42 +28,48 @@ import { ReferencesForm } from '@/components/resume/ReferencesForm';
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
-import { SaveStatus } from '@/components/resume/SaveStatus';
 import { SkillsForm } from '@/components/resume/SkillsForm';
+import { TailorDiffView } from '@/components/resume/TailorDiffView';
+import { TailorForm } from '@/components/resume/TailorForm';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
-import { TailorForm } from '@/components/resume/TailorForm';
-import { TailorDiffView } from '@/components/resume/TailorDiffView';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
-import { useUiStore } from '@/stores/uiStore';
 import { useTailorStore } from '@/stores/tailorStore';
-import { useAutoSave } from '@/hooks/useAutoSave';
+import { useUiStore } from '@/stores/uiStore';
 
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
-  const { activeTab, setActiveTab } = useUiStore();
+  const { activeTab, setActiveTab, showPreview, setShowPreview } = useUiStore();
   const { viewMode: tailorViewMode } = useTailorStore();
-  const { resumeData, deleteCustomSection, isSaving, loadResume, setResumeData } = useResumeStore();
-  const { saveNow } = useAutoSave();
-  const [showPreview, setShowPreview] = useState(false);
+  const {
+    resumeData,
+    deleteCustomSection,
+    loadResume,
+    setResumeData,
+    setLastSavedData,
+    startAutoSave,
+    stopAutoSave,
+  } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Initialize resume data
   useEffect(() => {
     const resumeId = searchParams.get('id');
     if (resumeId) {
@@ -79,18 +83,23 @@ const ResumeBuilder = () => {
         try {
           const parsed = JSON.parse(saved);
           setResumeData(parsed);
+          setLastSavedData(saved);
         } catch (e) {
           console.error('Failed to parse saved resume', e);
         }
+      } else {
+        // Brand new resume: set lastSavedData to current state to prevent immediate save
+        const currentData = useResumeStore.getState().resumeData;
+        setLastSavedData(JSON.stringify(currentData));
       }
     }
-  }, [searchParams, loadResume, setResumeData, navigate]);
+  }, [searchParams, loadResume, setResumeData, setLastSavedData, navigate]);
 
+  // Manage Autosave Lifecycle
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      setShowPreview(true);
-    }
-  }, []);
+    startAutoSave();
+    return () => stopAutoSave();
+  }, [startAutoSave, stopAutoSave]);
 
   const calculateZoom = useCallback(() => {
     if (!previewPanelRef.current) return;
@@ -274,98 +283,7 @@ const ResumeBuilder = () => {
         <ResumeSidebar />
 
         <div className="flex flex-col flex-1 overflow-hidden relative">
-          <header className="absolute top-0 left-0 right-0 z-40 border-b bg-card/40 backdrop-blur-md overflow-hidden group">
-            <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-              <div className="absolute inset-[-100%] opacity-[0.03] dark:opacity-[0.05] animate-[gradient-flow_20s_ease_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(var(--primary-rgb),0.5)_25%,rgba(var(--primary-rgb),1)_50%,rgba(var(--primary-rgb),0.5)_75%,transparent_100%)] bg-[length:400%_100%]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary-rgb),0.05),transparent_70%)]" />
-              <div className="absolute inset-0 bg-grid-white/[0.02]" />
-            </div>
-
-            <div className="mx-auto px-6 py-4 relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <SidebarTrigger />
-                  <div
-                    className="flex items-center gap-3 group/logo cursor-pointer"
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    <img
-                      src={Logo}
-                      alt="Resume Flow"
-                      className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110 brightness-0 dark:invert"
-                    />
-                    <h1 className="text-xl font-bold text-foreground hidden sm:block tracking-tight">
-                      Resume Flow
-                    </h1>
-                  </div>
-                  <div className="hidden md:block">
-                    <SaveStatus />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <motion.div whileHover="hover" whileTap="tap">
-                    <Button
-                      variant="ghost"
-                      onClick={() => saveNow()}
-                      disabled={isSaving}
-                      className="gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full hover:bg-primary/10 hover:border-primary/20"
-                    >
-                      <AnimatedIcon
-                        icon={Save}
-                        className={cn("w-4 h-4", isSaving && "animate-spin")}
-                      />
-                      <span className="hidden sm:inline font-medium">
-                        {isSaving ? "Saving..." : "Save"}
-                      </span>
-                    </Button>
-                  </motion.div>
-                  <div className="w-[1px] h-6 bg-border mx-1" />
-                  <motion.div whileHover="hover" whileTap="tap">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setShowPreview(!showPreview)}
-                      className={cn(
-                        'gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full',
-                        showPreview
-                          ? 'text-primary border-primary/20 bg-primary/5'
-                          : 'hover:bg-primary/10 hover:border-primary/20',
-                      )}
-                    >
-                      <div className="relative w-4 h-4 flex items-center justify-center">
-                        <AnimatePresence mode="popLayout" initial={false}>
-                          <motion.div
-                            key={showPreview ? 'closed' : 'open'}
-                            initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                            exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                            transition={{
-                              duration: 0.2,
-                              type: 'spring',
-                              stiffness: 300,
-                              damping: 20,
-                            }}
-                            className="absolute inset-0"
-                          >
-                            {showPreview ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </motion.div>
-                        </AnimatePresence>
-                      </div>
-                      <span className="hidden sm:inline font-medium">
-                        {showPreview ? 'Hide' : 'Show'} Preview
-                      </span>
-                    </Button>
-                  </motion.div>
-                  <div className="w-[1px] h-6 bg-border mx-1" />
-                  <ExportMenu />
-                </div>
-              </div>
-            </div>
-          </header>
+          <Topbar />
 
           <main className="flex-1 overflow-hidden relative">
             <div className="flex h-full w-full">
@@ -399,10 +317,7 @@ const ResumeBuilder = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => {
-                              deleteCustomSection(activeTab);
-                              setActiveTab('personal');
-                            }}
+                            onClick={() => setShowDeleteModal(true)}
                             className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 gap-2 shrink-0 h-10 px-4"
                           >
                             <TrashAnimatedIcon className="w-4 h-4" />
@@ -477,17 +392,17 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-2">
+                  <div className="sticky top-24 z-30 flex justify-center w-full pointer-events-none mb-4">
                     <motion.div
                       initial={{ y: -20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto mt-2"
+                      className="flex items-center gap-1 bg-card/80 backdrop-blur-xl border p-1.5 rounded-full shadow-2xl pointer-events-auto"
                     >
                       <motion.div whileHover="hover" whileTap="tap">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 rounded-full gap-2 text-xs font-medium px-3"
+                          className="h-8 rounded-full gap-2 text-xs font-medium px-3 text-primary border-primary/20 bg-primary/5"
                           onClick={() =>
                             setViewMode(viewMode === 'fit-height' ? 'fit-width' : 'fit-height')
                           }
@@ -656,9 +571,20 @@ const ResumeBuilder = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
         <AIInstructionModal />
         <AIReviewModal />
+        <DeleteSectionModal
+          isOpen={showDeleteModal}
+          sectionName={
+            resumeData.customSections.find((s) => s.id === activeTab)?.name ?? 'this section'
+          }
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            deleteCustomSection(activeTab);
+            setActiveTab('personal');
+            setShowDeleteModal(false);
+          }}
+        />
       </div>
     </SidebarProvider>
   );

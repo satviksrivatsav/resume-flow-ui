@@ -33,7 +33,7 @@ export default function SignUpPage() {
 
     const result = await signUp(email, password);
     if (!result.error) {
-      navigate('/resume-builder');
+      navigate('/dashboard');
     }
   };
 

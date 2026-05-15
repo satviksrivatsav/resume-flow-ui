@@ -3,17 +3,19 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle,
+  CloudUpload,
   FileText,
   Loader2,
   ServerCrash,
   Timer,
-  Upload,
 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button } from '@/components/ui/button';
+import { Topbar } from '@/components/layout/Topbar';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
+import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { parseResume } from '@/lib/parseResumeApi';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -34,10 +36,18 @@ export default function UploadResume() {
   const [dragActive, setDragActive] = useState(false);
   const setResumeData = useResumeStore((state) => state.setResumeData);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
     setUploadState('idle');
+  }, []);
+
+  const handleTryAgain = useCallback(() => {
+    setUploadState('idle');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }, []);
 
   const handleFile = useCallback(
@@ -59,7 +69,7 @@ export default function UploadResume() {
 
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
-      
+
       const timeoutId = setTimeout(() => {
         abortController.abort(new Error('TimeoutError'));
       }, 45000); // 45 second timeout for multi-format parsing (OCR can be slow)
@@ -115,136 +125,151 @@ export default function UploadResume() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (file) {
+      handleFile(file);
+      // Clear the input value so the same file can be selected again
+      e.target.value = '';
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      {/* Back Button */}
-      <Button
-        variant="ghost"
-        className="absolute top-6 left-6 text-muted-foreground hover:text-foreground"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back
-      </Button>
+    <SidebarProvider>
+      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
+        <Topbar />
+        
+        {/* Back Button */}
+        <div className="absolute left-8 top-24 z-20">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
+        </div>
 
-      <div className="max-w-xl w-full">
-        <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
-          Upload Your Resume
-        </h1>
+        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8 pt-24 relative">
+          <div className="max-w-xl w-full">
+            <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
+              Upload Your Resume
+            </h1>
 
-        {/* Upload Zone */}
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          className={`
-            relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 cursor-pointer
-            ${dragActive ? 'border-white bg-white/10' : 'border-border hover:border-muted-foreground'}
-            ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
-            ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
-          `}
-        >
-          <input
-            type="file"
-            accept=".pdf,.docx,.png,.jpg,.jpeg,.txt"
-            onChange={handleInputChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            disabled={uploadState === 'uploading'}
-          />
+            {/* Upload Zone */}
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={`
+                relative border-2 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 cursor-pointer
+                ${dragActive ? 'border-white bg-white/10' : 'border-border hover:border-muted-foreground'}
+                ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
+                ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
+              `}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx,.png,.jpg,.jpeg,.txt"
+                onChange={handleInputChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={uploadState === 'uploading'}
+              />
 
-          <AnimatePresence mode="wait">
-            {uploadState === 'idle' && (
-              <motion.div
-                key="idle"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex flex-col items-center"
-              >
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                  <Upload className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-lg font-medium text-foreground mb-1">Drop your resume here</p>
-                <p className="text-sm text-muted-foreground">or click to browse</p>
-              </motion.div>
-            )}
-
-            {uploadState === 'uploading' && (
-              <motion.div
-                key="uploading"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex flex-col items-center"
-              >
-                <p className="text-lg font-medium text-foreground mb-1">Upload initiated...</p>
-                <p className="text-sm text-muted-foreground">Preparing to parse your resume</p>
-              </motion.div>
-            )}
-
-            {uploadState === 'success' && (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center"
-              >
-                <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
-                <p className="text-lg font-medium text-green-500 dark:text-green-400">
-                  Resume parsed successfully!
-                </p>
-                <p className="text-sm text-muted-foreground">Redirecting to builder...</p>
-              </motion.div>
-            )}
-
-            {uploadState === 'error' && (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center"
-              >
-                {error?.toLowerCase().includes('too long') ? (
-                  <Timer className="w-12 h-12 text-red-500 mb-4" />
-                ) : error?.toLowerCase().includes('server') ||
-                  error?.toLowerCase().includes('500') ||
-                  error?.toLowerCase().includes('failed to fetch') ? (
-                  <ServerCrash className="w-12 h-12 text-red-500 mb-4" />
-                ) : (
-                  <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+              <AnimatePresence mode="wait">
+                {uploadState === 'idle' && (
+                  <motion.div
+                    key="idle"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                      <CloudUpload className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground mb-1">
+                      Drop your resume here
+                    </p>
+                    <p className="text-sm text-muted-foreground">or click to browse</p>
+                  </motion.div>
                 )}
-                <p className="text-lg font-medium text-red-500 dark:text-red-400 mb-1">
-                  Failed to parse resume
-                </p>
-                <p className="text-sm text-muted-foreground mb-4">{error}</p>
-                <Button
-                  variant="outline"
-                  onClick={() => setUploadState('idle')}
-                  className="border-border"
-                >
-                  Try Again
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
 
-        {/* Supported formats */}
-        <div className="flex items-center justify-center gap-2 mt-6 text-muted-foreground text-sm">
-          <FileText className="w-4 h-4" />
-          <span>Supported: PDF, DOCX, Images, TXT (max 10MB)</span>
-        </div>
+                {uploadState === 'uploading' && (
+                  <motion.div
+                    key="uploading"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center"
+                  >
+                    <p className="text-lg font-medium text-foreground mb-1">Upload initiated...</p>
+                    <p className="text-sm text-muted-foreground">Preparing to parse your resume</p>
+                  </motion.div>
+                )}
+
+                {uploadState === 'success' && (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center"
+                  >
+                    <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
+                    <p className="text-lg font-medium text-green-500 dark:text-green-400">
+                      Resume parsed successfully!
+                    </p>
+                    <p className="text-sm text-muted-foreground">Redirecting to builder...</p>
+                  </motion.div>
+                )}
+
+                {uploadState === 'error' && (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center"
+                  >
+                    {error?.toLowerCase().includes('too long') ? (
+                      <Timer className="w-12 h-12 text-red-500 mb-4" />
+                    ) : error?.toLowerCase().includes('server') ||
+                      error?.toLowerCase().includes('500') ||
+                      error?.toLowerCase().includes('failed to fetch') ? (
+                      <ServerCrash className="w-12 h-12 text-red-500 mb-4" />
+                    ) : (
+                      <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                    )}
+                    <p className="text-lg font-medium text-red-500 dark:text-red-400 mb-1">
+                      Failed to parse resume
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-4">{error}</p>
+                    <Button
+                      variant="outline"
+                      onClick={handleTryAgain}
+                      className="border-border"
+                    >
+                      Try Again
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Supported formats */}
+            <div className="flex items-center justify-center gap-2 mt-6 text-muted-foreground text-sm">
+              <FileText className="w-4 h-4" />
+              <span>Supported: PDF, DOCX, Images, TXT (max 10MB)</span>
+            </div>
+          </div>
+        </main>
+
+        <AILoadingModal
+          isOpen={uploadState === 'uploading'}
+          onCancel={handleCancel}
+          message="Parsing your resume content with AI..."
+          title="Resume Parser"
+        />
       </div>
-
-      <AILoadingModal
-        isOpen={uploadState === 'uploading'}
-        onCancel={handleCancel}
-        message="Parsing your resume content with AI..."
-        title="Resume Parser"
-      />
-    </div>
+    </SidebarProvider>
   );
 }

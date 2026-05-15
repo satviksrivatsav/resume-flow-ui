@@ -1,17 +1,19 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
-import { useAtsStore } from '@/stores/atsStore';
-import { useAuthStore } from '@/stores/authStore';
+import { Topbar } from '@/components/layout/Topbar';
+import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { useAtsStore } from '@/stores/atsStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function AtsChecker() {
   const navigate = useNavigate();
@@ -24,15 +26,19 @@ export default function AtsChecker() {
     resumeFile,
     resumeId: storeResumeId,
     jdText,
+    jdFile,
     status,
     report,
     error,
+    parsedResume,
     setResumeId,
     setStatus,
     setReport,
     setError,
+    setParsedResume,
     reset,
   } = useAtsStore();
+  const { setResumeData } = useResumeStore();
 
   const [phase, setPhase] = useState<'setup' | 'results'>('setup');
   const [isSaving, setIsSaving] = useState(false);
@@ -91,9 +97,23 @@ export default function AtsChecker() {
       setError(null);
 
       try {
+        let finalJdText = jdTextValue;
+
+        // If there's a JD file, we need to extract its text
+        if (jdFile) {
+          if (jdFile.type === 'text/plain') {
+            finalJdText = await jdFile.text();
+          } else {
+            // For PDF/DOCX, we might need a separate parsing step
+            // For now, we'll try to read it, but warn that it might be suboptimal
+            // Ideally, the backend should handle multi-file uploads
+            finalJdText = await jdFile.text();
+          }
+        }
+
         let response;
         if (file) {
-          response = await analyzeResumeAts(file, jdTextValue || undefined, controller.signal);
+          response = await analyzeResumeAts(file, finalJdText || undefined, controller.signal);
         } else if (activeResumeId) {
           // Fetch resume data from Supabase
           const { data, error: supabaseError } = await supabase
@@ -105,12 +125,17 @@ export default function AtsChecker() {
           if (supabaseError) throw new Error('Failed to fetch resume data from dashboard');
           if (!data?.data) throw new Error('Resume data is empty');
 
-          response = await analyzeResumeJsonAts(data.data, jdTextValue || undefined, controller.signal);
+          response = await analyzeResumeJsonAts(
+            data.data,
+            finalJdText || undefined,
+            controller.signal,
+          );
         } else {
           throw new Error('No resume selected');
         }
 
         setReport(response.ats_report);
+        setParsedResume(response.parsed_resume);
         setStatus('success');
 
         await new Promise((resolve) => setTimeout(resolve, 400));
@@ -122,7 +147,7 @@ export default function AtsChecker() {
         setStatus('error');
       }
     },
-    [storeResumeId, setStatus, setError, setReport]
+    [storeResumeId, setStatus, setError, setReport, jdFile],
   );
 
   const handleSaveReport = async () => {
@@ -178,106 +203,99 @@ export default function AtsChecker() {
   }, [reset]);
 
   const handleGoToBuilder = useCallback(() => {
-    navigate('/resume-builder');
-  }, [navigate]);
+    if (storeResumeId) {
+      navigate(`/resume-builder?id=${storeResumeId}`);
+    } else if (parsedResume) {
+      // If we have parsed data from a file upload, set it in the builder store
+      setResumeData(parsedResume);
+      navigate('/resume-builder');
+    } else {
+      navigate('/resume-builder');
+    }
+  }, [navigate, storeResumeId, parsedResume, setResumeData]);
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
-      {/* Header — always visible */}
-      <header className="shrink-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="flex items-center justify-between h-14 px-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/')}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            ← Back
-          </Button>
-          <h1 className="text-base font-semibold tracking-tight">
-            {phase === 'setup' ? 'ATS Checker' : 'Analysis Results'}
-          </h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="text-muted-foreground"
-          >
-            Reset
-          </Button>
-        </div>
-      </header>
+    <SidebarProvider>
+      <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
+        <Topbar />
 
-      {/* Body */}
-      <AnimatePresence mode="wait">
-        {phase === 'setup' ? (
-          <motion.main
-            key="setup"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="flex-1 overflow-y-auto px-6 py-8"
-          >
-            <AtsSetup
-              onAnalyze={handleAnalyze}
-              onCancel={handleCancel}
-              isAnalyzing={status === 'analyzing'}
-              hasExistingReport={!!existingReport}
-              onViewExistingReport={loadExistingReport}
-            />
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive flex items-center gap-2"
-              >
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
-              </motion.div>
-            )}
-          </motion.main>
-        ) : (
-          report && (
-            <motion.div
-              key="results"
+        {/* Body */}
+        <AnimatePresence mode="wait">
+          {phase === 'setup' ? (
+            <motion.main
+              key="setup"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-              className="flex-1 flex flex-col min-h-0"
+              transition={{ duration: 0.25 }}
+              className="flex-1 overflow-y-auto px-6 pb-8 pt-32"
             >
-              {/* Action Bar */}
-              <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border/40 bg-background/60 backdrop-blur-sm">
-                <Button variant="outline" size="sm" onClick={handleBackToSetup} className="gap-2">
-                  ← Back to Setup
+              {/* Back Button */}
+              <div className="absolute left-8 top-24 z-20">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate(-1)}
+                  className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
+                >
+                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                  <span className="text-sm font-medium">Back</span>
                 </Button>
-                <div className="flex items-center gap-3">
-                  <Button variant="outline" size="sm" onClick={handleGoToBuilder}>
-                    Open in Builder →
-                  </Button>
-                  <Button size="sm" onClick={handleSaveReport} disabled={isSaving}>
-                    {isSaving ? 'Saving...' : 'Save to Dashboard'}
-                  </Button>
-                </div>
               </div>
 
-              {/* Two-column body: left fixed, right scrolls */}
-              <div className="flex-1 flex min-h-0 overflow-hidden">
-                {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
-                <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
-                  <AtsResultsSidebar report={report} />
-                </div>
-
-                {/* RIGHT MAIN — 70%, scrollable */}
-                <div className="flex-1 overflow-y-auto">
-                  <AtsResultsMain report={report} />
-                </div>
+              <div className="max-w-[1100px] mx-auto">
+                <AtsSetup
+                  onAnalyze={handleAnalyze}
+                  onCancel={handleCancel}
+                  isAnalyzing={status === 'analyzing'}
+                  hasExistingReport={!!existingReport}
+                  onViewExistingReport={loadExistingReport}
+                />
               </div>
-            </motion.div>
-          )
-        )}
-      </AnimatePresence>
-    </div>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {error}
+                </motion.div>
+              )}
+            </motion.main>
+          ) : (
+            report && (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                className="flex-1 flex flex-col min-h-0 pt-20"
+              >
+
+
+                {/* Two-column body: left fixed, right scrolls */}
+                <div className="flex-1 flex min-h-0 overflow-hidden">
+                  {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
+                  <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
+                    <AtsResultsSidebar report={report} onBack={handleBackToSetup} />
+                  </div>
+
+                  {/* RIGHT MAIN — 70%, scrollable */}
+                  <div className="flex-1 overflow-y-auto">
+                    <AtsResultsMain 
+                      report={report} 
+                      onGoToBuilder={handleGoToBuilder}
+                      onSaveReport={handleSaveReport}
+                      isSaving={isSaving}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )
+          )}
+        </AnimatePresence>
+      </div>
+    </SidebarProvider>
   );
 }

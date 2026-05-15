@@ -2,6 +2,7 @@ import { AlertTriangle, ServerCrash, Timer } from 'lucide-react';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAIWriterStore } from '@/stores/aiWriterStore';
+
 import { AIDiffViewer } from './AIDiffViewer';
 import { AILoader } from './AILoader';
 
@@ -35,7 +36,9 @@ export function AIReviewModal() {
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="px-6 pt-6 pb-2 flex-shrink-0">
-          <DialogTitle className="text-xl font-bold tracking-tight">Review Changes - {fieldLabel}</DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight">
+            Review Changes - {fieldLabel}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-6 custom-scrollbar">

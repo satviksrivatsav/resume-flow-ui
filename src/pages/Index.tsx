@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   MobileNav,
@@ -18,20 +18,23 @@ const Index = () => {
   const { user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navItems = useMemo(() => [
-    {
-      name: 'Features',
-      link: '#features',
-    },
-    {
-      name: 'Pricing',
-      link: '#pricing',
-    },
-    {
-      name: user ? 'Dashboard' : 'Login',
-      link: user ? '/dashboard' : '/login',
-    },
-  ], [user]);
+  const navItems = useMemo(
+    () => [
+      {
+        name: 'Features',
+        link: '#features',
+      },
+      {
+        name: 'Pricing',
+        link: '#pricing',
+      },
+      {
+        name: user ? 'Dashboard' : 'Login',
+        link: user ? '/dashboard' : '/login',
+      },
+    ],
+    [user],
+  );
 
   return (
     <main className="min-h-screen dark bg-black">

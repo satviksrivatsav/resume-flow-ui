@@ -1,13 +1,16 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
 
-import { AtsReport } from '@/types/ats';
-import { ScoreRadialChart } from './ScoreRadialChart';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AtsReport } from '@/types/ats';
+
+import { ScoreRadialChart } from './ScoreRadialChart';
 
 interface AtsResultsSidebarProps {
   report: AtsReport;
+  onBack: () => void;
 }
 
 const SECTION_LABELS: Record<keyof AtsReport['scores'], string> = {
@@ -22,26 +25,65 @@ const SECTION_LABELS: Record<keyof AtsReport['scores'], string> = {
   parse_rate: 'Parse Rate',
 };
 
-export function AtsResultsSidebar({ report }: AtsResultsSidebarProps) {
+export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
   const gradeLetter = report.grade.charAt(0).toUpperCase();
 
-  const gradeConfig = ({
-    A: { color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/25', glow: 'shadow-green-500/10' },
-    B: { color: 'text-lime-400', bg: 'bg-lime-500/10', border: 'border-lime-500/25', glow: 'shadow-lime-500/10' },
-    C: { color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/25', glow: 'shadow-yellow-500/10' },
-    D: { color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/25', glow: 'shadow-orange-500/10' },
-    F: { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/25', glow: 'shadow-red-500/10' },
-  } as const)[gradeLetter as 'A' | 'B' | 'C' | 'D' | 'F'] ?? { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/25', glow: 'shadow-red-500/10' };
+  const gradeConfig = (
+    {
+      A: {
+        color: 'text-green-400',
+        bg: 'bg-green-500/10',
+        border: 'border-green-500/25',
+        glow: 'shadow-green-500/10',
+      },
+      B: {
+        color: 'text-lime-400',
+        bg: 'bg-lime-500/10',
+        border: 'border-lime-500/25',
+        glow: 'shadow-lime-500/10',
+      },
+      C: {
+        color: 'text-yellow-400',
+        bg: 'bg-yellow-500/10',
+        border: 'border-yellow-500/25',
+        glow: 'shadow-yellow-500/10',
+      },
+      D: {
+        color: 'text-orange-400',
+        bg: 'bg-orange-500/10',
+        border: 'border-orange-500/25',
+        glow: 'shadow-orange-500/10',
+      },
+      F: {
+        color: 'text-red-400',
+        bg: 'bg-red-500/10',
+        border: 'border-red-500/25',
+        glow: 'shadow-red-500/10',
+      },
+    } as const
+  )[gradeLetter as 'A' | 'B' | 'C' | 'D' | 'F'] ?? {
+    color: 'text-red-400',
+    bg: 'bg-red-500/10',
+    border: 'border-red-500/25',
+    glow: 'shadow-red-500/10',
+  };
 
   const passProbability = Math.min(
     100,
-    Math.max(0, report.overall_score + (report.overall_score >= 75 ? 10 : report.overall_score >= 50 ? 0 : -15))
+    Math.max(
+      0,
+      report.overall_score +
+        (report.overall_score >= 75 ? 10 : report.overall_score >= 50 ? 0 : -15),
+    ),
   );
 
   const probColor =
-    passProbability >= 70 ? 'text-green-400' : passProbability >= 40 ? 'text-yellow-400' : 'text-red-400';
-  const ProbIcon =
-    passProbability >= 70 ? CheckCircle2 : AlertTriangle;
+    passProbability >= 70
+      ? 'text-green-400'
+      : passProbability >= 40
+        ? 'text-yellow-400'
+        : 'text-red-400';
+  const ProbIcon = passProbability >= 70 ? CheckCircle2 : AlertTriangle;
 
   const sortedScores = Object.entries(report.scores).sort(([, a], [, b]) => b - a);
 
@@ -52,47 +94,40 @@ export function AtsResultsSidebar({ report }: AtsResultsSidebarProps) {
       transition={{ duration: 0.45, ease: 'easeOut' }}
       className="flex flex-col gap-5 p-5"
     >
+      {/* Back Button */}
+      <div className="mb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group px-4 h-9"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+          <span className="text-[11px] font-semibold tracking-wide">Back</span>
+        </Button>
+      </div>
+
       {/* Score wheel */}
-      <div className="flex flex-col items-center pt-2 pb-1">
-        <ScoreRadialChart score={report.overall_score} grade={gradeLetter} size={160} />
-        <p className="text-[11px] text-muted-foreground mt-2 tracking-wider uppercase">ATS Score</p>
+      <div className="flex flex-col items-center pt-4 pb-2">
+        <ScoreRadialChart score={report.overall_score} grade={gradeLetter} size={220} />
+        <p className="text-[11px] text-muted-foreground mt-4 font-bold uppercase tracking-[0.2em]">ATS Score</p>
       </div>
 
-      {/* Grade + Pass Probability side by side */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Grade */}
-        <div className={cn('rounded-xl p-3 text-center border', gradeConfig.bg, gradeConfig.border)}>
-          <p className={cn('text-2xl font-black tracking-wider leading-none', gradeConfig.color)}>
-            {report.grade}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-wider">Grade</p>
-        </div>
 
-        {/* Pass Probability */}
-        <div className="rounded-xl p-3 text-center border border-border/40 bg-muted/20">
-          <div className="flex items-center justify-center gap-1">
-            <ProbIcon className={cn('w-3.5 h-3.5', probColor)} />
-            <p className={cn('text-2xl font-black leading-none', probColor)}>{passProbability}%</p>
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-wider">Pass Prob.</p>
-        </div>
-      </div>
 
       {/* Section Scores */}
       <div className="rounded-xl border border-border/40 bg-muted/10 p-4">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Section Scores</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Section Scores
+          </p>
         </div>
         <div className="space-y-3">
           {sortedScores.map(([key, value]) => {
             const label = SECTION_LABELS[key as keyof typeof SECTION_LABELS];
             const barColor =
-              value >= 70
-                ? 'bg-green-500'
-                : value >= 50
-                ? 'bg-yellow-500'
-                : 'bg-red-500';
+              value >= 70 ? 'bg-green-500' : value >= 50 ? 'bg-yellow-500' : 'bg-red-500';
             const textColor =
               value >= 70 ? 'text-green-400' : value >= 50 ? 'text-yellow-400' : 'text-red-400';
 
@@ -121,11 +156,16 @@ export function AtsResultsSidebar({ report }: AtsResultsSidebarProps) {
         <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="w-3.5 h-3.5 text-yellow-500" />
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-yellow-600">Warnings</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-yellow-600">
+              Warnings
+            </p>
           </div>
           <ul className="space-y-2">
             {report.ats_warnings.map((w, i) => (
-              <li key={i} className="text-xs text-yellow-700 dark:text-yellow-300/80 leading-relaxed flex gap-2">
+              <li
+                key={i}
+                className="text-xs text-yellow-700 dark:text-yellow-300/80 leading-relaxed flex gap-2"
+              >
                 <span className="shrink-0 mt-0.5">—</span>
                 {w}
               </li>

@@ -1,14 +1,14 @@
-import { motion } from 'framer-motion';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+
+import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
 import { MeshGradient } from '@/components/ui/MeshGradient';
 import { useAuthStore } from '@/stores/authStore';
-import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
 
 export default React.memo(function LandingPage() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default React.memo(function LandingPage() {
                 You&apos;ve Done the Work.
                 <br />
                 Let&apos;s Make Sure It{' '}
-                <span className="bg-gradient-to-r from-zinc-200 to-zinc-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-100 bg-clip-text text-transparent animate-gradient-flow">
                   Shows.
                 </span>
               </h1>
@@ -50,13 +50,7 @@ export default React.memo(function LandingPage() {
                   Build now
                 </button>
                 <button
-                  onClick={() => {
-                    if (user) {
-                      setIsResumeSelectionModalOpen(true);
-                    } else {
-                      navigate('/ats');
-                    }
-                  }}
+                  onClick={() => navigate(user ? '/ats' : '/login')}
                   className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm text-sm"
                 >
                   ATS Checker

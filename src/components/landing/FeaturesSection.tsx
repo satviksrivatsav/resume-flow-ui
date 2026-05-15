@@ -1,47 +1,99 @@
-import React, { useState } from 'react';
-import { Sparkles, ShieldCheck, Zap, Layout } from 'lucide-react';
-import { FeatureCard } from './FeatureCard';
-import { FeaturePreview, FeatureKey } from './FeaturePreview';
+import { useNavigate } from 'react-router-dom';
 
-const features = [
-  { id: 'ai' as FeatureKey, title: 'AI Writing Assistant', description: 'Transform bullet points into impact statements instantly.', icon: Sparkles },
-  { id: 'ats' as FeatureKey, title: 'ATS Optimization', description: 'Engineered to pass the most sophisticated filters.', icon: ShieldCheck },
-  { id: 'format' as FeatureKey, title: 'Instant Formatting', description: 'Pixel-perfect PDF exports in seconds, not hours.', icon: Zap },
-  { id: 'templates' as FeatureKey, title: 'Modern Templates', description: 'Professional designs that stand out from the noise.', icon: Layout },
-];
+import { useAuthStore } from '@/stores/authStore';
+
+import { FeatureRow } from './FeatureRow';
+import { AIMockup } from './mockups/AIMockup';
+import { ATSMockup } from './mockups/ATSMockup';
+import { ParserMockup } from './mockups/ParserMockup';
+import { TailorMockup } from './mockups/TailorMockup';
 
 export const FeaturesSection = () => {
-  const [activeFeature, setActiveFeature] = useState<FeatureKey>('ai');
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+
+  const featuresData = [
+    {
+      title: 'AI Resume Writer.',
+      description:
+        'Drastically speed up your resume writing process. Thanks to artificial intelligence, generating high-impact bullet points is effortless.',
+      bullets: [
+        'Transform raw notes into professional achievements',
+        'Tone matching for your specific industry',
+        "Beat writer's block instantly",
+      ],
+      ctaText: 'Try AI Writer',
+      mockup: <AIMockup />,
+      reverse: false,
+      link: '/resume-builder',
+    },
+    {
+      title: 'Resume Parser.',
+      description:
+        'Upload your old PDF or Word document and let our parser instantly extract your experience, education, and skills.',
+      bullets: [
+        'Supports PDF, DOCX, and LinkedIn exports',
+        'Accurate data extraction and categorization',
+        'Start with your existing data, zero typing',
+      ],
+      ctaText: 'Resume Parser',
+      mockup: <ParserMockup />,
+      reverse: true,
+      link: '/upload',
+    },
+    {
+      title: 'ATS Resume Checker.',
+      description:
+        'Find out if your resume can pass the Applicant Tracking Systems used by top employers before you even apply.',
+      bullets: [
+        'Real-time ATS score and feedback',
+        'Identify missing keywords',
+        'Fix formatting issues automatically',
+      ],
+      ctaText: 'Check My Resume',
+      mockup: <ATSMockup />,
+      reverse: false,
+      link: '/ats',
+    },
+    {
+      title: 'Job Description Tailor.',
+      description:
+        "Align your resume perfectly with the job you want. Paste the job description, and we'll tailor your resume to match exactly what recruiters want.",
+      bullets: [
+        'Highlight exactly what recruiters want to see',
+        'Re-order skills and experience for maximum impact',
+        'Increase your interview chances significantly',
+      ],
+      ctaText: 'Tailor My Resume',
+      mockup: <TailorMockup />,
+      reverse: true,
+      link: '/resume-builder',
+    },
+  ];
 
   return (
-    <section className="py-32 px-6 bg-black relative">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mb-20 text-center">
-          <h2 className="text-4xl md:text-5xl font-medium text-white tracking-tight mb-4">
-            Built for the modern professional.
+    <section className="py-32 px-6 bg-black relative overflow-hidden">
+      <div className="container mx-auto max-w-6xl relative z-10">
+        <div className="mb-24 text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6">
+            Everything your resume needs.
           </h2>
-          <p className="text-zinc-500 max-w-2xl mx-auto">
-            Experience the precision of a resume builder designed by experts, powered by intelligence.
+          <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+            Built for the modern professional, powered by intelligence.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {features.map((f) => (
-              <FeatureCard
-                key={f.id}
-                isActive={activeFeature === f.id}
-                onClick={() => setActiveFeature(f.id)}
-                {...f}
-              />
-            ))}
-          </div>
-          
-          <div className="sticky top-32">
-            <FeaturePreview activeFeature={activeFeature} />
-          </div>
+        <div className="flex flex-col">
+          {featuresData.map((feature, idx) => (
+            <FeatureRow
+              key={idx}
+              {...feature}
+              onClick={() => navigate(user ? feature.link : '/login')}
+            />
+          ))}
         </div>
       </div>
     </section>
   );
 };
+

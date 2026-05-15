@@ -1,8 +1,8 @@
-import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
-import { forwardRef } from "react";
+import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
+import { forwardRef } from 'react';
 
-import { useResumeStore } from "@/stores/resumeStore";
-import { DEFAULT_SECTION_ORDER } from "@/types/resume";
+import { useResumeStore } from '@/stores/resumeStore';
+import { DEFAULT_SECTION_ORDER } from '@/types/resume';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
 const A4_WIDTH = '794px';
@@ -20,7 +20,9 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
   return (
     <div style={style}>
       {lines.map((line, i) => {
-        const bulletMatch = line.match(/^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/);
+        const bulletMatch = /^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/.exec(
+          line,
+        );
 
         if (bulletMatch) {
           const indent = bulletMatch[1];
@@ -249,8 +251,7 @@ const ResumeContent = ({
             .filter((i: any) => i.visible)
             .map((skill: any) => (
               <div key={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
-                <strong style={{ color: '#000' }}>{skill.name}:</strong>{' '}
-                {skill.keywords.join(', ')}
+                <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
               </div>
             ))}
         </div>
@@ -318,9 +319,7 @@ const ResumeContent = ({
                 <span>{award.date}</span>
               </div>
               <div style={{ fontSize: '0.9em', color: '#666' }}>{award.awarder}</div>
-              {award.description && (
-                <div style={{ fontSize: sizes.base }}>{award.description}</div>
-              )}
+              {award.description && <div style={{ fontSize: sizes.base }}>{award.description}</div>}
             </div>
           ))}
       </div>
@@ -328,8 +327,7 @@ const ResumeContent = ({
   };
 
   const renderCertifications = () => {
-    if (!sections.certifications.visible || sections.certifications.items.length === 0)
-      return null;
+    if (!sections.certifications.visible || sections.certifications.items.length === 0) return null;
     return (
       <div key="certifications" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
@@ -366,9 +364,7 @@ const ResumeContent = ({
                 <span>{pub.date}</span>
               </div>
               <div style={{ fontSize: '0.9em', color: '#666' }}>{pub.publisher}</div>
-              {pub.description && (
-                <div style={{ fontSize: sizes.base }}>{pub.description}</div>
-              )}
+              {pub.description && <div style={{ fontSize: sizes.base }}>{pub.description}</div>}
             </div>
           ))}
       </div>

@@ -108,7 +108,9 @@ const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any })
   return (
     <View style={style}>
       {lines.map((line, i) => {
-        const bulletMatch = line.match(/^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/);
+        const bulletMatch = /^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/.exec(
+          line,
+        );
 
         if (bulletMatch) {
           const indent = bulletMatch[1];
@@ -296,19 +298,23 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
         </View>
-        {sections.experience.items.filter((i) => i.visible).map((exp) => (
-          <View key={exp.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
-                {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+        {sections.experience.items
+          .filter((i) => i.visible)
+          .map((exp) => (
+            <View key={exp.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
+                  {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+                </View>
+                <Text style={styles.itemDate}>{exp.period}</Text>
               </View>
-              <Text style={styles.itemDate}>{exp.period}</Text>
+              {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
+              {exp.description && (
+                <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
+              )}
             </View>
-            {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
-            {exp.description && <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -318,18 +324,28 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.education.name}</Text>
         </View>
-        {sections.education.items.filter((i) => i.visible).map((edu) => (
-          <View key={edu.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{edu.degree || 'Degree'}{edu.area && ` in ${edu.area}`}</Text>
-                <Text style={styles.itemSubtitle}>{edu.school || 'School'}{edu.grade && ` • ${edu.grade}`}</Text>
+        {sections.education.items
+          .filter((i) => i.visible)
+          .map((edu) => (
+            <View key={edu.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>
+                    {edu.degree || 'Degree'}
+                    {edu.area && ` in ${edu.area}`}
+                  </Text>
+                  <Text style={styles.itemSubtitle}>
+                    {edu.school || 'School'}
+                    {edu.grade && ` • ${edu.grade}`}
+                  </Text>
+                </View>
+                <Text style={styles.itemDate}>{edu.period}</Text>
               </View>
-              <Text style={styles.itemDate}>{edu.period}</Text>
+              {edu.description && (
+                <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
+              )}
             </View>
-            {edu.description && <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -339,17 +355,27 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
         </View>
-        {sections.projects.items.filter((i) => i.visible).map((proj) => (
-          <View key={proj.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
-              <Text style={styles.itemDate}>{proj.period}</Text>
+        {sections.projects.items
+          .filter((i) => i.visible)
+          .map((proj) => (
+            <View key={proj.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
+                <Text style={styles.itemDate}>{proj.period}</Text>
+              </View>
+              {proj.website.href && (
+                <Link src={proj.website.href} style={styles.link}>
+                  {proj.website.label || proj.website.href}
+                </Link>
+              )}
+              {proj.description && (
+                <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
+              )}
+              {proj.keywords && proj.keywords.length > 0 && (
+                <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>
+              )}
             </View>
-            {proj.website.href && <Link src={proj.website.href} style={styles.link}>{proj.website.label || proj.website.href}</Link>}
-            {proj.description && <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />}
-            {proj.keywords && proj.keywords.length > 0 && <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -360,14 +386,18 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
         </View>
         <View style={styles.skillsContainer}>
-          {sections.skills.items.filter((i) => i.visible).map((skill) => (
-            <View key={skill.id} style={styles.skillRow} wrap={false}>
-              <Text style={styles.skillItems}>
-                <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
-                {skill.keywords && skill.keywords.length > 0 ? skill.keywords.join(', ') : skill.description || ''}
-              </Text>
-            </View>
-          ))}
+          {sections.skills.items
+            .filter((i) => i.visible)
+            .map((skill) => (
+              <View key={skill.id} style={styles.skillRow} wrap={false}>
+                <Text style={styles.skillItems}>
+                  <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
+                  {skill.keywords && skill.keywords.length > 0
+                    ? skill.keywords.join(', ')
+                    : skill.description || ''}
+                </Text>
+              </View>
+            ))}
         </View>
       </View>
     ) : null;
@@ -378,12 +408,17 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
           <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
         </View>
-        {sections.languages.items.filter((i) => i.visible).map((lang) => (
-          <View key={lang.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-            <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
-          </View>
-        ))}
+        {sections.languages.items
+          .filter((i) => i.visible)
+          .map((lang) => (
+            <View
+              key={lang.id}
+              style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}
+            >
+              <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
+              <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
+            </View>
+          ))}
       </View>
     ) : null;
 
@@ -394,7 +429,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
         </View>
         <Text style={styles.itemDescription}>
-          {sections.interests.items.filter((i) => i.visible).map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : '')).join(', ')}
+          {sections.interests.items
+            .filter((i) => i.visible)
+            .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
+            .join(', ')}
         </Text>
       </View>
     ) : null;
@@ -405,18 +443,20 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
         </View>
-        {sections.awards.items.filter((i) => i.visible).map((award) => (
-          <View key={award.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{award.title}</Text>
-                <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+        {sections.awards.items
+          .filter((i) => i.visible)
+          .map((award) => (
+            <View key={award.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{award.title}</Text>
+                  <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+                </View>
+                <Text style={styles.itemDate}>{award.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{award.date}</Text>
+              {award.description && <Text style={styles.itemDescription}>{award.description}</Text>}
             </View>
-            {award.description && <Text style={styles.itemDescription}>{award.description}</Text>}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -426,17 +466,19 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
         </View>
-        {sections.certifications.items.filter((i) => i.visible).map((cert) => (
-          <View key={cert.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{cert.name}</Text>
-                <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+        {sections.certifications.items
+          .filter((i) => i.visible)
+          .map((cert) => (
+            <View key={cert.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{cert.name}</Text>
+                  <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                </View>
+                <Text style={styles.itemDate}>{cert.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{cert.date}</Text>
             </View>
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -446,18 +488,22 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.volunteer.name}</Text>
         </View>
-        {sections.volunteer.items.filter((i) => i.visible).map((vol) => (
-          <View key={vol.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{vol.position}</Text>
-                <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+        {sections.volunteer.items
+          .filter((i) => i.visible)
+          .map((vol) => (
+            <View key={vol.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{vol.position}</Text>
+                  <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+                </View>
+                <Text style={styles.itemDate}>{vol.period}</Text>
               </View>
-              <Text style={styles.itemDate}>{vol.period}</Text>
+              {vol.description && (
+                <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />
+              )}
             </View>
-            {vol.description && <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -467,18 +513,20 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.publications.name}</Text>
         </View>
-        {sections.publications.items.filter((i) => i.visible).map((pub) => (
-          <View key={pub.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{pub.name}</Text>
-                <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+        {sections.publications.items
+          .filter((i) => i.visible)
+          .map((pub) => (
+            <View key={pub.id} style={styles.itemContainer} wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{pub.name}</Text>
+                  <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+                </View>
+                <Text style={styles.itemDate}>{pub.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{pub.date}</Text>
+              {pub.description && <Text style={styles.itemDescription}>{pub.description}</Text>}
             </View>
-            {pub.description && <Text style={styles.itemDescription}>{pub.description}</Text>}
-          </View>
-        ))}
+          ))}
       </View>
     ) : null;
 
@@ -489,13 +537,17 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           <Text style={styles.sectionTitle}>{sections.references.name}</Text>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }}>
-          {sections.references.items.filter((i) => i.visible).map((ref) => (
-            <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
-              <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
-              <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
-              <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>{ref.email} {ref.phone && `| ${ref.phone}`}</Text>
-            </View>
-          ))}
+          {sections.references.items
+            .filter((i) => i.visible)
+            .map((ref) => (
+              <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
+                <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
+                <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
+                <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
+                  {ref.email} {ref.phone && `| ${ref.phone}`}
+                </Text>
+              </View>
+            ))}
         </View>
       </View>
     ) : null;
@@ -525,7 +577,10 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           {basics.headline && <Text style={styles.headline}>{basics.headline}</Text>}
           <View style={styles.contactRow}>
             {contactInfo.map((item, index) => (
-              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
+              <View
+                key={index}
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+              >
                 <item.Icon />
                 <Text style={styles.contactItem}>{item.value}</Text>
               </View>
@@ -533,8 +588,13 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
             {sections.profiles.items
               .filter((p) => p.visible && (p.network || p.username))
               .map((profile, index) => (
-                <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
-                  <Text style={styles.contactItem}>{profile.network}: {profile.username}</Text>
+                <View
+                  key={index}
+                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+                >
+                  <Text style={styles.contactItem}>
+                    {profile.network}: {profile.username}
+                  </Text>
                 </View>
               ))}
           </View>
@@ -558,7 +618,12 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
               {section.items.map((item: any) => (
                 <View key={item.id} style={styles.itemContainer} wrap={false}>
                   <Text style={styles.itemTitle}>{item.title}</Text>
-                  {item.description && <PDFDescriptionRenderer text={item.description} style={styles.itemDescription} />}
+                  {item.description && (
+                    <PDFDescriptionRenderer
+                      text={item.description}
+                      style={styles.itemDescription}
+                    />
+                  )}
                 </View>
               ))}
             </View>

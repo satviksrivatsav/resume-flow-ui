@@ -19,7 +19,7 @@ const GRADE_CONFIG: Record<string, { color: string; label: string; bg: string }>
 
 export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartProps) {
   const [animated, setAnimated] = useState(false);
-  const gradeConfig = GRADE_CONFIG[grade] || GRADE_CONFIG['F'];
+  const gradeConfig = GRADE_CONFIG[grade] || GRADE_CONFIG.F;
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 100);
@@ -50,20 +50,7 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
           strokeOpacity={0.2}
         />
 
-        {/* Glow layer behind the arc */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={gradeConfig.color}
-          strokeWidth={strokeWidth + 10}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          opacity={0.08}
-          strokeLinecap="round"
-          className="transition-all duration-1000 ease-out"
-        />
+
 
         {/* Main progress arc */}
         <circle
@@ -82,26 +69,53 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
       </svg>
 
       {/* Center content — perfectly centred with inset-0 */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <motion.span
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className={cn(
-            'text-5xl font-bold tabular-nums leading-none',
-            score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'
-          )}
-        >
-          {Math.round(score)}
-        </motion.span>
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.3 }}
-          className="text-xs font-semibold tracking-widest text-muted-foreground uppercase mt-1"
-        >
-          {grade}
-        </motion.span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
+        <div className="flex flex-col items-center">
+          <div className="relative">
+            <motion.span
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className={cn(
+                'text-6xl font-bold tabular-nums leading-none tracking-tighter',
+                score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400',
+              )}
+            >
+              {Math.round(score)}
+            </motion.span>
+            <span className={cn(
+              'absolute top-1/2 -translate-y-1/2 left-full ml-1 text-[10px] font-bold opacity-60',
+              score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'
+            )}>%</span>
+          </div>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.3 }}
+            className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase opacity-80"
+          >
+            Match
+          </motion.span>
+        </div>
+        
+        <div className="flex flex-col items-center mt-2">
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.3 }}
+            className="text-2xl font-bold text-foreground leading-none"
+          >
+            {grade}
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.3 }}
+            className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mt-1.5 opacity-80"
+          >
+            Grade
+          </motion.span>
+        </div>
       </div>
     </div>
   );

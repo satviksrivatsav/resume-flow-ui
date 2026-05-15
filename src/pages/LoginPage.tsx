@@ -18,7 +18,7 @@ export default function LoginPage() {
     e.preventDefault();
     const result = await signIn(email, password);
     if (!result.error) {
-      navigate('/resume-builder');
+      navigate('/dashboard');
     }
   };
 

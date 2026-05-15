@@ -1,16 +1,16 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Sparkles, Loader2, AlertCircle, FileText, ChevronDown } from 'lucide-react';
+import { AlertCircle, ChevronDown, FileText, Loader2, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useResumeStore } from '@/stores/resumeStore';
-import { useTailorStore } from '@/stores/tailorStore';
 import { config } from '@/config/config';
 import { cn } from '@/lib/utils';
+import { useResumeStore } from '@/stores/resumeStore';
+import { useTailorStore } from '@/stores/tailorStore';
 
 export const TailorForm = () => {
   const { resumeData } = useResumeStore();
@@ -76,14 +76,15 @@ export const TailorForm = () => {
 
   // Sync tailorEntire with sectionsToTailor
   useEffect(() => {
-    const allSelected = availableSections.length > 0 && 
-                        availableSections.every(s => sectionsToTailor.includes(s.id));
-    
+    const allSelected =
+      availableSections.length > 0 &&
+      availableSections.every((s) => sectionsToTailor.includes(s.id));
+
     if (allSelected && !tailorEntire) {
       setTailorEntire(true);
     } else if (!allSelected && tailorEntire) {
-      // If the user unselected something while "entire" was on, 
-      // we already handle that in handleToggleSection, 
+      // If the user unselected something while "entire" was on,
+      // we already handle that in handleToggleSection,
       // but this effect keeps it robust.
       setTailorEntire(false);
     }
@@ -92,13 +93,13 @@ export const TailorForm = () => {
   const handleToggleSection = (id: string) => {
     const isCurrentlySelected = sectionsToTailor.includes(id);
     let newSections: string[];
-    
+
     if (isCurrentlySelected) {
       newSections = sectionsToTailor.filter((s) => s !== id);
     } else {
       newSections = [...sectionsToTailor, id];
     }
-    
+
     setSectionsToTailor(newSections);
 
     // If we just enabled the last remaining section, the effect will handle tailorEntire.
@@ -108,7 +109,7 @@ export const TailorForm = () => {
   const handleToggleEntire = (checked: boolean) => {
     setTailorEntire(checked);
     if (checked) {
-      setSectionsToTailor(availableSections.map(s => s.id));
+      setSectionsToTailor(availableSections.map((s) => s.id));
     } else {
       // User turned off "Tailor Entire Resume", so we reset/clear the selections
       // as requested to allow for a clean start.
@@ -122,7 +123,7 @@ export const TailorForm = () => {
       return;
     }
 
-    const sectionsToSubmit = tailorEntire ? availableSections.map(s => s.id) : sectionsToTailor;
+    const sectionsToSubmit = tailorEntire ? availableSections.map((s) => s.id) : sectionsToTailor;
 
     if (sectionsToSubmit.length === 0) {
       setError('Please select at least one section to tailor.');
@@ -194,21 +195,27 @@ export const TailorForm = () => {
           </div>
           <h3 className="text-lg font-semibold">Tailoring Options</h3>
         </div>
-        
+
         <div className="space-y-3">
-          <div 
+          <div
             className={cn(
-              "flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer",
-              tailorEntire ? "bg-primary/5 border-primary/40 shadow-sm" : "bg-card/50 border-border"
+              'flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer',
+              tailorEntire
+                ? 'bg-primary/5 border-primary/40 shadow-sm'
+                : 'bg-card/50 border-border',
             )}
             onClick={() => setTailorEntire(!tailorEntire)}
           >
             <div className="space-y-0.5">
-              <Label className="text-base font-semibold cursor-pointer">Tailor the entire resume</Label>
-              <p className="text-xs text-muted-foreground">Modify all sections to align with the JD.</p>
+              <Label className="text-base font-semibold cursor-pointer">
+                Tailor the entire resume
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Modify all sections to align with the JD.
+              </p>
             </div>
-            <Switch 
-              checked={tailorEntire} 
+            <Switch
+              checked={tailorEntire}
               onCheckedChange={handleToggleEntire}
               className="data-[state=checked]:bg-primary"
             />
@@ -239,18 +246,22 @@ export const TailorForm = () => {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className={cn(
-                            "relative group flex items-center justify-center p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden",
-                            isSelected 
-                              ? "bg-primary/10 border-primary" 
-                              : "bg-card/50 border-border hover:border-primary/30 hover:bg-primary/[0.02]"
+                            'relative group flex items-center justify-center p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden',
+                            isSelected
+                              ? 'bg-primary/10 border-primary'
+                              : 'bg-card/50 border-border hover:border-primary/30 hover:bg-primary/[0.02]',
                           )}
                           onClick={() => handleToggleSection(section.id)}
                         >
                           <div className="flex flex-col items-center gap-1">
-                            <Label className={cn(
-                              "font-bold text-sm cursor-pointer transition-colors duration-300",
-                              isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-                            )}>
+                            <Label
+                              className={cn(
+                                'font-bold text-sm cursor-pointer transition-colors duration-300',
+                                isSelected
+                                  ? 'text-primary'
+                                  : 'text-muted-foreground group-hover:text-foreground',
+                              )}
+                            >
                               {section.label}
                             </Label>
                           </div>

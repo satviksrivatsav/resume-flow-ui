@@ -1,20 +1,22 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Copy, Edit3, MoreVertical, Trash2, FileSearch } from 'lucide-react';
+import { Copy, Edit3, FileSearch, FileText, Layout, MoreVertical, Plus, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 
+import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
+import { ResumePreview } from '@/components/resume/ResumePreview';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useResumeStore } from '@/stores/resumeStore';
 import { supabase } from '@/lib/supabase';
+import { useResumeStore } from '@/stores/resumeStore';
 import { ResumeData } from '@/types/resume';
-import { ResumePreview } from '@/components/resume/ResumePreview';
 
 interface ResumeRow {
   id: string;
@@ -35,8 +37,9 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(resume.name);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.25); // Default fallback scale
+  const [scale, setScale] = useState(0.25);
   const [hasReport, setHasReport] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const checkReport = async () => {
@@ -46,7 +49,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         .eq('resume_id', resume.id)
         .limit(1)
         .maybeSingle();
-      
+
       if (data) setHasReport(true);
     };
 
@@ -55,7 +58,6 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        // Calculate exact scale to fit the 794px wide A4 preview
         setScale(entry.contentRect.width / 794);
       }
     });
@@ -89,14 +91,8 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this resume?')) return;
-
     try {
-      const { error } = await supabase
-        .from('resumes')
-        .delete()
-        .eq('id', resume.id);
-
+      const { error } = await supabase.from('resumes').delete().eq('id', resume.id);
       if (error) throw error;
       toast.success('Resume deleted');
       onRefresh();
@@ -107,18 +103,16 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
   const handleDuplicate = async () => {
     try {
-      // Fetch existing names to ensure uniqueness
       const { data: existingResumes } = await supabase
         .from('resumes')
         .select('name')
         .eq('user_id', resume.user_id);
 
       const existingNames = existingResumes?.map((r) => r.name) || [];
-      
-      // Remove any trailing numbers from the base name for clean duplication
-      const baseNameMatch = resume.name.match(/^(.*?)( \d+)?$/);
+
+      const baseNameMatch = /^(.*?)( \d+)?$/.exec(resume.name);
       const baseName = baseNameMatch ? baseNameMatch[1] : resume.name;
-      
+
       let finalName = baseName;
       let counter = 1;
       while (existingNames.includes(finalName)) {
@@ -126,18 +120,15 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         counter++;
       }
 
-      // Create a copy of the data
       const newData = { ...resume.data, name: finalName };
-      delete newData.id; // ensure a new ID is generated
+      delete newData.id;
 
-      const { error } = await supabase
-        .from('resumes')
-        .insert({
-          user_id: resume.user_id,
-          name: finalName,
-          data: newData,
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await supabase.from('resumes').insert({
+        user_id: resume.user_id,
+        name: finalName,
+        data: newData,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
       toast.success('Resume duplicated');
@@ -148,88 +139,114 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   };
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.05, y: -5 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="group relative aspect-[794/1123] overflow-hidden rounded-xl bg-white shadow-lg cursor-pointer border border-border hover:border-primary/50"
-      onClick={handleOpen}
-    >
-      {/* Live Preview Area */}
-      <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-0 left-0 origin-top-left opacity-90 group-hover:opacity-100 transition-opacity"
-          style={{
-            width: '794px',
-            height: '1123px',
-            transform: `scale(${scale})`,
-          }}
-        >
-          <ResumePreview data={resume.data} />
-        </div>
-      </div>
-
-      {/* Gradient overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none z-10" />
-
-      {/* Bottom Overlay */}
-      <div className="absolute inset-x-0 bottom-0 p-4 z-20 text-white flex flex-col justify-end">
-        {isRenaming ? (
-          <input
-            autoFocus
-            className="w-full bg-transparent border-b border-white outline-none mb-1 text-sm font-medium"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onBlur={handleRename}
-            onKeyDown={(e) => e.key === 'Enter' && handleRename()}
-            onClick={(e) => e.stopPropagation()}
-          />
-        ) : (
-          <h3 className="font-semibold text-base truncate pr-8 drop-shadow-md">{resume.name}</h3>
-        )}
-        <p className="text-[11px] text-white/80 drop-shadow-md">
-          Last updated {formatDistanceToNow(new Date(resume.updated_at))} ago
-        </p>
-      </div>
-
-      {/* Menu Trigger */}
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-        <DropdownMenu>
-          <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-            <button className="p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors">
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {hasReport && (
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/ats?resumeId=${resume.id}&view=true`);
-                }}
-              >
-                <FileSearch className="w-4 h-4 mr-2" />
-                View ATS Report
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setIsRenaming(true); }}>
-              <Edit3 className="w-4 h-4 mr-2" />
-              Rename
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDuplicate(); }}>
-              <Copy className="w-4 h-4 mr-2" />
-              Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={(e) => { e.stopPropagation(); handleDelete(); }}
+    <>
+      <motion.div
+        className="group relative flex flex-col bg-accent/20 border border-border/50 rounded-[24px] overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300"
+        onClick={handleOpen}
+      >
+        <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner">
+          <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div
+              className="absolute top-0 left-0 origin-top-left"
+              style={{ width: '794px', height: '1123px', transform: `scale(${scale})` }}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </motion.div>
+              <ResumePreview data={resume.data} />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm truncate pr-2 group-hover:text-primary transition-colors">
+              {isRenaming ? (
+                <input
+                  autoFocus
+                  className="w-full bg-transparent border-b border-primary outline-none text-sm font-bold"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  onBlur={handleRename}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRename()}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                resume.name
+              )}
+            </h3>
+            <DropdownMenu>
+              <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+                <button className="p-1 rounded-lg hover:bg-accent transition-colors">
+                  <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {hasReport && (
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/ats?resumeId=${resume.id}&view=true`);
+                    }}
+                  >
+                    <FileSearch className="w-4 h-4 mr-2" />
+                    View ATS Report
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsRenaming(true);
+                  }}
+                >
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDuplicate();
+                  }}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDeleteModal(true);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="flex items-center gap-1.5 mb-2">
+            <Layout className="w-3 h-3 text-muted-foreground" />
+            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+              Modern Professional
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-muted-foreground/60 font-medium">
+              Updated {formatDistanceToNow(new Date(resume.updated_at))} ago
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      <DeleteSectionModal
+        isOpen={showDeleteModal}
+        sectionName={resume.name}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={() => {
+          setShowDeleteModal(false);
+          void handleDelete();
+        }}
+      />
+    </>
   );
 }
 
@@ -245,17 +262,87 @@ export function CreateNewCard() {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.05, y: -5 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="group relative aspect-[794/1123] flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border hover:border-primary/50 bg-muted/20 hover:bg-muted/40 cursor-pointer transition-colors"
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
       onClick={handleCreate}
     >
-      <div className="p-4 rounded-full bg-background shadow-sm group-hover:scale-110 transition-transform">
-        <Edit3 className="w-8 h-8 text-primary" />
+      {/* Invisible structure to match ResumeCard height exactly */}
+      <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
+        <div className="aspect-[1/1.414] m-2 rounded-[18px]" />
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm">Placeholder</h3>
+            <div className="p-1">
+              <div className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-3 h-3" />
+            <p className="text-[11px]">Placeholder Template</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium">Updated 1 month ago</span>
+          </div>
+        </div>
       </div>
-      <span className="font-medium text-muted-foreground group-hover:text-primary transition-colors">
-        Create New Resume
-      </span>
+
+      {/* Centered Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
+        <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
+          <Plus className="w-8 h-8 text-primary" />
+        </div>
+        <div className="text-center">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg leading-tight">
+            New Masterpiece
+          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">From scratch</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export function ParseResumeCard() {
+  const navigate = useNavigate();
+
+  return (
+    <motion.div
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="group relative flex flex-col bg-primary/[0.02] border-2 border-dashed border-border/50 rounded-[24px] cursor-pointer hover:border-primary/50 hover:bg-primary/[0.04] transition-all duration-300"
+      onClick={() => navigate('/upload')}
+    >
+      {/* Invisible structure to match ResumeCard height exactly */}
+      <div className="flex flex-col invisible select-none pointer-events-none" aria-hidden="true">
+        <div className="aspect-[1/1.414] m-2 rounded-[18px]" />
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm">Placeholder</h3>
+            <div className="p-1">
+              <div className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            <div className="w-3 h-3" />
+            <p className="text-[11px]">Placeholder Template</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-medium">Updated 1 month ago</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Centered Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
+        <div className="w-16 h-16 rounded-full bg-background shadow-sm border border-border/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all">
+          <FileText className="w-8 h-8 text-primary" />
+        </div>
+        <div className="text-center">
+          <p className="font-bold text-muted-foreground group-hover:text-foreground transition-colors text-lg leading-tight">
+            Parse Existing Resume
+          </p>
+          <p className="text-xs text-muted-foreground/60 font-medium mt-1">AI-powered extraction</p>
+        </div>
+      </div>
     </motion.div>
   );
 }
