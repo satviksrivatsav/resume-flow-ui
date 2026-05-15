@@ -58,9 +58,9 @@ export const LandingFooter = () => {
   return (
     <footer className="w-full bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 py-20 px-6 border-t border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
       <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-12 lg:gap-8 mb-16">
           {/* Brand Column */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group w-fit">
               <img
                 src={LogoImage}
@@ -72,8 +72,8 @@ export const LandingFooter = () => {
               </span>
             </Link>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
-              Empowering job seekers with AI-driven optimization and modern design. Craft your
-              future with precision.
+              An open-source initiative dedicated to simplifying resume optimization with AI.
+              Built for the community, by the community.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <a
@@ -105,10 +105,10 @@ export const LandingFooter = () => {
             </div>
           </div>
 
-          {/* Product Column */}
+          {/* Features Column */}
           <div>
             <h4 className="text-sm font-bold uppercase tracking-widest mb-6 text-zinc-400 dark:text-zinc-500">
-              Product
+              Features
             </h4>
             <ul className="space-y-4">
               <li>
@@ -175,10 +175,10 @@ export const LandingFooter = () => {
             </ul>
           </div>
 
-          {/* Company Column */}
+          {/* About Column */}
           <div>
             <h4 className="text-sm font-bold uppercase tracking-widest mb-6 text-zinc-400 dark:text-zinc-500">
-              Company
+              About
             </h4>
             <ul className="space-y-4">
               <li>
@@ -199,10 +199,12 @@ export const LandingFooter = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="https://github.com/satviksrivatsav/resume-flow-ui"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
-                  About Us
+                  About the Project
                 </a>
               </li>
             </ul>
@@ -234,7 +236,7 @@ export const LandingFooter = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4 text-xs text-zinc-500">
-            <span>© {currentYear} Resume Flow Inc.</span>
+            <span>MIT Licensed • {currentYear}</span>
             <span className="hidden md:inline text-zinc-800 dark:text-zinc-800">|</span>
             <SystemStatus />
           </div>

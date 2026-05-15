@@ -25,10 +25,6 @@ const Index = () => {
         link: '#features',
       },
       {
-        name: 'Pricing',
-        link: '#pricing',
-      },
-      {
         name: user ? 'Dashboard' : 'Login',
         link: user ? '/dashboard' : '/login',
       },

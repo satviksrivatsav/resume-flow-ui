@@ -16,7 +16,7 @@ export const FeaturesSection = () => {
     {
       title: 'AI Resume Writer.',
       description:
-        'Drastically speed up your resume writing process. Thanks to artificial intelligence, generating high-impact bullet points is effortless.',
+        "Write better bullet points without the stress. Use AI to help you draft professional achievements in seconds.",
       bullets: [
         'Transform raw notes into professional achievements',
         'Tone matching for your specific industry',
@@ -44,7 +44,7 @@ export const FeaturesSection = () => {
     {
       title: 'ATS Resume Checker.',
       description:
-        'Find out if your resume can pass the Applicant Tracking Systems used by top employers before you even apply.',
+        'Find out if your resume can pass the Applicant Tracking Systems used by most companies before you even apply.',
       bullets: [
         'Real-time ATS score and feedback',
         'Identify missing keywords',
@@ -76,10 +76,11 @@ export const FeaturesSection = () => {
       <div className="container mx-auto max-w-6xl relative z-10">
         <div className="mb-24 text-center">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6">
-            Everything your resume needs.
+            Everything you need to land the job.
           </h2>
-          <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-            Built for the modern professional, powered by intelligence.
+          <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl mx-auto">
+            Resume Flow is a simple tool that uses AI to help you build better resumes 
+            without the headache. No subscriptions, just better applications.
           </p>
         </div>
 
@@ -96,4 +97,3 @@ export const FeaturesSection = () => {
     </section>
   );
 };
-

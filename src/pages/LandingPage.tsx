@@ -35,8 +35,8 @@ export default React.memo(function LandingPage() {
                 </span>
               </h1>
               <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl">
-                Resume Flow combines intelligent AI assistance with clean, modern templates — so
-                your experience gets the spotlight it deserves.
+                Resume Flow is a simple tool that uses AI to help you build better resumes 
+                without the headache. No subscriptions, just better applications.
               </p>
             </div>
 
