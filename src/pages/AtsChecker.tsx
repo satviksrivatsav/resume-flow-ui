@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -26,6 +26,7 @@ export default function AtsChecker() {
     resumeFile,
     resumeId: storeResumeId,
     jdText,
+    jdFile,
     status,
     report,
     error,
@@ -93,9 +94,23 @@ export default function AtsChecker() {
       setError(null);
 
       try {
+        let finalJdText = jdTextValue;
+
+        // If there's a JD file, we need to extract its text
+        if (jdFile) {
+          if (jdFile.type === 'text/plain') {
+            finalJdText = await jdFile.text();
+          } else {
+            // For PDF/DOCX, we might need a separate parsing step
+            // For now, we'll try to read it, but warn that it might be suboptimal
+            // Ideally, the backend should handle multi-file uploads
+            finalJdText = await jdFile.text();
+          }
+        }
+
         let response;
         if (file) {
-          response = await analyzeResumeAts(file, jdTextValue || undefined, controller.signal);
+          response = await analyzeResumeAts(file, finalJdText || undefined, controller.signal);
         } else if (activeResumeId) {
           // Fetch resume data from Supabase
           const { data, error: supabaseError } = await supabase
@@ -109,7 +124,7 @@ export default function AtsChecker() {
 
           response = await analyzeResumeJsonAts(
             data.data,
-            jdTextValue || undefined,
+            finalJdText || undefined,
             controller.signal,
           );
         } else {
@@ -128,7 +143,7 @@ export default function AtsChecker() {
         setStatus('error');
       }
     },
-    [storeResumeId, setStatus, setError, setReport],
+    [storeResumeId, setStatus, setError, setReport, jdFile],
   );
 
   const handleSaveReport = async () => {
@@ -201,15 +216,29 @@ export default function AtsChecker() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex-1 overflow-y-auto px-6 pb-8 pt-24"
+              className="flex-1 overflow-y-auto px-6 pb-8 pt-32"
             >
-              <AtsSetup
-                onAnalyze={handleAnalyze}
-                onCancel={handleCancel}
-                isAnalyzing={status === 'analyzing'}
-                hasExistingReport={!!existingReport}
-                onViewExistingReport={loadExistingReport}
-              />
+              {/* Back Button */}
+              <div className="absolute left-8 top-24 z-20">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate(-1)}
+                  className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
+                >
+                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                  <span className="text-sm font-medium">Back</span>
+                </Button>
+              </div>
+
+              <div className="max-w-[1100px] mx-auto">
+                <AtsSetup
+                  onAnalyze={handleAnalyze}
+                  onCancel={handleCancel}
+                  isAnalyzing={status === 'analyzing'}
+                  hasExistingReport={!!existingReport}
+                  onViewExistingReport={loadExistingReport}
+                />
+              </div>
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}

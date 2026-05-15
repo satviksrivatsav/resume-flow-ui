@@ -31,8 +31,8 @@ export const Topbar = () => {
         <div className="absolute inset-0 bg-grid-white/[0.02]" />
       </div>
 
-      <div className="px-6 py-4 relative">
-        <div className="flex items-center justify-between">
+      <div className="px-6 h-20 relative flex items-center">
+        <div className="flex items-center justify-between w-full">
           {/* Left: Logo + brand */}
           <div className="flex items-center gap-4">
             <div

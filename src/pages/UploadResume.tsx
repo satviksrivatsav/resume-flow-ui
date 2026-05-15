@@ -3,11 +3,11 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle,
+  CloudUpload,
   FileText,
   Loader2,
   ServerCrash,
   Timer,
-  Upload,
 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -36,10 +36,18 @@ export default function UploadResume() {
   const [dragActive, setDragActive] = useState(false);
   const setResumeData = useResumeStore((state) => state.setResumeData);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
     setUploadState('idle');
+  }, []);
+
+  const handleTryAgain = useCallback(() => {
+    setUploadState('idle');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }, []);
 
   const handleFile = useCallback(
@@ -117,14 +125,31 @@ export default function UploadResume() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (file) {
+      handleFile(file);
+      // Clear the input value so the same file can be selected again
+      e.target.value = '';
+    }
   };
 
   return (
     <SidebarProvider>
       <div className="h-screen flex flex-col bg-background w-full overflow-hidden relative">
         <Topbar />
-        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8 pt-24">
+        
+        {/* Back Button */}
+        <div className="absolute left-8 top-24 z-20">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 rounded-full hover:bg-accent transition-all group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
+        </div>
+
+        <main className="flex-1 overflow-y-auto flex items-center justify-center p-8 pt-24 relative">
           <div className="max-w-xl w-full">
             <h1 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
               Upload Your Resume
@@ -136,13 +161,14 @@ export default function UploadResume() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               className={`
-                relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 cursor-pointer
+                relative border-2 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 cursor-pointer
                 ${dragActive ? 'border-white bg-white/10' : 'border-border hover:border-muted-foreground'}
                 ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
                 ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
               `}
             >
               <input
+                ref={fileInputRef}
                 type="file"
                 accept=".pdf,.docx,.png,.jpg,.jpeg,.txt"
                 onChange={handleInputChange}
@@ -160,7 +186,7 @@ export default function UploadResume() {
                     className="flex flex-col items-center"
                   >
                     <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                      <Upload className="w-8 h-8 text-muted-foreground" />
+                      <CloudUpload className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <p className="text-lg font-medium text-foreground mb-1">
                       Drop your resume here
@@ -219,7 +245,7 @@ export default function UploadResume() {
                     <p className="text-sm text-muted-foreground mb-4">{error}</p>
                     <Button
                       variant="outline"
-                      onClick={() => setUploadState('idle')}
+                      onClick={handleTryAgain}
                       className="border-border"
                     >
                       Try Again

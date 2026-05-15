@@ -91,8 +91,8 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2 border-b">
-        <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
+      <SidebarHeader className="h-20 px-4 border-b flex flex-col justify-center">
+        <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
           <motion.div
             whileHover="hover"
             whileTap="tap"
@@ -110,7 +110,7 @@ export function DashboardSidebar() {
               </span>
             </Button>
           </motion.div>
-          <SidebarTrigger />
+          <SidebarTrigger className="group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8" />
         </div>
       </SidebarHeader>
 
