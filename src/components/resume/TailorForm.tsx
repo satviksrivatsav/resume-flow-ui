@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ChevronDown, FileText, Loader2, Sparkles } from 'lucide-react';
+import { AlertCircle, ChevronDown, CloudUpload, FileText, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { config } from '@/config/config';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
+import { extractTextFromFile } from '@/lib/atsApi';
 
 export const TailorForm = () => {
   const { resumeData } = useResumeStore();
@@ -28,11 +30,37 @@ export const TailorForm = () => {
   } = useTailorStore();
 
   const [tailorEntire, setTailorEntire] = useState(true);
+  const [isExtractingJd, setIsExtractingJd] = useState(false);
+  const [jdFile, setJdFile] = useState<File | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleCancel = () => {
     abortControllerRef.current?.abort();
     setIsTailoring(false);
+  };
+
+  const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        setIsExtractingJd(true);
+        setJdFile(file);
+        const text = await extractTextFromFile(file);
+        setJobDescription(text);
+        toast.success('Job description extracted from file');
+      } catch (err: any) {
+        console.error('JD extraction failed:', err);
+        toast.error(err.message || 'Failed to extract text from JD file');
+        setJdFile(null);
+      } finally {
+        setIsExtractingJd(false);
+      }
+    }
+  };
+
+  const handleClearJdFile = () => {
+    setJdFile(null);
+    setJobDescription('');
   };
 
   const getAvailableSections = () => {

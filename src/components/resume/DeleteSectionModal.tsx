@@ -13,6 +13,7 @@ import {
 
 interface DeleteSectionModalProps {
   isOpen: boolean;
+  title?: string;
   sectionName: string;
   onClose: () => void;
   onConfirm: () => void;
@@ -20,6 +21,7 @@ interface DeleteSectionModalProps {
 
 export function DeleteSectionModal({
   isOpen,
+  title = 'Delete Section',
   sectionName,
   onClose,
   onConfirm,
@@ -32,7 +34,7 @@ export function DeleteSectionModal({
             <Trash2 className="w-8 h-8 text-destructive" />
           </div>
           <AlertDialogTitle className="text-2xl font-extrabold tracking-tight">
-            Delete Section
+            {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
             Are you sure you want to delete{' '}
@@ -51,7 +53,7 @@ export function DeleteSectionModal({
           <AlertDialogAction
             type="button"
             onClick={onConfirm}
-            className="rounded-full h-11 px-10 font-bold bg-destructive hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
+            className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
           >
             Delete
           </AlertDialogAction>

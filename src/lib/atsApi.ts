@@ -65,3 +65,27 @@ export async function analyzeResumeJsonAts(
 
   return result.data;
 }
+
+export async function extractTextFromFile(file: File, signal?: AbortSignal): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/resume/extract-text`, {
+    method: 'POST',
+    body: formData,
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(errorData.detail || 'Failed to extract text from file');
+  }
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.error || 'Unknown error during text extraction');
+  }
+
+  return result.data;
+}

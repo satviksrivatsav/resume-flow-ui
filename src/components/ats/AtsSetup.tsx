@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
-import { Briefcase, CloudUpload, Database, X } from 'lucide-react';
+import { Briefcase, CloudUpload, Database, Loader2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-
+import { toast } from 'sonner';
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAtsStore } from '@/stores/atsStore';
+import { extractTextFromFile } from '@/lib/atsApi';
 import { ResumeSelectionModal } from './ResumeSelectionModal';
 
 interface AtsSetupProps {
@@ -47,6 +48,7 @@ export function AtsSetup({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
+  const [isExtractingJd, setIsExtractingJd] = useState(false);
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -71,10 +73,22 @@ export function AtsSetup({
     }
   };
 
-  const handleJdFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setJdFile(file);
+      try {
+        setIsExtractingJd(true);
+        setJdFile(file);
+        const text = await extractTextFromFile(file);
+        setJdText(text);
+        toast.success('Job description extracted from file');
+      } catch (err: any) {
+        console.error('JD extraction failed:', err);
+        toast.error(err.message || 'Failed to extract text from JD file');
+        setJdFile(null);
+      } finally {
+        setIsExtractingJd(false);
+      }
     }
   };
 
@@ -196,17 +210,23 @@ export function AtsSetup({
           <div className="relative">
             <Textarea
               placeholder={
-                jdFile ? 'Remove uploaded file to type manually...' : 'Paste the job description here...'
+                isExtractingJd 
+                  ? 'Extracting text from file...' 
+                  : jdFile 
+                    ? 'Remove uploaded file to type manually...' 
+                    : 'Paste the job description here...'
               }
               className={`min-h-[160px] resize-none bg-background border-border/50 rounded-[2rem] p-6 focus:ring-primary/20 transition-all text-sm leading-relaxed scrollbar-hide ${
-                jdFile ? 'opacity-50 cursor-not-allowed' : ''
+                jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
-              disabled={!!jdFile}
+              disabled={!!jdFile || isExtractingJd}
             />
-            {jdFile && (
-              <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none" />
+            {(jdFile || isExtractingJd) && (
+              <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none flex items-center justify-center">
+                {isExtractingJd && <Loader2 className="w-8 h-8 animate-spin text-primary/40" />}
+              </div>
             )}
           </div>
  
@@ -214,11 +234,11 @@ export function AtsSetup({
             <label
               htmlFor="jd-file-upload"
               className={`inline-flex items-center gap-2 px-5 h-full bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all uppercase tracking-wider ${
-                jdFile ? 'opacity-50 cursor-not-allowed' : 'hover:text-foreground hover:border-primary/30 cursor-pointer active:scale-[0.98]'
+                jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : 'hover:text-foreground hover:border-primary/30 cursor-pointer active:scale-[0.98]'
               }`}
             >
-              <CloudUpload className="w-3.5 h-3.5" />
-              Upload JD File
+              {isExtractingJd ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CloudUpload className="w-3.5 h-3.5" />}
+              {isExtractingJd ? 'Extracting...' : 'Upload JD File'}
             </label>
             <input
               id="jd-file-upload"

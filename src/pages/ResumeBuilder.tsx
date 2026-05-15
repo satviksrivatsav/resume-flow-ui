@@ -392,7 +392,7 @@ const ResumeBuilder = () => {
                   ref={previewPanelRef}
                   className="hidden lg:flex flex-col flex-1 h-full bg-muted/30 border-l overflow-y-auto custom-scrollbar relative group/preview"
                 >
-                  <div className="sticky top-[var(--header-height)] z-30 flex justify-center w-full pointer-events-none mb-4">
+                  <div className="sticky top-[calc(var(--header-height)+1.5rem)] z-30 flex justify-center w-full pointer-events-none mb-4">
                     <motion.div
                       initial={{ y: -20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}

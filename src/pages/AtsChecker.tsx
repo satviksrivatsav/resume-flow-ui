@@ -9,7 +9,7 @@ import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
-import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
+import { analyzeResumeAts, analyzeResumeJsonAts, extractTextFromFile } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import { useAtsStore } from '@/stores/atsStore';

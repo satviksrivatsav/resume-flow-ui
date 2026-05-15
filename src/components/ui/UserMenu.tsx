@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useSidebar } from '@/components/ui/sidebar-context';
+import { cn } from '@/lib/utils';
 
 import { useAuthStore } from '@/stores/authStore';
 
@@ -73,14 +74,37 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative rounded-full h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 p-0"
+          className={cn(
+            'relative flex items-center transition-all duration-300 rounded-full',
+            state === 'expanded'
+              ? 'w-full justify-start gap-3 px-2 h-12 hover:bg-primary/5'
+              : 'h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 justify-center p-0',
+          )}
         >
-          <Avatar className="h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8 border border-border/50 shrink-0">
+          <Avatar
+            className={cn(
+              'border border-border/50 shrink-0 transition-all duration-300',
+              state === 'expanded'
+                ? 'h-9 w-9'
+                : 'h-10 w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8',
+            )}
+          >
             <AvatarImage src={userAvatar} alt={userName} />
             <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs group-data-[collapsible=icon]:text-[10px] uppercase">
               {initials}
             </AvatarFallback>
           </Avatar>
+
+          {state === 'expanded' && (
+            <div className="flex flex-col items-start min-w-0 flex-1 overflow-hidden">
+              <span className="text-sm font-semibold truncate w-full text-foreground text-left">
+                {userName}
+              </span>
+              <span className="text-[10px] text-muted-foreground truncate w-full text-left">
+                {userEmail}
+              </span>
+            </div>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

@@ -43,6 +43,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { UnsavedChangesModal } from './UnsavedChangesModal';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -254,10 +255,57 @@ const SortableMenuItem = ({
 export const ResumeSidebar = () => {
   const { state } = useSidebar();
   const { activeTab, setActiveTab } = useUiStore();
-  const { resumeData, addCustomSection, reorderSections } = useResumeStore();
+  const {
+    resumeData,
+    addCustomSection,
+    reorderSections,
+    lastSavedData,
+    resetResume,
+    saveResume,
+  } = useResumeStore();
   const navigate = useNavigate();
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState('');
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+
+  const handleBackToDashboard = () => {
+    const isNew = !resumeData.id;
+    const currentDataStr = JSON.stringify(resumeData);
+    const isUnchanged = currentDataStr === lastSavedData;
+
+    // Check if it's a completely empty new resume (no name, no content)
+    const hasNoContent =
+      isNew &&
+      resumeData.basics.name === '' &&
+      resumeData.basics.email === '' &&
+      resumeData.summary.content === '' &&
+      resumeData.sections.experience.items.length === 0 &&
+      resumeData.sections.education.items.length === 0;
+
+    if (isUnchanged || hasNoContent) {
+      if (hasNoContent) resetResume();
+      setActiveTab('personal');
+      navigate('/dashboard');
+      return;
+    }
+
+    setShowUnsavedModal(true);
+  };
+
+  const handleSaveAndExit = async () => {
+    await saveResume();
+    setShowUnsavedModal(false);
+    setActiveTab('personal');
+    navigate('/dashboard');
+  };
+
+  const handleExitWithoutSave = () => {
+    setShowUnsavedModal(false);
+    // Clear all unsaved changes from the local store
+    resetResume();
+    setActiveTab('personal');
+    navigate('/dashboard');
+  };
 
   // Build the ordered list of draggable section IDs (personal is always pinned — excluded here)
   const storedOrder: string[] = resumeData.metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -305,7 +353,7 @@ export const ResumeSidebar = () => {
           <NavItemWrapper className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
               variant="ghost"
-              onClick={() => navigate('/dashboard')}
+              onClick={handleBackToDashboard}
               className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
               title="Back to Dashboard"
             >
@@ -445,43 +493,6 @@ export const ResumeSidebar = () => {
               </NavItemWrapper>
 
               <div className="my-2 border-t border-border/50" />
-
-              {/* Settings — fixed, not sortable */}
-              {(() => {
-                const isActive = activeTab === 'settings';
-                return (
-                  <NavItemWrapper>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        isActive={isActive}
-                        onClick={() => setActiveTab('settings')}
-                        tooltip="Resume Settings"
-                        className={cn(
-                          'transition-all duration-200 h-10 px-4',
-                          isActive
-                            ? 'bg-primary/10 text-primary font-semibold'
-                            : 'hover:bg-accent text-muted-foreground hover:text-foreground',
-                        )}
-                      >
-                        <motion.span
-                          variants={iconVariants.settings}
-                          initial={false}
-                          className="mr-2 inline-flex items-center justify-center"
-                          style={{ display: 'inline-flex' }}
-                        >
-                          <Settings
-                            className={cn(
-                              'w-4 h-4 transition-colors duration-200',
-                              isActive ? 'text-primary' : '',
-                            )}
-                          />
-                        </motion.span>
-                        <span className="truncate">Resume Settings</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </NavItemWrapper>
-                );
-              })()}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -490,16 +501,24 @@ export const ResumeSidebar = () => {
           <NavItemWrapper>
             <Button
               variant="outline"
+              onClick={() => setActiveTab('settings')}
+              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
+            >
+              <AnimatedIcon icon={Settings} preset="spinCW" className="w-4 h-4" />
+              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">
+                Resume Settings
+              </span>
+            </Button>
+          </NavItemWrapper>
+
+          <NavItemWrapper>
+            <Button
+              variant="outline"
               onClick={() => setActiveTab('tailor')}
-              className={cn(
-                'w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0 transition-all duration-300',
-                activeTab === 'tailor'
-                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]'
-                  : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10',
-              )}
+              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
             >
               <AnimatedIcon icon={Sparkles} preset="sparkle" className="w-4 h-4" />
-              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap font-semibold">
+              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">
                 Tailor Resume
               </span>
             </Button>
@@ -521,7 +540,7 @@ export const ResumeSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2 border-t">
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-start w-full">
           <UserMenu />
         </div>
       </SidebarFooter>
@@ -555,6 +574,12 @@ export const ResumeSidebar = () => {
           </form>
         </DialogContent>
       </Dialog>
+      <UnsavedChangesModal
+        isOpen={showUnsavedModal}
+        onClose={() => setShowUnsavedModal(false)}
+        onSaveAndExit={handleSaveAndExit}
+        onExitWithoutSave={handleExitWithoutSave}
+      />
     </Sidebar>
   );
 };

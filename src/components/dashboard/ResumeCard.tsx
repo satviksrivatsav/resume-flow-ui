@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/lib/supabase';
 import { useResumeStore } from '@/stores/resumeStore';
+import { useUiStore } from '@/stores/uiStore';
 import { sanitizeResumeData } from '@/lib/utils';
 import { ResumeData } from '@/types/resume';
 
@@ -232,6 +233,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 
       <DeleteSectionModal
         isOpen={showDeleteModal}
+        title="Delete Resume"
         sectionName={resume.name}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={() => {
@@ -246,9 +248,11 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
 export function CreateNewCard() {
   const navigate = useNavigate();
   const { resetResume } = useResumeStore();
+  const { setActiveTab } = useUiStore();
 
   const handleCreate = () => {
     resetResume();
+    setActiveTab('personal');
     sessionStorage.removeItem('rf-anonymous-resume');
     navigate('/resume-builder');
   };
