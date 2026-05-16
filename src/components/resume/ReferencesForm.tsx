@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Mail, Phone, Plus, User, Users } from 'lucide-react';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -107,11 +109,21 @@ export const ReferencesForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <Label className="font-medium">Summary / Context</Label>
-                  <Textarea
-                    value={ref.description}
-                    onChange={(e) =>
-                      updateItem('references', ref.id, { description: e.target.value })
+                  <div className="flex items-center justify-between">
+                    <Label className="font-medium">Summary / Context</Label>
+                    <AIWriterButton
+                      fieldName="references"
+                      fieldLabel="Reference"
+                      fieldValue={ref.description || ''}
+                      onUpdate={(newText) =>
+                        updateItem('references', ref.id, { description: newText })
+                      }
+                    />
+                  </div>
+                  <RichTextEditor
+                    value={ref.description || ''}
+                    onChange={(value) =>
+                      updateItem('references', ref.id, { description: value })
                     }
                     placeholder="Briefly describe how you worked together or what they can speak to."
                     className="min-h-[80px]"

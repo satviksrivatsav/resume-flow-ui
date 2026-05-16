@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronDown, ChevronUp, GraduationCap, Plus } from 'lucide-react';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -181,9 +182,19 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="md:col-span-2 space-y-3">
-                          <Label className="text-sm font-semibold">
-                            Description / Achievements
-                          </Label>
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm font-semibold">
+                              Description / Achievements
+                            </Label>
+                            <AIWriterButton
+                              fieldName="education"
+                              fieldLabel="Education Description"
+                              fieldValue={edu.description || ''}
+                              onUpdate={(newText) =>
+                                updateEducation(edu.id, { description: newText })
+                              }
+                            />
+                          </div>
                           <RichTextEditor
                             value={edu.description || ''}
                             onChange={(value) =>

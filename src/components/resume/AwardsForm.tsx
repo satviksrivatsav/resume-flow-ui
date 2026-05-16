@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, Plus, Trophy } from 'lucide-react';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,7 +92,17 @@ export const AwardsForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <Label className="font-medium">Description</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="font-medium">Description</Label>
+                    <AIWriterButton
+                      fieldName="awards"
+                      fieldLabel="Award"
+                      fieldValue={award.description || ''}
+                      onUpdate={(newText) =>
+                        updateItem('awards', award.id, { description: newText })
+                      }
+                    />
+                  </div>
                   <RichTextEditor
                     value={award.description || ''}
                     onChange={(value) =>

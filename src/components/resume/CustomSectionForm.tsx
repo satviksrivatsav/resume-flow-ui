@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, Trash2 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -92,10 +94,18 @@ export const CustomSectionForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Description</Label>
-                  <Textarea
-                    value={item.description}
-                    onChange={(e) => handleUpdateItem(item.id, { description: e.target.value })}
+                  <div className="flex items-center justify-between">
+                    <Label className="font-medium">Description</Label>
+                    <AIWriterButton
+                      fieldName="custom"
+                      fieldLabel={section.name}
+                      fieldValue={item.description || ''}
+                      onUpdate={(newText) => handleUpdateItem(item.id, { description: newText })}
+                    />
+                  </div>
+                  <RichTextEditor
+                    value={item.description || ''}
+                    onChange={(value) => handleUpdateItem(item.id, { description: value })}
                     placeholder="Describe this item in detail..."
                     className="min-h-[100px]"
                   />

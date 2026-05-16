@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, HandHelping, Link as LinkIcon, MapPin, Plus } from 'lucide-react';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -133,7 +134,17 @@ export const VolunteerForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <Label className="font-medium">Description</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="font-medium">Description</Label>
+                    <AIWriterButton
+                      fieldName="volunteer"
+                      fieldLabel="Volunteer Experience"
+                      fieldValue={vol.description || ''}
+                      onUpdate={(newText) =>
+                        updateItem('volunteer', vol.id, { description: newText })
+                      }
+                    />
+                  </div>
                   <RichTextEditor
                     value={vol.description || ''}
                     onChange={(value) =>

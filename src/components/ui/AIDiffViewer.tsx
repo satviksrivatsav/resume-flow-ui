@@ -141,15 +141,10 @@ export function AIDiffViewer({
                 onHoverEnd={() => setRejectHovered(false)}
               >
                 <Button
-                  variant={decision === 'reject' ? 'destructive' : 'outline'}
+                  variant="destructive"
                   size="lg"
                   onClick={onReject}
-                  className={cn(
-                    'gap-2 rounded-full px-6 h-12 transition-all duration-300',
-                    decision === 'reject'
-                      ? 'border-destructive bg-destructive/10'
-                      : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
-                  )}
+                  className="gap-2 rounded-full px-6 h-12 transition-all duration-300 bg-destructive hover:bg-destructive/90 text-white border-none"
                 >
                   <DrawableX draw={rejectHovered} />
                   Reject
@@ -164,12 +159,7 @@ export function AIDiffViewer({
                 <Button
                   size="lg"
                   onClick={onAccept}
-                  className={cn(
-                    'gap-2 rounded-full px-6 h-12 transition-all duration-300',
-                    decision === 'accept'
-                      ? 'bg-green-600 hover:bg-green-700 text-white border-0'
-                      : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
-                  )}
+                  className="gap-2 rounded-full px-6 h-12 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white border-none"
                 >
                   <DrawableCheck draw={acceptHovered} />
                   Accept
