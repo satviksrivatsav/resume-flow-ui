@@ -452,13 +452,11 @@ export const ResumeSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </NavItemWrapper>
-
-              <div className="my-2 border-t border-border/50" />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto px-4 pb-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:pb-2 space-y-2">
+        <div className="mt-auto px-4 py-4 border-t border-border/50 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-2 space-y-4 group-data-[collapsible=icon]:space-y-2">
           <NavItemWrapper>
             <Button
               variant="outline"

@@ -114,11 +114,11 @@ export function AIDiffViewer({
   return (
     <div className="flex flex-col h-full bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-sm transition-all duration-300">
       {/* Header with Title */}
-      <div className="p-8 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
-        <div className="space-y-1.5">
+      <div className="px-8 py-5 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-            <h3 className="text-2xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
+            <h3 className="text-xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
           </div>
           {infoTip && (
             <div className="flex items-center gap-1.5 opacity-60">
@@ -181,20 +181,20 @@ export function AIDiffViewer({
       </div>
 
       <div className={cn(
-        "flex-1 grid grid-cols-1 min-h-[400px] max-h-[60vh] overflow-hidden",
+        "flex-1 grid grid-cols-1 h-[500px] md:h-[600px] max-h-[60vh] overflow-hidden",
         isDiffMode ? "lg:grid-cols-2 divide-x divide-primary/10" : "lg:grid-cols-1"
       )}>
 
         {/* Original Text */}
         {isDiffMode && (
-          <div className="flex flex-col relative group/original overflow-y-auto custom-scrollbar">
-            <div className="p-8 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/original:opacity-100 transition-opacity">
+          <div className="flex flex-col relative group/original overflow-y-auto custom-scrollbar min-h-0">
+            <div className="p-6 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/original:opacity-100 transition-opacity">
               <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
                 Original
               </span>
             </div>
             <div className={cn(
-              "flex-1 p-8 pt-6 text-[14px] leading-[1.8] text-muted-foreground/80",
+              "flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-muted-foreground/80",
               typeof originalText === 'string' && "whitespace-pre-wrap"
             )}>
               {originalText || <span className="italic opacity-50">No original content</span>}
@@ -204,8 +204,8 @@ export function AIDiffViewer({
 
 
         {/* Tailored Text */}
-        <div className="flex flex-col relative bg-primary/[0.02] group/tailored overflow-y-auto custom-scrollbar">
-          <div className="p-8 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/tailored:opacity-100 transition-opacity">
+        <div className="flex flex-col relative bg-primary/[0.02] group/tailored overflow-y-auto custom-scrollbar min-h-0">
+          <div className="p-6 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/tailored:opacity-100 transition-opacity">
             <div className="flex items-center justify-between w-full">
               <div /> {/* Spacer for centering */}
               <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-primary">
@@ -226,7 +226,7 @@ export function AIDiffViewer({
             </div>
           </div>
           <div className={cn(
-            "flex-1 p-8 pt-6 text-[14px] leading-[1.8] text-foreground font-normal",
+            "flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-foreground font-normal",
             typeof newText === 'string' && "whitespace-pre-wrap"
           )}>
 
@@ -255,7 +255,7 @@ export function AIDiffViewer({
 
 
       {footer && (
-        <div className="p-8 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
+        <div className="px-8 py-5 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
           {footer}
         </div>
       )}

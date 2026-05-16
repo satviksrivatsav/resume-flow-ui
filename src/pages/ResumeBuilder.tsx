@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowLeft,
   Maximize2,
   MoveHorizontal,
   MoveVertical,
@@ -30,7 +29,7 @@ import { ResumePreview } from '@/components/resume/ResumePreview';
 import { ResumeSettings } from '@/components/resume/ResumeSettings';
 import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
 import { SkillsForm } from '@/components/resume/SkillsForm';
-import { TailorDiffView } from '@/components/resume/TailorDiffView';
+import { TailorDiffModal } from '@/components/resume/TailorDiffModal';
 import { TailorForm } from '@/components/resume/TailorForm';
 import { UnsavedChangesModal } from '@/components/resume/UnsavedChangesModal';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
@@ -245,7 +244,8 @@ const ResumeBuilder = () => {
   };
 
   const handleApplyTailoring = useCallback(() => {
-    tailoredSlides.forEach((slide) => {
+    const slides = useTailorStore.getState().tailoredSlides;
+    slides.forEach((slide) => {
       if (slide.decision === 'accept') {
         const { sectionId, tailoredContent, itemIndex, originalContent } = slide;
         
@@ -376,26 +376,7 @@ const ResumeBuilder = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
-                    {activeTab === 'tailor' && tailorViewMode === 'diff' && (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="mb-2"
-                      >
-                        <Button
-                          variant="ghost"
-                          onClick={() => setShowTailorBackModal(true)}
-                          className="gap-2 rounded-full px-4 h-10 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-all group"
-                        >
-                          <AnimatedIcon
-                            icon={ArrowLeft}
-                            preset="slideLeft"
-                            className="w-4 h-4"
-                          />
-                          Back
-                        </Button>
-                      </motion.div>
-                    )}
+
                     <div className="flex items-end justify-between">
                       <div className="space-y-1">
                         <h2 className="text-2xl font-bold tracking-tight">
@@ -466,11 +447,7 @@ const ResumeBuilder = () => {
                       </TabsContent>
 
                       <TabsContent value="tailor">
-                        {tailorViewMode === 'form' ? (
-                          <TailorForm />
-                        ) : (
-                          <TailorDiffView onApply={handleApplyTailoring} />
-                        )}
+                        {tailorViewMode === 'form' && <TailorForm />}
                       </TabsContent>
 
                       {/* Dynamic Custom Sections Content */}
@@ -671,6 +648,10 @@ const ResumeBuilder = () => {
         </AnimatePresence>
         <AIInstructionModal />
         <AIReviewModal />
+        <TailorDiffModal 
+          onApply={handleApplyTailoring} 
+          onDiscard={() => setShowTailorBackModal(true)}
+        />
         <AILoadingModal
           isOpen={isAIWriterLoading}
           onCancel={cancelAIWriterRequest}
