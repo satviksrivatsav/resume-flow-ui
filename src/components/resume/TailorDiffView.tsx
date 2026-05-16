@@ -11,7 +11,7 @@ import { useTailorStore } from '@/stores/tailorStore';
 import { formatSectionContent } from '@/utils/formatters';
 
 export const TailorDiffView = () => {
-  const { tailoredSections, updateDecision, setViewMode, reset } = useTailorStore();
+  const { tailoredSections, updateDecision, updateTailoredContent, setViewMode, reset } = useTailorStore();
   const { resumeData, updateSummary, updateSection, updateCustomSection, setResumeData } =
     useResumeStore();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -131,7 +131,7 @@ export const TailorDiffView = () => {
       <div className="min-h-0">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentSection.sectionId}
+            key={currentIndex} // Use index instead of ID to stabilize during content edits
             initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.02, y: -10 }}

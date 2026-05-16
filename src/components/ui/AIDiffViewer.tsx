@@ -92,12 +92,12 @@ export function AIDiffViewer({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Sync local text and reset editing state when section changes
+  // CRITICAL: We only sync if NOT editing to prevent keystroke feedback loops
   useEffect(() => {
-    if (typeof newText === 'string') {
+    if (typeof newText === 'string' && !isEditing) {
       setLocalText(newText);
-      setIsEditing(false);
     }
-  }, [newText]);
+  }, [newText, isEditing]);
 
   // Handle auto-resize
   useEffect(() => {
@@ -108,13 +108,13 @@ export function AIDiffViewer({
   }, [localText, isEditable, isEditing]);
 
   return (
-    <div className="flex flex-col bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 shadow-sm transition-all duration-300">
+    <div className="flex flex-col h-full bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-sm transition-all duration-300">
       {/* Header with Title */}
-      <div className="px-8 py-6 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
+      <div className="p-8 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-            <h3 className="text-xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
+            <h3 className="text-2xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
           </div>
           {infoTip && (
             <div className="flex items-center gap-1.5 opacity-60">
@@ -130,7 +130,7 @@ export function AIDiffViewer({
           {rightElement}
 
           {showActions && (
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <motion.div
                 whileTap={{ scale: 0.95 }}
                 onHoverStart={() => setRejectHovered(true)}
@@ -138,9 +138,10 @@ export function AIDiffViewer({
               >
                 <Button
                   variant={decision === 'reject' ? 'destructive' : 'outline'}
+                  size="lg"
                   onClick={onReject}
                   className={cn(
-                    'gap-2 rounded-full px-5 h-10 text-xs font-bold transition-all duration-300',
+                    'gap-2 rounded-full px-6 h-12 transition-all duration-300',
                     decision === 'reject'
                       ? 'border-destructive bg-destructive/10'
                       : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
@@ -157,9 +158,10 @@ export function AIDiffViewer({
                 onHoverEnd={() => setAcceptHovered(false)}
               >
                 <Button
+                  size="lg"
                   onClick={onAccept}
                   className={cn(
-                    'gap-2 rounded-full px-5 h-10 text-xs font-bold transition-all duration-300',
+                    'gap-2 rounded-full px-6 h-12 transition-all duration-300',
                     decision === 'accept'
                       ? 'bg-green-600 hover:bg-green-700 text-white border-0'
                       : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
@@ -174,7 +176,7 @@ export function AIDiffViewer({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-x divide-primary/10">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 min-h-0 divide-x divide-primary/10">
         {/* Original Text */}
         <div className="flex flex-col relative group/original min-h-[300px]">
           <div className="absolute top-6 left-8 flex items-center gap-2 pointer-events-none opacity-40 group-hover/original:opacity-100 transition-opacity">
@@ -208,19 +210,20 @@ export function AIDiffViewer({
           </div>
           <div className="flex-1 p-8 pt-16 text-[14px] leading-[1.8] text-foreground font-medium whitespace-pre-wrap">
             {isEditable && isEditing ? (
-              <textarea
-                ref={textareaRef}
-                autoFocus
-                className="w-full min-h-[200px] bg-transparent border-none focus:ring-0 resize-none outline-none p-0 custom-scrollbar scrollbar-hide text-[14px] leading-[1.8] font-medium overflow-hidden"
-                value={localText}
-                onChange={(e) => {
-                  setLocalText(e.target.value);
-                  onNewTextChange?.(e.target.value);
-                }}
-                onBlur={() => setIsEditing(false)}
-                placeholder="Type to edit the tailored version..."
-                spellCheck={false}
-              />
+              <div className="flex flex-col gap-2">
+                <textarea
+                  ref={textareaRef}
+                  autoFocus
+                  className="w-full min-h-[200px] bg-transparent border-none focus:ring-0 resize-none outline-none p-0 custom-scrollbar scrollbar-hide text-[14px] leading-[1.8] font-medium overflow-hidden"
+                  value={localText}
+                  onChange={(e) => {
+                    setLocalText(e.target.value);
+                    onNewTextChange?.(e.target.value);
+                  }}
+                  placeholder="Type to edit the tailored version..."
+                  spellCheck={false}
+                />
+              </div>
             ) : (
               newText || <span className="italic opacity-50">No content generated</span>
             )}
@@ -229,7 +232,7 @@ export function AIDiffViewer({
       </div>
 
       {footer && (
-        <div className="p-6 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
+        <div className="p-8 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
           {footer}
         </div>
       )}
