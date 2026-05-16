@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { AIDiffViewer, DrawableCheck, DrawableX } from '@/components/ui/AIDiffViewer';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -83,14 +84,16 @@ export const TailorDiffView = () => {
   return (
     <div className="flex flex-col h-full space-y-6 animate-in fade-in zoom-in-95 duration-500 pb-20">
       <div className="flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={() => setViewMode('form')}
-          className="gap-2 rounded-full px-5 h-10 text-muted-foreground hover:text-foreground transition-all group"
-        >
-          <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          Back to JD
-        </Button>
+        <motion.div whileHover="hover" whileTap="tap">
+          <Button
+            variant="ghost"
+            onClick={() => setViewMode('form')}
+            className="gap-2 rounded-full px-5 h-10 text-muted-foreground hover:text-foreground transition-all"
+          >
+            <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
+            Back to JD
+          </Button>
+        </motion.div>
         <div className="flex items-center gap-3">
           <div className="flex gap-1.5">
             {tailoredSections.map((_, i) => (
@@ -101,7 +104,7 @@ export const TailorDiffView = () => {
                   width: i === currentIndex ? 24 : 8,
                   backgroundColor:
                     i === currentIndex
-                      ? 'var(--primary)'
+                      ? '#ffffff'
                       : tailoredSections[i].decision === 'accept'
                         ? '#22c55e'
                         : tailoredSections[i].decision === 'reject'

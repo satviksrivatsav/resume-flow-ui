@@ -8,6 +8,7 @@ import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
 import { AtsSetup } from '@/components/ats/AtsSetup';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { AILoader } from '@/components/ui/AILoader';
 import { Button } from '@/components/ui/button';
 import { analyzeResumeAts, analyzeResumeJsonAts, extractTextFromFile } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
@@ -382,7 +383,7 @@ export default function AtsChecker() {
               </motion.div>
             ) : (
               <div className="flex-1 flex items-center justify-center h-full min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-primary/40" />
+                <AILoader message="Preparing your analysis report..." size="lg" />
               </div>
             )
           )}

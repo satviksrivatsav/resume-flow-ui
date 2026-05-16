@@ -20,7 +20,9 @@ export function AILoader({ message, size = 'md' }: AILoaderProps) {
         <Lottie animationData={aiSearchAnimation} loop={true} />
       </div>
       {message && (
-        <p className="text-sm text-muted-foreground font-medium animate-pulse">{message}</p>
+        <p className="text-sm text-muted-foreground font-medium animate-pulse text-center max-w-[280px]">
+          {message}
+        </p>
       )}
     </div>
   );

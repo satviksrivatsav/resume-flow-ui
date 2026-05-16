@@ -34,7 +34,6 @@ import {
   Settings,
   Sparkles,
   Trophy,
-  Upload,
   User,
   Users,
   Wrench,
@@ -514,25 +513,13 @@ export const ResumeSidebar = () => {
               onClick={() => setActiveTab('tailor')}
               className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
             >
-              <AnimatedIcon icon={Sparkles} preset="sparkle" className="w-4 h-4" />
+              <AnimatedIcon icon={Sparkles} preset="portal" className="w-4 h-4" />
               <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">
                 Tailor Resume
               </span>
             </Button>
           </NavItemWrapper>
 
-          <NavItemWrapper>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/upload')}
-              className="w-full justify-center gap-2 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
-            >
-              <AnimatedIcon icon={Upload} preset="bounceUp" className="w-4 h-4" />
-              <span className="group-data-[collapsible=icon]:hidden whitespace-nowrap">
-                Upload Resume
-              </span>
-            </Button>
-          </NavItemWrapper>
         </div>
       </SidebarContent>
 

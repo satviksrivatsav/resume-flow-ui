@@ -224,9 +224,7 @@ export function AtsSetup({
               disabled={!!jdFile || isExtractingJd}
             />
             {(jdFile || isExtractingJd) && (
-              <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none flex items-center justify-center">
-                {isExtractingJd && <Loader2 className="w-8 h-8 animate-spin text-primary/40" />}
-              </div>
+              <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none flex items-center justify-center" />
             )}
           </div>
  
@@ -294,10 +292,14 @@ export function AtsSetup({
       />
  
       <AILoadingModal
-        isOpen={isAnalyzing}
+        isOpen={isAnalyzing || isExtractingJd}
         onCancel={onCancel}
-        message="Analyzing your resume against the JD..."
-        title="ATS Analysis"
+        message={
+          isExtractingJd 
+            ? "Extracting job description content with AI..." 
+            : "Analyzing your resume against the JD..."
+        }
+        title={isExtractingJd ? "JD Extractor" : "ATS Analysis"}
       />
     </>
   );

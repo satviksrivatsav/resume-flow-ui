@@ -40,6 +40,7 @@ export const TailorForm = () => {
   const handleCancel = () => {
     abortControllerRef.current?.abort();
     setIsTailoring(false);
+    setIsExtractingJd(false);
   };
 
   const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,12 +115,9 @@ export const TailorForm = () => {
     if (allSelected && !tailorEntire) {
       setTailorEntire(true);
     } else if (!allSelected && tailorEntire) {
-      // If the user unselected something while "entire" was on,
-      // we already handle that in handleToggleSection,
-      // but this effect keeps it robust.
       setTailorEntire(false);
     }
-  }, [sectionsToTailor, availableSections, tailorEntire, setSectionsToTailor]);
+  }, [sectionsToTailor, availableSections, tailorEntire]);
 
   const handleToggleSection = (id: string) => {
     const isCurrentlySelected = sectionsToTailor.includes(id);
@@ -132,9 +130,6 @@ export const TailorForm = () => {
     }
 
     setSectionsToTailor(newSections);
-
-    // If we just enabled the last remaining section, the effect will handle tailorEntire.
-    // If we just disabled a section while tailorEntire was true, the effect handles it.
   };
 
   const handleToggleEntire = (checked: boolean) => {
@@ -142,8 +137,6 @@ export const TailorForm = () => {
     if (checked) {
       setSectionsToTailor(availableSections.map((s) => s.id));
     } else {
-      // User turned off "Tailor Entire Resume", so we reset/clear the selections
-      // as requested to allow for a clean start.
       setSectionsToTailor([]);
     }
   };
@@ -259,9 +252,7 @@ export const TailorForm = () => {
             disabled={isExtractingJd || isTailoring}
           />
           {isExtractingJd && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <Loader2 className="w-10 h-10 animate-spin text-primary/40" />
-            </div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" />
           )}
           {jdFile && !isExtractingJd && (
             <div className="absolute top-6 right-6 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
@@ -272,8 +263,6 @@ export const TailorForm = () => {
       </div>
 
       <div className="space-y-4">
-
-
         <div className="space-y-6">
           <div
             className="flex items-center justify-between px-4 py-2 transition-all cursor-pointer group"
@@ -370,17 +359,22 @@ export const TailorForm = () => {
             onClick={handleTailor}
             disabled={isTailoring || !jobDescription.trim()}
           >
-            <AnimatedIcon icon={Sparkles} preset="sparkle" className="w-6 h-6" />
+            <AnimatedIcon icon={Sparkles} preset="portal" className="w-6 h-6" />
             Tailor Resume Now
           </Button>
         </motion.div>
       </div>
 
+      {/* Loading Modal for Tailoring or JD Extraction */}
       <AILoadingModal
-        isOpen={isTailoring}
+        isOpen={isTailoring || isExtractingJd}
         onCancel={handleCancel}
-        message="Tailoring your resume sections for the job description..."
-        title="AI Tailor"
+        message={
+          isExtractingJd 
+            ? "Extracting job description content with AI..." 
+            : "Tailoring your resume sections for the job description..."
+        }
+        title={isExtractingJd ? "JD Extractor" : "AI Tailor"}
       />
     </div>
   );
