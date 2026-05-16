@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ChevronDown, CloudUpload, FileText, Loader2, Sparkles, X } from 'lucide-react';
+import { AlertCircle, ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 

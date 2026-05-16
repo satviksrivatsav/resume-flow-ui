@@ -74,67 +74,65 @@ export default function SettingsPage() {
           </div>
         </header>
 
-        <div className="space-y-6">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/50 p-8 rounded-[2rem] shadow-sm space-y-6">
-            <div className="grid gap-2">
-              <Label htmlFor="theme" className="text-sm font-bold px-1">
-                Appearance Theme
-              </Label>
-              <Select value={selectedTheme} onValueChange={handleThemeChange}>
-                <SelectTrigger
-                  id="theme"
-                  className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-                >
-                  <SelectValue placeholder="Select theme" />
-                </SelectTrigger>
-                <SelectContent className="rounded-[1.5rem] border-border/50 backdrop-blur-xl">
-                  <SelectItem value="light" className="rounded-full">
-                    Light
-                  </SelectItem>
-                  <SelectItem value="dark" className="rounded-full">
-                    Dark
-                  </SelectItem>
-                  <SelectItem value="system" className="rounded-full">
-                    System
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-[11px] text-muted-foreground px-1 italic">
-                Choose between light, dark, or follow your system preference.
-              </p>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="language" className="text-sm font-bold px-1">
-                Interface Language
-              </Label>
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger
-                  id="language"
-                  className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-                >
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent className="rounded-[1.5rem] border-border/50 backdrop-blur-xl">
-                  <SelectItem value="en" className="rounded-full">
-                    English
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-[11px] text-muted-foreground px-1 italic">
-                Select your preferred language for the application interface.
-              </p>
-            </div>
-
-            <div className="pt-4">
-              <Button
-                onClick={handleSave}
-                className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98]"
-                disabled={isLoading || !hasChanges}
+        <div className="space-y-8">
+          <div className="grid gap-2">
+            <Label htmlFor="theme" className="text-sm font-bold px-1">
+              Appearance Theme
+            </Label>
+            <Select value={selectedTheme} onValueChange={handleThemeChange}>
+              <SelectTrigger
+                id="theme"
+                className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
               >
-                {isLoading ? 'Saving...' : 'Save Changes'}
-              </Button>
-            </div>
+                <SelectValue placeholder="Select theme" />
+              </SelectTrigger>
+              <SelectContent className="rounded-[1.5rem] border-border/50 backdrop-blur-xl">
+                <SelectItem value="light" className="rounded-full">
+                  Light
+                </SelectItem>
+                <SelectItem value="dark" className="rounded-full">
+                  Dark
+                </SelectItem>
+                <SelectItem value="system" className="rounded-full">
+                  System
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground px-1 italic">
+              Choose between light, dark, or follow your system preference.
+            </p>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="language" className="text-sm font-bold px-1">
+              Interface Language
+            </Label>
+            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+              <SelectTrigger
+                id="language"
+                className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
+              >
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent className="rounded-[1.5rem] border-border/50 backdrop-blur-xl">
+                <SelectItem value="en" className="rounded-full">
+                  English
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground px-1 italic">
+              Select your preferred language for the application interface.
+            </p>
+          </div>
+
+          <div className="pt-4">
+            <Button
+              onClick={handleSave}
+              className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98]"
+              disabled={isLoading || !hasChanges}
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </Button>
           </div>
         </div>
       </div>

@@ -66,63 +66,61 @@ export default function DangerZonePage() {
           </div>
         </header>
 
-        <div className="space-y-6">
-          <div className="bg-destructive/5 backdrop-blur-sm border border-destructive/20 p-8 rounded-[2rem] shadow-sm space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-destructive">
-                <TrashAnimatedIcon className="w-5 h-5" />
-                <h3 className="text-lg font-bold">Delete Account</h3>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Once you delete your account, there is no going back. All your resumes, ATS analysis
-                reports, and personal data will be wiped from our servers immediately.
-              </p>
+        <div className="space-y-12">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-destructive px-1">
+              <TrashAnimatedIcon className="w-5 h-5" />
+              <h3 className="text-lg font-bold">Delete Account</h3>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed px-1">
+              Once you delete your account, there is no going back. All your resumes, ATS analysis
+              reports, and personal data will be wiped from our servers immediately.
+            </p>
 
-              <div className="bg-destructive/10 border border-destructive/20 rounded-full py-3 px-6 flex items-center gap-3">
-                <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-                <p className="text-xs text-destructive font-bold leading-relaxed italic">
-                  Note: To delete your account, you need to enter the confirmation text below.
-                </p>
-              </div>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-full py-3 px-6 flex items-center gap-3">
+              <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+              <p className="text-xs text-destructive font-bold leading-relaxed italic">
+                Note: To delete your account, you need to enter the confirmation text below.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="confirmation" className="text-sm font-bold px-1">
+                Please type{' '}
+                <span className="font-mono font-bold text-destructive underline">delete</span> to
+                confirm
+              </Label>
+              <Input
+                id="confirmation"
+                placeholder="Type 'delete' here..."
+                value={confirmationText}
+                onChange={(e) => setConfirmationText(e.target.value)}
+                className="bg-background border-destructive/20 rounded-full h-10 px-5 focus-visible:ring-destructive/50 focus-visible:border-destructive transition-all font-mono"
+                autoComplete="off"
+              />
             </div>
 
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="confirmation" className="text-sm font-bold px-1">
-                  Please type{' '}
-                  <span className="font-mono font-bold text-destructive underline">delete</span> to
-                  confirm
-                </Label>
-                <Input
-                  id="confirmation"
-                  placeholder="Type 'delete' here..."
-                  value={confirmationText}
-                  onChange={(e) => setConfirmationText(e.target.value)}
-                  className="bg-background border-destructive/20 rounded-full h-10 px-5 focus-visible:ring-destructive/50 focus-visible:border-destructive transition-all font-mono"
-                  autoComplete="off"
-                />
-              </div>
-
-              <div className="pt-2">
-                <MotionButton
-                  onClick={handleDeleteAccountClick}
-                  variant="destructive"
-                  className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98] gap-2 overflow-hidden"
-                  disabled={!isEnabled}
-                  initial="initial"
-                  whileHover={isEnabled ? 'hover' : 'initial'}
-                  whileTap={isEnabled ? 'tap' : 'initial'}
-                >
-                  {isDeleting ? (
-                    'Deleting...'
-                  ) : (
-                    <>
-                      <TrashAnimatedIcon className="w-4 h-4" />
-                      <span>Delete Account</span>
-                    </>
-                  )}
-                </MotionButton>
-              </div>
+            <div className="pt-2">
+              <MotionButton
+                onClick={handleDeleteAccountClick}
+                variant="destructive"
+                className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98] gap-2 overflow-hidden"
+                disabled={!isEnabled}
+                initial="initial"
+                whileHover={isEnabled ? 'hover' : 'initial'}
+                whileTap={isEnabled ? 'tap' : 'initial'}
+              >
+                {isDeleting ? (
+                  'Deleting...'
+                ) : (
+                  <>
+                    <TrashAnimatedIcon className="w-4 h-4" />
+                    <span>Delete Account</span>
+                  </>
+                )}
+              </MotionButton>
             </div>
           </div>
         </div>

@@ -92,77 +92,75 @@ export default function ProfilePage() {
       </header>
 
       <div className="max-w-2xl">
-        <div className="space-y-6">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/50 p-8 rounded-[2rem] shadow-sm space-y-6">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-sm font-bold px-1">
-                Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-              />
-            </div>
+        <div className="space-y-8">
+          <div className="grid gap-2">
+            <Label htmlFor="name" className="text-sm font-bold px-1">
+              Name
+            </Label>
+            <Input
+              id="name"
+              placeholder="Your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
+            />
+          </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="username" className="text-sm font-bold px-1">
-                Username
-              </Label>
-              <Input
-                id="username"
-                placeholder="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-              />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="username" className="text-sm font-bold px-1">
+              Username
+            </Label>
+            <Input
+              id="username"
+              placeholder="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
+            />
+          </div>
 
-            <div className="grid gap-2">
-              <div className="flex items-center justify-between px-1">
-                <Label htmlFor="email" className="text-sm font-bold">
-                  Email Address
-                </Label>
-                {email.trim().toLowerCase() === user?.email?.toLowerCase() ? (
-                  user?.email_confirmed_at ? (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                      Verified
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
-                      Unverified
-                    </span>
-                  )
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between px-1">
+              <Label htmlFor="email" className="text-sm font-bold">
+                Email Address
+              </Label>
+              {email.trim().toLowerCase() === user?.email?.toLowerCase() ? (
+                user?.email_confirmed_at ? (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                    Verified
+                  </span>
                 ) : (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
                     Unverified
                   </span>
-                )}
-              </div>
-              <Input
-                id="email"
-                type="email"
-                placeholder="email@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-              />
-              <p className="text-[11px] text-muted-foreground px-1 italic">
-                Note: Changing your email will require re-verification.
-              </p>
+                )
+              ) : (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
+                  Unverified
+                </span>
+              )}
             </div>
+            <Input
+              id="email"
+              type="email"
+              placeholder="email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
+            />
+            <p className="text-[11px] text-muted-foreground px-1 italic">
+              Note: Changing your email will require re-verification.
+            </p>
+          </div>
 
-            <div className="pt-4">
-              <Button
-                onClick={handleSave}
-                className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98]"
-                disabled={isLoading || !hasChanges}
-              >
-                {isLoading ? 'Saving...' : 'Save Changes'}
-              </Button>
-            </div>
+          <div className="pt-4">
+            <Button
+              onClick={handleSave}
+              className="w-full sm:w-auto min-w-[160px] rounded-full h-10 text-xs font-bold transition-all active:scale-[0.98]"
+              disabled={isLoading || !hasChanges}
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </Button>
           </div>
         </div>
       </div>
