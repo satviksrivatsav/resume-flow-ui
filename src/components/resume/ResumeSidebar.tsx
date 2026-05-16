@@ -41,7 +41,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+import { AnimatedIcon, type AnimatedIconPreset } from '@/components/ui/AnimatedIcon';
 import { UnsavedChangesModal } from './UnsavedChangesModal';
 import { Button } from '@/components/ui/button';
 import {
@@ -74,39 +74,7 @@ import { useUiStore } from '@/stores/uiStore';
 import { DEFAULT_SECTION_ORDER } from '@/types/resume';
 import { getSectionCompletionStatus } from '@/utils/mandatoryFieldValidator';
 
-// Per-icon hover animation variants
-const iconVariants: Record<string, Variants> = {
-  personal: {
-    initial: { y: 0 },
-    hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
-    tap: { y: 0, scale: 0.9 },
-  },
-  experience: {
-    initial: { rotate: 0 },
-    hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
-    tap: { scale: 0.9 },
-  },
-  education: {
-    initial: { rotate: 0 },
-    hover: { rotate: 12, transition: { type: 'spring', stiffness: 300, damping: 8 } },
-    tap: { rotate: 0, scale: 0.9 },
-  },
-  projects: {
-    initial: { scale: 1 },
-    hover: { scale: 1.25, transition: { type: 'spring', stiffness: 400, damping: 10 } },
-    tap: { scale: 0.9 },
-  },
-  skills: {
-    initial: { rotate: 0 },
-    hover: { rotate: 30, transition: { type: 'spring', stiffness: 300, damping: 8 } },
-    tap: { rotate: 0, scale: 0.9 },
-  },
-  settings: {
-    initial: { rotate: 0 },
-    hover: { rotate: 90, transition: { duration: 0.35, ease: 'easeInOut' } },
-    tap: { rotate: 0, scale: 0.9 },
-  },
-};
+
 
 // Helper for one-shot hover animations that must complete before returning to initial state
 const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
@@ -129,18 +97,23 @@ const NavItemWrapper = ({ children, className }: { children: React.ReactNode; cl
 // Metadata for every static section
 
 // Sidebar navigation sections — personal is always pinned at the top separately
-const STATIC_SIDEBAR_SECTIONS = [
-  { id: 'experience', label: 'Work Experience', icon: Briefcase },
-  { id: 'education', label: 'Education', icon: GraduationCap },
-  { id: 'projects', label: 'Projects', icon: FolderGit2 },
-  { id: 'skills', label: 'Skills', icon: Wrench },
-  { id: 'languages', label: 'Languages', icon: Languages },
-  { id: 'interests', label: 'Interests', icon: Heart },
-  { id: 'awards', label: 'Awards', icon: Trophy },
-  { id: 'certifications', label: 'Certifications', icon: Award },
-  { id: 'publications', label: 'Publications', icon: BookOpen },
-  { id: 'volunteer', label: 'Volunteer', icon: HandHelping },
-  { id: 'references', label: 'References', icon: Users },
+const STATIC_SIDEBAR_SECTIONS: Array<{
+  id: string;
+  label: string;
+  icon: any;
+  preset: AnimatedIconPreset;
+}> = [
+  { id: 'experience', label: 'Work Experience', icon: Briefcase, preset: 'scaleUp' },
+  { id: 'education', label: 'Education', icon: GraduationCap, preset: 'scaleUp' },
+  { id: 'projects', label: 'Projects', icon: FolderGit2, preset: 'scaleUp' },
+  { id: 'skills', label: 'Skills', icon: Wrench, preset: 'scaleUp' },
+  { id: 'languages', label: 'Languages', icon: Languages, preset: 'scaleUp' },
+  { id: 'interests', label: 'Interests', icon: Heart, preset: 'scaleUp' },
+  { id: 'awards', label: 'Awards', icon: Trophy, preset: 'scaleUp' },
+  { id: 'certifications', label: 'Certifications', icon: Award, preset: 'scaleUp' },
+  { id: 'publications', label: 'Publications', icon: BookOpen, preset: 'scaleUp' },
+  { id: 'volunteer', label: 'Volunteer', icon: HandHelping, preset: 'scaleUp' },
+  { id: 'references', label: 'References', icon: Users, preset: 'scaleUp' },
 ];
 
 const SIDEBAR_TO_SECTION_KEY: Record<string, string> = {};
@@ -151,7 +124,7 @@ interface SortableMenuItemProps {
   id: string;
   label: string;
   Icon: React.ElementType;
-  variants: Variants;
+  preset: AnimatedIconPreset;
   isActive: boolean;
   isCompleted: boolean;
   showCompletion: boolean;
@@ -162,7 +135,7 @@ const SortableMenuItem = ({
   id,
   label,
   Icon,
-  variants,
+  preset,
   isActive,
   isCompleted,
   showCompletion,
@@ -199,19 +172,14 @@ const SortableMenuItem = ({
             onMouseLeave={() => setIsHovered(false)}
           >
             {/* Left: section icon */}
-            <motion.span
-              variants={variants}
-              initial={false}
-              className="mr-2 inline-flex items-center justify-center"
-              style={{ display: 'inline-flex' }}
-            >
-              <Icon
-                className={cn(
-                  'w-4 h-4 transition-colors duration-200',
-                  isActive ? 'text-primary' : '',
-                )}
-              />
-            </motion.span>
+            <AnimatedIcon
+              icon={Icon as any}
+              preset={preset}
+              className={cn(
+                'w-4 h-4 mr-2 transition-colors duration-200',
+                isActive ? 'text-primary' : '',
+              )}
+            />
 
             {/* Label */}
             <span className="truncate flex-1">{label}</span>
@@ -388,19 +356,14 @@ export const ResumeSidebar = () => {
                             : 'hover:bg-accent text-muted-foreground hover:text-foreground',
                         )}
                       >
-                        <motion.span
-                          variants={iconVariants.personal}
-                          initial={false}
-                          className="mr-2 inline-flex items-center justify-center"
-                          style={{ display: 'inline-flex' }}
-                        >
-                          <User
-                            className={cn(
-                              'w-4 h-4 transition-colors duration-200',
-                              isActive ? 'text-primary' : '',
-                            )}
-                          />
-                        </motion.span>
+                        <AnimatedIcon
+                          icon={User}
+                          preset="scaleUp"
+                          className={cn(
+                            'w-4 h-4 mr-2 transition-colors duration-200',
+                            isActive ? 'text-primary' : '',
+                          )}
+                        />
                         <span className="truncate flex-1">Personal Info</span>
                         {isCompleted ? (
                           <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10 shrink-0" />
@@ -433,7 +396,7 @@ export const ResumeSidebar = () => {
                         id={id}
                         label={meta.label}
                         Icon={meta.icon}
-                        variants={iconVariants[id] ?? {}}
+                        preset={meta.preset}
                         isActive={activeTab === id}
                         isCompleted={isCompleted}
                         showCompletion={true}
@@ -461,7 +424,9 @@ export const ResumeSidebar = () => {
                             : 'hover:bg-accent text-muted-foreground hover:text-foreground',
                         )}
                       >
-                        <Plus
+                        <AnimatedIcon
+                          icon={Plus}
+                          preset="scaleUp"
                           className={cn(
                             'w-4 h-4 mr-2 transition-colors duration-200',
                             isActive ? 'text-primary' : '',
@@ -482,7 +447,7 @@ export const ResumeSidebar = () => {
                     className="transition-all duration-200 h-10 px-4 text-primary hover:bg-primary/5 hover:text-primary"
                     tooltip="Add Custom Section"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <AnimatedIcon icon={Plus} preset="scaleUp" className="w-4 h-4 mr-2" />
                     <span>Add section</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

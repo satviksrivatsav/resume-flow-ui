@@ -10,6 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
+import { FaviconManager } from './components/layout/FaviconManager';
 import AtsChecker from './pages/AtsChecker';
 import AtsReports from './pages/AtsReports';
 import DangerZonePage from './pages/DangerZonePage';
@@ -135,6 +136,7 @@ function AppContent() {
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <FaviconManager />
       <div className="min-h-screen font-sans antialiased">
         <AnimatedRoutes />
       </div>

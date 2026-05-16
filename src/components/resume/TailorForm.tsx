@@ -26,7 +26,7 @@ export const TailorForm = () => {
     setSectionsToTailor,
     isTailoring,
     setIsTailoring,
-    setTailoredSections,
+    setTailoredSlides,
     setViewMode,
     setError,
     error,
@@ -191,7 +191,39 @@ export const TailorForm = () => {
       const result = await response.json();
 
       if (result.success) {
-        setTailoredSections(result.data.tailoredSections);
+        const slides: any[] = [];
+        result.data.tailoredSections.forEach((section: any) => {
+          if (section.tailoredContent?.items && Array.isArray(section.tailoredContent.items)) {
+            section.tailoredContent.items.forEach((item: any, index: number) => {
+              const origItem = section.originalContent?.items?.[index] || {};
+              const title =
+                item.company ||
+                item.school ||
+                item.name ||
+                item.organization ||
+                item.title ||
+                item.position ||
+                `Item ${index + 1}`;
+              slides.push({
+                slideId: `${section.sectionId}-${index}`,
+                sectionId: section.sectionId,
+                itemIndex: index,
+                sectionName: `${section.sectionName}: ${title}`,
+                originalContent: origItem,
+                tailoredContent: item,
+              });
+            });
+          } else {
+            slides.push({
+              slideId: section.sectionId,
+              sectionId: section.sectionId,
+              sectionName: section.sectionName,
+              originalContent: section.originalContent,
+              tailoredContent: section.tailoredContent,
+            });
+          }
+        });
+        setTailoredSlides(slides);
         setViewMode('diff');
       } else {
         setError(result.detail || 'Failed to tailor resume. Please try again.');

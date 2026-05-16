@@ -1,7 +1,7 @@
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import LogoImage from '@/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
 
 export default function AuthLayout() {
@@ -55,10 +55,9 @@ export default function AuthLayout() {
                   }}
                   className="w-40 h-40 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl relative z-10 mx-auto"
                 >
-                  <img
-                    src={LogoImage}
-                    alt="Resume Flow"
-                    className="w-24 h-24 object-contain grayscale brightness-0 opacity-80"
+                  <Logo
+                    variant="dark"
+                    className="w-24 h-24 transition-transform duration-300 opacity-80"
                   />
                 </motion.div>
 

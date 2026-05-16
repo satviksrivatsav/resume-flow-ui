@@ -3,7 +3,7 @@ import { IconMenu2, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import React, { useRef, useState } from 'react';
 
-import logo from '/src/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
 
 interface NavbarProps {
@@ -279,12 +279,10 @@ export const MobileNavToggle = ({
 export const NavbarLogo = ({ visible }: { visible?: boolean }) => {
   return (
     <a href="/" className="relative z-20 flex items-center space-x-4 group">
-      <img
-        src={logo}
-        alt="Resume Flow"
+      <Logo
+        variant={visible ? 'auto' : 'light'}
         className={cn(
-          'w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-105',
-          visible ? 'brightness-0 dark:invert' : 'brightness-0 invert',
+          'w-10 h-10 transition-transform duration-300 group-hover:scale-105',
         )}
       />
       <span

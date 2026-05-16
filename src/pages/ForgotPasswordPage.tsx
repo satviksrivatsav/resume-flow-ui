@@ -3,7 +3,7 @@ import { ArrowLeft, Loader2, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import LogoImage from '@/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Button } from '@/components/ui/button';
 import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
@@ -75,10 +75,9 @@ export default function ForgotPasswordPage() {
               }}
               className="w-40 h-40 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl relative z-10 mx-auto"
             >
-              <img
-                src={LogoImage}
-                alt="Resume Flow"
-                className="w-24 h-24 object-contain grayscale brightness-0 opacity-80"
+              <Logo
+                variant="dark"
+                className="w-24 h-24 transition-transform duration-300 opacity-80"
               />
             </motion.div>
             <h2 className="text-4xl font-bold text-white mb-4">Resume Flow</h2>

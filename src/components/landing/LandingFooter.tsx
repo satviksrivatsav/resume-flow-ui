@@ -2,7 +2,7 @@ import { Github, Globe, Linkedin, Mail, MapPin } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import LogoImage from '@/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { config } from '@/config/config';
 import { cn } from '@/lib/utils';
 
@@ -62,11 +62,7 @@ export const LandingFooter = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group w-fit">
-              <img
-                src={LogoImage}
-                alt="Logo"
-                className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
-              />
+              <Logo className="w-9 h-9 transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xl font-bold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
                 Resume Flow
               </span>

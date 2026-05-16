@@ -2,9 +2,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Eye, EyeOff, Save, RefreshCw } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import Logo from '@/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { ExportMenu } from '@/components/resume/ExportMenu';
-
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -39,11 +38,7 @@ export const Topbar = () => {
               className="flex items-center gap-3 group/logo cursor-pointer"
               onClick={() => navigate('/dashboard')}
             >
-              <img
-                src={Logo}
-                alt="Resume Flow"
-                className="w-8 h-8 object-contain transition-transform duration-500 group-hover/logo:scale-110 brightness-0 dark:invert"
-              />
+              <Logo className="w-8 h-8 transition-transform duration-500 group-hover/logo:scale-110" />
               <h1 className="text-xl font-bold text-foreground hidden sm:block tracking-tight">
                 Resume Flow
               </h1>

@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 
-export interface TailoredSection {
+export interface TailoredSlide {
+  slideId: string;
   sectionId: string;
+  itemIndex?: number;
   sectionName: string;
   originalContent: any;
   tailoredContent: any;
@@ -15,11 +17,11 @@ interface TailorStore {
   sectionsToTailor: string[];
   setSectionsToTailor: (sections: string[]) => void;
 
-  tailoredSections: TailoredSection[];
-  setTailoredSections: (sections: TailoredSection[]) => void;
+  tailoredSlides: TailoredSlide[];
+  setTailoredSlides: (slides: TailoredSlide[]) => void;
 
-  updateDecision: (sectionId: string, decision: 'accept' | 'reject') => void;
-  updateTailoredContent: (sectionId: string, content: any) => void;
+  updateDecision: (slideId: string, decision: 'accept' | 'reject') => void;
+  updateTailoredContent: (slideId: string, content: any) => void;
 
   isTailoring: boolean;
   setIsTailoring: (is: boolean) => void;
@@ -40,19 +42,19 @@ export const useTailorStore = create<TailorStore>((set) => ({
   sectionsToTailor: ['summary', 'experience', 'projects', 'skills'],
   setSectionsToTailor: (sectionsToTailor) => set({ sectionsToTailor }),
 
-  tailoredSections: [],
-  setTailoredSections: (tailoredSections) => set({ tailoredSections }),
+  tailoredSlides: [],
+  setTailoredSlides: (tailoredSlides) => set({ tailoredSlides }),
 
-  updateDecision: (sectionId, decision) =>
+  updateDecision: (slideId, decision) =>
     set((state) => ({
-      tailoredSections: state.tailoredSections.map((s) =>
-        s.sectionId === sectionId ? { ...s, decision } : s,
+      tailoredSlides: state.tailoredSlides.map((s) =>
+        s.slideId === slideId ? { ...s, decision } : s,
       ),
     })),
-  updateTailoredContent: (sectionId, content) =>
+  updateTailoredContent: (slideId, content) =>
     set((state) => ({
-      tailoredSections: state.tailoredSections.map((s) =>
-        s.sectionId === sectionId ? { ...s, tailoredContent: content } : s,
+      tailoredSlides: state.tailoredSlides.map((s) =>
+        s.slideId === slideId ? { ...s, tailoredContent: content } : s,
       ),
     })),
 
@@ -69,7 +71,7 @@ export const useTailorStore = create<TailorStore>((set) => ({
     set({
       jobDescription: '',
       sectionsToTailor: ['summary', 'experience', 'projects', 'skills'],
-      tailoredSections: [],
+      tailoredSlides: [],
       isTailoring: false,
       viewMode: 'form',
       error: null,
