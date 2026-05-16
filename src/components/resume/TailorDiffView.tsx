@@ -183,7 +183,7 @@ export const TailorDiffView = () => {
                         className={cn(
                           'gap-2 rounded-full px-8 h-12 transition-all duration-300',
                           currentSection.decision === 'reject'
-                            ? 'shadow-lg shadow-destructive/20 border-destructive'
+                            ? 'border-destructive bg-destructive/10'
                             : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
                         )}
                       >
@@ -206,7 +206,7 @@ export const TailorDiffView = () => {
                         className={cn(
                           'gap-2 rounded-full px-8 h-12 transition-all duration-300',
                           currentSection.decision === 'accept'
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0'
+                            ? 'bg-green-600 hover:bg-green-700 text-white border-0'
                             : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
                         )}
                       >

@@ -81,7 +81,7 @@ export function AIDiffViewer({
   const [acceptHovered, setAcceptHovered] = useState(false);
 
   return (
-    <div className="flex flex-col h-full bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-2xl shadow-primary/5">
+    <div className="flex flex-col h-full bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-sm">
       {/* Header with Title */}
       <div className="p-8 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
         <div className="space-y-1">
@@ -106,7 +106,7 @@ export function AIDiffViewer({
                 className={cn(
                   'gap-2 rounded-full px-6 h-12 transition-all duration-300',
                   decision === 'reject'
-                    ? 'shadow-lg shadow-destructive/20 border-destructive'
+                    ? 'border-destructive bg-destructive/10'
                     : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
                 )}
               >
@@ -126,7 +126,7 @@ export function AIDiffViewer({
                 className={cn(
                   'gap-2 rounded-full px-6 h-12 transition-all duration-300',
                   decision === 'accept'
-                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20 border-0'
+                    ? 'bg-green-600 hover:bg-green-700 text-white border-0'
                     : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
                 )}
               >
