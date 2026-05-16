@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAIWriterStore } from '@/stores/aiWriterStore';
+import { useResumeStore } from '@/stores/resumeStore';
+
 
 interface AIWriterButtonProps {
   fieldName: string;
@@ -28,15 +30,17 @@ export function AIWriterButton({
   onUpdate,
 }: AIWriterButtonProps) {
   const { openInstructionModal, isLoading } = useAIWriterStore();
+  const { resumeData } = useResumeStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAction = (action: 'REWRITE' | 'GENERATE') => {
     console.log('🔘 AI Writer Button clicked:', { fieldName, action });
-    openInstructionModal(fieldName, action, fieldValue, onUpdate);
+    openInstructionModal(fieldName, action, fieldValue, onUpdate, resumeData);
     setIsOpen(false);
   };
+
 
   const hasContent = (() => {
     if (!fieldValue) return false;
@@ -64,15 +68,10 @@ export function AIWriterButton({
             className="gap-1.5 text-xs text-primary hover:text-primary hover:bg-primary/10"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <div className="w-4 h-4 flex items-center justify-center">
-                <Lottie animationData={aiSearchAnimation} loop={true} />
-              </div>
-            ) : (
-              <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
-            )}
+            <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
             AI Writer
           </Button>
+
         </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48">

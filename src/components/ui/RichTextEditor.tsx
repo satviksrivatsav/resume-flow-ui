@@ -34,7 +34,8 @@ const ToolbarButton = ({
   <TooltipProvider delayDuration={delayDuration}>
     <Tooltip>
       <TooltipTrigger asChild>
-        <button className={cn("ql-custom-button transition-colors hover:bg-muted p-1 rounded-md", className)} value={value}>
+        <button className={cn("custom-toolbar-button transition-colors hover:bg-muted p-1 rounded-md", className)} value={value}>
+
           {children}
         </button>
       </TooltipTrigger>
@@ -71,10 +72,17 @@ export const RichTextEditor = ({
 
   return (
     <div className={cn(
-      "rich-text-editor-container bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background shadow-sm",
+      "rich-text-editor-container bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background shadow-sm font-normal",
       className
     )}>
-      <div id={toolbarId} className="flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20">
+
+      <div 
+        id={toolbarId} 
+        className="flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+
         <div className="flex items-center gap-0.5">
           <ToolbarButton className="ql-bold" tooltip="Bold">
             <Bold className="w-3.5 h-3.5" />

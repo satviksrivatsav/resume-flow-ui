@@ -36,7 +36,9 @@ import { UnsavedChangesModal } from '@/components/resume/UnsavedChangesModal';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
+import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
+
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -46,7 +48,9 @@ import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
+import { useAIWriterStore } from '@/stores/aiWriterStore';
 import { useUiStore } from '@/stores/uiStore';
+
 
 type ViewMode = 'fit-width' | 'fit-height';
 
@@ -58,7 +62,9 @@ const ResumeBuilder = () => {
     tailoredSlides,
     reset: resetTailor
   } = useTailorStore();
+  const { isLoading: isAIWriterLoading, cancelRequest: cancelAIWriterRequest } = useAIWriterStore();
   const {
+
     resumeData,
     deleteCustomSection,
     loadResume,
@@ -665,6 +671,13 @@ const ResumeBuilder = () => {
         </AnimatePresence>
         <AIInstructionModal />
         <AIReviewModal />
+        <AILoadingModal
+          isOpen={isAIWriterLoading}
+          onCancel={cancelAIWriterRequest}
+          message="Generating content..."
+          title="AI Writer"
+        />
+
         <DeleteSectionModal
           isOpen={showDeleteModal}
           sectionName={

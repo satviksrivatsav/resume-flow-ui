@@ -9,7 +9,9 @@ export interface AIFieldRequest {
   instruction?: string;
   tone?: 'professional' | 'casual' | 'confident' | 'friendly';
   format?: 'bullets' | 'paragraph';
+  fullResumeData?: any;
 }
+
 
 export interface AIFieldResponse {
   id: string;

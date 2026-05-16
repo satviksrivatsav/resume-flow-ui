@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Eye, EyeOff, Save, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Save, RefreshCw, Check, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Logo } from '@/components/ui/Logo';
@@ -13,7 +13,7 @@ import { useUiStore } from '@/stores/uiStore';
 export const Topbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isSaving, saveResume } = useResumeStore();
+  const { saveStatus, saveResume } = useResumeStore();
   const { showPreview, setShowPreview } = useUiStore();
 
   const isBuilderPage = location.pathname === '/resume-builder';
@@ -53,16 +53,33 @@ export const Topbar = () => {
                   <Button
                     variant="ghost"
                     onClick={() => saveResume()}
-                    disabled={isSaving}
-                    className="gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full hover:bg-primary/10 transition-all text-primary font-medium"
+                    disabled={saveStatus !== 'idle'}
+                    className={cn(
+                      'gap-2 border h-10 px-4 rounded-full transition-all font-medium',
+                      saveStatus === 'error'
+                        ? 'bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20'
+                        : saveStatus === 'success'
+                          ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
+                          : 'bg-primary/5 border-primary/20 text-primary hover:bg-primary/10',
+                    )}
                   >
-                    {isSaving ? (
+                    {saveStatus === 'saving' ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : saveStatus === 'success' ? (
+                      <Check className="w-4 h-4" />
+                    ) : saveStatus === 'error' ? (
+                      <X className="w-4 h-4" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
                     <span className="hidden sm:inline font-medium">
-                      {isSaving ? 'Saving...' : 'Save'}
+                      {saveStatus === 'saving'
+                        ? 'Saving...'
+                        : saveStatus === 'success'
+                          ? 'Saved'
+                          : saveStatus === 'error'
+                            ? 'Save Failed'
+                            : 'Save'}
                     </span>
                   </Button>
                 </motion.div>

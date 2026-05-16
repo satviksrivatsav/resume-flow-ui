@@ -96,12 +96,13 @@ export const TailoredItemEditor = ({
             <div
               className={cn(
                 'text-[14px] leading-[1.8] ql-editor ql-editor-preview',
-                label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90 font-medium',
+                label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90 font-normal',
               )}
               dangerouslySetInnerHTML={{ __html: value || '' }}
             />
           ) : (
-            <div className="text-[14px] leading-[1.8] text-foreground/90 font-medium">
+            <div className="text-[14px] leading-[1.8] text-foreground/90 font-normal">
+
               {value || <span className="italic opacity-50">Empty</span>}
             </div>
           )}
@@ -136,13 +137,16 @@ export const TailoredItemEditor = ({
     <div className="space-y-6">
       {/* Headline string wrapped in object */}
       {sectionId === 'headline' &&
+        localContent &&
         localContent.hasOwnProperty('headline') &&
         renderField('Headline', localContent.headline, 'headline', 'input')}
 
       {/* Summary content */}
       {sectionId === 'summary' &&
+        localContent &&
         localContent.hasOwnProperty('content') &&
         renderField('Professional Summary', localContent.content, 'content', 'textarea')}
+
 
       {/* Skills Category Name */}
       {sectionId === 'skills' &&
@@ -150,7 +154,8 @@ export const TailoredItemEditor = ({
         renderField('Category Name', localContent.name, 'name', 'input')}
 
       {/* Keywords (Chips) */}
-      {localContent.hasOwnProperty('keywords') && Array.isArray(localContent.keywords) && (
+      {localContent && localContent.hasOwnProperty('keywords') && Array.isArray(localContent.keywords) && (
+
         <div className="space-y-2">
           <Label
             className={cn(
@@ -186,20 +191,24 @@ export const TailoredItemEditor = ({
       )}
 
       {/* Description / Consolidated Bullets */}
-      {(localContent.hasOwnProperty('description') ||
-        localContent.hasOwnProperty('summary') ||
-        localContent.hasOwnProperty('bullets')) &&
+      {localContent &&
+        (localContent.hasOwnProperty('description') ||
+          localContent.hasOwnProperty('summary') ||
+          localContent.hasOwnProperty('bullets')) &&
+
         sectionId !== 'summary' &&
         sectionId !== 'skills' &&
         renderField('Description', localContent.description, 'description', 'textarea')}
 
       {/* Fallback if no known editable fields are found */}
-      {sectionId !== 'headline' &&
+      {localContent &&
+        sectionId !== 'headline' &&
         sectionId !== 'summary' &&
         !localContent.hasOwnProperty('keywords') &&
         !localContent.hasOwnProperty('description') &&
         !localContent.hasOwnProperty('summary') &&
         !localContent.hasOwnProperty('bullets') && (
+
           <div className="p-4 border border-dashed border-primary/20 rounded-xl text-center">
             <p className="text-sm text-muted-foreground">
               No directly editable structured fields found for this item.

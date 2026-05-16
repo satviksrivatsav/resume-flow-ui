@@ -84,11 +84,13 @@ interface ResumeStore {
   // Save Status
   isSaving: boolean;
   isSavingInProgress: boolean;
+  saveStatus: 'idle' | 'saving' | 'success' | 'error';
   lastSaved: Date | null;
   lastSavedData: string;
   autoSaveTimer: any;
   setIsSaving: (isSaving: boolean) => void;
   setIsSavingInProgress: (isSaving: boolean) => void;
+  setSaveStatus: (status: 'idle' | 'saving' | 'success' | 'error') => void;
   setLastSaved: (lastSaved: Date | null) => void;
   setLastSavedData: (data: string) => void;
 
@@ -102,12 +104,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   resumeData: defaultResumeData,
   isSaving: false,
   isSavingInProgress: false,
+  saveStatus: 'idle',
   lastSaved: null,
   lastSavedData: '',
   autoSaveTimer: null,
 
   setIsSaving: (isSaving) => set({ isSaving }),
   setIsSavingInProgress: (isSavingInProgress) => set({ isSavingInProgress }),
+  setSaveStatus: (saveStatus) => set({ saveStatus }),
   setLastSaved: (lastSaved) => set({ lastSaved }),
   setLastSavedData: (lastSavedData) => set({ lastSavedData }),
 
@@ -133,7 +137,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     const currentDataString = JSON.stringify(currentResumeData);
     const finalUserId = userId || useAuthStore.getState().user?.id;
 
-    set({ isSaving: true, isSavingInProgress: true });
+    set({ isSaving: true, isSavingInProgress: true, saveStatus: 'saving' });
 
     try {
       if (finalUserId) {
@@ -193,15 +197,16 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         set({ lastSavedData: currentDataString });
       }
 
-      set({ lastSaved: new Date() });
+      set({ lastSaved: new Date(), saveStatus: 'success' });
     } catch (error) {
       console.error('Error saving:', error);
+      set({ saveStatus: 'error' });
     } finally {
       set({ isSavingInProgress: false });
-      // Keep isSaving true for at least 500ms to avoid flicker and show "Saved" state properly
+      // Keep saveStatus for 1 second as requested
       setTimeout(() => {
-        set({ isSaving: false });
-      }, 500);
+        set({ isSaving: false, saveStatus: 'idle' });
+      }, 1000);
 
       // Reschedule the next autosave check
       get().startAutoSave(finalUserId);

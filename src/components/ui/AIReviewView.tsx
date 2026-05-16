@@ -13,16 +13,12 @@ export function AIReviewModal() {
     originalText,
     newText,
     currentField,
-    currentAction,
     acceptChanges,
     discardChanges,
     cancelRequest,
     error,
     setNewText,
   } = useAIWriterStore();
-
-  const isDiffMode = currentAction === 'REWRITE';
-
 
   const fieldLabel =
     currentField?.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()) || 'Field';
@@ -40,6 +36,7 @@ export function AIReviewModal() {
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
+
         <div className="w-full">
           {error ? (
             <div className="bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2.5rem] p-16 flex flex-col items-center justify-center gap-4 shadow-2xl">
@@ -68,9 +65,7 @@ export function AIReviewModal() {
           ) : (
             <AIDiffViewer
               title={fieldLabel}
-              isDiffMode={isDiffMode}
               description="Review and refine the AI-generated suggestions."
-
               infoTip="Feel free to edit the tailored version to make it perfect before accepting."
               onAccept={acceptChanges}
               onReject={discardChanges}
@@ -93,9 +88,11 @@ export function AIReviewModal() {
                 </div>
               }
             />
+
           )}
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+

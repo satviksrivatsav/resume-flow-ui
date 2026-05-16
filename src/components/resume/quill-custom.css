@@ -39,7 +39,13 @@
   padding: 16px 20px !important;
   line-height: 1.6 !important;
   color: hsl(var(--foreground));
+  font-weight: 400 !important;
 }
+
+.ql-editor b, .ql-editor strong {
+  font-weight: 600 !important;
+}
+
 
 .ql-container {
   height: auto !important;
@@ -134,7 +140,7 @@
   padding: 4px !important;
 }
 /* Custom Toolbar Button Styling */
-.ql-custom-button {
+.custom-toolbar-button {
   color: hsl(var(--foreground)/0.6);
   transition: all 0.2s ease;
   display: flex;
@@ -142,23 +148,24 @@
   justify-content: center;
 }
 
-.ql-custom-button:hover {
+.custom-toolbar-button:hover {
   color: hsl(var(--primary));
   background: hsl(var(--primary)/0.08) !important;
 }
 
-.ql-custom-button.ql-active {
+.custom-toolbar-button.ql-active {
   color: hsl(var(--primary));
   background: hsl(var(--primary)/0.12) !important;
 }
 
-.ql-custom-button svg {
+.custom-toolbar-button svg {
   transition: transform 0.2s ease;
 }
 
-.ql-custom-button:hover svg {
+.custom-toolbar-button:hover svg {
   transform: scale(1.1);
 }
+
 
 /* Hide default Quill toolbar if it accidentally renders */
 .ql-toolbar.ql-snow:not([id^="toolbar-"]) {

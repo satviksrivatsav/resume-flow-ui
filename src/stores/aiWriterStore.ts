@@ -9,9 +9,11 @@ interface AIWriterState {
   currentAction: 'REWRITE' | 'GENERATE' | null;
   originalText: string;
   newText: string | null;
+  fullResumeData: any | null;
   error: string | null;
   showInstructionModal: boolean;
   showReviewModal: boolean;
+
 
   // Internal: tracks the in-flight request so it can be aborted
   _abortController: AbortController | null;
@@ -25,7 +27,9 @@ interface AIWriterState {
     action: 'REWRITE' | 'GENERATE',
     text: string,
     onAccept: (newText: string) => void,
+    fullResumeData?: any,
   ) => void;
+
   closeInstructionModal: () => void;
   submitAIRequest: (params: {
     instruction?: string;
@@ -36,7 +40,9 @@ interface AIWriterState {
   discardChanges: () => void;
   /** Abort any in-flight request and immediately reset all state. */
   cancelRequest: () => void;
+  setNewText: (text: string) => void;
 }
+
 
 const initialState = {
   isLoading: false,
@@ -44,17 +50,19 @@ const initialState = {
   currentAction: null,
   originalText: '',
   newText: null,
+  fullResumeData: null,
   error: null,
   showInstructionModal: false,
   showReviewModal: false,
   onAccept: null,
+
   _abortController: null,
 };
 
 export const useAIWriterStore = create<AIWriterState>((set, get) => ({
   ...initialState,
 
-  openInstructionModal: (field, action, text, onAccept) => {
+  openInstructionModal: (field, action, text, onAccept, fullResumeData) => {
     console.log('📝 Opening Instruction Modal', { field, action });
     set({
       currentField: field,
@@ -63,10 +71,12 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       showInstructionModal: true,
       showReviewModal: false,
       newText: null,
+      fullResumeData: fullResumeData || null,
       error: null,
       onAccept,
     });
   },
+
 
   closeInstructionModal: () => {
     set({ ...initialState });
@@ -98,14 +108,15 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       abortController.abort(new Error('TimeoutError'));
     }, 20000);
 
-    // Close instruction modal, show review modal with loading
+    // Close instruction modal, trigger loading state
     set({
       showInstructionModal: false,
-      showReviewModal: true,
+      showReviewModal: false,
       isLoading: true,
       error: null,
       _abortController: abortController,
     });
+
 
     try {
       const request: AIFieldRequest = {
@@ -115,7 +126,9 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         instruction: params.instruction,
         tone: params.tone as AIFieldRequest['tone'],
         format: params.format as AIFieldRequest['format'],
+        fullResumeData: get().fullResumeData,
       };
+
 
       console.log('\n>>> SENDING TO API:');
       console.log(JSON.stringify(request, null, 2));
@@ -131,8 +144,10 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       set({
         newText: response.newText,
         isLoading: false,
+        showReviewModal: true,
         _abortController: null,
       });
+
     } catch (error: unknown) {
       clearTimeout(timeoutId);
 
@@ -142,8 +157,10 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         set({
           error: 'The AI took too long to respond. Please try again.',
           isLoading: false,
+          showReviewModal: true,
           _abortController: null,
         });
+
         return;
       }
 
@@ -161,8 +178,10 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       set({
         error: message,
         isLoading: false,
+        showReviewModal: true,
         _abortController: null,
       });
+
     }
   },
 
@@ -179,4 +198,8 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
     console.log('❌ Discarding changes');
     set({ ...initialState });
   },
+  setNewText: (text: string) => {
+    set({ newText: text });
+  },
 }));
+

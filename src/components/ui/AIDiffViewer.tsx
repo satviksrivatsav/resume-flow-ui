@@ -68,7 +68,9 @@ interface AIDiffViewerProps {
   isEditable?: boolean;
   onNewTextChange?: (text: string) => void;
   infoTip?: string;
+  isDiffMode?: boolean;
 }
+
 
 export function AIDiffViewer({
   title,
@@ -84,7 +86,9 @@ export function AIDiffViewer({
   isEditable = false,
   onNewTextChange,
   infoTip,
+  isDiffMode = true,
 }: AIDiffViewerProps) {
+
   const [rejectHovered, setRejectHovered] = useState(false);
   const [acceptHovered, setAcceptHovered] = useState(false);
   const [localText, setLocalText] = useState(typeof newText === 'string' ? newText : '');
@@ -176,39 +180,57 @@ export function AIDiffViewer({
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 min-h-0 divide-x divide-primary/10">
-        {/* Original Text */}
-        <div className="flex flex-col relative group/original min-h-[300px]">
-          <div className="absolute top-6 left-8 flex items-center gap-2 pointer-events-none opacity-40 group-hover/original:opacity-100 transition-opacity">
-            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Original
-            </span>
-          </div>
-          <div className="flex-1 p-8 pt-16 text-[14px] leading-[1.8] text-muted-foreground/80 whitespace-pre-wrap">
-            {originalText || <span className="italic opacity-50">No original content</span>}
-          </div>
-        </div>
+      <div className={cn(
+        "flex-1 grid grid-cols-1 min-h-[400px] max-h-[60vh] overflow-hidden",
+        isDiffMode ? "lg:grid-cols-2 divide-x divide-primary/10" : "lg:grid-cols-1"
+      )}>
 
-        {/* Tailored Text */}
-        <div className="flex flex-col relative bg-primary/[0.02] group/tailored min-h-[300px]">
-          <div className="absolute top-6 left-8 right-8 flex items-center justify-between pointer-events-none">
-            <div className="flex items-center gap-2 opacity-40 group-hover/tailored:opacity-100 transition-opacity">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-                Tailored
+        {/* Original Text */}
+        {isDiffMode && (
+          <div className="flex flex-col relative group/original overflow-y-auto custom-scrollbar">
+            <div className="p-8 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/original:opacity-100 transition-opacity">
+              <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                Original
               </span>
             </div>
-            {isEditable && !isEditing && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="pointer-events-auto text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors cursor-pointer"
-              >
-                Edit
-              </button>
-            )}
+            <div className={cn(
+              "flex-1 p-8 pt-6 text-[14px] leading-[1.8] text-muted-foreground/80",
+              typeof originalText === 'string' && "whitespace-pre-wrap"
+            )}>
+              {originalText || <span className="italic opacity-50">No original content</span>}
+            </div>
           </div>
-          <div className="flex-1 p-8 pt-16 text-[14px] leading-[1.8] text-foreground font-medium whitespace-pre-wrap">
+        )}
+
+
+        {/* Tailored Text */}
+        <div className="flex flex-col relative bg-primary/[0.02] group/tailored overflow-y-auto custom-scrollbar">
+          <div className="p-8 pb-0 flex flex-col items-center gap-1 opacity-40 group-hover/tailored:opacity-100 transition-opacity">
+            <div className="flex items-center justify-between w-full">
+              <div /> {/* Spacer for centering */}
+              <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-primary">
+                {isDiffMode ? 'Refined' : 'Proposed'}
+              </span>
+
+
+              <div className="min-w-[40px] flex justify-end">
+                {isEditable && !isEditing && (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="pointer-events-auto text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className={cn(
+            "flex-1 p-8 pt-6 text-[14px] leading-[1.8] text-foreground font-normal",
+            typeof newText === 'string' && "whitespace-pre-wrap"
+          )}>
+
+
             {isEditable && isEditing ? (
               <div className="flex flex-col gap-2">
                 <textarea
@@ -230,6 +252,7 @@ export function AIDiffViewer({
           </div>
         </div>
       </div>
+
 
       {footer && (
         <div className="p-8 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
