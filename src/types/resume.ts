@@ -26,6 +26,7 @@ export interface Basics {
   headline: string;
   email: string;
   phone: string;
+  countryCode: string;
   location: string;
   url: Website;
   customFields: CustomField[];
@@ -253,6 +254,7 @@ export const defaultResumeData: ResumeData = {
     headline: '',
     email: '',
     phone: '',
+    countryCode: '',
     location: '',
     url: { label: '', href: '' },
     customFields: [],

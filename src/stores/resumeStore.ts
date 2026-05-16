@@ -101,7 +101,13 @@ interface ResumeStore {
 }
 
 export const useResumeStore = create<ResumeStore>((set, get) => ({
-  resumeData: defaultResumeData,
+  resumeData: {
+    ...defaultResumeData,
+    basics: {
+      ...defaultResumeData.basics,
+      countryCode: localStorage.getItem('rf_user_country_code') || 'US',
+    },
+  },
   isSaving: false,
   isSavingInProgress: false,
   saveStatus: 'idle',
@@ -506,5 +512,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       },
     })),
 
-  resetResume: () => set({ resumeData: defaultResumeData }),
+  resetResume: () =>
+    set({
+      resumeData: {
+        ...defaultResumeData,
+        basics: {
+          ...defaultResumeData.basics,
+          countryCode: localStorage.getItem('rf_user_country_code') || 'US',
+        },
+      },
+    }),
 }));

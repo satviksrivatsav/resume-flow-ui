@@ -16,18 +16,13 @@ export const PersonalInfoForm = () => {
   const { resumeData, updateBasics, updateSummary, updateProfileByNetwork } = useResumeStore();
   const { basics, summary, sections } = resumeData;
   const [countryCode, setCountryCode] = useState('US');
-  const hasDetected = useRef(false);
 
-  // Auto-detect country code from timezone on first load
+  // Auto-sync local state when store changes
   useEffect(() => {
-    if (hasDetected.current) return;
-    hasDetected.current = true;
-
-    const detectedCountryCode = detectCountryFromTimezone();
-    if (detectedCountryCode) {
-      setCountryCode(detectedCountryCode);
+    if (basics.countryCode && getCountryByCode(basics.countryCode.toUpperCase())) {
+      setCountryCode(basics.countryCode.toUpperCase());
     }
-  }, []);
+  }, [basics.countryCode]);
 
   const getProfileUsername = (network: string) => {
     return (

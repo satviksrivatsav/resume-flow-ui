@@ -214,3 +214,56 @@ export const detectCountryFromTimezone = (): string | null => {
     return null;
   }
 };
+
+/**
+ * Initializes and caches the country code on app startup.
+ * Uses ipapi.co (Free up to 1000 requests/day).
+ * Stores result in localStorage to prevent hitting API limits.
+ */
+export const initializeCountryCode = async (): Promise<string> => {
+  const CACHE_KEY = 'rf_user_country_code';
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) return cached;
+
+  const updateStoreIfNeeded = async (code: string) => {
+    try {
+      const { useResumeStore } = await import('@/stores/resumeStore');
+      const store = useResumeStore.getState();
+      if (!store.resumeData.basics.countryCode || store.resumeData.basics.countryCode === 'US') {
+        store.updateBasics({ countryCode: code });
+      }
+    } catch (e) {
+      // Store might not be ready yet
+    }
+  };
+
+  try {
+    // Attempt IP-based detection first for highest accuracy
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    if (data.country_code) {
+      localStorage.setItem(CACHE_KEY, data.country_code);
+      await updateStoreIfNeeded(data.country_code);
+      return data.country_code;
+    }
+  } catch (error) {
+    console.error('IP fetch failed, falling back to timezone:', error);
+  }
+
+  // Fallback to timezone if IP fails or is rate-limited
+  const tzCountry = detectCountryFromTimezone();
+  if (tzCountry) {
+    localStorage.setItem(CACHE_KEY, tzCountry);
+    await updateStoreIfNeeded(tzCountry);
+    return tzCountry;
+  }
+
+  // Final fallback to US
+  await updateStoreIfNeeded('US');
+  return 'US';
+};
+
+export const getCachedCountryCode = (): string => {
+  return localStorage.getItem('rf_user_country_code') || 'US';
+};
+

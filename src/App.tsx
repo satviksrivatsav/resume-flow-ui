@@ -123,6 +123,7 @@ function AppContent() {
 
   useEffect(() => {
     void initialize();
+    import('./lib/geolocation').then((m) => m.initializeCountryCode());
   }, [initialize]);
 
   return (
