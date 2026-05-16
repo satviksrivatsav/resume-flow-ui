@@ -83,7 +83,9 @@ export const ReferencesForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Email</Label>
+                  <Label className="font-medium">
+                    Email <span className="text-foreground/50">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       value={ref.email}
@@ -96,7 +98,9 @@ export const ReferencesForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Phone</Label>
+                  <Label className="font-medium">
+                    Phone <span className="text-foreground/50">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       value={ref.phone}
@@ -106,6 +110,12 @@ export const ReferencesForm = () => {
                     />
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <p className="text-xs text-muted-foreground">
+                    * At least one contact method (Email or Phone) is required.
+                  </p>
                 </div>
 
                 <div className="md:col-span-2 space-y-2">

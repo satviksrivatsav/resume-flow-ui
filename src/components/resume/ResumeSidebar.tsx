@@ -274,9 +274,12 @@ export const ResumeSidebar = () => {
   // Build the ordered list of draggable section IDs (personal is always pinned — excluded here)
   const storedOrder: string[] = resumeData.metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
   const staticIds = STATIC_SIDEBAR_SECTIONS.map((s) => s.id); // does NOT include 'personal'
-  const orderedStaticIds = [
-    ...storedOrder.filter((id) => staticIds.includes(id)),
-    ...staticIds.filter((id) => !storedOrder.includes(id)),
+  const customIds = resumeData.customSections.map((s) => s.id);
+  const allIds = [...staticIds, ...customIds];
+
+  const orderedAllIds = [
+    ...storedOrder.filter((id) => allIds.includes(id)),
+    ...allIds.filter((id) => !storedOrder.includes(id)),
   ];
 
   const sensors = useSensors(
@@ -288,13 +291,11 @@ export const ResumeSidebar = () => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = orderedStaticIds.indexOf(active.id as string);
-    const newIndex = orderedStaticIds.indexOf(over.id as string);
-    const newOrder = arrayMove(orderedStaticIds, oldIndex, newIndex);
+    const oldIndex = orderedAllIds.indexOf(active.id as string);
+    const newIndex = orderedAllIds.indexOf(over.id as string);
+    const newOrder = arrayMove(orderedAllIds, oldIndex, newIndex);
 
-    // Merge with custom section ids (they are appended, not reordered here)
-    const customIds = resumeData.customSections.map((s) => s.id);
-    reorderSections([...newOrder, ...customIds]);
+    reorderSections(newOrder);
   };
 
   const handleAddCustomSubmit = (e: React.FormEvent) => {
@@ -382,62 +383,48 @@ export const ResumeSidebar = () => {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
               >
-                <SortableContext items={orderedStaticIds} strategy={verticalListSortingStrategy}>
-                  {orderedStaticIds.map((id) => {
+                <SortableContext items={orderedAllIds} strategy={verticalListSortingStrategy}>
+                  {orderedAllIds.map((id) => {
                     const meta = STATIC_SIDEBAR_SECTIONS.find((s) => s.id === id);
-                    if (!meta) return null;
+                    if (meta) {
+                      const sectionKey = SIDEBAR_TO_SECTION_KEY[id] ?? id;
+                      const isCompleted = getSectionCompletionStatus(sectionKey, resumeData);
 
-                    const sectionKey = SIDEBAR_TO_SECTION_KEY[id] ?? id;
-                    const isCompleted = getSectionCompletionStatus(sectionKey, resumeData);
+                      return (
+                        <SortableMenuItem
+                          key={id}
+                          id={id}
+                          label={meta.label}
+                          Icon={meta.icon}
+                          preset={meta.preset}
+                          isActive={activeTab === id}
+                          isCompleted={isCompleted}
+                          showCompletion={true}
+                          onClick={() => setActiveTab(id)}
+                        />
+                      );
+                    } else {
+                      const customMeta = resumeData.customSections.find((s) => s.id === id);
+                      if (!customMeta) return null;
+                      const isCompleted = getSectionCompletionStatus(customMeta.id, resumeData);
 
-                    return (
-                      <SortableMenuItem
-                        key={id}
-                        id={id}
-                        label={meta.label}
-                        Icon={meta.icon}
-                        preset={meta.preset}
-                        isActive={activeTab === id}
-                        isCompleted={isCompleted}
-                        showCompletion={true}
-                        onClick={() => setActiveTab(id)}
-                      />
-                    );
+                      return (
+                        <SortableMenuItem
+                          key={id}
+                          id={id}
+                          label={customMeta.name}
+                          Icon={Plus}
+                          preset="scaleUp"
+                          isActive={activeTab === id}
+                          isCompleted={isCompleted}
+                          showCompletion={true}
+                          onClick={() => setActiveTab(id)}
+                        />
+                      );
+                    }
                   })}
                 </SortableContext>
               </DndContext>
-
-              {/* Custom Sections (not draggable for now, appended at bottom) */}
-              {resumeData.customSections.map((section) => {
-                const isActive = activeTab === section.id;
-                return (
-                  <NavItemWrapper key={section.id}>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        isActive={isActive}
-                        onClick={() => setActiveTab(section.id)}
-                        tooltip={section.name}
-                        className={cn(
-                          'transition-all duration-200 h-10 px-4',
-                          isActive
-                            ? 'bg-primary/10 text-primary font-semibold'
-                            : 'hover:bg-accent text-muted-foreground hover:text-foreground',
-                        )}
-                      >
-                        <AnimatedIcon
-                          icon={Plus}
-                          preset="scaleUp"
-                          className={cn(
-                            'w-4 h-4 mr-2 transition-colors duration-200',
-                            isActive ? 'text-primary' : '',
-                          )}
-                        />
-                        <span className="truncate">{section.name}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </NavItemWrapper>
-                );
-              })}
 
               {/* Add custom section button */}
               <NavItemWrapper>

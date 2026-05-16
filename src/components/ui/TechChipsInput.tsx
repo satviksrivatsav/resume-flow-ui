@@ -49,7 +49,7 @@ export const TechChipsInput: React.FC<TechChipsInputProps> = ({
       {label && (
         <Label>
           {label}
-          {required && ' *'}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </Label>
       )}
       <div className={containerClassName}>

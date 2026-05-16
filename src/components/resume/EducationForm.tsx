@@ -149,7 +149,9 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-medium">Field of Study</Label>
+                          <Label className="font-medium">
+                            Field of Study <span className="text-red-500">*</span>
+                          </Label>
                           <Input
                             value={edu.area}
                             onChange={(e) => updateEducation(edu.id, { area: e.target.value })}
@@ -158,7 +160,9 @@ export const EducationForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-medium">Period</Label>
+                          <Label className="font-medium">
+                            Period <span className="text-red-500">*</span>
+                          </Label>
                           <div className="relative">
                             <Input
                               value={edu.period}

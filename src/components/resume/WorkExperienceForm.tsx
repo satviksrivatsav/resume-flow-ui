@@ -170,7 +170,9 @@ export const WorkExperienceForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="font-medium">Period</Label>
+                          <Label className="font-medium">
+                            Period <span className="text-red-500">*</span>
+                          </Label>
                           <div className="relative">
                             <Input
                               value={exp.period}

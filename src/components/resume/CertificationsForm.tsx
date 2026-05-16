@@ -77,7 +77,9 @@ export const CertificationsForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Issuer</Label>
+                  <Label className="font-medium">
+                    Issuer <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={cert.issuer}
                     onChange={(e) =>

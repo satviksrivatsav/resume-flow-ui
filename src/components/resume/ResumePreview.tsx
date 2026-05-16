@@ -470,8 +470,16 @@ const ResumeContent = ({
     references: renderReferences,
   };
 
-  // Determine render order — sidebar uses work→experience alias; preview uses raw keys
-  const sectionOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
+  // Determine render order
+  const storedOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
+  const staticIds = DEFAULT_SECTION_ORDER;
+  const customIds = customSections.map((s) => s.id);
+  const allIds = [...staticIds, ...customIds];
+
+  const orderedAllIds = [
+    ...storedOrder.filter((id) => allIds.includes(id)),
+    ...allIds.filter((id) => !storedOrder.includes(id)),
+  ];
 
   return (
     <>
@@ -575,26 +583,28 @@ const ResumeContent = ({
         )}
       </div>
 
-      {/* Dynamic section body — respects sectionOrder from metadata */}
-      {sectionOrder.map((key) => {
+      {/* Dynamic section body — respects orderedAllIds */}
+      {orderedAllIds.map((key) => {
         const renderer = sectionRenderers[key];
-        return renderer ? renderer() : null;
-      })}
+        if (renderer) return renderer();
 
-      {/* Custom Sections — always appended after standard ones */}
-      {customSections
-        .filter((s) => s.visible && s.items.length > 0)
-        .map((section) => (
-          <div key={section.id} style={{ marginBottom: '16px' }}>
-            <SectionHeader title={section.name} color={themeColor} sizes={sizes} />
-            {section.items.map((item: any) => (
-              <div key={item.id} style={{ marginBottom: '8px' }}>
-                <div style={{ fontWeight: 'bold' }}>{item.title}</div>
-                <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
-              </div>
-            ))}
-          </div>
-        ))}
+        const customSection = customSections.find((s) => s.id === key);
+        if (customSection && customSection.visible && customSection.items.length > 0) {
+          return (
+            <div key={customSection.id} style={{ marginBottom: '16px' }}>
+              <SectionHeader title={customSection.name} color={themeColor} sizes={sizes} />
+              {customSection.items.map((item: any) => (
+                <div key={item.id} style={{ marginBottom: '8px' }}>
+                  <div style={{ fontWeight: 'bold' }}>{item.title}</div>
+                  <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        return null;
+      })}
     </>
   );
 };

@@ -85,7 +85,9 @@ export const CustomSectionForm = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="font-medium">Title</Label>
+                  <Label className="font-medium">
+                    Title <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={item.title}
                     onChange={(e) => handleUpdateItem(item.id, { title: e.target.value })}
@@ -95,7 +97,9 @@ export const CustomSectionForm = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className="font-medium">Description</Label>
+                    <Label className="font-medium">
+                      Description <span className="text-red-500">*</span>
+                    </Label>
                     <AIWriterButton
                       fieldName="custom"
                       fieldLabel={section.name}

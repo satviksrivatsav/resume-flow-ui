@@ -77,19 +77,6 @@ export const LanguagesForm = () => {
                     placeholder="e.g. Native, Professional Working, Conversational"
                   />
                 </div>
-
-                <div className="space-y-3 pt-2">
-                  <div className="flex justify-between items-center">
-                    <Label className="font-medium text-xs">Level ({lang.level}/5)</Label>
-                  </div>
-                  <Slider
-                    min={0}
-                    max={5}
-                    step={1}
-                    value={[lang.level]}
-                    onValueChange={(val) => updateItem('languages', lang.id, { level: val[0] })}
-                  />
-                </div>
               </div>
             </motion.div>
           ))}

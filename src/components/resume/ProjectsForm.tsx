@@ -175,7 +175,7 @@ export const ProjectsForm = () => {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <Label className="text-sm font-semibold">
-                              Description / Key Features
+                              Description / Key Features <span className="text-red-500">*</span>
                             </Label>
                             <AIWriterButton
                               fieldName="projects"

@@ -75,7 +75,9 @@ export const PublicationsForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Publisher / Journal</Label>
+                  <Label className="font-medium">
+                    Publisher / Journal <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     value={pub.publisher}
                     onChange={(e) =>
