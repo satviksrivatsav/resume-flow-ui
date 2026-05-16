@@ -4,7 +4,7 @@ import { Calendar, HandHelping, Link as LinkIcon, MapPin, Plus } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -134,10 +134,10 @@ export const VolunteerForm = () => {
 
                 <div className="md:col-span-2 space-y-2">
                   <Label className="font-medium">Description</Label>
-                  <Textarea
-                    value={vol.description}
-                    onChange={(e) =>
-                      updateItem('volunteer', vol.id, { description: e.target.value })
+                  <RichTextEditor
+                    value={vol.description || ''}
+                    onChange={(value) =>
+                      updateItem('volunteer', vol.id, { description: value })
                     }
                     placeholder="Describe your responsibilities and the organization's mission."
                     className="min-h-[100px]"

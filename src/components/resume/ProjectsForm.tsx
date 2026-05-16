@@ -8,7 +8,7 @@ import { FieldTip } from '@/components/ui/FieldTip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TechChipsInput } from '@/components/ui/TechChipsInput';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -186,14 +186,13 @@ export const ProjectsForm = () => {
                               }
                             />
                           </div>
-                          <Textarea
-                            value={proj.description}
-                            onChange={(e) =>
-                              updateProject(proj.id, { description: e.target.value })
+                          <RichTextEditor
+                            value={proj.description || ''}
+                            onChange={(value) =>
+                              updateProject(proj.id, { description: value })
                             }
                             placeholder="• Built a full-stack app using...&#10;• Implemented real-time updates with..."
                             className="min-h-[150px]"
-                            rows={6}
                           />
                           <FieldTip>
                             Briefly explain the project's purpose and highlight your technical

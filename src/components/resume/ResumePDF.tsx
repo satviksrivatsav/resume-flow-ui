@@ -17,6 +17,8 @@ import {
 import React from 'react';
 
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/types/resume';
+import { stripHtml } from '@/lib/utils';
+
 
 interface ResumePDFProps {
   resumeData: ResumeData;
@@ -84,20 +86,7 @@ const WebsiteIcon = () => (
   </Svg>
 );
 
-const stripHtml = (html: string) => {
-  if (!html) return '';
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n')
-    .replace(/<li>/gi, '\n• ')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/\n\s*\n/g, '\n')
-    .trim();
-};
+
 
 const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any }) => {
   if (!text) return null;
@@ -453,7 +442,9 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                 </View>
                 <Text style={styles.itemDate}>{award.date}</Text>
               </View>
-              {award.description && <Text style={styles.itemDescription}>{award.description}</Text>}
+              {award.description && (
+                <PDFDescriptionRenderer text={award.description} style={styles.itemDescription} />
+              )}
             </View>
           ))}
       </View>
@@ -476,6 +467,9 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                 </View>
                 <Text style={styles.itemDate}>{cert.date}</Text>
               </View>
+              {cert.description && (
+                <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
+              )}
             </View>
           ))}
       </View>
@@ -523,7 +517,9 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                 </View>
                 <Text style={styles.itemDate}>{pub.date}</Text>
               </View>
-              {pub.description && <Text style={styles.itemDescription}>{pub.description}</Text>}
+              {pub.description && (
+                <PDFDescriptionRenderer text={pub.description} style={styles.itemDescription} />
+              )}
             </View>
           ))}
       </View>

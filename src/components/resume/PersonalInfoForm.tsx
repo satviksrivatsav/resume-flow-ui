@@ -7,7 +7,7 @@ import { FieldTip } from '@/components/ui/FieldTip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/PhoneInput';
-import { AutoResizingTextarea } from '@/components/ui/AutoResizingTextarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { getCountryByCode } from '@/lib/countries';
 import { detectCountryFromTimezone } from '@/lib/geolocation';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -170,10 +170,9 @@ export const PersonalInfoForm = () => {
             onUpdate={(newText) => updateSummary({ content: newText })}
           />
         </div>
-        <AutoResizingTextarea
-          id="summary"
+        <RichTextEditor
           value={summary.content}
-          onChange={(e) => updateSummary({ content: e.target.value })}
+          onChange={(value) => updateSummary({ content: value })}
           placeholder="A brief summary of your professional background and career goals..."
           className="min-h-[120px]"
         />

@@ -9,6 +9,8 @@ import {
 } from 'docx';
 
 import { ResumeData } from '@/types/resume';
+import { stripHtml } from '@/lib/utils';
+
 
 export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   const sections = [];
@@ -61,9 +63,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         spacing: { before: 200, after: 100 },
       }),
       new Paragraph({
-        text: resumeData.summary.content,
+        text: stripHtml(resumeData.summary.content),
         spacing: { after: 200 },
       }),
+
     );
   }
 
@@ -95,9 +98,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           ],
         }),
         new Paragraph({
-          text: item.description,
+          text: stripHtml(item.description),
           spacing: { after: 120 },
         }),
+
       );
 
       if (item.roles && item.roles.length > 0) {
@@ -110,9 +114,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               ],
             }),
             new Paragraph({
-              text: `    ${role.description}`,
+              text: stripHtml(role.description),
               spacing: { after: 120 },
             }),
+
           );
         });
       }

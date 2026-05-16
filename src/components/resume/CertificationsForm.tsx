@@ -4,7 +4,7 @@ import { Award, Calendar, Link as LinkIcon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { useResumeStore } from '@/stores/resumeStore';
 
@@ -120,10 +120,10 @@ export const CertificationsForm = () => {
 
                 <div className="md:col-span-2 space-y-2">
                   <Label className="font-medium">Description</Label>
-                  <Textarea
-                    value={cert.description}
-                    onChange={(e) =>
-                      updateItem('certifications', cert.id, { description: e.target.value })
+                  <RichTextEditor
+                    value={cert.description || ''}
+                    onChange={(value) =>
+                      updateItem('certifications', cert.id, { description: value })
                     }
                     placeholder="Optional details about the certification."
                     className="min-h-[80px]"

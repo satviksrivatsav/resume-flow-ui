@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -184,14 +184,13 @@ export const EducationForm = () => {
                           <Label className="text-sm font-semibold">
                             Description / Achievements
                           </Label>
-                          <Textarea
-                            value={edu.description}
-                            onChange={(e) =>
-                              updateEducation(edu.id, { description: e.target.value })
+                          <RichTextEditor
+                            value={edu.description || ''}
+                            onChange={(value) =>
+                              updateEducation(edu.id, { description: value })
                             }
                             placeholder="• Relevant coursework: Data Structures, Algorithms&#10;• Dean's List for 4 semesters"
                             className="min-h-[120px]"
-                            rows={4}
                           />
                         </div>
                       </div>

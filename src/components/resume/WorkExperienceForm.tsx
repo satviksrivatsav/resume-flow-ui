@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { FieldTip } from '@/components/ui/FieldTip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -196,14 +196,13 @@ export const WorkExperienceForm = () => {
                               }
                             />
                           </div>
-                          <Textarea
-                            value={exp.description}
-                            onChange={(e) =>
-                              updateExperience(exp.id, { description: e.target.value })
+                          <RichTextEditor
+                            value={exp.description || ''}
+                            onChange={(value) =>
+                              updateExperience(exp.id, { description: value })
                             }
                             placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
-                            className="min-h-[150px] font-mono text-sm"
-                            rows={6}
+                            className="min-h-[150px]"
                           />
                           <FieldTip>
                             Use bullet points and lead with strong action verbs. Quantify impact

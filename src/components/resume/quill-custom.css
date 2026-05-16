@@ -33,10 +33,16 @@
 
 /* Editor Styling */
 .ql-editor {
-  min-height: 12rem;
+  min-height: 120px;
+  height: auto !important;
+  overflow-y: hidden !important;
   padding: 16px 20px !important;
   line-height: 1.6 !important;
   color: hsl(var(--foreground));
+}
+
+.ql-container {
+  height: auto !important;
 }
 
 .ql-editor.ql-blank::before {
@@ -126,4 +132,41 @@
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
   padding: 4px !important;
+}
+/* Custom Toolbar Button Styling */
+.ql-custom-button {
+  color: hsl(var(--foreground)/0.6);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ql-custom-button:hover {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary)/0.08) !important;
+}
+
+.ql-custom-button.ql-active {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary)/0.12) !important;
+}
+
+.ql-custom-button svg {
+  transition: transform 0.2s ease;
+}
+
+.ql-custom-button:hover svg {
+  transform: scale(1.1);
+}
+
+/* Hide default Quill toolbar if it accidentally renders */
+.ql-toolbar.ql-snow:not([id^="toolbar-"]) {
+  display: none !important;
+}
+
+/* Ensure the custom toolbar looks consistent */
+[id^="toolbar-"] {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
 }

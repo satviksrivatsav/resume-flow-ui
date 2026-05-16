@@ -1,9 +1,4 @@
-import 'react-quill/dist/quill.snow.css';
-import './quill-custom.css';
-
 import { motion } from 'framer-motion';
-import ReactQuill from 'react-quill';
-
 import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -12,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MonthYearPicker } from '@/components/ui/MonthYearPicker';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';
 
@@ -22,10 +18,6 @@ export const AdditionalSectionForm = () => {
   const section = resumeData.additionalSections.find((s) => s.id === activeTab);
 
   if (!section) return null;
-
-  const modules = {
-    toolbar: [['bold', 'italic', 'underline'], [{ list: 'bullet' }]],
-  };
 
   return (
     <motion.div
@@ -128,15 +120,11 @@ export const AdditionalSectionForm = () => {
               onUpdate={(newText) => updateAdditionalSection(section.id, { description: newText })}
             />
           </div>
-          <div className="bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background shadow-sm">
-            <ReactQuill
-              theme="snow"
-              value={section.description}
-              onChange={(value) => updateAdditionalSection(section.id, { description: value })}
-              modules={modules}
-              placeholder="Describe your achievements or details here..."
-            />
-          </div>
+          <RichTextEditor
+            value={section.description || ''}
+            onChange={(value) => updateAdditionalSection(section.id, { description: value })}
+            placeholder="Describe your achievements or details here..."
+          />
           <FieldTip>
             Use the toolbar to add bullets, bold key terms, or italicise details. Keep each entry
             focused and relevant to the role you're applying for.

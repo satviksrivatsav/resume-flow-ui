@@ -4,7 +4,7 @@ import { Calendar, Plus, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -92,10 +92,10 @@ export const AwardsForm = () => {
 
                 <div className="md:col-span-2 space-y-2">
                   <Label className="font-medium">Description</Label>
-                  <Textarea
-                    value={award.description}
-                    onChange={(e) =>
-                      updateItem('awards', award.id, { description: e.target.value })
+                  <RichTextEditor
+                    value={award.description || ''}
+                    onChange={(value) =>
+                      updateItem('awards', award.id, { description: value })
                     }
                     placeholder="Briefly describe the award and why you received it."
                     className="min-h-[100px]"

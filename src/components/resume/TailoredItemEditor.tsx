@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
-import { AutoResizingTextarea } from '@/components/ui/AutoResizingTextarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TechChipsInput } from '@/components/ui/TechChipsInput';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -60,15 +60,16 @@ export const TailoredItemEditor = ({
     return (
       <div className="space-y-4">
         {readOnly ? (
-          <div className="text-[14px] leading-[1.8] text-muted-foreground/80 whitespace-pre-wrap">
-            {localContent}
-          </div>
+          <div 
+            className="text-[14px] leading-[1.8] text-muted-foreground/80 ql-editor ql-editor-preview"
+            dangerouslySetInnerHTML={{ __html: localContent }}
+          />
         ) : (
-          <AutoResizingTextarea
+          <RichTextEditor
             value={localContent}
-            onChange={(e) => {
-              setLocalContent(e.target.value);
-              onChange?.(e.target.value);
+            onChange={(value) => {
+              setLocalContent(value);
+              onChange?.(value);
             }}
             className="text-[14px] leading-[1.8]"
             placeholder="Edit content..."
@@ -91,14 +92,19 @@ export const TailoredItemEditor = ({
           <Label className="text-muted-foreground font-bold tracking-wider uppercase text-[10px]">
             {label}
           </Label>
-          <div
-            className={cn(
-              'text-[14px] leading-[1.8] whitespace-pre-wrap',
-              label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90 font-medium',
-            )}
-          >
-            {value || <span className="italic opacity-50">Empty</span>}
-          </div>
+          {type === 'textarea' ? (
+            <div
+              className={cn(
+                'text-[14px] leading-[1.8] ql-editor ql-editor-preview',
+                label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90 font-medium',
+              )}
+              dangerouslySetInnerHTML={{ __html: value || '' }}
+            />
+          ) : (
+            <div className="text-[14px] leading-[1.8] text-foreground/90 font-medium">
+              {value || <span className="italic opacity-50">Empty</span>}
+            </div>
+          )}
         </div>
       );
     }
@@ -115,9 +121,9 @@ export const TailoredItemEditor = ({
             placeholder={`Edit ${label.toLowerCase()}...`}
           />
         ) : (
-          <AutoResizingTextarea
+          <RichTextEditor
             value={value || ''}
-            onChange={(e) => handleChange(field, e.target.value)}
+            onChange={(value) => handleChange(field, value)}
             className="text-[14px] leading-[1.8]"
             placeholder={`Edit ${label.toLowerCase()}...`}
           />

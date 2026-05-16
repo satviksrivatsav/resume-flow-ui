@@ -16,8 +16,22 @@ const IconWrapper = ({ children }: { children: React.ReactNode }) => (
 const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSSProperties }) => {
   if (!text) return null;
 
-  const lines = text.split('\n');
+  // If it's HTML (contains tags), render it directly
+  if (text.includes('<') && text.includes('>')) {
+    return (
+      <div 
+        className="description-content"
+        style={{
+          ...style,
+          wordBreak: 'break-word',
+        }}
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
+    );
+  }
 
+  // Fallback for plain text with manual bullets
+  const lines = text.split('\n');
   return (
     <div style={style}>
       {lines.map((line, i) => {
@@ -320,7 +334,12 @@ const ResumeContent = ({
                 <span>{award.date}</span>
               </div>
               <div style={{ fontSize: '0.9em', color: '#666' }}>{award.awarder}</div>
-              {award.description && <div style={{ fontSize: sizes.base }}>{award.description}</div>}
+              {award.description && (
+                <DescriptionRenderer
+                  text={award.description}
+                  style={{ fontSize: sizes.base, color: '#000' }}
+                />
+              )}
             </div>
           ))}
       </div>
@@ -343,6 +362,12 @@ const ResumeContent = ({
                 <span>{cert.date}</span>
               </div>
               <div style={{ fontSize: '0.9em', color: '#666' }}>{cert.issuer}</div>
+              {cert.description && (
+                <DescriptionRenderer
+                  text={cert.description}
+                  style={{ fontSize: sizes.base, color: '#000', marginTop: '2px' }}
+                />
+              )}
             </div>
           ))}
       </div>
@@ -365,7 +390,12 @@ const ResumeContent = ({
                 <span>{pub.date}</span>
               </div>
               <div style={{ fontSize: '0.9em', color: '#666' }}>{pub.publisher}</div>
-              {pub.description && <div style={{ fontSize: sizes.base }}>{pub.description}</div>}
+              {pub.description && (
+                <DescriptionRenderer
+                  text={pub.description}
+                  style={{ fontSize: sizes.base, color: '#000' }}
+                />
+              )}
             </div>
           ))}
       </div>

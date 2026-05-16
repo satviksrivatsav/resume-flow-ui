@@ -1,4 +1,7 @@
+import { stripHtml } from '@/lib/utils';
+
 /**
+
  * Formats a single structured resume item into human-readable text.
  */
 export const formatItemContent = (id: string, item: any): string => {
@@ -36,14 +39,16 @@ export const formatItemContent = (id: string, item: any): string => {
   if (item.date || item.period) parts.push(item.date || item.period);
 
   // General description/summary
-  if (item.summary) parts.push(item.summary);
-  if (item.description) parts.push(item.description);
+  if (item.summary) parts.push(stripHtml(item.summary));
+  if (item.description) parts.push(stripHtml(item.description));
+
 
   // Experience Roles (nested)
   if (item.roles && Array.isArray(item.roles)) {
     item.roles.forEach((role: any) => {
       if (role.position) parts.push(`- ${role.position}`);
-      if (role.description) parts.push(role.description);
+      if (role.description) parts.push(stripHtml(role.description));
+
     });
   }
 
@@ -77,8 +82,9 @@ export const formatSectionContent = (id: string, content: any): string => {
 
   // Summary
   if (id === 'summary') {
-    return content.content || content || '';
+    return stripHtml(content.content || content || '');
   }
+
 
   // Handle section items (Experience, Education, Projects, etc.)
   if (content.items && Array.isArray(content.items)) {
