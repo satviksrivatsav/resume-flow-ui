@@ -202,10 +202,7 @@ export const TailorForm = () => {
     <div className="max-w-xl mx-auto w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       <div className="space-y-4">
         <div className="flex items-center justify-between px-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-primary/10 text-primary">
-              <FileText className="w-5 h-5" />
-            </div>
+          <div className="px-2">
             <h3 className="text-lg font-bold">Job Description</h3>
           </div>
 
@@ -275,12 +272,7 @@ export const TailorForm = () => {
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-3 px-2">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold">Tailoring Options</h3>
-        </div>
+
 
         <div className="space-y-6">
           <div
@@ -359,13 +351,18 @@ export const TailorForm = () => {
       <div className="pt-2">
         <motion.div
           onHoverStart={() => {
+            if (isTailoring || !jobDescription.trim()) return;
             setIsButtonHovered(true);
             setIsButtonAnimating(true);
           }}
           onHoverEnd={() => setIsButtonHovered(false)}
-          animate={isButtonHovered || isButtonAnimating ? 'hover' : 'initial'}
+          animate={
+            (isButtonHovered || isButtonAnimating) && !isTailoring && jobDescription.trim()
+              ? 'hover'
+              : 'initial'
+          }
           onAnimationComplete={() => setIsButtonAnimating(false)}
-          whileTap="tap"
+          whileTap={isTailoring || !jobDescription.trim() ? undefined : 'tap'}
         >
           <Button
             className="w-full h-14 rounded-full text-lg font-bold gap-3 transition-all"
