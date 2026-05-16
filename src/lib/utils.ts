@@ -74,3 +74,22 @@ export function stripHtml(html: string): string {
     .replace(/'/g, "'")
     .trim();
 }
+export function cleanProfileDisplay(input: string): string {
+  if (!input) return '';
+  if (!input.includes('/') && !input.includes('.')) return input.replace(/^@/, '');
+
+  try {
+    const urlString = input.startsWith('http') ? input : `https://${input}`;
+    const url = new URL(urlString);
+    const segments = url.pathname.split('/').filter(Boolean);
+    
+    // For LinkedIn, usually it's /in/username
+    if (url.hostname.includes('linkedin.com') && segments[0] === 'in' && segments[1]) {
+      return segments[1];
+    }
+    
+    return segments[segments.length - 1] || input;
+  } catch (e) {
+    return input.split('/').filter(Boolean).pop() || input;
+  }
+}

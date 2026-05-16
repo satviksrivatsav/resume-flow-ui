@@ -51,18 +51,18 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     <div className="relative" ref={dropdownRef}>
       <div
         className={cn(
-          'flex items-center rounded-full border border-input bg-background overflow-hidden transition-all duration-200',
-          'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:border-primary',
-          isOpen && 'ring-2 ring-ring ring-offset-2 border-primary',
+          'flex items-center rounded-full border border-input bg-background ring-offset-background transition-colors overflow-hidden',
+          'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+          isOpen && 'ring-2 ring-ring ring-offset-2',
         )}
       >
         {/* Country Code Dropdown Button */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1 pl-4 pr-2 h-10 border-r border-input bg-muted/30 hover:bg-muted/50 transition-colors min-w-[90px] focus:outline-none"
+          className="flex items-center gap-2 pl-4 pr-2 h-10 border-r border-input bg-muted/30 hover:bg-muted/50 transition-colors min-w-[95px] focus:outline-none"
         >
-          <span className="text-lg">{selectedCountry.flag}</span>
+          <span className="text-xs font-bold text-muted-foreground">{selectedCountry.code}</span>
           <span className="text-sm font-medium">{selectedCountry.dialCode}</span>
           <ChevronDown
             className={cn(
@@ -84,9 +84,9 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-50 top-full left-0 mt-1 w-64 max-h-60 overflow-auto rounded-2xl border border-input bg-background shadow-lg">
+        <div className="absolute z-50 top-full left-0 mt-1 w-[300px] max-h-60 overflow-y-auto overflow-x-hidden rounded-2xl border border-input bg-background shadow-lg">
           {/* Search */}
-          <div className="sticky top-0 bg-background p-2 border-b">
+          <div className="sticky top-0 bg-background p-2 border-b z-10">
             <input
               type="text"
               value={search}
@@ -104,17 +104,18 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 key={country.code}
                 type="button"
                 onClick={() => handleSelect(country)}
-                className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors rounded-full mx-1 w-[calc(100%-8px)] ${
-                  country.code === countryCode ? 'bg-accent' : ''
-                }`}
+                className={cn(
+                  "w-[calc(100%-8px)] flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors rounded-full mx-1",
+                  country.code === countryCode ? "bg-accent" : ""
+                )}
               >
-                <span className="text-lg">{country.flag}</span>
-                <span className="flex-1 text-left">{country.name}</span>
-                <span className="text-muted-foreground">{country.dialCode}</span>
+                <span className="font-bold text-xs text-muted-foreground w-6 shrink-0">{country.code}</span>
+                <span className="flex-1 text-left truncate">{country.name}</span>
+                <span className="text-muted-foreground tabular-nums shrink-0">{country.dialCode}</span>
               </button>
             ))}
             {filteredCountries.length === 0 && (
-              <div className="px-3 py-2 text-sm text-muted-foreground">No countries found</div>
+              <div className="px-3 py-2 text-sm text-muted-foreground text-center">No countries found</div>
             )}
           </div>
         </div>

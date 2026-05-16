@@ -17,7 +17,7 @@ import {
 import React from 'react';
 
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/types/resume';
-import { stripHtml } from '@/lib/utils';
+import { cleanProfileDisplay, stripHtml } from '@/lib/utils';
 
 
 interface ResumePDFProps {
@@ -587,9 +587,17 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
                   key={index}
                   style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
                 >
-                  <Text style={styles.contactItem}>
-                    {profile.network}: {profile.username}
-                  </Text>
+                  {profile.website?.href ? (
+                    <Link src={profile.website.href} style={styles.contactItem}>
+                      <Text>
+                        {profile.network}: {cleanProfileDisplay(profile.username)}
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text style={styles.contactItem}>
+                      {profile.network}: {cleanProfileDisplay(profile.username)}
+                    </Text>
+                  )}
                 </View>
               ))}
           </View>

@@ -422,32 +422,47 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   updateProfile: (id, item) => get().updateItem('profiles', id, item),
   deleteProfile: (id) => get().deleteItem('profiles', id),
 
-  updateProfileByNetwork: (network: string, username: string) => {
+  updateProfileByNetwork: (network: string, input: string) => {
     const state = get();
     const profiles = state.resumeData.sections.profiles.items;
     const existing = profiles.find((p) => p.network.toLowerCase() === network.toLowerCase());
 
-    if (existing) {
-      if (!username) {
+    if (!input) {
+      if (existing) {
         state.deleteItem('profiles', existing.id);
-      } else {
-        state.updateItem('profiles', existing.id, {
-          username,
-          website: {
-            ...existing.website,
-            href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}`,
-          },
-        });
       }
-    } else if (username) {
+      return;
+    }
+
+    // Determine if input is a URL or just a username
+    let href = input;
+
+    if (!input.startsWith('http') && !input.includes('.com')) {
+      // It's likely just a username
+      const cleanUsername = input.replace(/^@/, '');
+      href = `https://${network.toLowerCase()}.com/${cleanUsername}`;
+    } else {
+      // It's a URL, let's try to extract a clean href
+      try {
+        const url = new URL(input.startsWith('http') ? input : `https://${input}`);
+        href = url.href;
+      } catch (e) {
+        // Fallback
+        href = input.startsWith('http') ? input : `https://${input}`;
+      }
+    }
+
+    if (existing) {
+      state.updateItem('profiles', existing.id, {
+        username: input, // Store raw input to keep typing smooth
+        website: { ...existing.website, href },
+      });
+    } else {
       state.addItem('profiles', {
         network,
-        username,
+        username: input, // Store raw input
         icon: network.toLowerCase(),
-        website: {
-          label: '',
-          href: `https://${network.toLowerCase()}.com/${username.replace(/^@/, '')}`,
-        },
+        website: { label: '', href },
       });
     }
   },

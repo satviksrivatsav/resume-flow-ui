@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { FieldTip } from '@/components/ui/FieldTip';
@@ -15,6 +15,7 @@ import { useResumeStore } from '@/stores/resumeStore';
 export const PersonalInfoForm = () => {
   const { resumeData, updateBasics, updateSummary, updateProfileByNetwork } = useResumeStore();
   const { basics, summary, sections } = resumeData;
+  const [countryCode, setCountryCode] = useState('US');
   const hasDetected = useRef(false);
 
   // Auto-detect country code from timezone on first load
@@ -22,18 +23,10 @@ export const PersonalInfoForm = () => {
     if (hasDetected.current) return;
     hasDetected.current = true;
 
-    // Only auto-detect if phone is empty
-    if (!basics.phone) {
-      const detectedCountryCode = detectCountryFromTimezone();
-      if (detectedCountryCode) {
-        const country = getCountryByCode(detectedCountryCode);
-        if (country) {
-          // In the new schema, we don't have a separate country code field in basics
-          // But we can keep it in the PhoneInput state if needed.
-        }
-      }
+    const detectedCountryCode = detectCountryFromTimezone();
+    if (detectedCountryCode) {
+      setCountryCode(detectedCountryCode);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProfileUsername = (network: string) => {
@@ -90,7 +83,6 @@ export const PersonalInfoForm = () => {
             placeholder="john@example.com"
           />
         </div>
-
         <div className="space-y-2">
           <Label htmlFor="phone" className="flex items-center gap-2">
             <Phone className="w-3.5 h-3.5 text-muted-foreground" />
@@ -99,8 +91,8 @@ export const PersonalInfoForm = () => {
           <PhoneInput
             value={basics.phone}
             onChange={(value) => updateBasics({ phone: value })}
-            countryCode="US" // Default to US for now
-            onCountryCodeChange={() => {}}
+            countryCode={countryCode}
+            onCountryCodeChange={setCountryCode}
             placeholder="Phone number"
           />
         </div>
@@ -134,26 +126,26 @@ export const PersonalInfoForm = () => {
         <div className="space-y-2">
           <Label htmlFor="linkedin" className="flex items-center gap-2">
             <Linkedin className="w-3.5 h-3.5 text-muted-foreground" />
-            LinkedIn Username
+            LinkedIn Profile
           </Label>
           <Input
             id="linkedin"
             value={getProfileUsername('linkedin')}
             onChange={(e) => updateProfileByNetwork('LinkedIn', e.target.value)}
-            placeholder="johndoe"
+            placeholder="linkedin.com/in/johndoe"
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="github" className="flex items-center gap-2">
             <Github className="w-3.5 h-3.5 text-muted-foreground" />
-            GitHub Username
+            GitHub Profile
           </Label>
           <Input
             id="github"
             value={getProfileUsername('github')}
             onChange={(e) => updateProfileByNetwork('GitHub', e.target.value)}
-            placeholder="johndoe"
+            placeholder="github.com/johndoe"
           />
         </div>
       </div>

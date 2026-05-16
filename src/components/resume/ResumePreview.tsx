@@ -2,7 +2,7 @@ import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-re
 import { forwardRef, useMemo } from 'react';
 
 import { useResumeStore } from '@/stores/resumeStore';
-import { sanitizeResumeData } from '@/lib/utils';
+import { cleanProfileDisplay, sanitizeResumeData } from '@/lib/utils';
 import { DEFAULT_SECTION_ORDER } from '@/types/resume';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
@@ -553,7 +553,18 @@ const ResumeContent = ({
               .map((p: any) => (
                 <IconWrapper key={p.id}>
                   {getNetworkIcon(p.network)}
-                  <span>{p.username}</span>
+                  {p.website?.href ? (
+                    <a
+                      href={p.website.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      {cleanProfileDisplay(p.username)}
+                    </a>
+                  ) : (
+                    <span>{cleanProfileDisplay(p.username)}</span>
+                  )}
                 </IconWrapper>
               ))}
           </div>
