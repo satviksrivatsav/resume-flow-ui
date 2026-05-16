@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Info } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -64,6 +64,10 @@ interface AIDiffViewerProps {
   decision?: 'accept' | 'reject';
   showActions?: boolean;
   footer?: React.ReactNode;
+  rightElement?: React.ReactNode;
+  isEditable?: boolean;
+  onNewTextChange?: (text: string) => void;
+  infoTip?: string;
 }
 
 export function AIDiffViewer({
@@ -76,95 +80,159 @@ export function AIDiffViewer({
   decision,
   showActions = true,
   footer,
+  rightElement,
+  isEditable = false,
+  onNewTextChange,
+  infoTip,
 }: AIDiffViewerProps) {
   const [rejectHovered, setRejectHovered] = useState(false);
   const [acceptHovered, setAcceptHovered] = useState(false);
+  const [localText, setLocalText] = useState(typeof newText === 'string' ? newText : '');
+  const [isEditing, setIsEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Sync local text and reset editing state when section changes
+  useEffect(() => {
+    if (typeof newText === 'string') {
+      setLocalText(newText);
+      setIsEditing(false);
+    }
+  }, [newText]);
+
+  // Handle auto-resize
+  useEffect(() => {
+    if (isEditable && isEditing && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [localText, isEditable, isEditing]);
 
   return (
-    <div className="flex flex-col h-full bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 overflow-hidden shadow-sm">
+    <div className="flex flex-col bg-card/30 backdrop-blur-md rounded-[2.5rem] border border-primary/10 shadow-sm transition-all duration-300">
       {/* Header with Title */}
-      <div className="p-8 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
-        <div className="space-y-1">
+      <div className="px-8 py-6 border-b border-primary/10 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-            <h3 className="text-2xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
+            <h3 className="text-xl font-bold tracking-tight">{title || 'Review Changes'}</h3>
           </div>
-          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+          {infoTip && (
+            <div className="flex items-center gap-1.5 opacity-60">
+              <Info className="w-3.5 h-3.5 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground font-medium italic">
+                {infoTip}
+              </p>
+            </div>
+          )}
         </div>
 
-        {showActions && (
-          <div className="flex gap-3">
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              onHoverStart={() => setRejectHovered(true)}
-              onHoverEnd={() => setRejectHovered(false)}
-            >
-              <Button
-                variant={decision === 'reject' ? 'destructive' : 'outline'}
-                size="lg"
-                onClick={onReject}
-                className={cn(
-                  'gap-2 rounded-full px-6 h-12 transition-all duration-300',
-                  decision === 'reject'
-                    ? 'border-destructive bg-destructive/10'
-                    : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
-                )}
-              >
-                <DrawableX draw={rejectHovered} />
-                Reject
-              </Button>
-            </motion.div>
+        <div className="flex items-center gap-4">
+          {rightElement}
 
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              onHoverStart={() => setAcceptHovered(true)}
-              onHoverEnd={() => setAcceptHovered(false)}
-            >
-              <Button
-                size="lg"
-                onClick={onAccept}
-                className={cn(
-                  'gap-2 rounded-full px-6 h-12 transition-all duration-300',
-                  decision === 'accept'
-                    ? 'bg-green-600 hover:bg-green-700 text-white border-0'
-                    : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
-                )}
+          {showActions && (
+            <div className="flex gap-2">
+              <motion.div
+                whileTap={{ scale: 0.95 }}
+                onHoverStart={() => setRejectHovered(true)}
+                onHoverEnd={() => setRejectHovered(false)}
               >
-                <DrawableCheck draw={acceptHovered} />
-                Accept
-              </Button>
-            </motion.div>
-          </div>
-        )}
+                <Button
+                  variant={decision === 'reject' ? 'destructive' : 'outline'}
+                  onClick={onReject}
+                  className={cn(
+                    'gap-2 rounded-full px-5 h-10 text-xs font-bold transition-all duration-300',
+                    decision === 'reject'
+                      ? 'border-destructive bg-destructive/10'
+                      : 'border-destructive/40 text-destructive hover:bg-destructive/10 hover:border-destructive',
+                  )}
+                >
+                  <DrawableX draw={rejectHovered} />
+                  Reject
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileTap={{ scale: 0.95 }}
+                onHoverStart={() => setAcceptHovered(true)}
+                onHoverEnd={() => setAcceptHovered(false)}
+              >
+                <Button
+                  onClick={onAccept}
+                  className={cn(
+                    'gap-2 rounded-full px-5 h-10 text-xs font-bold transition-all duration-300',
+                    decision === 'accept'
+                      ? 'bg-green-600 hover:bg-green-700 text-white border-0'
+                      : 'bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white border-0',
+                  )}
+                >
+                  <DrawableCheck draw={acceptHovered} />
+                  Accept
+                </Button>
+              </motion.div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 min-h-0 divide-x divide-primary/10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 divide-x divide-primary/10">
         {/* Original Text */}
-        <div className="flex flex-col min-h-0">
-          <div className="px-8 py-4 bg-muted/20 border-b border-primary/5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Original Version
+        <div className="flex flex-col relative group/original min-h-[300px]">
+          <div className="absolute top-6 left-8 flex items-center gap-2 pointer-events-none opacity-40 group-hover/original:opacity-100 transition-opacity">
+            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Original
             </span>
           </div>
-          <div className="flex-1 p-8 overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-muted-foreground whitespace-pre-wrap">
+          <div className="flex-1 p-8 pt-16 text-[14px] leading-[1.8] text-muted-foreground/80 whitespace-pre-wrap">
             {originalText || <span className="italic opacity-50">No original content</span>}
           </div>
         </div>
 
         {/* Tailored Text */}
-        <div className="flex flex-col min-h-0 bg-primary/[0.01]">
-          <div className="px-8 py-4 bg-primary/5 border-b border-primary/10">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-              Tailored Version
-            </span>
+        <div className="flex flex-col relative bg-primary/[0.02] group/tailored min-h-[300px]">
+          <div className="absolute top-6 left-8 right-8 flex items-center justify-between pointer-events-none">
+            <div className="flex items-center gap-2 opacity-40 group-hover/tailored:opacity-100 transition-opacity">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                Tailored
+              </span>
+            </div>
+            {isEditable && !isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="pointer-events-auto text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors cursor-pointer"
+              >
+                Edit
+              </button>
+            )}
           </div>
-          <div className="flex-1 p-8 overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-foreground font-medium whitespace-pre-wrap">
-            {newText || <span className="italic opacity-50">No content generated</span>}
+          <div className="flex-1 p-8 pt-16 text-[14px] leading-[1.8] text-foreground font-medium whitespace-pre-wrap">
+            {isEditable && isEditing ? (
+              <textarea
+                ref={textareaRef}
+                autoFocus
+                className="w-full min-h-[200px] bg-transparent border-none focus:ring-0 resize-none outline-none p-0 custom-scrollbar scrollbar-hide text-[14px] leading-[1.8] font-medium overflow-hidden"
+                value={localText}
+                onChange={(e) => {
+                  setLocalText(e.target.value);
+                  onNewTextChange?.(e.target.value);
+                }}
+                onBlur={() => setIsEditing(false)}
+                placeholder="Type to edit the tailored version..."
+                spellCheck={false}
+              />
+            ) : (
+              newText || <span className="italic opacity-50">No content generated</span>
+            )}
           </div>
         </div>
       </div>
 
-      {footer && <div className="p-6 border-t border-primary/10 bg-card/50">{footer}</div>}
+      {footer && (
+        <div className="p-6 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
+          {footer}
+        </div>
+      )}
     </div>
   );
 }

@@ -19,6 +19,7 @@ interface TailorStore {
   setTailoredSections: (sections: TailoredSection[]) => void;
 
   updateDecision: (sectionId: string, decision: 'accept' | 'reject') => void;
+  updateTailoredContent: (sectionId: string, content: any) => void;
 
   isTailoring: boolean;
   setIsTailoring: (is: boolean) => void;
@@ -46,6 +47,12 @@ export const useTailorStore = create<TailorStore>((set) => ({
     set((state) => ({
       tailoredSections: state.tailoredSections.map((s) =>
         s.sectionId === sectionId ? { ...s, decision } : s,
+      ),
+    })),
+  updateTailoredContent: (sectionId, content) =>
+    set((state) => ({
+      tailoredSections: state.tailoredSections.map((s) =>
+        s.sectionId === sectionId ? { ...s, tailoredContent: content } : s,
       ),
     })),
 

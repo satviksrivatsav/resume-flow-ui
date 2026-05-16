@@ -70,9 +70,18 @@ export const TailorForm = () => {
   const getAvailableSections = () => {
     const sections: { id: string; label: string }[] = [];
 
-    // Headline (part of basics)
+    // Headline (part of basics) - Always visible if it exists
     if (resumeData.basics.headline && resumeData.basics.headline.trim()) {
       sections.push({ id: 'headline', label: 'Headline' });
+    }
+
+    // Summary
+    if (
+      resumeData.summary.visible &&
+      resumeData.summary.content &&
+      resumeData.summary.content.trim()
+    ) {
+      sections.push({ id: 'summary', label: 'Summary' });
     }
 
     // Standard Sections
@@ -89,14 +98,19 @@ export const TailorForm = () => {
     };
 
     Object.entries(resumeData.sections).forEach(([key, section]: [string, any]) => {
-      if (sectionConfig[key] && section.items && section.items.length > 0) {
+      if (
+        sectionConfig[key] &&
+        section.visible &&
+        section.items &&
+        section.items.some((item: any) => item.visible)
+      ) {
         sections.push({ id: key, label: sectionConfig[key] });
       }
     });
 
     // Custom Sections
     resumeData.customSections.forEach((s) => {
-      if (s.items && s.items.length > 0) {
+      if (s.visible && s.items && s.items.some((item: any) => item.visible)) {
         sections.push({ id: s.id, label: s.name });
       }
     });
