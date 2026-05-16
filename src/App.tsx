@@ -22,7 +22,6 @@ import NotFound from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ProfilePage from './pages/ProfilePage';
 import ResumeBuilder from './pages/ResumeBuilder';
-import SettingsPage from './pages/SettingsPage';
 import SignUpPage from './pages/SignUpPage';
 import TermsOfService from './pages/TermsOfService';
 import UpdatePasswordPage from './pages/UpdatePasswordPage';
@@ -81,14 +80,6 @@ function AnimatedRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
             </ProtectedRoute>
           }
         />

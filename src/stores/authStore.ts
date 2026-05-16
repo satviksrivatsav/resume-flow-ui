@@ -7,8 +7,6 @@ interface Profile {
   id: string;
   name: string | null;
   username: string | null;
-  theme: string; // 'light' | 'dark' | 'system'
-  language: string; // BCP-47, e.g. 'en'
 }
 
 interface AuthState {

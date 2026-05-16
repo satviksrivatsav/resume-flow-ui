@@ -72,7 +72,6 @@ const navItems = [
     group: 'Account',
     items: [
       { label: 'Profile', icon: User, href: '/dashboard/profile' },
-      { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
       {
         label: 'Danger Zone',
         icon: AlertTriangle,
@@ -125,7 +124,7 @@ export function DashboardSidebar() {
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
-              className="w-full justify-center gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full text-primary hover:bg-primary/10 transition-all group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
+              className="w-full justify-center gap-2 h-10 px-4 hover:bg-primary/10 transition-all group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
               title="Back to Homepage"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
