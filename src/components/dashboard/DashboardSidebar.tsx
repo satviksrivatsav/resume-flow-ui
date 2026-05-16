@@ -39,9 +39,9 @@ const iconVariants: Record<string, Variants> = {
     tap: { y: 0, scale: 0.9 },
   },
   'ATS Reports': {
-    initial: { rotate: 0 },
-    hover: { rotate: [-4, 4, -4, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
-    tap: { scale: 0.9 },
+    initial: { y: 0 },
+    hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
+    tap: { y: 0, scale: 0.9 },
   },
   Profile: {
     initial: { y: 0 },
@@ -125,7 +125,7 @@ export function DashboardSidebar() {
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
-              className="w-full justify-center gap-2 h-10 px-2 hover:bg-primary/10 transition-colors group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
+              className="w-full justify-center gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full text-primary hover:bg-primary/10 transition-all group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0"
               title="Back to Homepage"
             >
               <AnimatedIcon icon={ArrowLeft} preset="slideLeft" className="w-4 h-4" />
@@ -161,7 +161,7 @@ export function DashboardSidebar() {
                           className={cn(
                             'transition-all duration-200 h-10 px-4 rounded-full',
                             isActive && !isDestructive
-                              ? 'bg-primary/10 text-primary font-semibold'
+                              ? 'bg-primary/5 border border-primary/20 text-primary font-semibold'
                               : isDestructive
                                 ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
                                 : 'text-muted-foreground hover:bg-accent hover:text-foreground',

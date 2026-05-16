@@ -59,7 +59,7 @@ export const Topbar = () => {
                     variant="ghost"
                     onClick={() => saveResume()}
                     disabled={isSaving}
-                    className="gap-2 bg-background/40 transition-all border border-transparent h-10 px-4 rounded-full hover:bg-primary/10 hover:border-primary/20"
+                    className="gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full hover:bg-primary/10 transition-all text-primary font-medium"
                   >
                     <AnimatedIcon
                       icon={Save}

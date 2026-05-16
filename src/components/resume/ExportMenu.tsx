@@ -102,7 +102,11 @@ export const ExportMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="gap-2" disabled={isGenerating}>
+        <Button
+          variant="ghost"
+          className="gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full hover:bg-primary/10 transition-all text-primary font-medium"
+          disabled={isGenerating}
+        >
           {isGenerating ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
