@@ -15,15 +15,23 @@ import { Button } from '@/components/ui/button';
 interface UnsavedChangesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSaveAndExit: () => void;
-  onExitWithoutSave: () => void;
+  onSaveAndExit?: () => void;
+  onExitWithoutSave?: () => void;
+  title?: string;
+  description?: string;
+  saveLabel?: string;
+  discardLabel?: string;
 }
 
 export function UnsavedChangesModal({ 
   isOpen, 
   onClose, 
   onSaveAndExit, 
-  onExitWithoutSave 
+  onExitWithoutSave,
+  title = "Unsaved Changes",
+  description = "You have unsaved progress on your resume. Would you like to save before leaving?",
+  saveLabel = "Save and Exit",
+  discardLabel = "Exit without save"
 }: UnsavedChangesModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -33,31 +41,35 @@ export function UnsavedChangesModal({
             <AlertTriangle className="w-8 h-8 text-primary" />
           </div>
           <AlertDialogTitle className="text-2xl font-extrabold tracking-tight">
-            Unsaved Changes
+            {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
-            You have unsaved progress on your resume. Would you like to save before leaving?
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter className="mt-8 flex flex-col items-center gap-3 w-full sm:flex-col sm:justify-center">
           {/* Primary Action */}
-          <AlertDialogAction
-            onClick={onSaveAndExit}
-            className="rounded-full h-12 px-10 font-bold bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] w-full"
-          >
-            Save and Exit
-          </AlertDialogAction>
+          {onSaveAndExit && (
+            <AlertDialogAction
+              onClick={onSaveAndExit}
+              className="rounded-full h-12 px-10 font-bold bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] w-full"
+            >
+              {saveLabel}
+            </AlertDialogAction>
+          )}
 
           {/* Secondary Action - Same dimensions as primary, solid red destructive variant */}
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={onExitWithoutSave}
-            className="rounded-full h-12 px-10 font-bold transition-all active:scale-[0.98] w-full"
-          >
-            Exit without save
-          </Button>
+          {onExitWithoutSave && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={onExitWithoutSave}
+              className="rounded-full h-12 px-10 font-bold transition-all active:scale-[0.98] w-full"
+            >
+              {discardLabel}
+            </Button>
+          )}
 
           {/* Cancel Action - Text button below */}
           <AlertDialogCancel

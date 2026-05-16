@@ -7,7 +7,7 @@ import { FieldTip } from '@/components/ui/FieldTip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/PhoneInput';
-import { Textarea } from '@/components/ui/textarea';
+import { AutoResizingTextarea } from '@/components/ui/AutoResizingTextarea';
 import { getCountryByCode } from '@/lib/countries';
 import { detectCountryFromTimezone } from '@/lib/geolocation';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -170,13 +170,12 @@ export const PersonalInfoForm = () => {
             onUpdate={(newText) => updateSummary({ content: newText })}
           />
         </div>
-        <Textarea
+        <AutoResizingTextarea
           id="summary"
           value={summary.content}
           onChange={(e) => updateSummary({ content: e.target.value })}
           placeholder="A brief summary of your professional background and career goals..."
-          className="min-h-[120px] resize-y"
-          rows={4}
+          className="min-h-[120px]"
         />
         <FieldTip>
           Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end

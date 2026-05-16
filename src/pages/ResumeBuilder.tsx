@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  ArrowLeft,
   Maximize2,
   MoveHorizontal,
   MoveVertical,
@@ -11,7 +12,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import Logo from '@/assets/logo.png';
+import { Logo } from '@/components/ui/Logo';
 import { Topbar } from '@/components/layout/Topbar';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
@@ -31,6 +32,7 @@ import { ResumeSidebar } from '@/components/resume/ResumeSidebar';
 import { SkillsForm } from '@/components/resume/SkillsForm';
 import { TailorDiffView } from '@/components/resume/TailorDiffView';
 import { TailorForm } from '@/components/resume/TailorForm';
+import { UnsavedChangesModal } from '@/components/resume/UnsavedChangesModal';
 import { VolunteerForm } from '@/components/resume/VolunteerForm';
 import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
@@ -50,7 +52,12 @@ type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab, showPreview } = useUiStore();
-  const { viewMode: tailorViewMode } = useTailorStore();
+  const { 
+    viewMode: tailorViewMode, 
+    setViewMode: setTailorViewMode, 
+    tailoredSlides,
+    reset: resetTailor
+  } = useTailorStore();
   const {
     resumeData,
     deleteCustomSection,
@@ -59,12 +66,15 @@ const ResumeBuilder = () => {
     setLastSavedData,
     startAutoSave,
     stopAutoSave,
+    updateSummary,
+    updateItem,
   } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showTailorBackModal, setShowTailorBackModal] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -228,6 +238,64 @@ const ResumeBuilder = () => {
     setIsFullscreen(!isFullscreen);
   };
 
+  const handleApplyTailoring = useCallback(() => {
+    tailoredSlides.forEach((slide) => {
+      if (slide.decision === 'accept') {
+        const { sectionId, tailoredContent, itemIndex, originalContent } = slide;
+        
+        if (sectionId === 'summary') {
+          const content =
+            typeof tailoredContent === 'string'
+              ? { ...resumeData.summary, content: tailoredContent }
+              : tailoredContent;
+          updateSummary(content);
+        } else if (sectionId === 'headline') {
+          const headline =
+            typeof tailoredContent === 'string' ? tailoredContent : tailoredContent.headline;
+          setResumeData({
+            ...resumeData,
+            basics: { ...resumeData.basics, headline },
+          });
+        } else if (itemIndex !== undefined && originalContent?.id) {
+          if (sectionId in resumeData.sections) {
+            updateItem(sectionId as any, originalContent.id, tailoredContent);
+          } else {
+            const customSection = resumeData.customSections.find((s) => s.id === sectionId);
+            if (customSection) {
+              const updatedItems = customSection.items.map((item: any) =>
+                item.id === originalContent.id ? { ...item, ...tailoredContent } : item
+              );
+              setResumeData({
+                ...resumeData,
+                customSections: resumeData.customSections.map((s) =>
+                  s.id === sectionId ? { ...s, items: updatedItems } : s
+                ),
+              });
+            }
+          }
+        }
+      }
+    });
+
+    resetTailor();
+    setTailorViewMode('form');
+    setShowTailorBackModal(false);
+  }, [
+    tailoredSlides,
+    resumeData,
+    updateSummary,
+    updateItem,
+    setResumeData,
+    resetTailor,
+    setTailorViewMode,
+  ]);
+
+  const handleTailorDiscard = () => {
+    resetTailor();
+    setTailorViewMode('form');
+    setShowTailorBackModal(false);
+  };
+
   const previewContent = (
     <div className="flex-1 flex flex-col items-center justify-start pt-[calc(var(--header-height)+1rem)] pb-12">
       <div
@@ -302,6 +370,26 @@ const ResumeBuilder = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
+                    {activeTab === 'tailor' && tailorViewMode === 'diff' && (
+                      <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="mb-2"
+                      >
+                        <Button
+                          variant="ghost"
+                          onClick={() => setShowTailorBackModal(true)}
+                          className="gap-2 rounded-full px-4 h-10 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-all group"
+                        >
+                          <AnimatedIcon
+                            icon={ArrowLeft}
+                            preset="slideLeft"
+                            className="w-4 h-4"
+                          />
+                          Back
+                        </Button>
+                      </motion.div>
+                    )}
                     <div className="flex items-end justify-between">
                       <div className="space-y-1">
                         <h2 className="text-2xl font-bold tracking-tight">
@@ -372,7 +460,11 @@ const ResumeBuilder = () => {
                       </TabsContent>
 
                       <TabsContent value="tailor">
-                        {tailorViewMode === 'form' ? <TailorForm /> : <TailorDiffView />}
+                        {tailorViewMode === 'form' ? (
+                          <TailorForm />
+                        ) : (
+                          <TailorDiffView onApply={handleApplyTailoring} />
+                        )}
                       </TabsContent>
 
                       {/* Dynamic Custom Sections Content */}
@@ -456,7 +548,7 @@ const ResumeBuilder = () => {
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/20 backdrop-blur-md z-10">
                 <div className="flex items-center gap-3 w-1/4">
-                  <img src={Logo} alt="Logo" className="w-8 h-8 object-contain" />
+                  <Logo variant="light" className="w-8 h-8" />
                   <span className="font-bold tracking-tight hidden sm:block text-white">
                     Fullscreen Preview
                   </span>
@@ -584,6 +676,14 @@ const ResumeBuilder = () => {
             setActiveTab('personal');
             setShowDeleteModal(false);
           }}
+        />
+        <UnsavedChangesModal
+          isOpen={showTailorBackModal}
+          onClose={() => setShowTailorBackModal(false)}
+          onExitWithoutSave={handleTailorDiscard}
+          title="Discard Tailored Results?"
+          description="Going back will discard the current AI-generated suggestions. Are you sure you want to proceed?"
+          discardLabel="Discard All"
         />
       </div>
     </SidebarProvider>
