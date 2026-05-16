@@ -10,10 +10,11 @@ import {
 
 import { ResumeData } from '@/types/resume';
 import { stripHtml } from '@/lib/utils';
+import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 
 
 export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
-  const sections = [];
+  const sections: any[] = [];
 
   // Basics Section
   sections.push({
@@ -28,7 +29,15 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         alignment: AlignmentType.CENTER,
         children: [
           new TextRun({
-            text: `${resumeData.basics.email}${resumeData.basics.phone ? ` | ${resumeData.basics.phone}` : ''}${resumeData.basics.location ? ` | ${resumeData.basics.location}` : ''}`,
+            text: `${resumeData.basics.email}${
+              resumeData.basics.phone 
+                ? ` | ${
+                    resumeData.basics.countryCode 
+                      ? getCountryByCode(resumeData.basics.countryCode)?.dialCode + ' ' 
+                      : ''
+                  }${cleanPhoneNumber(resumeData.basics.phone, resumeData.basics.countryCode)}` 
+                : ''
+            }${resumeData.basics.location ? ` | ${resumeData.basics.location}` : ''}`,
           }),
         ],
       }),

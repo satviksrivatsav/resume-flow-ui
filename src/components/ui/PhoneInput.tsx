@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { COUNTRIES, CountryData, getCountryByCode } from '@/lib/countries';
+import { COUNTRIES, CountryData, getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 import { cn } from '@/lib/utils';
 
 interface PhoneInputProps {
@@ -73,13 +73,43 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         </button>
 
         {/* Phone Number Input */}
-        <input
-          type="tel"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="flex-1 h-10 bg-transparent px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none"
-        />
+        <div className="flex-1 flex items-center h-10 px-4 py-2">
+          <input
+            type="tel"
+            value={cleanPhoneNumber(value, countryCode)}
+            onChange={(e) => {
+              let val = e.target.value;
+              // If user tries to type/paste the dial code, strip it
+              const dialCodeClean = selectedCountry.dialCode.replace(/[\s\-\(\)]/g, '');
+              const valClean = val.replace(/[\s\-\(\)]/g, '');
+              
+              if (valClean.startsWith(dialCodeClean)) {
+                // Find where the dial code ends in the original string
+                let index = 0;
+                let matched = 0;
+                while (index < val.length && matched < dialCodeClean.length) {
+                  if (/[\s\-\(\)]/.test(val[index])) {
+                    index++;
+                    continue;
+                  }
+                  if (val[index] === dialCodeClean[matched]) {
+                    index++;
+                    matched++;
+                  } else {
+                    break;
+                  }
+                }
+                val = val.slice(index);
+              }
+
+              // Basic cleanup - only numbers and common symbols
+              val = val.replace(/[^\d\s\-\(\)]/g, '');
+              onChange(val.trim());
+            }}
+            placeholder={placeholder}
+            className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none"
+          />
+        </div>
       </div>
 
       {/* Dropdown */}

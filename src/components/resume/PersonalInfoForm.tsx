@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { FieldTip } from '@/components/ui/FieldTip';
@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/PhoneInput';
 import { RichTextEditor } from '@/components/ui/RichTextEditor';
-import { getCountryByCode } from '@/lib/countries';
-import { detectCountryFromTimezone } from '@/lib/geolocation';
+import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 import { useResumeStore } from '@/stores/resumeStore';
 
 export const PersonalInfoForm = () => {
@@ -17,12 +16,18 @@ export const PersonalInfoForm = () => {
   const { basics, summary, sections } = resumeData;
   const [countryCode, setCountryCode] = useState('US');
 
-  // Auto-sync local state when store changes
+  // Auto-sync local state and clean store when data loads
   useEffect(() => {
     if (basics.countryCode && getCountryByCode(basics.countryCode.toUpperCase())) {
       setCountryCode(basics.countryCode.toUpperCase());
     }
-  }, [basics.countryCode]);
+    
+    // Proactively clean the phone number if it contains the dial code
+    const cleanedPhone = cleanPhoneNumber(basics.phone, basics.countryCode || countryCode);
+    if (cleanedPhone !== basics.phone) {
+      updateBasics({ phone: cleanedPhone });
+    }
+  }, [basics.countryCode, basics.phone]);
 
   const getProfileUsername = (network: string) => {
     return (
@@ -87,7 +92,10 @@ export const PersonalInfoForm = () => {
             value={basics.phone}
             onChange={(value) => updateBasics({ phone: value })}
             countryCode={countryCode}
-            onCountryCodeChange={setCountryCode}
+            onCountryCodeChange={(code) => {
+              setCountryCode(code);
+              updateBasics({ countryCode: code });
+            }}
             placeholder="Phone number"
           />
         </div>

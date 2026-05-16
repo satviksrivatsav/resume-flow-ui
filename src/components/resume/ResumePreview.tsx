@@ -4,6 +4,7 @@ import { forwardRef, useMemo } from 'react';
 import { useResumeStore } from '@/stores/resumeStore';
 import { cleanProfileDisplay, sanitizeResumeData } from '@/lib/utils';
 import { DEFAULT_SECTION_ORDER } from '@/types/resume';
+import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
 const A4_WIDTH = '794px';
@@ -518,7 +519,10 @@ const ResumeContent = ({
           {basics.phone && (
             <IconWrapper>
               <Phone size={12} />
-              <span>{basics.phone}</span>
+              <span>
+                {basics.countryCode && `${getCountryByCode(basics.countryCode)?.dialCode} `}
+                {cleanPhoneNumber(basics.phone, basics.countryCode)}
+              </span>
             </IconWrapper>
           )}
           {basics.location && (

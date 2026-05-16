@@ -18,6 +18,7 @@ import React from 'react';
 
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/types/resume';
 import { cleanProfileDisplay, stripHtml } from '@/lib/utils';
+import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 
 
 interface ResumePDFProps {
@@ -260,9 +261,14 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     },
   });
 
+  const country = basics.countryCode ? getCountryByCode(basics.countryCode) : null;
+  const dialCode = country?.dialCode || '';
+  const localPhone = cleanPhoneNumber(basics.phone, basics.countryCode);
+  const formattedPhone = dialCode ? `${dialCode} ${localPhone}` : localPhone;
+
   const contactInfo = [
     { value: basics.email, Icon: MailIcon },
-    { value: basics.phone, Icon: PhoneIcon },
+    { value: formattedPhone, Icon: PhoneIcon },
     { value: basics.location, Icon: MapPinIcon },
     { value: basics.url.href, Icon: WebsiteIcon },
   ].filter((item) => item.value && item.value.trim());
