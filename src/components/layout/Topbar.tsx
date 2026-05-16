@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Eye, EyeOff, Save } from 'lucide-react';
+import { Eye, EyeOff, Save, RefreshCw } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Logo from '@/assets/logo.png';
 import { ExportMenu } from '@/components/resume/ExportMenu';
-import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
+
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -61,11 +61,11 @@ export const Topbar = () => {
                     disabled={isSaving}
                     className="gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full hover:bg-primary/10 transition-all text-primary font-medium"
                   >
-                    <AnimatedIcon
-                      icon={Save}
-                      preset="bounceUp"
-                      className={cn('w-4 h-4', isSaving && 'animate-spin')}
-                    />
+                    {isSaving ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
                     <span className="hidden sm:inline font-medium">
                       {isSaving ? 'Saving...' : 'Save'}
                     </span>

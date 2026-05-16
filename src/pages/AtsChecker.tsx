@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -10,7 +10,7 @@ import { AtsSetup } from '@/components/ats/AtsSetup';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AILoader } from '@/components/ui/AILoader';
 import { Button } from '@/components/ui/button';
-import { analyzeResumeAts, analyzeResumeJsonAts, extractTextFromFile } from '@/lib/atsApi';
+import { analyzeResumeAts, analyzeResumeJsonAts } from '@/lib/atsApi';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import { useAtsStore } from '@/stores/atsStore';
