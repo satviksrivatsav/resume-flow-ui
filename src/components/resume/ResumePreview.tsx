@@ -11,7 +11,7 @@ const A4_WIDTH = '794px';
 const A4_HEIGHT = '1123px';
 
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>{children}</div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: '100%', minWidth: 0 }}>{children}</div>
 );
 
 const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSSProperties }) => {
@@ -514,6 +514,8 @@ const ResumeContent = ({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          width: '100%',
+          maxWidth: '100%',
         }}
       >
         <h1
@@ -522,12 +524,26 @@ const ResumeContent = ({
             fontWeight: 'bold',
             color: themeColor,
             margin: '0 0 4px 0',
+            overflowWrap: 'break-word',
+            wordBreak: 'break-all',
+            width: '100%',
+            maxWidth: '100%',
           }}
         >
           {basics.name}
         </h1>
         {basics.headline && (
-          <p style={{ fontSize: sizes.heading, color: '#444', margin: '0 0 8px 0' }}>
+          <p 
+            style={{ 
+              fontSize: sizes.heading, 
+              color: '#444', 
+              margin: '0 0 8px 0',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all',
+              width: '100%',
+              maxWidth: '100%',
+            }}
+          >
             {basics.headline}
           </p>
         )}
@@ -539,18 +555,20 @@ const ResumeContent = ({
             gap: '8px 16px',
             color: '#000',
             justifyContent: 'center',
+            width: '100%',
+            maxWidth: '100%',
           }}
         >
           {basics.email && (
             <IconWrapper>
               <Mail size={12} />
-              <span>{basics.email}</span>
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.email}</span>
             </IconWrapper>
           )}
           {basics.phone && (
             <IconWrapper>
               <Phone size={12} />
-              <span>
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>
                 {basics.countryCode && `${getCountryByCode(basics.countryCode)?.dialCode} `}
                 {cleanPhoneNumber(basics.phone, basics.countryCode)}
               </span>
@@ -559,13 +577,13 @@ const ResumeContent = ({
           {basics.location && (
             <IconWrapper>
               <MapPin size={12} />
-              <span>{basics.location}</span>
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.location}</span>
             </IconWrapper>
           )}
           {basics.url.href && (
             <IconWrapper>
               <Globe size={12} />
-              <span>{basics.url.label || basics.url.href}</span>
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.url.label || basics.url.href}</span>
             </IconWrapper>
           )}
         </div>
@@ -581,6 +599,8 @@ const ResumeContent = ({
               color: '#000',
               justifyContent: 'center',
               marginTop: '4px',
+              width: '100%',
+              maxWidth: '100%',
             }}
           >
             {sections.profiles.items
@@ -593,12 +613,12 @@ const ResumeContent = ({
                       href={p.website.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: 'inherit', textDecoration: 'none' }}
+                      style={{ color: 'inherit', textDecoration: 'none', overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
                     >
                       {cleanProfileDisplay(p.username)}
                     </a>
                   ) : (
-                    <span>{cleanProfileDisplay(p.username)}</span>
+                    <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{cleanProfileDisplay(p.username)}</span>
                   )}
                 </IconWrapper>
               ))}

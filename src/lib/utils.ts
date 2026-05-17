@@ -93,3 +93,31 @@ export function cleanProfileDisplay(input: string): string {
     return input.split('/').filter(Boolean).pop() || input;
   }
 }
+
+/**
+ * Checks if a string (potentially HTML) contains actual visible content.
+ * Returns false for empty strings, strings with only whitespace, or strings
+ * with only empty HTML tags like <p><br></p>.
+ */
+export function hasContent(html: string | undefined | null): boolean {
+  if (!html) return false;
+  const stripped = html.replace(/<[^>]*>/g, '').trim();
+  return stripped.length > 0;
+}
+/**
+ * Inserts zero-width spaces into long continuous strings to allow them to break 
+ * across lines in environments that don't support overflow-wrap (like PDFs).
+ */
+export function breakLongWords(str: string, maxLength: number = 50): string {
+  if (!str) return '';
+  return str.split(' ').map(word => {
+    if (word.length > maxLength) {
+      const chunks = [];
+      for (let i = 0; i < word.length; i += maxLength) {
+        chunks.push(word.substring(i, i + maxLength));
+      }
+      return chunks.join('\u200B');
+    }
+    return word;
+  }).join(' ');
+}

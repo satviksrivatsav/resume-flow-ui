@@ -17,7 +17,7 @@ import {
 import React from 'react';
 
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/types/resume';
-import { cleanProfileDisplay, stripHtml } from '@/lib/utils';
+import { breakLongWords, cleanProfileDisplay, hasContent, stripHtml } from '@/lib/utils';
 import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 
 
@@ -26,7 +26,16 @@ interface ResumePDFProps {
 }
 
 // Register fonts from public/fonts folder
-Font.registerHyphenationCallback((word) => [word]);
+Font.registerHyphenationCallback((word) => {
+  if (word.length > 12) {
+    const parts = [];
+    for (let i = 0; i < word.length; i += 6) {
+      parts.push(word.substring(i, i + 6));
+    }
+    return parts;
+  }
+  return [word];
+});
 
 // Registering default fonts
 Font.register({
@@ -154,6 +163,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
     header: {
       marginBottom: 16,
       alignItems: 'center',
+      width: '100%',
     },
     name: {
       fontSize: sizes.name,
@@ -161,12 +171,14 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
       color: metadata.theme.primary || '#1f2937',
       marginBottom: 4,
       textAlign: 'center',
+      width: '100%',
     },
     headline: {
       fontSize: sizes.heading,
       color: '#444444',
       marginBottom: 8,
       textAlign: 'center',
+      width: '100%',
     },
     contactRow: {
       flexDirection: 'row',
@@ -174,9 +186,11 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
       fontSize: sizes.base - 1,
       color: '#000000',
       justifyContent: 'center',
+      width: '100%',
     },
     contactItem: {
       marginRight: 8,
+      flexShrink: 1,
     },
     section: {
       marginBottom: 14,
@@ -277,281 +291,329 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
 
   // ── Section renderers ──────────────────────────────────────────────────────
   const renderSummary = () =>
-    summary.content && summary.visible ? (
+    hasContent(summary.content) && summary.visible ? (
       <View key="summary" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
-          <Text style={styles.sectionTitle}>Summary</Text>
+          <Text style={styles.sectionTitle}>{summary.name || 'Summary'}</Text>
         </View>
         <PDFDescriptionRenderer text={summary.content} style={styles.itemDescription} />
       </View>
     ) : null;
 
-  const renderExperience = () =>
-    sections.experience.visible && sections.experience.items.length > 0 ? (
+  const renderExperience = () => {
+    const visibleItems = sections.experience.items.filter(
+      (i) => i.visible && (i.company || i.position || hasContent(i.description)),
+    );
+    if (!sections.experience.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="experience" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
         </View>
-        {sections.experience.items
-          .filter((i) => i.visible)
-          .map((exp) => (
-            <View key={exp.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
-                  {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
-                </View>
-                <Text style={styles.itemDate}>{exp.period}</Text>
-              </View>
-              {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
-              {exp.description && (
-                <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
-              )}
-            </View>
-          ))}
-      </View>
-    ) : null;
 
-  const renderEducation = () =>
-    sections.education.visible && sections.education.items.length > 0 ? (
+        {visibleItems.map((exp) => (
+          <View key={exp.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
+                {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+              </View>
+              <Text style={styles.itemDate}>{exp.period}</Text>
+            </View>
+            {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
+            {hasContent(exp.description) && (
+              <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderEducation = () => {
+    const visibleItems = sections.education.items.filter(
+      (i) => i.visible && (i.school || i.degree || hasContent(i.description)),
+    );
+    if (!sections.education.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="education" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.education.name}</Text>
         </View>
-        {sections.education.items
-          .filter((i) => i.visible)
-          .map((edu) => (
-            <View key={edu.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>
-                    {edu.degree || 'Degree'}
-                    {edu.area && ` in ${edu.area}`}
-                  </Text>
-                  <Text style={styles.itemSubtitle}>
-                    {edu.school || 'School'}
-                    {edu.grade && ` • ${edu.grade}`}
-                  </Text>
-                </View>
-                <Text style={styles.itemDate}>{edu.period}</Text>
+        {visibleItems.map((edu) => (
+          <View key={edu.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>
+                  {edu.degree || 'Degree'}
+                  {edu.area && ` in ${edu.area}`}
+                </Text>
+                <Text style={styles.itemSubtitle}>
+                  {edu.school || 'School'}
+                  {edu.grade && ` • ${edu.grade}`}
+                </Text>
               </View>
-              {edu.description && (
-                <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
-              )}
+              <Text style={styles.itemDate}>{edu.period}</Text>
             </View>
-          ))}
+            {hasContent(edu.description) && (
+              <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderProjects = () =>
-    sections.projects.visible && sections.projects.items.length > 0 ? (
+  const renderProjects = () => {
+    const visibleItems = sections.projects.items.filter(
+      (i) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.projects.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="projects" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
           <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
         </View>
-        {sections.projects.items
-          .filter((i) => i.visible)
-          .map((proj) => (
-            <View key={proj.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
-                <Text style={styles.itemDate}>{proj.period}</Text>
-              </View>
-              {proj.website.href && (
-                <Link src={proj.website.href} style={styles.link}>
-                  {proj.website.label || proj.website.href}
-                </Link>
-              )}
-              {proj.description && (
-                <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
-              )}
-              {proj.keywords && proj.keywords.length > 0 && (
-                <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>
-              )}
+        {visibleItems.map((proj) => (
+          <View key={proj.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
+              <Text style={styles.itemDate}>{proj.period}</Text>
             </View>
-          ))}
+            {proj.website.href && (
+              <Link src={proj.website.href} style={styles.link}>
+                {proj.website.label || proj.website.href}
+              </Link>
+            )}
+            {hasContent(proj.description) && (
+              <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
+            )}
+            {proj.keywords && proj.keywords.length > 0 && (
+              <Text style={styles.itemSubtitle}>
+                Technologies: {proj.keywords.join(', ')}
+              </Text>
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderSkills = () =>
-    sections.skills.visible && sections.skills.items.length > 0 ? (
+  const renderSkills = () => {
+    const visibleItems = sections.skills.items.filter(
+      (i) => i.visible && i.name && (i.keywords.length > 0 || hasContent(i.description)),
+    );
+    if (!sections.skills.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="skills" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
         </View>
         <View style={styles.skillsContainer}>
-          {sections.skills.items
-            .filter((i) => i.visible)
-            .map((skill) => (
-              <View key={skill.id} style={styles.skillRow} wrap={false}>
-                <Text style={styles.skillItems}>
-                  <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
-                  {skill.keywords && skill.keywords.length > 0
-                    ? skill.keywords.join(', ')
-                    : skill.description || ''}
-                </Text>
-              </View>
-            ))}
+          {visibleItems.map((skill) => (
+            <View key={skill.id} style={styles.skillRow} wrap={false}>
+              <Text style={styles.skillItems}>
+                <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
+                {skill.keywords && skill.keywords.length > 0
+                  ? skill.keywords.join(', ')
+                  : stripHtml(skill.description || '')}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
-    ) : null;
+    );
+  };
 
-  const renderLanguages = () =>
-    sections.languages.visible && sections.languages.items.length > 0 ? (
+  const renderLanguages = () => {
+    const visibleItems = sections.languages.items.filter((i) => i.visible && i.name);
+    if (!sections.languages.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="languages" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
           <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
         </View>
-        {sections.languages.items
-          .filter((i) => i.visible)
-          .map((lang) => (
-            <View
-              key={lang.id}
-              style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}
-            >
-              <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-              <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
-            </View>
-          ))}
+        {visibleItems.map((lang) => (
+          <View
+            key={lang.id}
+            style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}
+          >
+            <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
+            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>
+              {lang.description}
+            </Text>
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderInterests = () =>
-    sections.interests.visible && sections.interests.items.length > 0 ? (
+  const renderInterests = () => {
+    const visibleItems = sections.interests.items.filter((i) => i.visible && i.name);
+    if (!sections.interests.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="interests" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
           <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
         </View>
         <Text style={styles.itemDescription}>
-          {sections.interests.items
-            .filter((i) => i.visible)
-            .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
+          {visibleItems
+            .map(
+              (i) =>
+                i.name +
+                (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''),
+            )
             .join(', ')}
         </Text>
       </View>
-    ) : null;
+    );
+  };
 
-  const renderAwards = () =>
-    sections.awards.visible && sections.awards.items.length > 0 ? (
+  const renderAwards = () => {
+    const visibleItems = sections.awards.items.filter(
+      (i) => i.visible && (i.title || hasContent(i.description)),
+    );
+    if (!sections.awards.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="awards" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
         </View>
-        {sections.awards.items
-          .filter((i) => i.visible)
-          .map((award) => (
-            <View key={award.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{award.title}</Text>
-                  <Text style={styles.itemSubtitle}>{award.awarder}</Text>
-                </View>
-                <Text style={styles.itemDate}>{award.date}</Text>
+        {visibleItems.map((award) => (
+          <View key={award.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>{award.title}</Text>
+                <Text style={styles.itemSubtitle}>{award.awarder}</Text>
               </View>
-              {award.description && (
-                <PDFDescriptionRenderer text={award.description} style={styles.itemDescription} />
-              )}
+              <Text style={styles.itemDate}>{award.date}</Text>
             </View>
-          ))}
+            {hasContent(award.description) && (
+              <PDFDescriptionRenderer text={award.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderCertifications = () =>
-    sections.certifications.visible && sections.certifications.items.length > 0 ? (
+  const renderCertifications = () => {
+    const visibleItems = sections.certifications.items.filter(
+      (i) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.certifications.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="certifications" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
         </View>
-        {sections.certifications.items
-          .filter((i) => i.visible)
-          .map((cert) => (
-            <View key={cert.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{cert.name}</Text>
-                  <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
-                </View>
-                <Text style={styles.itemDate}>{cert.date}</Text>
+        {visibleItems.map((cert) => (
+          <View key={cert.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>{cert.name}</Text>
+                <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
               </View>
-              {cert.description && (
-                <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
-              )}
+              <Text style={styles.itemDate}>{cert.date}</Text>
             </View>
-          ))}
+            {hasContent(cert.description) && (
+              <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderVolunteer = () =>
-    sections.volunteer.visible && sections.volunteer.items.length > 0 ? (
+  const renderVolunteer = () => {
+    const visibleItems = sections.volunteer.items.filter(
+      (i) => i.visible && (i.organization || i.position || hasContent(i.description)),
+    );
+    if (!sections.volunteer.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="volunteer" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.volunteer.name}</Text>
         </View>
-        {sections.volunteer.items
-          .filter((i) => i.visible)
-          .map((vol) => (
-            <View key={vol.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{vol.position}</Text>
-                  <Text style={styles.itemSubtitle}>{vol.organization}</Text>
-                </View>
-                <Text style={styles.itemDate}>{vol.period}</Text>
+        {visibleItems.map((vol) => (
+          <View key={vol.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>{vol.position}</Text>
+                <Text style={styles.itemSubtitle}>{vol.organization}</Text>
               </View>
-              {vol.description && (
-                <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />
-              )}
+              <Text style={styles.itemDate}>{vol.period}</Text>
             </View>
-          ))}
+            {hasContent(vol.description) && (
+              <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderPublications = () =>
-    sections.publications.visible && sections.publications.items.length > 0 ? (
+  const renderPublications = () => {
+    const visibleItems = sections.publications.items.filter(
+      (i) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.publications.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="publications" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.publications.name}</Text>
         </View>
-        {sections.publications.items
-          .filter((i) => i.visible)
-          .map((pub) => (
-            <View key={pub.id} style={styles.itemContainer} wrap={false}>
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{pub.name}</Text>
-                  <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
-                </View>
-                <Text style={styles.itemDate}>{pub.date}</Text>
+        {visibleItems.map((pub) => (
+          <View key={pub.id} style={styles.itemContainer} wrap={false}>
+            <View style={styles.itemHeader}>
+              <View style={styles.itemHeaderLeft}>
+                <Text style={styles.itemTitle}>{pub.name}</Text>
+                <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
               </View>
-              {pub.description && (
-                <PDFDescriptionRenderer text={pub.description} style={styles.itemDescription} />
-              )}
+              <Text style={styles.itemDate}>{pub.date}</Text>
             </View>
-          ))}
+            {hasContent(pub.description) && (
+              <PDFDescriptionRenderer text={pub.description} style={styles.itemDescription} />
+            )}
+          </View>
+        ))}
       </View>
-    ) : null;
+    );
+  };
 
-  const renderReferences = () =>
-    sections.references.visible && sections.references.items.length > 0 ? (
+  const renderReferences = () => {
+    const visibleItems = sections.references.items.filter((i) => i.visible && i.name);
+    if (!sections.references.visible || visibleItems.length === 0) return null;
+
+    return (
       <View key="references" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
           <Text style={styles.sectionTitle}>{sections.references.name}</Text>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }}>
-          {sections.references.items
-            .filter((i) => i.visible)
-            .map((ref) => (
-              <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
-                <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
-                <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
-                <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
-                  {ref.email} {ref.phone && `| ${ref.phone}`}
-                </Text>
-              </View>
-            ))}
+          {visibleItems.map((ref) => (
+            <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
+              <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
+              <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
+              <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
+                {ref.email} {ref.phone && `| ${ref.phone}`}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
-    ) : null;
+    );
+  };
 
   const sectionRenderers: Record<string, () => React.ReactNode> = {
     summary: renderSummary,
@@ -575,12 +637,14 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Header — always first */}
         <View style={styles.header}>
           <Text style={styles.name}>{basics.name || 'Your Name'}</Text>
-          {basics.headline && <Text style={styles.headline}>{basics.headline}</Text>}
+          {basics.headline && (
+            <Text style={styles.headline}>{basics.headline}</Text>
+          )}
           <View style={styles.contactRow}>
             {contactInfo.map((item, index) => (
               <View
                 key={index}
-                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
               >
                 <item.Icon />
                 <Text style={styles.contactItem}>{item.value}</Text>
@@ -591,7 +655,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
               .map((profile, index) => (
                 <View
                   key={index}
-                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}
+                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
                 >
                   {profile.website?.href ? (
                     <Link src={profile.website.href} style={styles.contactItem}>
@@ -618,24 +682,31 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         {/* Custom Sections — always appended */}
         {customSections
           .filter((s) => s.visible && s.items.length > 0)
-          .map((section) => (
-            <View key={section.id} style={styles.section}>
-              <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
-                <Text style={styles.sectionTitle}>{section.name}</Text>
-              </View>
-              {section.items.map((item: any) => (
-                <View key={item.id} style={styles.itemContainer} wrap={false}>
-                  <Text style={styles.itemTitle}>{item.title}</Text>
-                  {item.description && (
-                    <PDFDescriptionRenderer
-                      text={item.description}
-                      style={styles.itemDescription}
-                    />
-                  )}
+          .map((section) => {
+            const visibleItems = section.items.filter(
+              (item: any) => item.visible && (item.title || hasContent(item.description)),
+            );
+            if (visibleItems.length === 0) return null;
+
+            return (
+              <View key={section.id} style={styles.section}>
+                <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+                  <Text style={styles.sectionTitle}>{section.name}</Text>
                 </View>
-              ))}
-            </View>
-          ))}
+                {visibleItems.map((item: any) => (
+                  <View key={item.id} style={styles.itemContainer} wrap={false}>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    {hasContent(item.description) && (
+                      <PDFDescriptionRenderer
+                        text={item.description}
+                        style={styles.itemDescription}
+                      />
+                    )}
+                  </View>
+                ))}
+              </View>
+            );
+          })}
       </Page>
     </Document>
   );

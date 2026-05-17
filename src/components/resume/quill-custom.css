@@ -40,6 +40,7 @@
   line-height: 1.6 !important;
   color: hsl(var(--foreground));
   font-weight: 400 !important;
+  overflow-wrap: break-word;
 }
 
 .ql-editor b, .ql-editor strong {

@@ -43,7 +43,7 @@ export const PersonalInfoForm = () => {
       className="space-y-6"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="name" className="flex items-center gap-2">
             <User className="w-3.5 h-3.5 text-muted-foreground" />
             Full Name <span className="text-red-500">*</span>
@@ -53,11 +53,11 @@ export const PersonalInfoForm = () => {
             value={basics.name}
             onChange={(e) => updateBasics({ name: e.target.value })}
             placeholder="John Doe"
-            className="focus-visible:ring-primary"
+            className="focus-visible:ring-primary w-full"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="headline" className="flex items-center gap-2">
             <User className="w-3.5 h-3.5 text-muted-foreground" />
             Headline
@@ -67,10 +67,11 @@ export const PersonalInfoForm = () => {
             value={basics.headline}
             onChange={(e) => updateBasics({ headline: e.target.value })}
             placeholder="Software Engineer"
+            className="w-full"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="email" className="flex items-center gap-2">
             <Mail className="w-3.5 h-3.5 text-muted-foreground" />
             Email <span className="text-red-500">*</span>
@@ -81,9 +82,10 @@ export const PersonalInfoForm = () => {
             value={basics.email}
             onChange={(e) => updateBasics({ email: e.target.value })}
             placeholder="john@example.com"
+            className="w-full"
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="phone" className="flex items-center gap-2">
             <Phone className="w-3.5 h-3.5 text-muted-foreground" />
             Phone <span className="text-red-500">*</span>
@@ -100,7 +102,7 @@ export const PersonalInfoForm = () => {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="location" className="flex items-center gap-2">
             <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
             Location
@@ -110,10 +112,11 @@ export const PersonalInfoForm = () => {
             value={basics.location}
             onChange={(e) => updateBasics({ location: e.target.value })}
             placeholder="City, Country"
+            className="w-full"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="website" className="flex items-center gap-2">
             <Globe className="w-3.5 h-3.5 text-muted-foreground" />
             Portfolio Website
@@ -123,10 +126,11 @@ export const PersonalInfoForm = () => {
             value={basics.url.href}
             onChange={(e) => updateBasics({ url: { ...basics.url, href: e.target.value } })}
             placeholder="johndoe.com"
+            className="w-full"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="linkedin" className="flex items-center gap-2">
             <Linkedin className="w-3.5 h-3.5 text-muted-foreground" />
             LinkedIn Profile
@@ -136,10 +140,11 @@ export const PersonalInfoForm = () => {
             value={getProfileUsername('linkedin')}
             onChange={(e) => updateProfileByNetwork('LinkedIn', e.target.value)}
             placeholder="linkedin.com/in/johndoe"
+            className="w-full"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="github" className="flex items-center gap-2">
             <Github className="w-3.5 h-3.5 text-muted-foreground" />
             GitHub Profile
@@ -149,6 +154,7 @@ export const PersonalInfoForm = () => {
             value={getProfileUsername('github')}
             onChange={(e) => updateProfileByNetwork('GitHub', e.target.value)}
             placeholder="github.com/johndoe"
+            className="w-full"
           />
         </div>
       </div>
