@@ -42,7 +42,7 @@ export const TechChipsInput: React.FC<TechChipsInputProps> = ({
   const inputClassName =
     'flex-1 min-w-[120px] h-8 bg-transparent border-0 outline-none text-sm placeholder:text-muted-foreground';
   const containerClassName =
-    'flex flex-wrap gap-2 py-2 min-h-[42px] w-full transition-all';
+    'flex flex-wrap gap-2 py-2 min-h-[42px] w-full border-b border-input focus-within:border-primary transition-all';
 
   return (
     <div className="space-y-2">

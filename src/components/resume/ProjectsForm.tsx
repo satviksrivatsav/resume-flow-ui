@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronDown, ChevronUp, FolderGit2, Link as LinkIcon, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { Button } from '@/components/ui/button';
@@ -14,23 +15,29 @@ import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 
 export const ProjectsForm = () => {
-  const { resumeData, addProject, updateProject, deleteProject } = useResumeStore();
+  const { resumeData, addItem, updateProject, deleteProject } = useResumeStore();
   const { items: projects } = resumeData.sections.projects;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (projects.length > 0 && !expandedId) {
-      setExpandedId(projects[projects.length - 1].id);
+      setExpandedId(projects[0].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projects]);
+  }, []); // Only run once on mount
 
   const handleAdd = () => {
-    addProject();
-    setTimeout(() => {
-      const lastProj = projects[projects.length - 1];
-      if (lastProj) setExpandedId(lastProj.id);
-    }, 0);
+    const id = uuidv4();
+    addItem('projects', {
+      id,
+      name: '',
+      description: '',
+      period: '',
+      website: { label: '', href: '' },
+      keywords: [],
+      visible: true,
+    });
+    setExpandedId(id);
   };
 
   return (

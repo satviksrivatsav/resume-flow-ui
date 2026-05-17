@@ -113,10 +113,17 @@ const ResumeContent = ({
     return <Globe size={12} />;
   };
 
+  // Helper to check if content actually exists (ignoring empty HTML tags)
+  const hasContent = (html: string | undefined | null) => {
+    if (!html) return false;
+    const stripped = html.replace(/<[^>]*>/g, '').trim();
+    return stripped.length > 0;
+  };
+
   // ── Section renderers ────────────────────────────────────────────────────────
 
   const renderSummary = () => {
-    if (!summary.content || !summary.visible) return null;
+    if (!summary.visible || !hasContent(summary.content)) return null;
     return (
       <div key="summary" style={{ marginBottom: '16px' }}>
         <SectionHeader title="Summary" color={themeColor} sizes={sizes} />
@@ -129,147 +136,155 @@ const ResumeContent = ({
   };
 
   const renderExperience = () => {
-    if (!sections.experience.visible || sections.experience.items.length === 0) return null;
+    const visibleItems = sections.experience.items.filter(
+      (i: any) => i.visible && (i.company || i.position || hasContent(i.description)),
+    );
+    if (!sections.experience.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="experience" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.experience.name} color={themeColor} sizes={sizes} />
-        {sections.experience.items
-          .filter((i: any) => i.visible)
-          .map((exp: any) => (
-            <div key={exp.id} style={{ marginBottom: '12px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  marginBottom: '2px',
-                }}
-              >
-                <div>
-                  <strong style={{ color: '#000' }}>{exp.position}</strong>
-                  {exp.company && <span style={{ color: '#000' }}>, {exp.company}</span>}
-                </div>
-                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
-                  {exp.period}
-                </span>
+        {visibleItems.map((exp: any) => (
+          <div key={exp.id} style={{ marginBottom: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                marginBottom: '2px',
+              }}
+            >
+              <div>
+                <strong style={{ color: '#000' }}>{exp.position}</strong>
+                {exp.company && <span style={{ color: '#000' }}>, {exp.company}</span>}
               </div>
-              {exp.location && (
-                <div style={{ fontSize: '0.9em', color: '#666', marginBottom: '4px' }}>
-                  {exp.location}
-                </div>
-              )}
-              {exp.description && (
-                <DescriptionRenderer
-                  text={exp.description}
-                  style={{ color: '#000', lineHeight: '1.5' }}
-                />
-              )}
+              <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
+                {exp.period}
+              </span>
             </div>
-          ))}
+            {exp.location && (
+              <div style={{ fontSize: '0.9em', color: '#666', marginBottom: '4px' }}>
+                {exp.location}
+              </div>
+            )}
+            {hasContent(exp.description) && (
+              <DescriptionRenderer
+                text={exp.description}
+                style={{ color: '#000', lineHeight: '1.5' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderEducation = () => {
-    if (!sections.education.visible || sections.education.items.length === 0) return null;
+    const visibleItems = sections.education.items.filter(
+      (i: any) => i.visible && (i.school || i.degree || hasContent(i.description)),
+    );
+    if (!sections.education.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="education" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.education.name} color={themeColor} sizes={sizes} />
-        {sections.education.items
-          .filter((i: any) => i.visible)
-          .map((edu: any) => (
-            <div key={edu.id} style={{ marginBottom: '12px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  marginBottom: '2px',
-                }}
-              >
-                <div>
-                  <strong style={{ color: '#000' }}>{edu.degree}</strong>
-                  {edu.area && <span style={{ color: '#000' }}> in {edu.area}</span>}
-                </div>
-                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
-                  {edu.period}
-                </span>
+        {visibleItems.map((edu: any) => (
+          <div key={edu.id} style={{ marginBottom: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                marginBottom: '2px',
+              }}
+            >
+              <div>
+                <strong style={{ color: '#000' }}>{edu.degree}</strong>
+                {edu.area && <span style={{ color: '#000' }}> in {edu.area}</span>}
               </div>
-              <div style={{ color: '#000' }}>
-                {edu.school}
-                {edu.grade && <span> • {edu.grade}</span>}
-              </div>
-              {edu.description && (
-                <DescriptionRenderer
-                  text={edu.description}
-                  style={{ color: '#000', lineHeight: '1.5', marginTop: '2px' }}
-                />
-              )}
+              <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
+                {edu.period}
+              </span>
             </div>
-          ))}
+            <div style={{ color: '#000' }}>
+              {edu.school}
+              {edu.grade && <span> • {edu.grade}</span>}
+            </div>
+            {hasContent(edu.description) && (
+              <DescriptionRenderer
+                text={edu.description}
+                style={{ color: '#000', lineHeight: '1.5', marginTop: '2px' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderProjects = () => {
-    if (!sections.projects.visible || sections.projects.items.length === 0) return null;
+    const visibleItems = sections.projects.items.filter(
+      (i: any) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.projects.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="projects" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.projects.name} color={themeColor} sizes={sizes} />
-        {sections.projects.items
-          .filter((i: any) => i.visible)
-          .map((proj: any) => (
-            <div key={proj.id} style={{ marginBottom: '12px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  marginBottom: '2px',
-                }}
-              >
-                <strong style={{ color: '#000' }}>{proj.name}</strong>
-                {proj.period && (
-                  <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
-                    {proj.period}
-                  </span>
-                )}
-              </div>
-              {proj.website.href && (
-                <div style={{ fontSize: '0.9em', color: themeColor, marginBottom: '4px' }}>
-                  {proj.website.label || proj.website.href}
-                </div>
-              )}
-              {proj.description && (
-                <DescriptionRenderer
-                  text={proj.description}
-                  style={{ color: '#000', lineHeight: '1.5' }}
-                />
-              )}
-              {proj.keywords && proj.keywords.length > 0 && (
-                <div style={{ fontSize: '0.8em', color: '#666', marginTop: '4px' }}>
-                  <strong>Tech:</strong> {proj.keywords.join(', ')}
-                </div>
+        {visibleItems.map((proj: any) => (
+          <div key={proj.id} style={{ marginBottom: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                marginBottom: '2px',
+              }}
+            >
+              <strong style={{ color: '#000' }}>{proj.name}</strong>
+              {proj.period && (
+                <span style={{ fontSize: sizes.base, color: '#000', whiteSpace: 'nowrap' }}>
+                  {proj.period}
+                </span>
               )}
             </div>
-          ))}
+            {proj.website.href && (
+              <div style={{ fontSize: '0.9em', color: themeColor, marginBottom: '4px' }}>
+                {proj.website.label || proj.website.href}
+              </div>
+            )}
+            {hasContent(proj.description) && (
+              <DescriptionRenderer
+                text={proj.description}
+                style={{ color: '#000', lineHeight: '1.5' }}
+              />
+            )}
+            {proj.keywords && proj.keywords.length > 0 && (
+              <div style={{ fontSize: '0.8em', color: '#666', marginTop: '4px' }}>
+                <strong>Tech:</strong> {proj.keywords.join(', ')}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderSkills = () => {
-    if (!sections.skills.visible || sections.skills.items.length === 0) return null;
+    const visibleItems = sections.skills.items.filter(
+      (i: any) => i.visible && i.name && i.keywords.length > 0,
+    );
+    if (!sections.skills.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="skills" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.skills.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {sections.skills.items
-            .filter((i: any) => i.visible)
-            .map((skill: any) => (
-              <div key={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
-                <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
-              </div>
-            ))}
+          {visibleItems.map((skill: any) => (
+            <div key={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
+              <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -281,173 +296,181 @@ const ResumeContent = ({
   };
 
   const renderLanguages = () => {
-    if (!sections.languages.visible || sections.languages.items.length === 0) return null;
+    const visibleItems = sections.languages.items.filter((i: any) => i.visible && i.name);
+    if (!sections.languages.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="languages" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.languages.name} color={themeColor} sizes={sizes} />
-        {sections.languages.items
-          .filter((i: any) => i.visible)
-          .map((lang: any) => (
-            <div
-              key={lang.id}
-              style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}
-            >
-              <span style={{ fontWeight: 'bold' }}>{lang.name}</span>
-              <span style={{ fontSize: '0.9em', color: '#666' }}>{lang.description}</span>
-            </div>
-          ))}
+        {visibleItems.map((lang: any) => (
+          <div
+            key={lang.id}
+            style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}
+          >
+            <span style={{ fontWeight: 'bold' }}>{lang.name}</span>
+            <span style={{ fontSize: '0.9em', color: '#666' }}>{lang.description}</span>
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderInterests = () => {
-    if (!sections.interests.visible || sections.interests.items.length === 0) return null;
+    const visibleItems = sections.interests.items.filter((i: any) => i.visible && i.name);
+    if (!sections.interests.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="interests" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.interests.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-          {sections.interests.items
-            .filter((i: any) => i.visible)
-            .map((interest: any) => (
-              <span key={interest.id} style={{ fontSize: sizes.base }}>
-                {interest.name}
-                {interest.keywords.length > 0 ? ` (${interest.keywords.join(', ')})` : ''}
-              </span>
-            ))}
+          {visibleItems.map((interest: any) => (
+            <span key={interest.id} style={{ fontSize: sizes.base }}>
+              {interest.name}
+              {interest.keywords.length > 0 ? ` (${interest.keywords.join(', ')})` : ''}
+            </span>
+          ))}
         </div>
       </div>
     );
   };
 
   const renderAwards = () => {
-    if (!sections.awards.visible || sections.awards.items.length === 0) return null;
+    const visibleItems = sections.awards.items.filter(
+      (i: any) => i.visible && (i.title || hasContent(i.description)),
+    );
+    if (!sections.awards.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="awards" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.awards.name} color={themeColor} sizes={sizes} />
-        {sections.awards.items
-          .filter((i: any) => i.visible)
-          .map((award: any) => (
-            <div key={award.id} style={{ marginBottom: '8px' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-              >
-                <strong style={{ color: '#000' }}>{award.title}</strong>
-                <span>{award.date}</span>
-              </div>
-              <div style={{ fontSize: '0.9em', color: '#666' }}>{award.awarder}</div>
-              {award.description && (
-                <DescriptionRenderer
-                  text={award.description}
-                  style={{ fontSize: sizes.base, color: '#000' }}
-                />
-              )}
+        {visibleItems.map((award: any) => (
+          <div key={award.id} style={{ marginBottom: '8px' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
+            >
+              <strong style={{ color: '#000' }}>{award.title}</strong>
+              <span>{award.date}</span>
             </div>
-          ))}
+            <div style={{ fontSize: '0.9em', color: '#666' }}>{award.awarder}</div>
+            {hasContent(award.description) && (
+              <DescriptionRenderer
+                text={award.description}
+                style={{ fontSize: sizes.base, color: '#000' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderCertifications = () => {
-    if (!sections.certifications.visible || sections.certifications.items.length === 0) return null;
+    const visibleItems = sections.certifications.items.filter(
+      (i: any) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.certifications.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="certifications" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
-        {sections.certifications.items
-          .filter((i: any) => i.visible)
-          .map((cert: any) => (
-            <div key={cert.id} style={{ marginBottom: '8px' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-              >
-                <strong style={{ color: '#000' }}>{cert.name}</strong>
-                <span>{cert.date}</span>
-              </div>
-              <div style={{ fontSize: '0.9em', color: '#666' }}>{cert.issuer}</div>
-              {cert.description && (
-                <DescriptionRenderer
-                  text={cert.description}
-                  style={{ fontSize: sizes.base, color: '#000', marginTop: '2px' }}
-                />
-              )}
+        {visibleItems.map((cert: any) => (
+          <div key={cert.id} style={{ marginBottom: '8px' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
+            >
+              <strong style={{ color: '#000' }}>{cert.name}</strong>
+              <span>{cert.date}</span>
             </div>
-          ))}
+            <div style={{ fontSize: '0.9em', color: '#666' }}>{cert.issuer}</div>
+            {hasContent(cert.description) && (
+              <DescriptionRenderer
+                text={cert.description}
+                style={{ fontSize: sizes.base, color: '#000', marginTop: '2px' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderPublications = () => {
-    if (!sections.publications.visible || sections.publications.items.length === 0) return null;
+    const visibleItems = sections.publications.items.filter(
+      (i: any) => i.visible && (i.name || hasContent(i.description)),
+    );
+    if (!sections.publications.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="publications" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.publications.name} color={themeColor} sizes={sizes} />
-        {sections.publications.items
-          .filter((i: any) => i.visible)
-          .map((pub: any) => (
-            <div key={pub.id} style={{ marginBottom: '8px' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-              >
-                <strong style={{ color: '#000' }}>{pub.name}</strong>
-                <span>{pub.date}</span>
-              </div>
-              <div style={{ fontSize: '0.9em', color: '#666' }}>{pub.publisher}</div>
-              {pub.description && (
-                <DescriptionRenderer
-                  text={pub.description}
-                  style={{ fontSize: sizes.base, color: '#000' }}
-                />
-              )}
+        {visibleItems.map((pub: any) => (
+          <div key={pub.id} style={{ marginBottom: '8px' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
+            >
+              <strong style={{ color: '#000' }}>{pub.name}</strong>
+              <span>{pub.date}</span>
             </div>
-          ))}
+            <div style={{ fontSize: '0.9em', color: '#666' }}>{pub.publisher}</div>
+            {hasContent(pub.description) && (
+              <DescriptionRenderer
+                text={pub.description}
+                style={{ fontSize: sizes.base, color: '#000' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderVolunteer = () => {
-    if (!sections.volunteer.visible || sections.volunteer.items.length === 0) return null;
+    const visibleItems = sections.volunteer.items.filter(
+      (i: any) => i.visible && (i.organization || i.position || hasContent(i.description)),
+    );
+    if (!sections.volunteer.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="volunteer" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.volunteer.name} color={themeColor} sizes={sizes} />
-        {sections.volunteer.items
-          .filter((i: any) => i.visible)
-          .map((vol: any) => (
-            <div key={vol.id} style={{ marginBottom: '10px' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-              >
-                <strong style={{ color: '#000' }}>{vol.position}</strong>
-                <span>{vol.period}</span>
-              </div>
-              <div style={{ fontStyle: 'italic' }}>{vol.organization}</div>
-              {vol.description && (
-                <DescriptionRenderer
-                  text={vol.description}
-                  style={{ color: '#000', lineHeight: '1.4' }}
-                />
-              )}
+        {visibleItems.map((vol: any) => (
+          <div key={vol.id} style={{ marginBottom: '10px' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
+            >
+              <strong style={{ color: '#000' }}>{vol.position}</strong>
+              <span>{vol.period}</span>
             </div>
-          ))}
+            <div style={{ fontStyle: 'italic' }}>{vol.organization}</div>
+            {hasContent(vol.description) && (
+              <DescriptionRenderer
+                text={vol.description}
+                style={{ color: '#000', lineHeight: '1.4' }}
+              />
+            )}
+          </div>
+        ))}
       </div>
     );
   };
 
   const renderReferences = () => {
-    if (!sections.references.visible || sections.references.items.length === 0) return null;
+    const visibleItems = sections.references.items.filter((i: any) => i.visible && i.name);
+    if (!sections.references.visible || visibleItems.length === 0) return null;
+
     return (
       <div key="references" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.references.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-          {sections.references.items
-            .filter((i: any) => i.visible)
-            .map((ref: any) => (
-              <div key={ref.id} style={{ fontSize: sizes.base }}>
-                <div style={{ fontWeight: 'bold' }}>{ref.name}</div>
-                <div>{ref.position}</div>
-                <div style={{ color: '#666' }}>
-                  {ref.email} {ref.phone && `| ${ref.phone}`}
-                </div>
+          {visibleItems.map((ref: any) => (
+            <div key={ref.id} style={{ fontSize: sizes.base }}>
+              <div style={{ fontWeight: 'bold' }}>{ref.name}</div>
+              <div>{ref.position}</div>
+              <div style={{ color: '#666' }}>
+                {ref.email} {ref.phone && `| ${ref.phone}`}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -501,7 +524,7 @@ const ResumeContent = ({
             margin: '0 0 4px 0',
           }}
         >
-          {basics.name || 'Your Name'}
+          {basics.name}
         </h1>
         {basics.headline && (
           <p style={{ fontSize: sizes.heading, color: '#444', margin: '0 0 8px 0' }}>
@@ -561,7 +584,7 @@ const ResumeContent = ({
             }}
           >
             {sections.profiles.items
-              .filter((p: any) => p.visible)
+              .filter((p: any) => p.visible && (p.network || p.username))
               .map((p: any) => (
                 <IconWrapper key={p.id}>
                   {getNetworkIcon(p.network)}
@@ -589,14 +612,22 @@ const ResumeContent = ({
         if (renderer) return renderer();
 
         const customSection = customSections.find((s) => s.id === key);
-        if (customSection && customSection.visible && customSection.items.length > 0) {
+        if (customSection && customSection.visible) {
+          const visibleItems = customSection.items.filter(
+            (item: any) => item.visible && (item.title || hasContent(item.description)),
+          );
+
+          if (visibleItems.length === 0) return null;
+
           return (
             <div key={customSection.id} style={{ marginBottom: '16px' }}>
               <SectionHeader title={customSection.name} color={themeColor} sizes={sizes} />
-              {customSection.items.map((item: any) => (
+              {visibleItems.map((item: any) => (
                 <div key={item.id} style={{ marginBottom: '8px' }}>
                   <div style={{ fontWeight: 'bold' }}>{item.title}</div>
-                  <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
+                  {hasContent(item.description) && (
+                    <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
+                  )}
                 </div>
               ))}
             </div>

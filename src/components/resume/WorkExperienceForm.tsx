@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Briefcase, Calendar, ChevronDown, ChevronUp, MapPin, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { Button } from '@/components/ui/button';
@@ -13,23 +14,31 @@ import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 
 export const WorkExperienceForm = () => {
-  const { resumeData, addExperience, updateExperience, deleteExperience } = useResumeStore();
+  const { resumeData, addItem, updateExperience, deleteExperience } = useResumeStore();
   const { items: workExperience } = resumeData.sections.experience;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (workExperience.length > 0 && !expandedId) {
-      setExpandedId(workExperience[workExperience.length - 1].id);
+      setExpandedId(workExperience[0].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workExperience]);
+  }, []); // Only run once on mount
 
   const handleAdd = () => {
-    addExperience();
-    setTimeout(() => {
-      const lastExp = workExperience[workExperience.length - 1];
-      if (lastExp) setExpandedId(lastExp.id);
-    }, 0);
+    const id = uuidv4();
+    addItem('experience', {
+      id,
+      company: '',
+      position: '',
+      location: '',
+      period: '',
+      description: '',
+      website: { label: '', href: '' },
+      roles: [],
+      visible: true,
+    });
+    setExpandedId(id);
   };
 
   return (

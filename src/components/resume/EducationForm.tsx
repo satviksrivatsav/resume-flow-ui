@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronDown, ChevronUp, GraduationCap, Plus } from 'lucide-react';
-import { AIWriterButton } from '@/components/ui/AIWriterButton';
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { AIWriterButton } from '@/components/ui/AIWriterButton';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,23 +13,32 @@ import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 
 export const EducationForm = () => {
-  const { resumeData, addEducation, updateEducation, deleteEducation } = useResumeStore();
+  const { resumeData, addItem, updateEducation, deleteEducation } = useResumeStore();
   const { items: education } = resumeData.sections.education;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (education.length > 0 && !expandedId) {
-      setExpandedId(education[education.length - 1].id);
+      setExpandedId(education[0].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [education]);
+  }, []); // Only run once on mount
 
   const handleAdd = () => {
-    addEducation();
-    setTimeout(() => {
-      const lastEdu = education[education.length - 1];
-      if (lastEdu) setExpandedId(lastEdu.id);
-    }, 0);
+    const id = uuidv4();
+    addItem('education', {
+      id,
+      school: '',
+      degree: '',
+      area: '',
+      grade: '',
+      location: '',
+      period: '',
+      description: '',
+      visible: true,
+      website: { label: '', href: '' },
+    });
+    setExpandedId(id);
   };
 
   return (

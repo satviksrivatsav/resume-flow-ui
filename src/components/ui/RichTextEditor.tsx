@@ -1,7 +1,7 @@
 import * as React from 'react';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill-new';
 import { Bold, Italic, List, ListOrdered, Strikethrough, Underline, Type } from 'lucide-react';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import '../resume/quill-custom.css';
 import { cn } from '@/lib/utils';
 import {
@@ -61,13 +61,13 @@ export const RichTextEditor = ({
     },
   }), [toolbarId]);
 
+  // 'list' is the format name, 'bullet' and 'ordered' are attributes
   const formats = [
     'bold',
     'italic',
     'underline',
     'strike',
     'list',
-    'bullet',
   ];
 
   return (

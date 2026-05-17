@@ -32,9 +32,9 @@ export const InterestsForm = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
         <AnimatePresence mode="popLayout">
-          {interests.map((interest) => (
+          {interests.map((interest, index) => (
             <motion.div
               key={interest.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -42,7 +42,10 @@ export const InterestsForm = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               className="group relative border rounded-xl p-6 bg-card hover:border-primary/30 transition-all duration-200 shadow-sm"
             >
-              <div className="absolute top-4 right-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  Interest {index + 1}
+                </h3>
                 <motion.div whileHover="hover" whileTap="tap">
                   <Button
                     variant="ghost"

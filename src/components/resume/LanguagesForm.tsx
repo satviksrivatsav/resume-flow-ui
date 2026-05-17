@@ -32,9 +32,9 @@ export const LanguagesForm = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
         <AnimatePresence mode="popLayout">
-          {languages.map((lang) => (
+          {languages.map((lang, index) => (
             <motion.div
               key={lang.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -42,7 +42,10 @@ export const LanguagesForm = () => {
               exit={{ opacity: 0, scale: 0.95 }}
               className="group relative border rounded-xl p-6 bg-card hover:border-primary/30 transition-all duration-200 shadow-sm"
             >
-              <div className="absolute top-4 right-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  Language {index + 1}
+                </h3>
                 <motion.div whileHover="hover" whileTap="tap">
                   <Button
                     variant="ghost"
@@ -55,7 +58,7 @@ export const LanguagesForm = () => {
                 </motion.div>
               </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label className="font-medium">
                     Language Name <span className="text-red-500">*</span>
