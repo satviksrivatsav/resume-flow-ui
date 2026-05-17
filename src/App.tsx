@@ -11,6 +11,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import AuthLayout from './components/layout/AuthLayout';
 import { FaviconManager } from './components/layout/FaviconManager';
+import { useInactivityTimeout } from './hooks/useInactivityTimeout';
 import AtsChecker from './pages/AtsChecker';
 import AtsReports from './pages/AtsReports';
 import DangerZonePage from './pages/DangerZonePage';
@@ -121,9 +122,12 @@ function AnimatedRoutes() {
 function AppContent() {
   const { initialize } = useAuthStore();
 
+  // Register inactivity timeout monitoring
+  useInactivityTimeout();
+
   useEffect(() => {
     void initialize();
-    import('./lib/geolocation').then((m) => m.initializeCountryCode());
+    void import('./lib/geolocation').then((m) => m.initializeCountryCode());
   }, [initialize]);
 
   return (

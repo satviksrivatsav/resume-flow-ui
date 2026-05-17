@@ -1,10 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
-import { useInactivityTimeout } from '../useInactivityTimeout';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { useAuthStore } from '@/stores/authStore';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+import { useInactivityTimeout } from '../useInactivityTimeout';
 
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: vi.fn(),
@@ -74,7 +76,7 @@ describe('useInactivityTimeout', () => {
       session: null,
       signOut,
     });
-    
+
     const { unmount } = renderHook(() => useInactivityTimeout());
 
     vi.advanceTimersByTime(60 * 60 * 1000 + 1);
