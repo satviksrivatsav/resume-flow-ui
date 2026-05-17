@@ -1,12 +1,20 @@
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Logo } from '@/components/ui/Logo';
 import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function AuthLayout() {
   const location = useLocation();
+  const { clearError } = useAuthStore();
   const isLogin = location.pathname === '/login';
+
+  useEffect(() => {
+    // Clear any auth errors when switching between login and signup
+    clearError();
+  }, [location.pathname, clearError]);
 
   return (
     <motion.div
