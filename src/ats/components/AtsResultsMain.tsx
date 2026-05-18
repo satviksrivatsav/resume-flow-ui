@@ -375,7 +375,7 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
         titleClass="text-foreground"
       >
         <p className="text-sm text-foreground/85 leading-relaxed bg-muted/30 rounded-xl p-4 border border-border/30 italic">
-          "{sim.first_impression}"
+          &quot;{sim.first_impression}&quot;
         </p>
       </AtsCard>
 

@@ -1,7 +1,6 @@
 ﻿import { motion } from 'framer-motion';
 
 import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
-import { Button } from '@/shared/components/ui/button';
 import { Checkbox } from '@/shared/components/ui/checkbox';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
 import { Input } from '@/shared/components/ui/input';
@@ -12,7 +11,7 @@ import { useResumeStore } from '@/shared/stores/resumeStore';
 import { useUiStore } from '@/shared/stores/uiStore';
 
 export const AdditionalSectionForm = () => {
-  const { resumeData, updateCustomSection, deleteCustomSection } = useResumeStore();
+  const { resumeData, updateCustomSection } = useResumeStore();
   const { activeTab } = useUiStore();
 
   const section = resumeData.customSections.find((s) => s.id === activeTab);

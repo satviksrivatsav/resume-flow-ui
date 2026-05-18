@@ -58,14 +58,15 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     checkReport();
 
     if (!containerRef.current) return;
+    const currentContainer = containerRef.current;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setScale(entry.contentRect.width / 794);
       }
     });
-    observer.observe(containerRef.current);
+    observer.observe(currentContainer);
     return () => observer.disconnect();
-  }, []);
+  }, [resume.id]);
 
   const handleOpen = () => {
     navigate(`/resume-builder?id=${resume.id}`);

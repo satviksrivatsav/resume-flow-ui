@@ -1,5 +1,5 @@
 ﻿import { motion } from 'framer-motion';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 import {
   AccordionContent,

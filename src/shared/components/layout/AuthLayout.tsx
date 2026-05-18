@@ -1,6 +1,6 @@
 ﻿import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { HeartbeatPulseBackground } from '@/shared/components/ui/backgrounds';
 import { Logo } from '@/shared/components/ui/Logo';

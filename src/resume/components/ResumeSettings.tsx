@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion';
 import { Pencil } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import {

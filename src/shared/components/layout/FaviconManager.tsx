@@ -10,7 +10,7 @@ export const FaviconManager = () => {
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
-    const favicon = document.querySelector('link[rel="icon"]')!;
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement | null;
     if (favicon) {
       const baseUrl = favicon.href.split('?')[0];
       // Appending the theme as a version query parameter forces the browser

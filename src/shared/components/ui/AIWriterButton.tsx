@@ -1,9 +1,7 @@
 ﻿import { motion } from 'framer-motion';
-import Lottie from 'lottie-react';
 import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
-import aiSearchAnimation from '@/assets/ai-searching.json';
 import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -24,7 +22,6 @@ interface AIWriterButtonProps {
 
 export function AIWriterButton({
   fieldName,
-  fieldLabel,
   fieldValue,
   onUpdate,
 }: AIWriterButtonProps) {

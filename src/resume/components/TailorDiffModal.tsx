@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { CheckCircle2, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,7 +17,7 @@ interface TailorDiffModalProps {
 }
 
 export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) => {
-  const { viewMode, setViewMode, tailoredSlides, updateDecision, updateTailoredContent } =
+  const { viewMode, tailoredSlides, updateDecision, updateTailoredContent } =
     useTailorStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPendingModal, setShowPendingModal] = useState(false);

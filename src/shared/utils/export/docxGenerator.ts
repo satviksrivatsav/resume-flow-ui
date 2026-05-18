@@ -2,8 +2,6 @@
   AlignmentType,
   BorderStyle,
   Document,
-  ExternalHyperlink,
-  HeadingLevel,
   Packer,
   Paragraph,
   TextRun,
@@ -179,7 +177,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   // ── Section Renderers ──────────────────────────────────────────────────────
   const renderSummary = () => {
     if (hasContent(summary.content) && summary.visible) {
-      children.push(...createSectionTitle(summary.name || 'Summary'));
+      children.push(...createSectionTitle('Summary'));
       children.push(...renderDescription(summary.content, sizes.base));
     }
   };
@@ -379,10 +377,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
     children.push(
       new Paragraph({
-        text: visibleItems
-          .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
-          .join(', '),
-        size: sizes.base * 2,
+        children: [
+          new TextRun({
+            text: visibleItems
+              .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
+              .join(', '),
+            size: sizes.base * 2,
+          }),
+        ],
       }),
     );
   };

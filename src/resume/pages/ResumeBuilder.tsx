@@ -43,7 +43,6 @@ import { Logo } from '@/shared/components/ui/Logo';
 import { SidebarProvider } from '@/shared/components/ui/sidebar';
 import { Slider } from '@/shared/components/ui/slider';
 import { Tabs, TabsContent } from '@/shared/components/ui/tabs';
-import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useAIWriterStore } from '@/shared/stores/aiWriterStore';
 import { useResumeStore } from '@/shared/stores/resumeStore';

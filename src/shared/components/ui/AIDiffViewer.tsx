@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Info, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -73,12 +73,10 @@ interface AIDiffViewerProps {
 
 export function AIDiffViewer({
   title,
-  description,
   originalText,
   newText,
   onAccept,
   onReject,
-  decision,
   showActions = true,
   footer,
   rightElement,

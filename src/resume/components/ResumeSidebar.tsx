@@ -1,4 +1,4 @@
-﻿import {
+import {
   closestCenter,
   DndContext,
   DragEndEvent,
@@ -16,7 +16,6 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { motion, Variants } from 'framer-motion';
 import {
   ArrowLeft,
   Award,
@@ -41,7 +40,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { iconVariants, NavItemWrapper } from '@/shared/components/layout/SidebarUtils';
+import { NavItemWrapper } from '@/shared/components/layout/SidebarUtils';
 import { AnimatedIcon, type AnimatedIconPreset } from '@/shared/components/ui/AnimatedIcon';
 import { Button } from '@/shared/components/ui/button';
 import {

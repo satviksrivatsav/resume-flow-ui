@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Briefcase, CloudUpload, Database, Loader2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -170,6 +170,10 @@ export function AtsSetup({
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+              tabIndex={0}
+              role="button"
+              aria-label="Upload resume"
               className={`
                 relative border-2 border-dashed rounded-[2rem] p-10 text-center cursor-pointer transition-all duration-300
                 ${dragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground hover:bg-muted/5'}
@@ -206,7 +210,7 @@ export function AtsSetup({
         {/* Zone 2: Job Description Input */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-2">
-            <label className="text-sm font-bold flex items-center gap-2">
+            <label htmlFor="jd-text-editor" className="text-sm font-bold flex items-center gap-2">
               <Briefcase className="w-4 h-4 text-primary" />
               Job Description
             </label>
@@ -217,6 +221,7 @@ export function AtsSetup({
 
           <div className="relative">
             <RichTextEditor
+              id="jd-text-editor"
               placeholder={
                 isExtractingJd
                   ? 'Extracting text from file...'

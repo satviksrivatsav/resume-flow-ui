@@ -291,7 +291,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     hasContent(summary.content) && summary.visible ? (
       <View key="summary" style={styles.section}>
         <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
-          <Text style={styles.sectionTitle}>{summary.name || 'Summary'}</Text>
+          <Text style={styles.sectionTitle}>Summary</Text>
         </View>
         <PDFDescriptionRenderer text={summary.content} style={styles.itemDescription} />
       </View>

@@ -3,7 +3,7 @@ import '@/resume/components/quill-custom.css';
 
 import { Bold, Italic, List, ListOrdered, Strikethrough, Type, Underline } from 'lucide-react';
 import * as React from 'react';
-import ReactQuill, { Quill } from 'react-quill-new';
+import ReactQuill from 'react-quill-new';
 
 import {
   Tooltip,
@@ -14,6 +14,7 @@ import {
 import { cn } from '@/shared/lib/utils';
 
 interface RichTextEditorProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -62,6 +63,7 @@ const ToolbarButton = ({
 );
 
 export const RichTextEditor = ({
+  id,
   value,
   onChange,
   placeholder,
@@ -144,6 +146,7 @@ export const RichTextEditor = ({
       </div>
 
       <ReactQuill
+        id={id}
         theme="snow"
         value={value}
         onChange={onChange}

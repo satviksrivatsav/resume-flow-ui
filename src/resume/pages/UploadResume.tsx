@@ -5,7 +5,6 @@ import {
   CheckCircle,
   CloudUpload,
   FileText,
-  Loader2,
   ServerCrash,
   Timer,
 } from 'lucide-react';

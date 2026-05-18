@@ -1,5 +1,4 @@
 ﻿'use client';
-import { IconMenu2, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import React, { useRef, useState } from 'react';
 
@@ -195,7 +194,7 @@ export const MobileNavHeader = ({
   );
 };
 
-export const MobileNavMenu = ({ children, className, isOpen, onClose }: MobileNavMenuProps) => {
+export const MobileNavMenu = ({ children, className, isOpen }: MobileNavMenuProps) => {
   return (
     <AnimatePresence>
       {isOpen && (

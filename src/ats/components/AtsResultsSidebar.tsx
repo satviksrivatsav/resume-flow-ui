@@ -1,5 +1,5 @@
 ﻿import { motion } from 'framer-motion';
-import { AlertTriangle, ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, TrendingUp } from 'lucide-react';
 
 import { Button } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/utils';
