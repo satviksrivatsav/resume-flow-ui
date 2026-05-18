@@ -6,7 +6,6 @@ import { FieldTip } from '@/components/ui/FieldTip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MonthYearPicker } from '@/components/ui/MonthYearPicker';
-import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';

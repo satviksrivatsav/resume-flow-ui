@@ -4,6 +4,7 @@ import {
   MoveHorizontal,
   MoveVertical,
   RotateCcw,
+  Trash2,
   X,
   ZoomIn,
   ZoomOut,
@@ -384,17 +385,15 @@ const ResumeBuilder = () => {
                       </div>
 
                       {resumeData.customSections.some((s) => s.id === activeTab) && (
-                        <motion.div whileHover="hover" whileTap="tap">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowDeleteModal(true)}
-                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2 shrink-0 h-10 px-4"
-                          >
-                            <TrashAnimatedIcon className="w-4 h-4" />
-                            Delete Section
-                          </Button>
-                        </motion.div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowDeleteModal(true)}
+                          className="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive gap-2 shrink-0 h-10 px-4"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete Section
+                        </Button>
                       )}
                     </div>
 
@@ -657,6 +656,8 @@ const ResumeBuilder = () => {
 
         <DeleteConfirmationModal
           isOpen={showDeleteModal}
+          title="Delete Section"
+          icon={<Trash2 className="w-8 h-8 text-destructive" />}
           itemName={
             resumeData.customSections.find((s) => s.id === activeTab)?.name ?? 'this section'
           }
