@@ -12,10 +12,10 @@ import { useResumeStore } from '@/shared/stores/resumeStore';
 import { useUiStore } from '@/shared/stores/uiStore';
 
 export const AdditionalSectionForm = () => {
-  const { resumeData, updateAdditionalSection, deleteAdditionalSection } = useResumeStore();
-  const { activeTab, setActiveTab } = useUiStore();
+  const { resumeData, updateCustomSection, deleteCustomSection } = useResumeStore();
+  const { activeTab } = useUiStore();
 
-  const section = resumeData.additionalSections.find((s) => s.id === activeTab);
+  const section = resumeData.customSections.find((s) => s.id === activeTab);
 
   if (!section) return null;
 
@@ -32,8 +32,8 @@ export const AdditionalSectionForm = () => {
           </Label>
           <Input
             placeholder="e.g. Certifications, Awards, Languages"
-            value={section.title}
-            onChange={(e) => updateAdditionalSection(section.id, { title: e.target.value })}
+            value={section.name}
+            onChange={(e) => updateCustomSection(section.id, { name: e.target.value })}
             className="font-medium bg-background"
           />
         </div>
@@ -42,9 +42,9 @@ export const AdditionalSectionForm = () => {
           <div className="flex items-center space-x-2">
             <Checkbox
               id={`has-date-${section.id}`}
-              checked={section.hasDate || false}
+              checked={(section as any).hasDate || false}
               onCheckedChange={(checked) =>
-                updateAdditionalSection(section.id, { hasDate: checked as boolean })
+                updateCustomSection(section.id, { hasDate: checked as boolean })
               }
             />
             <label
@@ -55,14 +55,14 @@ export const AdditionalSectionForm = () => {
             </label>
           </div>
 
-          {section.hasDate && (
+          {(section as any).hasDate && (
             <div className="space-y-4 pt-2">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id={`is-range-${section.id}`}
-                  checked={section.isDateRange || false}
+                  checked={(section as any).isDateRange || false}
                   onCheckedChange={(checked) =>
-                    updateAdditionalSection(section.id, { isDateRange: checked as boolean })
+                    updateCustomSection(section.id, { isDateRange: checked as boolean })
                   }
                 />
                 <label
@@ -75,25 +75,25 @@ export const AdditionalSectionForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <MonthYearPicker
-                  label={<span>{section.isDateRange ? 'Start Date' : 'Date'}</span>}
-                  value={section.startDate || ''}
-                  onChange={(value) => updateAdditionalSection(section.id, { startDate: value })}
+                  label={<span>{(section as any).isDateRange ? 'Start Date' : 'Date'}</span>}
+                  value={(section as any).startDate || ''}
+                  onChange={(value) => updateCustomSection(section.id, { startDate: value })}
                 />
 
-                {section.isDateRange && (
+                {(section as any).isDateRange && (
                   <div className="space-y-4">
                     <MonthYearPicker
                       label={<span>End Date</span>}
-                      value={section.endDate || ''}
-                      onChange={(value) => updateAdditionalSection(section.id, { endDate: value })}
-                      disabled={section.current}
+                      value={(section as any).endDate || ''}
+                      onChange={(value) => updateCustomSection(section.id, { endDate: value })}
+                      disabled={(section as any).current}
                     />
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id={`current-${section.id}`}
-                        checked={section.current || false}
+                        checked={(section as any).current || false}
                         onCheckedChange={(checked) =>
-                          updateAdditionalSection(section.id, { current: checked as boolean })
+                          updateCustomSection(section.id, { current: checked as boolean })
                         }
                       />
                       <label
@@ -116,13 +116,13 @@ export const AdditionalSectionForm = () => {
             <AIWriterButton
               fieldName="description"
               fieldLabel="Section Content"
-              fieldValue={section.description || ''}
-              onUpdate={(newText) => updateAdditionalSection(section.id, { description: newText })}
+              fieldValue={(section as any).description || ''}
+              onUpdate={(newText) => updateCustomSection(section.id, { description: newText })}
             />
           </div>
           <RichTextEditor
-            value={section.description || ''}
-            onChange={(value) => updateAdditionalSection(section.id, { description: value })}
+            value={(section as any).description || ''}
+            onChange={(value) => updateCustomSection(section.id, { description: value })}
             placeholder="Describe your achievements or details here..."
           />
           <FieldTip>

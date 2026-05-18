@@ -1,6 +1,5 @@
 ﻿import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
 import { CreateNewCard, ParseResumeCard, ResumeCard } from '@/dashboard/components/ResumeCard';

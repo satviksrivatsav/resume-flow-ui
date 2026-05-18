@@ -2,7 +2,6 @@
 import { AlertTriangle, ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
 
 import { Button } from '@/shared/components/ui/button';
-import { Progress } from '@/shared/components/ui/progress';
 import { cn } from '@/shared/lib/utils';
 import { AtsReport } from '@/shared/types/ats';
 
@@ -27,63 +26,6 @@ const SECTION_LABELS: Record<keyof AtsReport['scores'], string> = {
 
 export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
   const gradeLetter = report.grade.charAt(0).toUpperCase();
-
-  const gradeConfig = (
-    {
-      A: {
-        color: 'text-success',
-        bg: 'bg-success/10',
-        border: 'border-success/25',
-        glow: 'shadow-success/10',
-      },
-      B: {
-        color: 'text-success',
-        bg: 'bg-success/10',
-        border: 'border-success/25',
-        glow: 'shadow-success/10',
-      },
-      C: {
-        color: 'text-warning',
-        bg: 'bg-warning/10',
-        border: 'border-warning/25',
-        glow: 'shadow-warning/10',
-      },
-      D: {
-        color: 'text-warning',
-        bg: 'bg-warning/10',
-        border: 'border-warning/25',
-        glow: 'shadow-warning/10',
-      },
-      F: {
-        color: 'text-destructive',
-        bg: 'bg-destructive/10',
-        border: 'border-destructive/25',
-        glow: 'shadow-destructive/10',
-      },
-    } as const
-  )[gradeLetter as 'A' | 'B' | 'C' | 'D' | 'F'] ?? {
-    color: 'text-destructive',
-    bg: 'bg-destructive/10',
-    border: 'border-destructive/25',
-    glow: 'shadow-destructive/10',
-  };
-
-  const passProbability = Math.min(
-    100,
-    Math.max(
-      0,
-      report.overall_score +
-        (report.overall_score >= 75 ? 10 : report.overall_score >= 50 ? 0 : -15),
-    ),
-  );
-
-  const probColor =
-    passProbability >= 70
-      ? 'text-success'
-      : passProbability >= 40
-        ? 'text-warning'
-        : 'text-destructive';
-  const ProbIcon = passProbability >= 70 ? CheckCircle2 : AlertTriangle;
 
   const sortedScores = Object.entries(report.scores).sort(([, a], [, b]) => b - a);
 

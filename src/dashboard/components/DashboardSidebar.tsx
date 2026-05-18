@@ -1,6 +1,5 @@
 ﻿import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, FileText, LogOut, ShieldCheck, User } from 'lucide-react';
-import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { iconVariants, NavItemWrapper } from '@/shared/components/layout/SidebarUtils';

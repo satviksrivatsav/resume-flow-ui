@@ -2,8 +2,6 @@
 import { CheckCircle2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { cn } from '@/shared/lib/utils';
-
 export const TailorMockup = () => {
   const keywords = ['React', 'TypeScript', 'Node.js', 'GraphQL', 'Tailwind'];
   // phases: 'scanning', 'revealed'

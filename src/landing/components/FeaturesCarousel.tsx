@@ -1,6 +1,4 @@
-﻿import { motion } from 'framer-motion';
-import { ArrowRight, Layout, ShieldCheck, Sparkles, Zap } from 'lucide-react';
-import React from 'react';
+﻿import { ArrowRight, Layout, ShieldCheck, Sparkles, Zap } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils';
 

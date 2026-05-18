@@ -1,4 +1,4 @@
-import { animate, AnimatePresence, motion } from 'framer-motion';
+import { animate, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 export const ATSMockup = () => {
@@ -18,7 +18,7 @@ export const ATSMockup = () => {
         // Step 2: Animate (3s)
         if (!isMounted) break;
         setPhase('animating');
-        const controls = animate(0, 85, {
+        animate(0, 85, {
           duration: 3,
           ease: 'easeInOut',
           onUpdate: (latest) => setScore(Math.round(latest)),

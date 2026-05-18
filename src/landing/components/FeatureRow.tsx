@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { cn } from '@/shared/lib/utils';
 

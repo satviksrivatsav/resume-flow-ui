@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type FeatureKey = 'ai' | 'ats' | 'format' | 'templates';
 

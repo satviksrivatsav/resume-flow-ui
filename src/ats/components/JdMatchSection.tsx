@@ -2,7 +2,6 @@
 import { Target } from 'lucide-react';
 
 import { Badge } from '@/shared/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { JdMatch } from '@/shared/types/ats';
 
 interface JdMatchSectionProps {
