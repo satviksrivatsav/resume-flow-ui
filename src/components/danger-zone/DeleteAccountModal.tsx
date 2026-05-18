@@ -21,7 +21,6 @@ export function DeleteAccountModal({ isOpen, onClose, onConfirm }: DeleteAccount
       confirmButtonClassName="shadow-lg shadow-destructive/20 flex items-center justify-center gap-2 group"
       confirmNode={
         <motion.button
-          type="button"
           whileHover="hover"
           whileTap="tap"
           variants={{

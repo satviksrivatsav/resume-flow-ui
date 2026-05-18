@@ -71,6 +71,7 @@ export function DeleteConfirmationModal({
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
+            type="button"
             asChild={!!confirmNode}
             onClick={onConfirm}
             className={cn(
