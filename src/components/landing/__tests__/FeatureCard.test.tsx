@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, screen } from '@testing-library/react';
 import { FeatureCard } from '../FeatureCard';
 import { Sparkles } from 'lucide-react';
