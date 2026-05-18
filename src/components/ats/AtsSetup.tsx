@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { useAtsStore } from '@/stores/atsStore';
 import { extractTextFromFile } from '@/lib/atsApi';
 import { ResumeSelectionModal } from '@/components/shared/ResumeSelectionModal';
@@ -208,7 +208,7 @@ export function AtsSetup({
           </div>
  
           <div className="relative">
-            <Textarea
+            <RichTextEditor
               placeholder={
                 isExtractingJd 
                   ? 'Extracting text from file...' 
@@ -216,11 +216,11 @@ export function AtsSetup({
                     ? 'Remove uploaded file to type manually...' 
                     : 'Paste the job description here...'
               }
-              className={`min-h-[160px] resize-none bg-background border-border/50 rounded-[2rem] p-6 focus:ring-primary/20 transition-all text-sm leading-relaxed scrollbar-hide ${
+              className={`min-h-[160px] ${
                 jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               value={jdText}
-              onChange={(e) => setJdText(e.target.value)}
+              onChange={setJdText}
               disabled={!!jdFile || isExtractingJd}
             />
             {(jdFile || isExtractingJd) && (

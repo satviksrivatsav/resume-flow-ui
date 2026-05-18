@@ -7,7 +7,7 @@ import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { config } from '@/config/config';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
@@ -284,18 +284,18 @@ export const TailorForm = () => {
         </div>
 
         <div className="relative">
-          <Textarea
+          <RichTextEditor
             placeholder={
               isExtractingJd
                 ? 'Extracting text from file...'
                 : 'Paste the job description here or upload a file above...'
             }
             className={cn(
-              'min-h-[260px] bg-background border-border/50 focus:border-primary/30 focus:ring-primary/5 transition-all resize-none rounded-[2rem] p-8 text-sm leading-relaxed scrollbar-hide',
+              'min-h-[260px]',
               isExtractingJd && 'opacity-50 cursor-not-allowed',
             )}
             value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
+            onChange={setJobDescription}
             disabled={isExtractingJd || isTailoring}
           />
           {isExtractingJd && (

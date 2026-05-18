@@ -16,6 +16,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 const ToolbarButton = ({ 
@@ -23,18 +24,28 @@ const ToolbarButton = ({
   tooltip, 
   children,
   value,
-  delayDuration = 400
+  delayDuration = 400,
+  disabled
 }: { 
   className: string; 
   tooltip: string; 
   children: React.ReactNode;
   value?: string;
   delayDuration?: number;
+  disabled?: boolean;
 }) => (
   <TooltipProvider delayDuration={delayDuration}>
     <Tooltip>
       <TooltipTrigger asChild>
-        <button className={cn("custom-toolbar-button transition-colors hover:bg-muted p-1 rounded-md", className)} value={value}>
+        <button 
+          className={cn(
+            "custom-toolbar-button transition-colors hover:bg-muted p-1 rounded-md", 
+            className,
+            disabled && "opacity-50 cursor-not-allowed"
+          )} 
+          value={value}
+          disabled={disabled}
+        >
 
           {children}
         </button>
@@ -51,6 +62,7 @@ export const RichTextEditor = ({
   onChange,
   placeholder,
   className,
+  disabled,
 }: RichTextEditorProps) => {
   const editorId = React.useId().replace(/:/g, '');
   const toolbarId = `toolbar-${editorId}`;
@@ -73,27 +85,31 @@ export const RichTextEditor = ({
   return (
     <div className={cn(
       "rich-text-editor-container bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background shadow-sm font-normal",
+      disabled && "opacity-50 cursor-not-allowed select-none",
       className
     )}>
 
       <div 
         id={toolbarId} 
-        className="flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20"
+        className={cn(
+          "flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20",
+          disabled && "pointer-events-none"
+        )}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
 
         <div className="flex items-center gap-0.5">
-          <ToolbarButton className="ql-bold" tooltip="Bold">
+          <ToolbarButton className="ql-bold" tooltip="Bold" disabled={disabled}>
             <Bold className="w-3.5 h-3.5" />
           </ToolbarButton>
-          <ToolbarButton className="ql-italic" tooltip="Italic">
+          <ToolbarButton className="ql-italic" tooltip="Italic" disabled={disabled}>
             <Italic className="w-3.5 h-3.5" />
           </ToolbarButton>
-          <ToolbarButton className="ql-underline" tooltip="Underline">
+          <ToolbarButton className="ql-underline" tooltip="Underline" disabled={disabled}>
             <Underline className="w-3.5 h-3.5" />
           </ToolbarButton>
-          <ToolbarButton className="ql-strike" tooltip="Strikethrough">
+          <ToolbarButton className="ql-strike" tooltip="Strikethrough" disabled={disabled}>
             <Strikethrough className="w-3.5 h-3.5" />
           </ToolbarButton>
         </div>
@@ -101,17 +117,17 @@ export const RichTextEditor = ({
         <div className="w-[1px] h-4 bg-border mx-1.5" />
         
         <div className="flex items-center gap-0.5">
-          <ToolbarButton className="ql-list" tooltip="Bullet List" value="bullet">
+          <ToolbarButton className="ql-list" tooltip="Bullet List" value="bullet" disabled={disabled}>
             <List className="w-3.5 h-3.5" />
           </ToolbarButton>
-          <ToolbarButton className="ql-list" tooltip="Numbered List" value="ordered">
+          <ToolbarButton className="ql-list" tooltip="Numbered List" value="ordered" disabled={disabled}>
             <ListOrdered className="w-3.5 h-3.5" />
           </ToolbarButton>
         </div>
 
         <div className="w-[1px] h-4 bg-border mx-1.5" />
 
-        <ToolbarButton className="ql-clean" tooltip="Clear Formatting">
+        <ToolbarButton className="ql-clean" tooltip="Clear Formatting" disabled={disabled}>
           <Type className="w-3.5 h-3.5" />
         </ToolbarButton>
       </div>
@@ -123,6 +139,7 @@ export const RichTextEditor = ({
         modules={modules}
         formats={formats}
         placeholder={placeholder}
+        readOnly={disabled}
       />
     </div>
   );
