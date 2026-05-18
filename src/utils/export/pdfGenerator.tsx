@@ -1,4 +1,4 @@
-// src/components/resume/ResumePDF.tsx
+// src/utils/export/pdfGenerator.tsx
 // Using local font files from public/fonts folder
 
 import {
@@ -17,11 +17,11 @@ import {
 import React from 'react';
 
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/types/resume';
-import { breakLongWords, cleanProfileDisplay, hasContent, stripHtml } from '@/lib/utils';
+import { cleanProfileDisplay, hasContent, stripHtml } from '@/lib/utils';
 import { getCountryByCode, cleanPhoneNumber } from '@/lib/countries';
 
 
-interface ResumePDFProps {
+interface PDFGeneratorProps {
   resumeData: ResumeData;
 }
 
@@ -141,7 +141,7 @@ const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any })
   );
 };
 
-export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
+export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   const { basics, summary, sections, customSections, metadata } = resumeData;
 
   const baseSize = metadata.typography.fontSize || 11;
@@ -313,15 +313,21 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
         </View>
 
         {visibleItems.map((exp) => (
-          <View key={exp.id} style={styles.itemContainer} wrap={false}>
+          <View key={exp.id} style={{ marginBottom: 12 }} wrap={false}>
             <View style={styles.itemHeader}>
               <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{exp.position || 'Position'}</Text>
-                {exp.company && <Text style={styles.itemSubtitle}>{exp.company}</Text>}
+                <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                  <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
+                  {exp.company && <Text style={{ fontWeight: 400 }}>, {exp.company}</Text>}
+                </Text>
               </View>
               <Text style={styles.itemDate}>{exp.period}</Text>
             </View>
-            {exp.location && <Text style={styles.itemLocation}>{exp.location}</Text>}
+            {exp.location && (
+              <Text style={{ fontSize: sizes.base * 0.9, color: '#666', marginBottom: 4 }}>
+                {exp.location}
+              </Text>
+            )}
             {hasContent(exp.description) && (
               <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
             )}
@@ -343,19 +349,18 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
           <Text style={styles.sectionTitle}>{sections.education.name}</Text>
         </View>
         {visibleItems.map((edu) => (
-          <View key={edu.id} style={styles.itemContainer} wrap={false}>
+          <View key={edu.id} style={{ marginBottom: 12 }} wrap={false}>
             <View style={styles.itemHeader}>
               <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>
-                  {edu.degree || 'Degree'}
-                  {edu.area && ` in ${edu.area}`}
-                </Text>
-                <Text style={styles.itemSubtitle}>
-                  {edu.school || 'School'}
-                  {edu.grade && ` • ${edu.grade}`}
+                <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                  <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
+                  {edu.area && <Text style={{ fontWeight: 400 }}> in {edu.area}</Text>}
                 </Text>
               </View>
               <Text style={styles.itemDate}>{edu.period}</Text>
+            </View>
+            <View style={{ color: '#000', marginBottom: 2 }}>
+              <Text>{edu.school}{edu.grade && ` • ${edu.grade}`}</Text>
             </View>
             {hasContent(edu.description) && (
               <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
@@ -365,6 +370,7 @@ export const ResumePDF: React.FC<ResumePDFProps> = ({ resumeData }) => {
       </View>
     );
   };
+
 
   const renderProjects = () => {
     const visibleItems = sections.projects.items.filter(

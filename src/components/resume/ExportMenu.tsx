@@ -17,9 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
 import { useResumeStore } from '@/stores/resumeStore';
 import { generateDocx } from '@/utils/export/docxGenerator';
+import { PDFGenerator } from '@/utils/export/pdfGenerator';
 import { getMissingMandatorySections } from '@/utils/mandatoryFieldValidator';
-
-import { ResumePDF } from './ResumePDF';
 
 export const ExportMenu = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -59,7 +58,7 @@ export const ExportMenu = () => {
 
     setIsGenerating(true);
     try {
-      const blob = await pdf(<ResumePDF resumeData={resumeData} />).toBlob();
+      const blob = await pdf(<PDFGenerator resumeData={resumeData} />).toBlob();
       saveAs(blob, `${resumeData.basics.name || 'Resume'}.pdf`);
       toast({ title: 'Success!', description: 'PDF downloaded.' });
     } catch (error) {
@@ -69,6 +68,7 @@ export const ExportMenu = () => {
       setIsGenerating(false);
     }
   };
+
 
   const handleExportDocx = async () => {
     if (!validateAndAuth()) return;
