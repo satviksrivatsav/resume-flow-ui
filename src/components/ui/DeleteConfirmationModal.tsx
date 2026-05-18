@@ -21,6 +21,7 @@ interface DeleteConfirmationModalProps {
   icon?: React.ReactNode;
   confirmText?: string;
   confirmNode?: React.ReactElement;
+  confirmButtonClassName?: string;
   contentClassName?: string;
   titleClassName?: string;
   onClose: () => void;
@@ -35,6 +36,7 @@ export function DeleteConfirmationModal({
   icon,
   confirmText = 'Delete',
   confirmNode,
+  confirmButtonClassName,
   contentClassName,
   titleClassName,
   onClose,
@@ -68,19 +70,16 @@ export function DeleteConfirmationModal({
           >
             Cancel
           </AlertDialogCancel>
-          {confirmNode ? (
-            <AlertDialogAction asChild onClick={onConfirm}>
-              {confirmNode}
-            </AlertDialogAction>
-          ) : (
-            <AlertDialogAction
-              type="button"
-              onClick={onConfirm}
-              className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
-            >
-              {confirmText}
-            </AlertDialogAction>
-          )}
+          <AlertDialogAction
+            asChild={!!confirmNode}
+            onClick={onConfirm}
+            className={cn(
+              "rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto",
+              confirmButtonClassName
+            )}
+          >
+            {confirmNode ?? confirmText}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
