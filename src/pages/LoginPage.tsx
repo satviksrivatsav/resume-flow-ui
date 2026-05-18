@@ -5,10 +5,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { signIn, signInWithProvider, isLoading, error, clearError } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +19,13 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await signIn(email, password);
-    if (!result.error) {
+    if (result.error) {
+      toast({
+        title: 'Error',
+        description: result.error,
+        variant: 'destructive',
+      });
+    } else {
       navigate('/dashboard');
     }
   };
@@ -102,10 +110,6 @@ export default function LoginPage() {
 
       {/* Email / Password Form */}
       <form onSubmit={handleSubmit} className="space-y-3">
-        {error && (
-          <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>
-        )}
-
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
@@ -117,7 +121,6 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
-                clearError();
               }}
               className="pl-10 h-10"
               required
@@ -145,7 +148,6 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                clearError();
               }}
               className="pl-10 pr-10 h-10"
               required
