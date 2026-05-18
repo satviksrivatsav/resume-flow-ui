@@ -1,8 +1,9 @@
 import { Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Accordion } from '@/components/ui/accordion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface SectionListManagerProps<T extends { id: string }> {
   items: T[];
@@ -30,6 +31,13 @@ export function SectionListManager<T extends { id: string }>({
     items.length > 0 ? items[0].id : undefined
   );
 
+  // Handle initial expansion when items load asynchronously
+  useEffect(() => {
+    if (items.length > 0 && !expandedId) {
+      setExpandedId(items[0].id);
+    }
+  }, [items, expandedId]);
+
   const handleAdd = () => {
     const id = uuidv4();
     const newItem = defaultNewItem(id);
@@ -38,7 +46,7 @@ export function SectionListManager<T extends { id: string }>({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {items.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-border/50 rounded-xl">
           {emptyMessage}
@@ -51,9 +59,19 @@ export function SectionListManager<T extends { id: string }>({
           onValueChange={setExpandedId}
           className="space-y-4"
         >
-          {items.map((item, index) =>
-            renderItem(item, index, expandedId === item.id, setExpandedId)
-          )}
+          <AnimatePresence mode="popLayout">
+            {items.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
+                {renderItem(item, index, expandedId === item.id, setExpandedId)}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </Accordion>
       )}
 

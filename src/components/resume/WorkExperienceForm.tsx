@@ -46,7 +46,7 @@ export const WorkExperienceForm = () => {
             key={exp.id}
             value={exp.id}
             className={cn(
-              'group border rounded-xl overflow-hidden transition-all duration-200 border-b-0 mb-4',
+              'group border rounded-xl overflow-hidden transition-all duration-200 border-b-0',
               isExpanded
                 ? 'ring-1 ring-primary/20 shadow-md bg-card'
                 : 'hover:border-primary/30 hover:shadow-sm bg-card/50',
@@ -136,7 +136,7 @@ export const WorkExperienceForm = () => {
                       onChange={(e) =>
                         updateExperience(exp.id, { location: e.target.value })
                       }
-                      placeholder=" San Francisco, CA"
+                      placeholder="e.g. San Francisco, CA"
                       className="pl-9"
                     />
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

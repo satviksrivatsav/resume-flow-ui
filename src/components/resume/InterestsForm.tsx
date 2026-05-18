@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronDown, Heart } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,58 +7,99 @@ import { Label } from '@/components/ui/label';
 import { TechChipsInput } from '@/components/ui/TechChipsInput';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { useResumeStore } from '@/stores/resumeStore';
+import { SectionListManager } from './shared/SectionListManager';
+import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 
 export const InterestsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
   const { items: interests } = resumeData.sections.interests;
 
-  const handleAdd = () => {
-    addItem('interests', { name: '', keywords: [] });
-  };
+  const defaultNewItem = (id: string) => ({
+    id,
+    name: '',
+    keywords: [],
+    visible: true,
+  });
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="space-y-4"
     >
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-muted-foreground">
-          Add your hobbies and personal interests to show your personality.
-        </p>
-        <Button onClick={handleAdd} className="gap-2 shadow-sm">
-          <Plus className="w-4 h-4" />
-          Add Interest
-        </Button>
-      </div>
-
-      <div className="space-y-4">
-        <AnimatePresence mode="popLayout">
-          {interests.map((interest, index) => (
-            <motion.div
-              key={interest.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="group relative border rounded-xl p-6 bg-card hover:border-primary/30 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                  Interest {index + 1}
-                </h3>
-                <motion.div whileHover="hover" whileTap="tap">
+      <SectionListManager
+        items={interests}
+        onAdd={(newItem) => addItem('interests', newItem)}
+        defaultNewItem={defaultNewItem}
+        addButtonLabel="Add Interest"
+        emptyMessage="Share what you're passionate about outside of work."
+        renderItem={(interest, index, isExpanded) => (
+          <AccordionItem
+            key={interest.id}
+            value={interest.id}
+            className={cn(
+              'group border rounded-xl overflow-hidden transition-all duration-200 border-b-0',
+              isExpanded
+                ? 'ring-1 ring-primary/20 shadow-md bg-card'
+                : 'hover:border-primary/30 hover:shadow-sm bg-card/50',
+            )}
+          >
+            <AccordionTrigger className="hover:no-underline p-0 [&>svg]:hidden">
+              <div
+                className={cn(
+                  'flex items-center justify-between p-4 w-full text-left',
+                  isExpanded && 'border-b bg-muted/30',
+                )}
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-base truncate">
+                    {interest.name || `Interest ${index + 1}`}
+                  </h3>
+                  {interest.keywords.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {interest.keywords.slice(0, 5).map((kw) => (
+                        <span
+                          key={kw}
+                          className="px-2 py-0.5 text-[10px] bg-muted rounded-full text-muted-foreground"
+                        >
+                          {kw}
+                        </span>
+                      ))}
+                      {interest.keywords.length > 5 && (
+                        <span className="text-[10px] text-muted-foreground self-center ml-1">
+                          +{interest.keywords.length - 5} more
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 ml-4">
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteItem('interests', interest.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteItem('interests', interest.id);
+                    }}
                     className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                   >
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
-                </motion.div>
+                  <div className="text-muted-foreground p-1">
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
+            </AccordionTrigger>
 
-              <div className="space-y-6">
+            <AccordionContent className="p-0">
+              <div className="p-6 space-y-6">
                 <div className="space-y-2">
                   <Label className="font-medium">
                     Interest / Hobby <span className="text-destructive">*</span>
@@ -77,27 +118,12 @@ export const InterestsForm = () => {
                   placeholder="Type a tag and press Enter"
                 />
               </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {interests.length === 0 && (
-        <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/20">
-          <div className="bg-background w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Heart className="w-6 h-6 text-muted-foreground" />
-          </div>
-          <h3 className="font-medium text-lg">No interests added</h3>
-          <p className="text-muted-foreground max-w-[250px] mx-auto mt-1 mb-6">
-            Share what you're passionate about outside of work.
-          </p>
-          <Button onClick={handleAdd} variant="outline" className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Interest
-          </Button>
-        </div>
-      )}
+            </AccordionContent>
+          </AccordionItem>
+        )}
+      />
     </motion.div>
   );
 };
+
 
