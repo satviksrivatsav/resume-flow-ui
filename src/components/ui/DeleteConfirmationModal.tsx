@@ -10,12 +10,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import React from 'react';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   title?: string;
   itemName?: string;
   description?: React.ReactNode;
+  icon?: React.ReactNode;
+  confirmText?: string;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -25,6 +28,8 @@ export function DeleteConfirmationModal({
   title = 'Delete Item',
   itemName,
   description,
+  icon,
+  confirmText = 'Delete',
   onClose,
   onConfirm,
 }: DeleteConfirmationModalProps) {
@@ -33,7 +38,7 @@ export function DeleteConfirmationModal({
       <AlertDialogContent className="sm:max-w-[440px] p-8 flex flex-col items-center text-center">
         <AlertDialogHeader className="flex flex-col items-center sm:text-center">
           <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-            <Trash2 className="w-8 h-8 text-destructive" />
+            {icon ? icon : <Trash2 className="w-8 h-8 text-destructive" />}
           </div>
           <AlertDialogTitle className="text-2xl font-extrabold tracking-tight">
             {title}
@@ -61,7 +66,7 @@ export function DeleteConfirmationModal({
             onClick={onConfirm}
             className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
           >
-            Delete
+            {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
