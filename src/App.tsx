@@ -46,18 +46,16 @@ function AnimatedRoutes() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route
+            path="/update-password"
+            element={
+              <ProtectedRoute>
+                <UpdatePasswordPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
-
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="/update-password"
-          element={
-            <ProtectedRoute>
-              {' '}
-              <UpdatePasswordPage />{' '}
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/dashboard"
           element={

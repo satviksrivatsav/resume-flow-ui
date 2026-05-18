@@ -46,13 +46,7 @@ export default React.memo(function LandingPage() {
                   onClick={() => navigate(user ? '/dashboard' : '/login')}
                   className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all text-sm"
                 >
-                  Build now
-                </button>
-                <button
-                  onClick={() => navigate(user ? '/ats' : '/login')}
-                  className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-transparent text-white font-semibold rounded-full border border-white/20 hover:bg-white/5 transition-all backdrop-blur-sm text-sm"
-                >
-                  ATS Checker
+                  Build your resume now
                 </button>
               </div>
             </div>

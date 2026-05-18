@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
-import { HeartbeatPulseBackground } from '@/shared/components/ui/backgrounds';
+import { RadialGridBackground } from '@/shared/components/ui/backgrounds';
 import { Logo } from '@/shared/components/ui/Logo';
 import { useAuthStore } from '@/shared/stores/authStore';
 
@@ -31,46 +31,29 @@ export default function AuthLayout() {
             layout
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
             style={{ order: isLogin ? 0 : 1 }}
-            className="hidden lg:flex lg:w-2/5 relative overflow-hidden bg-black flex-shrink-0"
+            className="hidden lg:flex lg:w-2/5 relative overflow-hidden bg-zinc-50 dark:bg-black flex-shrink-0"
           >
-            <HeartbeatPulseBackground
-              gap={18}
-              radius={1.5}
-              color="rgba(255,255,255,0.15)"
-              glowColor="rgba(255, 255, 255, 0.4)"
-              opacity={0.8}
-              centerX={0.5}
-              centerY={0.42}
-              pulseDuration={2000}
-              pulseGap={2000}
-            />
-
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-zinc-900/40 pointer-events-none" />
+            <RadialGridBackground />
 
             {/* Content */}
             <div className="relative z-10 flex flex-col justify-center items-center w-full p-12">
               <div className="text-center">
                 {/* Logo circle */}
-                <motion.div
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{
-                    scale: {
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatDelay: 2,
-                    },
-                  }}
-                  className="w-40 h-40 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl relative z-10 mx-auto"
-                >
+                <div className="w-40 h-40 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center mb-6 shadow-xl border border-zinc-800 dark:border-zinc-200 relative z-10 mx-auto">
+                  <Logo
+                    variant="light"
+                    className="w-24 h-24 transition-transform duration-300 dark:hidden"
+                  />
                   <Logo
                     variant="dark"
-                    className="w-24 h-24 transition-transform duration-300 opacity-80"
+                    className="w-24 h-24 transition-transform duration-300 hidden dark:block"
                   />
-                </motion.div>
+                </div>
 
-                <h2 className="text-4xl font-bold text-white mb-4">Resume Flow</h2>
-                <p className="text-xl text-neutral-400 max-w-md">
+                <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">
+                  Resume Flow
+                </h2>
+                <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-md">
                   Create stunning, professional resumes that stand out from the crowd.
                 </p>
               </div>
