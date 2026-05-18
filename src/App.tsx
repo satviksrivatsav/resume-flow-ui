@@ -1,32 +1,32 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+﻿import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from 'next-themes';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/shared/components/ui/toaster';
+import { TooltipProvider } from '@/shared/components/ui/tooltip';
 
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import AuthLayout from './components/layout/AuthLayout';
-import { FaviconManager } from './components/layout/FaviconManager';
-import { useInactivityTimeout } from './hooks/useInactivityTimeout';
-import AtsChecker from './pages/AtsChecker';
-import AtsReports from './pages/AtsReports';
-import DangerZonePage from './pages/DangerZonePage';
-import Dashboard from './pages/Dashboard';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import Index from './pages/Index';
-import LoginPage from './pages/LoginPage';
-import NotFound from './pages/NotFound';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ProfilePage from './pages/ProfilePage';
-import ResumeBuilder from './pages/ResumeBuilder';
-import SignUpPage from './pages/SignUpPage';
-import TermsOfService from './pages/TermsOfService';
-import UpdatePasswordPage from './pages/UpdatePasswordPage';
-import UploadResume from './pages/UploadResume';
-import { useAuthStore } from './stores/authStore';
+import { ProtectedRoute } from '@/auth/components/ProtectedRoute';
+import AuthLayout from '@/shared/components/layout/AuthLayout';
+import { FaviconManager } from '@/shared/components/layout/FaviconManager';
+import { useInactivityTimeout } from '@/shared/hooks/useInactivityTimeout';
+import AtsChecker from '@/ats/pages/AtsChecker';
+import AtsReports from '@/ats/pages/AtsReports';
+import DangerZonePage from '@/dashboard/pages/DangerZonePage';
+import Dashboard from '@/dashboard/pages/Dashboard';
+import ForgotPasswordPage from '@/auth/pages/ForgotPasswordPage';
+import Index from '@/landing/pages/Index';
+import LoginPage from '@/auth/pages/LoginPage';
+import NotFound from '@/shared/pages/NotFound';
+import PrivacyPolicy from '@/legal/pages/PrivacyPolicy';
+import ProfilePage from '@/dashboard/pages/ProfilePage';
+import ResumeBuilder from '@/resume/pages/ResumeBuilder';
+import SignUpPage from '@/auth/pages/SignUpPage';
+import TermsOfService from '@/legal/pages/TermsOfService';
+import UpdatePasswordPage from '@/auth/pages/UpdatePasswordPage';
+import UploadResume from '@/resume/pages/UploadResume';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 const queryClient = new QueryClient();
 
@@ -126,7 +126,7 @@ function AppContent() {
 
   useEffect(() => {
     void initialize();
-    void import('./lib/geolocation').then((m) => m.initializeCountryCode());
+    void import('@/shared/lib/geolocation').then((m) => m.initializeCountryCode());
   }, [initialize]);
 
   return (
