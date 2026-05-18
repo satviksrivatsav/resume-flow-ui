@@ -3,6 +3,7 @@ import { AlertCircle, Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { BulletReview } from '@/types/ats';
 
@@ -13,11 +14,17 @@ interface BulletReviewCardProps {
 
 export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
   const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(review.improved);
       setCopied(true);
+      toast({
+        title: 'Success',
+        description: 'Bullet copied to clipboard',
+        variant: 'success',
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback
