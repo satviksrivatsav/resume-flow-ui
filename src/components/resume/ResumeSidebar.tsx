@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavItemWrapper, iconVariants } from '@/components/layout/SidebarUtils';
 import { AnimatedIcon, type AnimatedIconPreset } from '@/components/ui/AnimatedIcon';
 import { UnsavedChangesModal } from './UnsavedChangesModal';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
