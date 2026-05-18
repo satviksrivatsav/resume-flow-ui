@@ -1,9 +1,11 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,6 +36,7 @@ interface ReportCardProps {
 
 export function ReportCard({ report, onRefresh }: ReportCardProps) {
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const score = report.data.overall_score;
   const grade = report.data.grade;
 
@@ -52,10 +55,12 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
     navigate(`/dashboard/ats?resumeId=${report.resume_id}&view=true`);
   };
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this report?')) return;
+    setShowDeleteModal(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
       const { error: deleteError } = await supabase
         .from('ats_reports')
@@ -67,99 +72,111 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
     } catch (err) {
       console.error('Failed to delete report:', err);
       toast.error('Failed to delete report');
+    } finally {
+      setShowDeleteModal(false);
     }
   };
 
   return (
-    <motion.div
-      className="group relative flex flex-col bg-accent/20 border border-border/50 rounded-[24px] overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300"
-      onClick={handleView}
-    >
-      <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner flex flex-col items-center justify-center gap-4">
-        <div
-          className={cn(
-            'w-24 h-24 rounded-full border-8 flex items-center justify-center shadow-lg',
-            scoreBg,
-            scoreBorder,
-          )}
-        >
-          <span className={cn('text-3xl font-black', scoreColor)}>{score}</span>
-        </div>
-        <div className="text-center">
-          <span
+    <>
+      <motion.div
+        className="group relative flex flex-col bg-accent/20 border border-border/50 rounded-[24px] overflow-hidden cursor-pointer hover:border-primary/50 transition-all duration-300"
+        onClick={handleView}
+      >
+        <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner flex flex-col items-center justify-center gap-4">
+          <div
             className={cn(
-              'text-xs font-black px-4 py-1 rounded-full shadow-sm',
+              'w-24 h-24 rounded-full border-8 flex items-center justify-center shadow-lg',
               scoreBg,
-              scoreColor,
+              scoreBorder,
             )}
           >
-            GRADE {grade}
-          </span>
+            <span className={cn('text-3xl font-black', scoreColor)}>{score}</span>
+          </div>
+          <div className="text-center">
+            <span
+              className={cn(
+                'text-xs font-black px-4 py-1 rounded-full shadow-sm',
+                scoreBg,
+                scoreColor,
+              )}
+            >
+              GRADE {grade}
+            </span>
+          </div>
+
+          {/* Hover Action Overlay */}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <Button
+              variant="secondary"
+              className="rounded-full font-bold px-8 shadow-xl bg-white text-black hover:bg-zinc-100 h-12"
+            >
+              View Report
+            </Button>
+          </div>
         </div>
 
-        {/* Hover Action Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <Button
-            variant="secondary"
-            className="rounded-full font-bold px-8 shadow-xl bg-white text-black hover:bg-zinc-100 h-12"
-          >
-            View Report
-          </Button>
-        </div>
-      </div>
+        <div className="p-4 pt-2">
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="font-bold text-sm truncate pr-2 group-hover:text-primary transition-colors">
+              {report.resumes?.name ?? 'Untitled Resume'}
+            </h3>
+            <DropdownMenu>
+              <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+                <button className="p-1 rounded-lg hover:bg-accent transition-colors">
+                  <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleView}>
+                  <FileSearch className="w-4 h-4 mr-2" />
+                  View Report
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={handleDeleteClick}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-      <div className="p-4 pt-2">
-        <div className="flex items-start justify-between mb-1">
-          <h3 className="font-bold text-sm truncate pr-2 group-hover:text-primary transition-colors">
-            {report.resumes?.name ?? 'Untitled Resume'}
-          </h3>
-          <DropdownMenu>
-            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-              <button className="p-1 rounded-lg hover:bg-accent transition-colors">
-                <MoreVertical className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleView}>
-                <FileSearch className="w-4 h-4 mr-2" />
-                View Report
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={handleDelete}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+          <div className="flex items-center gap-1.5 mb-2">
+            {report.job_description ? (
+              <>
+                <Briefcase className="w-3 h-3 text-muted-foreground" />
+                <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                  {report.job_description}
+                </p>
+              </>
+            ) : (
+              <>
+                <FileSearch className="w-3 h-3 text-muted-foreground" />
+                <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                  General Analysis
+                </p>
+              </>
+            ) }
+          </div>
 
-        <div className="flex items-center gap-1.5 mb-2">
-          {report.job_description ? (
-            <>
-              <Briefcase className="w-3 h-3 text-muted-foreground" />
-              <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-                {report.job_description}
-              </p>
-            </>
-          ) : (
-            <>
-              <FileSearch className="w-3 h-3 text-muted-foreground" />
-              <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-                General Analysis
-              </p>
-            </>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-muted-foreground/60 font-medium">
+              Updated {formatDistanceToNow(new Date(report.created_at))} ago
+            </span>
+          </div>
         </div>
+      </motion.div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground/60 font-medium">
-            Updated {formatDistanceToNow(new Date(report.created_at))} ago
-          </span>
-        </div>
-      </div>
-    </motion.div>
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        title="Delete Report"
+        itemName={report.resumes?.name ? `report for ${report.resumes.name}` : 'this ATS report'}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }
 
