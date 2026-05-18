@@ -9,121 +9,131 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --primary-rgb: 255, 255, 255;
-    /* Light theme - soft, eye-friendly palette */
-    /* More pronounced warm cream tones */
-    --background: 40 30% 95%;
-    /* Noticeably warm cream #F5F0E8 */
-    --foreground: 220 25% 18%;
-    /* Darker slate for better contrast */
+    --primary-rgb: 0, 0, 0;
+    /* Pure grayscale theme */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
 
-    --card: 40 20% 98%;
-    /* Warm off-white cards */
-    --card-foreground: 220 25% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
 
-    --popover: 40 20% 98%;
-    --popover-foreground: 220 25% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
 
-    --primary: 240 10% 3.9%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 40 20% 90%;
-    /* Warmer, more visible gray */
-    --secondary-foreground: 220 25% 18%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 40 15% 88%;
-    /* Darker warm gray for preview bg */
-    --muted-foreground: 220 15% 40%;
-    /* Better contrast muted text */
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
 
-    --accent: 40 20% 90%;
-    --accent-foreground: 220 25% 18%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 40 15% 82%;
-    /* More visible warm border */
-    --input: 40 15% 85%;
-    --ring: 221 83% 53%;
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 37.9 92.4% 52.2%;
+    --warning-foreground: 0 0% 9%;
+
+    --info: 221.2 83.2% 53.3%;
+    --info-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
 
     --radius: 0.5rem;
 
-    /* Gradient colors for light mode - Subtle and clean */
+    /* Grayscale gradient colors */
     --gradient-start: 0 0% 100%;
-    --gradient-mid: 240 5% 96%;
-    --gradient-end: 240 5% 90%;
-    --gradient-accent: 240 5% 85%;
-    --gradient-foreground: 240 10% 3.9%;
+    --gradient-mid: 0 0% 98%;
+    --gradient-end: 0 0% 95%;
+    --gradient-accent: 0 0% 90%;
+    --gradient-foreground: 0 0% 3.9%;
 
-    /* Glass effect for light mode */
-    --glass-bg: 40 25% 98% / 0.85;
-    --glass-border: 40 15% 65% / 0.25;
+    /* Glass effect */
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 0 0% 0% / 0.1;
 
     /* Shadows */
-    --shadow-colorful: 220 25% 18% / 0.1;
+    --shadow-colorful: 0 0% 0% / 0.1;
 
-    --sidebar-background: 40 25% 94%;
-    --sidebar-foreground: 220 25% 18%;
-    --sidebar-primary: 240 10% 3.9%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 20% 90%;
-    --sidebar-accent-foreground: 220 25% 18%;
-    --sidebar-border: 40 15% 82%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 3.9%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 89.8%;
+    --sidebar-ring: 0 0% 3.9%;
 
     --header-height: 5rem;
   }
 
   .dark {
-    /* Dark theme */
-    --background: 240 10% 4%;
+    /* Dark pure grayscale theme */
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 8%;
+    --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 8%;
+    --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;
-    --primary-foreground: 240 10% 3.9%;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 240 10% 15%;
+    --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
 
-    --accent: 240 10% 15%;
+    --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62% 30%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
-    --ring: 0 0% 98%;
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 0 0% 98%;
 
-    /* Gradient colors for dark mode - Deep and technical */
-    --gradient-start: 240 10% 8%;
-    --gradient-mid: 240 10% 12%;
-    --gradient-end: 240 10% 16%;
-    --gradient-accent: 240 10% 20%;
+    --warning: 37.9 92.4% 52.2%;
+    --warning-foreground: 0 0% 9%;
+
+    --info: 221.2 83.2% 53.3%;
+    --info-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+
+    /* Dark gradient colors */
+    --gradient-start: 0 0% 3.9%;
+    --gradient-mid: 0 0% 6%;
+    --gradient-end: 0 0% 9%;
+    --gradient-accent: 0 0% 12%;
     --gradient-foreground: 0 0% 98%;
 
     /* Glass effect for dark mode */
-    --glass-bg: 0 0% 100% / 0.05;
+    --glass-bg: 0 0% 0% / 0.5;
     --glass-border: 0 0% 100% / 0.1;
 
-    --sidebar-background: 240 10% 8%;
+    --sidebar-background: 0 0% 2%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 10% 8%;
-    --sidebar-accent: 240 10% 15%;
+    --sidebar-primary-foreground: 0 0% 2%;
+    --sidebar-accent: 0 0% 14.9%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 10% 20%;
-    --sidebar-ring: 0 0% 98%;
+    --sidebar-border: 0 0% 14.9%;
+    --sidebar-ring: 0 0% 83.1%;
   }
 }
 

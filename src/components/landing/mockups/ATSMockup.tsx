@@ -107,7 +107,7 @@ export const ATSMockup = () => {
             >
               <span className="text-sm font-medium text-white">{item.label}</span>
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${item.passed && phase !== 'start' ? 'bg-emerald-500 text-white' : 'bg-zinc-800 text-zinc-400'}`}
+                className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${item.passed && phase !== 'start' ? 'bg-success text-white' : 'bg-zinc-800 text-zinc-400'}`}
               >
                 {item.status}
               </span>
@@ -120,3 +120,4 @@ export const ATSMockup = () => {
     </div>
   );
 };
+

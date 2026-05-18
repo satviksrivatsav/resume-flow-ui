@@ -159,7 +159,7 @@ export function AIDiffViewer({
                 <Button
                   size="lg"
                   onClick={onAccept}
-                  className="gap-2 rounded-full px-6 h-12 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white border-none"
+                  className="gap-2 rounded-full px-6 h-12 transition-all duration-300 bg-success hover:bg-success/90 text-white border-none"
                 >
                   <DrawableCheck draw={acceptHovered} />
                   Accept
@@ -252,3 +252,5 @@ export function AIDiffViewer({
     </div>
   );
 }
+
+

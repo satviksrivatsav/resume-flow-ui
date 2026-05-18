@@ -28,7 +28,7 @@ export const AdditionalSectionForm = () => {
       <div className="p-6 border rounded-xl bg-card/50 space-y-6 shadow-sm">
         <div className="space-y-2 max-w-md">
           <Label className="font-medium">
-            Section Title <span className="text-red-500">*</span>
+            Section Title <span className="text-destructive">*</span>
           </Label>
           <Input
             placeholder="e.g. Certifications, Awards, Languages"
@@ -134,3 +134,4 @@ export const AdditionalSectionForm = () => {
     </motion.div>
   );
 };
+

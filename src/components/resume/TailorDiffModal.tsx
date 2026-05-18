@@ -183,8 +183,8 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
                           className={cn(
                             'gap-2 rounded-full px-5 h-9 text-sm transition-all duration-300',
                             currentSlide?.decision === 'accept'
-                              ? 'bg-green-600 text-white hover:bg-green-700 border-none'
-                              : 'text-green-600 hover:bg-green-600/10 border border-green-600/20',
+                              ? 'bg-success text-white hover:bg-success/90 border-none'
+                              : 'text-success hover:bg-success/10 border border-success/20',
                           )}
                         >
                           <DrawableCheck draw={acceptHovered} />
@@ -230,3 +230,5 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
     </Dialog>
   );
 };
+
+

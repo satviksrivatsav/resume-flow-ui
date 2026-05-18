@@ -31,41 +31,41 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
   const gradeConfig = (
     {
       A: {
-        color: 'text-green-400',
-        bg: 'bg-green-500/10',
-        border: 'border-green-500/25',
-        glow: 'shadow-green-500/10',
+        color: 'text-success',
+        bg: 'bg-success/10',
+        border: 'border-success/25',
+        glow: 'shadow-success/10',
       },
       B: {
-        color: 'text-lime-400',
-        bg: 'bg-lime-500/10',
-        border: 'border-lime-500/25',
-        glow: 'shadow-lime-500/10',
+        color: 'text-success',
+        bg: 'bg-success/10',
+        border: 'border-success/25',
+        glow: 'shadow-success/10',
       },
       C: {
-        color: 'text-yellow-400',
-        bg: 'bg-yellow-500/10',
-        border: 'border-yellow-500/25',
-        glow: 'shadow-yellow-500/10',
+        color: 'text-warning',
+        bg: 'bg-warning/10',
+        border: 'border-warning/25',
+        glow: 'shadow-warning/10',
       },
       D: {
-        color: 'text-orange-400',
-        bg: 'bg-orange-500/10',
-        border: 'border-orange-500/25',
-        glow: 'shadow-orange-500/10',
+        color: 'text-warning',
+        bg: 'bg-warning/10',
+        border: 'border-warning/25',
+        glow: 'shadow-warning/10',
       },
       F: {
-        color: 'text-red-400',
-        bg: 'bg-red-500/10',
-        border: 'border-red-500/25',
-        glow: 'shadow-red-500/10',
+        color: 'text-destructive',
+        bg: 'bg-destructive/10',
+        border: 'border-destructive/25',
+        glow: 'shadow-destructive/10',
       },
     } as const
   )[gradeLetter as 'A' | 'B' | 'C' | 'D' | 'F'] ?? {
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/25',
-    glow: 'shadow-red-500/10',
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive/25',
+    glow: 'shadow-destructive/10',
   };
 
   const passProbability = Math.min(
@@ -79,10 +79,10 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
 
   const probColor =
     passProbability >= 70
-      ? 'text-green-400'
+      ? 'text-success'
       : passProbability >= 40
-        ? 'text-yellow-400'
-        : 'text-red-400';
+        ? 'text-warning'
+        : 'text-destructive';
   const ProbIcon = passProbability >= 70 ? CheckCircle2 : AlertTriangle;
 
   const sortedScores = Object.entries(report.scores).sort(([, a], [, b]) => b - a);
@@ -127,9 +127,9 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
           {sortedScores.map(([key, value]) => {
             const label = SECTION_LABELS[key as keyof typeof SECTION_LABELS];
             const barColor =
-              value >= 70 ? 'bg-green-500' : value >= 50 ? 'bg-yellow-500' : 'bg-red-500';
+              value >= 70 ? 'bg-success' : value >= 50 ? 'bg-warning' : 'bg-destructive';
             const textColor =
-              value >= 70 ? 'text-green-400' : value >= 50 ? 'text-yellow-400' : 'text-red-400';
+              value >= 70 ? 'text-success' : value >= 50 ? 'text-warning' : 'text-destructive';
 
             return (
               <div key={key} className="space-y-1">
@@ -153,10 +153,10 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
 
       {/* Quick Warnings */}
       {report.ats_warnings.length > 0 && (
-        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+        <div className="rounded-xl border border-warning/20 bg-warning/5 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-3.5 h-3.5 text-yellow-500" />
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-yellow-600">
+            <AlertTriangle className="w-3.5 h-3.5 text-warning" />
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-warning">
               Warnings
             </p>
           </div>
@@ -164,7 +164,7 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
             {report.ats_warnings.map((w, i) => (
               <li
                 key={i}
-                className="text-xs text-yellow-700 dark:text-yellow-300/80 leading-relaxed flex gap-2"
+                className="text-xs text-warning dark:text-warning/80 leading-relaxed flex gap-2"
               >
                 <span className="shrink-0 mt-0.5">—</span>
                 {w}
@@ -176,3 +176,5 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
     </motion.div>
   );
 }
+
+

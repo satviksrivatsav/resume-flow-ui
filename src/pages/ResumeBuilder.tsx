@@ -309,7 +309,7 @@ const ResumeBuilder = () => {
       >
         <div className="flex items-center justify-between gap-2 mb-4 shrink-0 px-1">
           <div className="flex items-center gap-2 text-muted-foreground/60 uppercase tracking-widest text-[10px] font-bold select-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_hsl(var(--destructive)/0.6)]" />
             Live Preview
           </div>
           <div className="text-[10px] font-mono text-muted-foreground/40 bg-muted/50 px-2 py-0.5 rounded-full">
@@ -389,7 +389,7 @@ const ResumeBuilder = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => setShowDeleteModal(true)}
-                            className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 gap-2 shrink-0 h-10 px-4"
+                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2 shrink-0 h-10 px-4"
                           >
                             <TrashAnimatedIcon className="w-4 h-4" />
                             Delete Section

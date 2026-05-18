@@ -46,7 +46,7 @@ export const PersonalInfoForm = () => {
         <div className="space-y-2 min-w-0">
           <Label htmlFor="name" className="flex items-center gap-2">
             <User className="w-3.5 h-3.5 text-muted-foreground" />
-            Full Name <span className="text-red-500">*</span>
+            Full Name <span className="text-destructive">*</span>
           </Label>
           <Input
             id="name"
@@ -74,7 +74,7 @@ export const PersonalInfoForm = () => {
         <div className="space-y-2 min-w-0">
           <Label htmlFor="email" className="flex items-center gap-2">
             <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-            Email <span className="text-red-500">*</span>
+            Email <span className="text-destructive">*</span>
           </Label>
           <Input
             id="email"
@@ -88,7 +88,7 @@ export const PersonalInfoForm = () => {
         <div className="space-y-2 min-w-0">
           <Label htmlFor="phone" className="flex items-center gap-2">
             <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-            Phone <span className="text-red-500">*</span>
+            Phone <span className="text-destructive">*</span>
           </Label>
           <PhoneInput
             value={basics.phone}
@@ -185,3 +185,4 @@ export const PersonalInfoForm = () => {
     </motion.div>
   );
 };
+

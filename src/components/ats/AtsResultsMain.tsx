@@ -119,19 +119,19 @@ export function AtsResultsMain({
                       className={cn(
                         'flex items-center justify-between px-4 py-3 rounded-xl border text-sm',
                         passed
-                          ? 'bg-green-500/5 border-green-500/20'
-                          : 'bg-red-500/5 border-red-500/20',
+                          ? 'bg-success/5 border-success/20'
+                          : 'bg-destructive/5 border-destructive/20',
                       )}
                     >
                       <span className="capitalize text-foreground/90">
                         {key.replace(/_/g, ' ')}
                       </span>
                       {passed ? (
-                        <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[11px]">
+                        <Badge className="bg-success/10 text-success border-success/20 text-[11px]">
                           ✓ Pass
                         </Badge>
                       ) : (
-                        <Badge className="bg-red-500/10 text-red-500 border-red-500/20 text-[11px]">
+                        <Badge className="bg-destructive/10 text-destructive border-destructive/20 text-[11px]">
                           ✗ Fail
                         </Badge>
                       )}
@@ -142,11 +142,11 @@ export function AtsResultsMain({
 
               {/* Risks */}
               {report.risks.length > 0 && (
-                <Section title="Risks" icon={AlertCircle} titleClass="text-red-500">
+                <Section title="Risks" icon={AlertCircle} titleClass="text-destructive">
                   <ul className="space-y-2.5">
                     {report.risks.map((risk, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-red-500" />
+                        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-destructive" />
                         {risk}
                       </li>
                     ))}
@@ -156,11 +156,11 @@ export function AtsResultsMain({
 
               {/* Warnings */}
               {report.ats_warnings.length > 0 && (
-                <Section title="ATS Warnings" icon={AlertTriangle} titleClass="text-yellow-500">
+                <Section title="ATS Warnings" icon={AlertTriangle} titleClass="text-warning">
                   <ul className="space-y-2.5">
                     {report.ats_warnings.map((w, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500" />
+                        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-warning" />
                         {w}
                       </li>
                     ))}
@@ -229,12 +229,12 @@ export function AtsResultsMain({
               {/* Keywords */}
               <div className="grid sm:grid-cols-2 gap-4">
                 {report.strong_keywords.length > 0 && (
-                  <Section title="Strong Keywords" icon={CheckCircle2} titleClass="text-green-500">
+                  <Section title="Strong Keywords" icon={CheckCircle2} titleClass="text-success">
                     <div className="flex flex-wrap gap-2">
                       {report.strong_keywords.map((kw, i) => (
                         <Badge
                           key={i}
-                          className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[11px]"
+                          className="bg-success/10 text-success dark:text-success border-success/20 text-[11px]"
                         >
                           {kw}
                         </Badge>
@@ -243,13 +243,13 @@ export function AtsResultsMain({
                   </Section>
                 )}
                 {report.missing_keywords.length > 0 && (
-                  <Section title="Missing Keywords" icon={AlertCircle} titleClass="text-red-500">
+                  <Section title="Missing Keywords" icon={AlertCircle} titleClass="text-destructive">
                     <div className="flex flex-wrap gap-2">
                       {report.missing_keywords.map((kw, i) => (
                         <Badge
                           key={i}
                           variant="outline"
-                          className="text-[11px] text-red-500 border-red-400/30"
+                          className="text-[11px] text-destructive border-destructive/30"
                         >
                           {kw}
                         </Badge>
@@ -362,7 +362,7 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
         title="First Impression" 
         subtitle="What a recruiter sees in 6 seconds"
         icon={UserSearch}
-        titleClass="text-blue-500"
+        titleClass="text-foreground"
       >
         <p className="text-sm text-foreground/85 leading-relaxed bg-muted/30 rounded-xl p-4 border border-border/30 italic">
           "{sim.first_impression}"
@@ -375,7 +375,7 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
           title="Likely Concerns" 
           subtitle="Red flags a recruiter may raise"
           icon={AlertTriangle}
-          titleClass="text-yellow-500"
+          titleClass="text-warning"
         >
           <ul className="space-y-3">
             {sim.likely_concerns.map((concern, i) => (
@@ -383,7 +383,7 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
                 key={i}
                 className="flex items-start gap-3 text-sm text-foreground/85"
               >
-                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500/70" />
+                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-warning/70" />
                 {concern}
               </li>
             ))}
@@ -403,3 +403,5 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
     </div>
   );
 }
+
+

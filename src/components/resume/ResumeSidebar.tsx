@@ -201,7 +201,7 @@ const SortableMenuItem = ({
                     <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 hover:text-muted-foreground transition-colors" />
                   </span>
                 ) : isCompleted ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500 fill-green-500/10" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-success fill-success/10" />
                 ) : (
                   <Circle className="w-3.5 h-3.5 text-muted-foreground/20" />
                 )}
@@ -367,7 +367,7 @@ export const ResumeSidebar = () => {
                         />
                         <span className="truncate flex-1">Personal Info</span>
                         {isCompleted ? (
-                          <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-green-500 fill-green-500/10 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-success fill-success/10 shrink-0" />
                         ) : (
                           <Circle className="w-3.5 h-3.5 ml-auto text-muted-foreground/20 shrink-0" />
                         )}
@@ -517,3 +517,4 @@ export const ResumeSidebar = () => {
     </Sidebar>
   );
 };
+

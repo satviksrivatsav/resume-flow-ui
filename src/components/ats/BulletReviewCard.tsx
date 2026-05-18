@@ -39,10 +39,10 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
       className="grid grid-cols-1 md:grid-cols-2 gap-0 border rounded-2xl overflow-hidden bg-card"
     >
       {/* Original - Red toned */}
-      <div className="bg-red-50/50 dark:bg-red-950/30 border-r border-border p-4 md:p-5">
+      <div className="bg-destructive/5 dark:bg-destructive/10 border-r border-border p-4 md:p-5">
         <div className="flex items-start gap-2 mb-2">
-          <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-          <span className="text-[10px] font-semibold text-red-600 dark:text-red-400 uppercase tracking-wider">
+          <AlertCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+          <span className="text-[10px] font-semibold text-destructive uppercase tracking-wider">
             Original
           </span>
         </div>
@@ -50,11 +50,12 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
       </div>
 
       {/* Improved - Green toned */}
-      <div className="bg-green-50/50 dark:bg-green-950/30 p-4 md:p-5 flex flex-col">
+      <div className="bg-success/5 dark:bg-success/10 p-4 md:p-5 flex flex-col">
+
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-            <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 uppercase tracking-wider">
+            <Check className="w-4 h-4 text-success mt-0.5 shrink-0" />
+            <span className="text-[10px] font-semibold text-success dark:text-success uppercase tracking-wider">
               AI Improved
             </span>
           </div>
@@ -77,3 +78,4 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
     </motion.div>
   );
 }
+

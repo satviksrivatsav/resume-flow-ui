@@ -112,7 +112,7 @@ export const EducationForm = () => {
                           e.stopPropagation();
                           deleteEducation(edu.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -138,7 +138,7 @@ export const EducationForm = () => {
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2 md:col-span-2">
                           <Label className="font-medium">
-                            School / University <span className="text-red-500">*</span>
+                            School / University <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={edu.school}
@@ -149,7 +149,7 @@ export const EducationForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Degree <span className="text-red-500">*</span>
+                            Degree <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={edu.degree}
@@ -160,7 +160,7 @@ export const EducationForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Field of Study <span className="text-red-500">*</span>
+                            Field of Study <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={edu.area}
@@ -171,7 +171,7 @@ export const EducationForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Period <span className="text-red-500">*</span>
+                            Period <span className="text-destructive">*</span>
                           </Label>
                           <div className="relative">
                             <Input
@@ -186,7 +186,7 @@ export const EducationForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Grade / GPA <span className="text-red-500">*</span>
+                            Grade / GPA <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={edu.grade}
@@ -246,3 +246,4 @@ export const EducationForm = () => {
     </motion.div>
   );
 };
+

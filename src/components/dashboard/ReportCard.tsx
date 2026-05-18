@@ -42,15 +42,15 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
   const grade = report.data.grade;
 
   const scoreColor =
-    score >= 80 ? 'text-green-500' : score >= 60 ? 'text-yellow-500' : 'text-red-500';
+    score >= 80 ? 'text-success' : score >= 60 ? 'text-warning' : 'text-destructive';
   const scoreBg =
-    score >= 80 ? 'bg-green-500/10' : score >= 60 ? 'bg-yellow-500/10' : 'bg-red-500/10';
+    score >= 80 ? 'bg-success/10' : score >= 60 ? 'bg-warning/10' : 'bg-destructive/10';
   const scoreBorder =
     score >= 80
-      ? 'border-green-500/20'
+      ? 'border-success/20'
       : score >= 60
-        ? 'border-yellow-500/20'
-        : 'border-red-500/20';
+        ? 'border-warning/20'
+        : 'border-destructive/20';
 
   const handleView = () => {
     navigate(`/dashboard/ats?resumeId=${report.resume_id}&view=true`);
@@ -226,3 +226,4 @@ export function ScanCard() {
     </motion.div>
   );
 }
+

@@ -151,16 +151,17 @@ export default function ProfilePage() {
               </Label>
               {email.trim().toLowerCase() === user?.email?.toLowerCase() ? (
                 user?.email_confirmed_at ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                    Verified
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+                    Pro
                   </span>
-                ) : (
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
+                  ) : (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+
                     Unverified
                   </span>
                 )
               ) : (
-                <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
                   Unverified
                 </span>
               )}

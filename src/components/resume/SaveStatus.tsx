@@ -11,24 +11,24 @@ export const SaveStatus = () => {
   const getStatusColor = () => {
     switch (saveStatus) {
       case 'saving':
-        return 'bg-blue-500';
+        return 'bg-primary';
       case 'error':
         return 'bg-destructive';
       case 'success':
       default:
-        return 'bg-green-500';
+        return 'bg-success';
     }
   };
 
   const getStatusPulseColor = () => {
     switch (saveStatus) {
       case 'saving':
-        return 'bg-blue-500/50';
+        return 'bg-primary/50';
       case 'error':
         return 'bg-destructive/50';
       case 'success':
       default:
-        return 'bg-green-500/50';
+        return 'bg-success/50';
     }
   };
 
@@ -65,3 +65,5 @@ export const SaveStatus = () => {
     </div>
   );
 };
+
+

@@ -111,7 +111,7 @@ export const CustomSectionForm = () => {
                           e.stopPropagation();
                           handleDeleteItem(item.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -137,7 +137,7 @@ export const CustomSectionForm = () => {
                       <div className="p-6 space-y-6">
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Title <span className="text-red-500">*</span>
+                            Title <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={item.title}
@@ -149,7 +149,7 @@ export const CustomSectionForm = () => {
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <Label className="font-medium">
-                              Description <span className="text-red-500">*</span>
+                              Description <span className="text-destructive">*</span>
                             </Label>
                             <AIWriterButton
                               fieldName="custom"
@@ -192,3 +192,4 @@ export const CustomSectionForm = () => {
     </motion.div>
   );
 };
+

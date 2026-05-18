@@ -99,7 +99,7 @@ export const SkillsForm = () => {
                           e.stopPropagation();
                           deleteSkill(skill.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -125,7 +125,7 @@ export const SkillsForm = () => {
                       <div className="p-6 space-y-6">
                         <div className="space-y-2 max-w-md">
                           <Label className="font-medium">
-                            Category Name <span className="text-red-500">*</span>
+                            Category Name <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={skill.name}
@@ -170,3 +170,4 @@ export const SkillsForm = () => {
     </motion.div>
   );
 };
+

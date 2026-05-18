@@ -138,7 +138,7 @@ export const TailorMockup = () => {
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-zinc-800/50">
-                  <div className="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <div className="flex items-center justify-center gap-2 py-3 rounded-xl bg-success/10 border border-success/20 text-success">
                     <CheckCircle2 className="w-4 h-4" />
                     <div className="flex flex-col items-start leading-none">
                       <span className="text-[11px] font-black uppercase tracking-tighter">98%</span>
@@ -157,3 +157,4 @@ export const TailorMockup = () => {
     </div>
   );
 };
+

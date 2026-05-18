@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      'fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]',
+      'fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 sm:bottom-0 sm:right-0 sm:flex-col md:max-w-[420px]',
       className,
     )}
     {...props}
@@ -23,19 +23,19 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-  'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-4 shadow-2xl transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full',
+  'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-4 shadow-2xl transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:slide-in-from-right-full',
   {
     variants: {
       variant: {
         default: 'border bg-background text-foreground',
         destructive:
-          'bg-[#fef2f2] text-red-900 border-red-200 dark:bg-[#450a0a] dark:text-red-50 dark:border-red-800',
+          'destructive group border-destructive bg-destructive text-destructive-foreground',
         success:
-          'bg-[#f0fdf4] text-green-900 border-green-200 dark:bg-[#052e16] dark:text-green-50 dark:border-green-800',
+          'success group border-success bg-success text-success-foreground',
         warning:
-          'bg-[#fffbeb] text-amber-900 border-amber-200 dark:bg-[#451a03] dark:text-amber-50 dark:border-amber-800',
+          'warning group border-warning bg-warning text-warning-foreground',
         info:
-          'bg-[#f0f9ff] text-sky-900 border-sky-200 dark:bg-[#082f49] dark:text-sky-50 dark:border-sky-800',
+          'info group border-info bg-info text-info-foreground',
       },
     },
     defaultVariants: {
@@ -105,7 +105,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn('text-sm opacity-90', className)}
+    className={cn('text-sm opacity-100', className)}
     {...props}
   />
 ));

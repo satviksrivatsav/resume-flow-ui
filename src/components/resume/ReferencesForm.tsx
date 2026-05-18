@@ -93,7 +93,7 @@ export const ReferencesForm = () => {
                           e.stopPropagation();
                           deleteItem('references', ref.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -119,7 +119,7 @@ export const ReferencesForm = () => {
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Name <span className="text-red-500">*</span>
+                            Name <span className="text-destructive">*</span>
                           </Label>
                           <div className="relative">
                             <Input
@@ -234,3 +234,4 @@ export const ReferencesForm = () => {
     </motion.div>
   );
 };
+

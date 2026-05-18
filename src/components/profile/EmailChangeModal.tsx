@@ -23,8 +23,8 @@ export function EmailChangeModal({ isOpen, onClose, onConfirm, newEmail }: Email
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="sm:max-w-[440px] p-8 flex flex-col items-center text-center">
         <AlertDialogHeader className="flex flex-col items-center sm:text-center">
-          <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center mb-4">
-            <AlertTriangle className="w-8 h-8 text-yellow-500" />
+          <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mb-4">
+            <AlertTriangle className="w-8 h-8 text-warning" />
           </div>
           <AlertDialogTitle className="text-2xl font-extrabold tracking-tight">
             Confirm Email Change
@@ -55,3 +55,4 @@ export function EmailChangeModal({ isOpen, onClose, onConfirm, newEmail }: Email
     </AlertDialog>
   );
 }
+

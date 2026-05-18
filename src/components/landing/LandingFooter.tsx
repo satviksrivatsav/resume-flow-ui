@@ -38,7 +38,7 @@ const SystemStatus = () => {
       <div
         className={cn(
           'w-2 h-2 rounded-full',
-          status === 'loading' ? 'bg-zinc-600' : status === 'ok' ? 'bg-emerald-400' : 'bg-red-500',
+          status === 'loading' ? 'bg-zinc-600' : status === 'ok' ? 'bg-success' : 'bg-destructive',
         )}
       />
       <span className="text-xs font-medium text-zinc-500">
@@ -248,3 +248,4 @@ export const LandingFooter = () => {
     </footer>
   );
 };
+

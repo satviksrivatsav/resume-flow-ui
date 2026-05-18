@@ -10,11 +10,11 @@ interface ScoreRadialChartProps {
 }
 
 const GRADE_CONFIG: Record<string, { color: string; label: string; bg: string }> = {
-  A: { color: '#22c55e', label: 'Excellent', bg: 'bg-green-500/10' },
-  B: { color: '#84cc16', label: 'Good', bg: 'bg-lime-500/10' },
-  C: { color: '#eab308', label: 'Fair', bg: 'bg-yellow-500/10' },
-  D: { color: '#f97316', label: 'Poor', bg: 'bg-orange-500/10' },
-  F: { color: '#ef4444', label: 'Fail', bg: 'bg-red-500/10' },
+  A: { color: 'hsl(var(--success))', label: 'Excellent', bg: 'bg-success/10' },
+  B: { color: 'hsl(var(--success))', label: 'Good', bg: 'bg-success/10' },
+  C: { color: 'hsl(var(--warning))', label: 'Fair', bg: 'bg-warning/10' },
+  D: { color: 'hsl(var(--warning))', label: 'Poor', bg: 'bg-warning/10' },
+  F: { color: 'hsl(var(--destructive))', label: 'Fail', bg: 'bg-destructive/10' },
 };
 
 export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartProps) {
@@ -79,14 +79,14 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
               transition={{ delay: 0.3, duration: 0.5 }}
               className={cn(
                 'text-6xl font-bold tabular-nums leading-none tracking-tighter',
-                score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400',
+                score >= 70 ? 'text-success' : score >= 50 ? 'text-warning' : 'text-destructive',
               )}
             >
               {Math.round(score)}
             </motion.span>
             <span className={cn(
               'absolute top-1/2 -translate-y-1/2 left-full ml-1 text-[10px] font-bold opacity-60',
-              score >= 70 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'
+              score >= 70 ? 'text-success' : score >= 50 ? 'text-warning' : 'text-destructive'
             )}>%</span>
           </div>
           <motion.span
@@ -121,3 +121,4 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
     </div>
   );
 }
+

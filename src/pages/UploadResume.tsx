@@ -158,9 +158,9 @@ export default function UploadResume() {
               onDragLeave={handleDragLeave}
               className={`
                 relative border-2 border-dashed rounded-[2rem] p-12 text-center transition-all duration-300 cursor-pointer
-                ${dragActive ? 'border-white bg-white/10' : 'border-border hover:border-muted-foreground'}
-                ${uploadState === 'success' ? 'border-green-500 bg-green-500/10' : ''}
-                ${uploadState === 'error' ? 'border-red-500 bg-red-500/10' : ''}
+                ${dragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'}
+                ${uploadState === 'success' ? 'border-success bg-success text-success-foreground' : ''}
+                ${uploadState === 'error' ? 'border-destructive bg-destructive text-destructive-foreground' : ''}
               `}
             >
               <input
@@ -211,11 +211,11 @@ export default function UploadResume() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex flex-col items-center"
                   >
-                    <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
-                    <p className="text-lg font-medium text-green-500 dark:text-green-400">
+                    <CheckCircle className="w-12 h-12 text-success-foreground mb-4" />
+                    <p className="text-lg font-medium text-success-foreground">
                       Resume parsed successfully!
                     </p>
-                    <p className="text-sm text-muted-foreground">Redirecting to builder...</p>
+                    <p className="text-sm text-success-foreground/80">Redirecting to builder...</p>
                   </motion.div>
                 )}
 
@@ -227,22 +227,22 @@ export default function UploadResume() {
                     className="flex flex-col items-center"
                   >
                     {error?.toLowerCase().includes('too long') ? (
-                      <Timer className="w-12 h-12 text-red-500 mb-4" />
+                      <Timer className="w-12 h-12 text-destructive-foreground mb-4" />
                     ) : error?.toLowerCase().includes('server') ||
                       error?.toLowerCase().includes('500') ||
                       error?.toLowerCase().includes('failed to fetch') ? (
-                      <ServerCrash className="w-12 h-12 text-red-500 mb-4" />
+                      <ServerCrash className="w-12 h-12 text-destructive-foreground mb-4" />
                     ) : (
-                      <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                      <AlertCircle className="w-12 h-12 text-destructive-foreground mb-4" />
                     )}
-                    <p className="text-lg font-medium text-red-500 dark:text-red-400 mb-1">
+                    <p className="text-lg font-medium text-destructive-foreground mb-1">
                       Failed to parse resume
                     </p>
-                    <p className="text-sm text-muted-foreground mb-4">{error}</p>
+                    <p className="text-sm text-destructive-foreground/80 mb-4">{error}</p>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       onClick={handleTryAgain}
-                      className="border-border"
+                      className="bg-white text-destructive hover:bg-white/90"
                     >
                       Try Again
                     </Button>

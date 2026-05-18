@@ -109,7 +109,7 @@ export const ProjectsForm = () => {
                           e.stopPropagation();
                           deleteProject(proj.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -136,7 +136,7 @@ export const ProjectsForm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
                             <Label className="font-medium">
-                              Project Name <span className="text-red-500">*</span>
+                              Project Name <span className="text-destructive">*</span>
                             </Label>
                             <Input
                               value={proj.name}
@@ -182,7 +182,7 @@ export const ProjectsForm = () => {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <Label className="text-sm font-semibold">
-                              Description / Key Features <span className="text-red-500">*</span>
+                              Description / Key Features <span className="text-destructive">*</span>
                             </Label>
                             <AIWriterButton
                               fieldName="projects"
@@ -234,3 +234,4 @@ export const ProjectsForm = () => {
     </motion.div>
   );
 };
+

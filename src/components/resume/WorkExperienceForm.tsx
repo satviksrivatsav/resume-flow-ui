@@ -117,7 +117,7 @@ export const WorkExperienceForm = () => {
                           e.stopPropagation();
                           deleteExperience(exp.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500 hover:bg-red-500/10 h-10 w-10"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 w-10"
                       >
                         <TrashAnimatedIcon className="w-4 h-4" />
                       </Button>
@@ -143,7 +143,7 @@ export const WorkExperienceForm = () => {
                       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Position <span className="text-red-500">*</span>
+                            Position <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={exp.position}
@@ -154,7 +154,7 @@ export const WorkExperienceForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Company Name <span className="text-red-500">*</span>
+                            Company Name <span className="text-destructive">*</span>
                           </Label>
                           <Input
                             value={exp.company}
@@ -180,7 +180,7 @@ export const WorkExperienceForm = () => {
 
                         <div className="space-y-2">
                           <Label className="font-medium">
-                            Period <span className="text-red-500">*</span>
+                            Period <span className="text-destructive">*</span>
                           </Label>
                           <div className="relative">
                             <Input
@@ -249,3 +249,4 @@ export const WorkExperienceForm = () => {
     </motion.div>
   );
 };
+
