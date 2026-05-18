@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -19,6 +20,9 @@ interface DeleteConfirmationModalProps {
   description?: React.ReactNode;
   icon?: React.ReactNode;
   confirmText?: string;
+  confirmNode?: React.ReactNode;
+  contentClassName?: string;
+  titleClassName?: string;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -30,17 +34,20 @@ export function DeleteConfirmationModal({
   description,
   icon,
   confirmText = 'Delete',
+  confirmNode,
+  contentClassName,
+  titleClassName,
   onClose,
   onConfirm,
 }: DeleteConfirmationModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="sm:max-w-[440px] p-8 flex flex-col items-center text-center">
+      <AlertDialogContent className={cn("sm:max-w-[440px] p-8 flex flex-col items-center text-center", contentClassName)}>
         <AlertDialogHeader className="flex flex-col items-center sm:text-center">
           <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-            {icon ? icon : <Trash2 className="w-8 h-8 text-destructive" />}
+            {icon ?? <Trash2 className="w-8 h-8 text-destructive" />}
           </div>
-          <AlertDialogTitle className="text-2xl font-extrabold tracking-tight">
+          <AlertDialogTitle className={cn("text-2xl font-extrabold tracking-tight", titleClassName)}>
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
@@ -61,13 +68,19 @@ export function DeleteConfirmationModal({
           >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction
-            type="button"
-            onClick={onConfirm}
-            className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
-          >
-            {confirmText}
-          </AlertDialogAction>
+          {confirmNode ? (
+            <AlertDialogAction asChild onClick={onConfirm}>
+              {confirmNode}
+            </AlertDialogAction>
+          ) : (
+            <AlertDialogAction
+              type="button"
+              onClick={onConfirm}
+              className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-all active:scale-[0.98] w-full sm:w-auto"
+            >
+              {confirmText}
+            </AlertDialogAction>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

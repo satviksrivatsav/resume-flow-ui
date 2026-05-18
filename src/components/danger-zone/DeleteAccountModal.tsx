@@ -15,8 +15,19 @@ export function DeleteAccountModal({ isOpen, onClose, onConfirm }: DeleteAccount
       onClose={onClose}
       onConfirm={onConfirm}
       title="Delete Account?"
+      contentClassName="border-destructive/20"
+      titleClassName="text-destructive"
       icon={<TrashAnimatedIcon className="w-8 h-8 text-destructive" />}
-      confirmText="Delete Forever"
+      confirmNode={
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg shadow-destructive/20 flex items-center justify-center gap-2 group w-full sm:w-auto"
+        >
+          <TrashAnimatedIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          Delete Forever
+        </motion.button>
+      }
       description={
         <>
           Are you absolutely sure? This action is{' '}
