@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Logo } from '@/components/ui/Logo';
-import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
+import { HeartbeatPulseBackground } from '@/components/ui/backgrounds';
 import { useAuthStore } from '@/stores/authStore';
 
 export default function AuthLayout() {

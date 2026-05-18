@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Button } from '@/components/ui/button';
-import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-background';
+import { HeartbeatPulseBackground } from '@/components/ui/backgrounds';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/stores/authStore';

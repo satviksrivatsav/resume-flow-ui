@@ -7,7 +7,7 @@ import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/components/ui/AnimatedResumeHero';
-import { MeshGradient } from '@/components/ui/MeshGradient';
+import { MeshGradient } from '@/components/ui/backgrounds';
 import { useAuthStore } from '@/stores/authStore';
 
 export default React.memo(function LandingPage() {
