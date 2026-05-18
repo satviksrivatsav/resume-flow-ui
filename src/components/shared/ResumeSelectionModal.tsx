@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Search, X } from 'lucide-react';
+import { Loader2, Search, X, UploadCloud } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
@@ -10,6 +10,7 @@ interface ResumeSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (id: string, name: string) => void;
+  onUploadNew?: () => void;
 }
 
 interface ResumeRow {
@@ -18,7 +19,7 @@ interface ResumeRow {
   updated_at: string;
 }
 
-export function ResumeSelectionModal({ isOpen, onClose, onSelect }: ResumeSelectionModalProps) {
+export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }: ResumeSelectionModalProps) {
   const { user } = useAuthStore();
   const [resumes, setResumes] = useState<ResumeRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,9 +69,8 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect }: ResumeSelect
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative w-full max-w-[400px] bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[70vh]"
+            className="relative w-full max-w-[400px] bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[70vh]"
           >
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute top-5 right-5 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all z-10"
@@ -81,7 +81,7 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect }: ResumeSelect
             <div className="p-7 pb-4">
               <div className="mb-6">
                 <h2 className="text-xl font-bold tracking-tight mb-1">Select Resume</h2>
-                <p className="text-[11px] text-muted-foreground font-medium italic">Choose a resume to analyze.</p>
+                <p className="text-[11px] text-muted-foreground font-medium italic">Choose an existing resume to analyze.</p>
               </div>
 
               <div className="relative">
@@ -123,11 +123,19 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect }: ResumeSelect
               )}
             </div>
 
-            <div className="p-7 pt-4 flex justify-center">
+            <div className="p-7 pt-4 flex flex-col gap-2">
+              {onUploadNew && (
+                <Button
+                  onClick={onUploadNew}
+                  className="w-full rounded-full font-bold h-11"
+                >
+                  <UploadCloud className="h-4 w-4 mr-2" /> Upload New Resume
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 onClick={onClose}
-                className="h-9 rounded-full px-8 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                className="h-9 rounded-full px-8 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all w-full"
               >
                 Cancel
               </Button>

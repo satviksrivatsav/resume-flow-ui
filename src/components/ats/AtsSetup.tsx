@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAtsStore } from '@/stores/atsStore';
 import { extractTextFromFile } from '@/lib/atsApi';
-import { ResumeSelectionModal } from './ResumeSelectionModal';
+import { ResumeSelectionModal } from '@/components/shared/ResumeSelectionModal';
 
 interface AtsSetupProps {
   onAnalyze: (file: File | null, jdText: string) => Promise<void>;

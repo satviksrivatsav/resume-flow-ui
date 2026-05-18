@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { ResumeSelectionModal } from '@/components/dashboard/ResumeSelectionModal';
+import { ResumeSelectionModal } from '@/components/shared/ResumeSelectionModal';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -78,6 +78,14 @@ export default React.memo(function LandingPage() {
       <ResumeSelectionModal
         isOpen={isResumeSelectionModalOpen}
         onClose={() => setIsResumeSelectionModalOpen(false)}
+        onSelect={(id) => {
+          navigate(`/ats?resumeId=${id}`);
+          setIsResumeSelectionModalOpen(false);
+        }}
+        onUploadNew={() => {
+          navigate('/ats');
+          setIsResumeSelectionModalOpen(false);
+        }}
       />
     </PageTransition>
   );
