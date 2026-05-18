@@ -1,7 +1,7 @@
 ﻿import { ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { COUNTRIES, CountryData, getCountryByCode, cleanPhoneNumber } from '@/shared/lib/countries';
+import { cleanPhoneNumber, COUNTRIES, CountryData, getCountryByCode } from '@/shared/lib/countries';
 import { cn } from '@/shared/lib/utils';
 
 interface PhoneInputProps {
@@ -82,7 +82,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
               // If user tries to type/paste the dial code, strip it
               const dialCodeClean = selectedCountry.dialCode.replace(/[\s\-\(\)]/g, '');
               const valClean = val.replace(/[\s\-\(\)]/g, '');
-              
+
               if (valClean.startsWith(dialCodeClean)) {
                 // Find where the dial code ends in the original string
                 let index = 0;
@@ -135,17 +135,23 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 type="button"
                 onClick={() => handleSelect(country)}
                 className={cn(
-                  "w-[calc(100%-8px)] flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors rounded-full mx-1",
-                  country.code === countryCode ? "bg-accent" : ""
+                  'w-[calc(100%-8px)] flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors rounded-full mx-1',
+                  country.code === countryCode ? 'bg-accent' : '',
                 )}
               >
-                <span className="font-bold text-xs text-muted-foreground w-6 shrink-0">{country.code}</span>
+                <span className="font-bold text-xs text-muted-foreground w-6 shrink-0">
+                  {country.code}
+                </span>
                 <span className="flex-1 text-left truncate">{country.name}</span>
-                <span className="text-muted-foreground tabular-nums shrink-0">{country.dialCode}</span>
+                <span className="text-muted-foreground tabular-nums shrink-0">
+                  {country.dialCode}
+                </span>
               </button>
             ))}
             {filteredCountries.length === 0 && (
-              <div className="px-3 py-2 text-sm text-muted-foreground text-center">No countries found</div>
+              <div className="px-3 py-2 text-sm text-muted-foreground text-center">
+                No countries found
+              </div>
             )}
           </div>
         </div>

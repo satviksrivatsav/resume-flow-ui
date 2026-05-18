@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/shared/hooks/use-toast';
 
-import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
 import { Button } from '@/shared/components/ui/button';
+import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
+import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { cn } from '@/shared/lib/utils';
 import { AtsReport } from '@/shared/types/ats';
@@ -46,11 +46,7 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
   const scoreBg =
     score >= 80 ? 'bg-success/10' : score >= 60 ? 'bg-warning/10' : 'bg-destructive/10';
   const scoreBorder =
-    score >= 80
-      ? 'border-success/20'
-      : score >= 60
-        ? 'border-warning/20'
-        : 'border-destructive/20';
+    score >= 80 ? 'border-success/20' : score >= 60 ? 'border-warning/20' : 'border-destructive/20';
 
   const handleView = () => {
     navigate(`/dashboard/ats?resumeId=${report.resume_id}&view=true`);
@@ -159,7 +155,7 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
                   General Analysis
                 </p>
               </>
-            ) }
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -226,4 +222,3 @@ export function ScanCard() {
     </motion.div>
   );
 }
-

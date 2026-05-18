@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 
 import { supabase } from '@/shared/lib/supabase';
+import { sanitizeResumeData } from '@/shared/lib/utils';
 import {
   defaultResumeData,
   EducationItem,
@@ -11,7 +12,6 @@ import {
   ResumeData,
   SkillItem,
 } from '@/shared/types/resume';
-import { sanitizeResumeData } from '@/shared/lib/utils';
 
 import { useAuthStore } from './authStore';
 

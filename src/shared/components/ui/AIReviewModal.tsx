@@ -1,8 +1,8 @@
 ﻿import { AlertTriangle, ServerCrash, Timer } from 'lucide-react';
 
+import { TailoredItemEditor } from '@/resume/components/TailoredItemEditor';
 import { Dialog, DialogContent } from '@/shared/components/ui/dialog';
 import { useAIWriterStore } from '@/shared/stores/aiWriterStore';
-import { TailoredItemEditor } from '@/resume/components/TailoredItemEditor';
 
 import { AIDiffViewer } from './AIDiffViewer';
 
@@ -22,7 +22,6 @@ export function AIReviewModal() {
   } = useAIWriterStore();
 
   const isDiffMode = currentAction === 'REWRITE';
-
 
   const fieldLabel =
     currentField?.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase()) || 'Field';
@@ -70,7 +69,6 @@ export function AIReviewModal() {
               title={fieldLabel}
               isDiffMode={isDiffMode}
               description="Review and refine the AI-generated suggestions."
-
               infoTip="Feel free to edit the tailored version to make it perfect before accepting."
               onAccept={acceptChanges}
               onReject={discardChanges}
@@ -88,7 +86,11 @@ export function AIReviewModal() {
                   <TailoredItemEditor
                     sectionId={currentField || 'summary'}
                     content={newText}
-                    onChange={(val) => setNewText(typeof val === 'string' ? val : val.content || val.description || '')}
+                    onChange={(val) =>
+                      setNewText(
+                        typeof val === 'string' ? val : val.content || val.description || '',
+                      )
+                    }
                   />
                 </div>
               }

@@ -1,11 +1,11 @@
 ﻿import { AlignLeft, Briefcase, Coffee, List, Smile, Sparkles, Zap } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { Button } from '@/shared/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { useToast } from '@/shared/hooks/use-toast';
 import { useAIWriterStore } from '@/shared/stores/aiWriterStore';
 
 const toneOptions = [

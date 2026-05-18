@@ -1,7 +1,12 @@
 ﻿import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, GraduationCap, MapPin } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -9,8 +14,8 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const EducationForm = () => {
   const { resumeData, addItem, updateEducation, deleteEducation } = useResumeStore();
@@ -93,7 +98,12 @@ export const EducationForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -139,9 +149,7 @@ export const EducationForm = () => {
                   <div className="relative">
                     <Input
                       value={edu.location}
-                      onChange={(e) =>
-                        updateEducation(edu.id, { location: e.target.value })
-                      }
+                      onChange={(e) => updateEducation(edu.id, { location: e.target.value })}
                       placeholder="e.g. Stanford, CA"
                       className="pl-9"
                     />
@@ -165,9 +173,7 @@ export const EducationForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">
-                    Grade / GPA
-                  </Label>
+                  <Label className="font-medium">Grade / GPA</Label>
                   <Input
                     value={edu.grade}
                     onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
@@ -177,23 +183,17 @@ export const EducationForm = () => {
 
                 <div className="md:col-span-2 space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-semibold">
-                      Description / Achievements
-                    </Label>
+                    <Label className="text-sm font-semibold">Description / Achievements</Label>
                     <AIWriterButton
                       fieldName="education"
                       fieldLabel="Education Description"
                       fieldValue={edu.description || ''}
-                      onUpdate={(newText) =>
-                        updateEducation(edu.id, { description: newText })
-                      }
+                      onUpdate={(newText) => updateEducation(edu.id, { description: newText })}
                     />
                   </div>
                   <RichTextEditor
                     value={edu.description || ''}
-                    onChange={(value) =>
-                      updateEducation(edu.id, { description: value })
-                    }
+                    onChange={(value) => updateEducation(edu.id, { description: value })}
                     placeholder="• Relevant coursework: Data Structures, Algorithms&#10;• Dean's List for 4 semesters"
                     className="min-h-[120px]"
                   />
@@ -206,4 +206,3 @@ export const EducationForm = () => {
     </motion.div>
   );
 };
-

@@ -23,15 +23,15 @@ interface UnsavedChangesModalProps {
   discardLabel?: string;
 }
 
-export function UnsavedChangesModal({ 
-  isOpen, 
-  onClose, 
-  onSaveAndExit, 
+export function UnsavedChangesModal({
+  isOpen,
+  onClose,
+  onSaveAndExit,
   onExitWithoutSave,
-  title = "Unsaved Changes",
-  description = "You have unsaved progress on your resume. Would you like to save before leaving?",
-  saveLabel = "Save and Exit",
-  discardLabel = "Exit without save"
+  title = 'Unsaved Changes',
+  description = 'You have unsaved progress on your resume. Would you like to save before leaving?',
+  saveLabel = 'Save and Exit',
+  discardLabel = 'Exit without save',
 }: UnsavedChangesModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

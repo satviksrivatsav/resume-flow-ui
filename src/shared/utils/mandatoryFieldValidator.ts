@@ -16,7 +16,9 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
   // Work Experience
   if (
     sections.experience.items.length > 0 &&
-    sections.experience.items.some((exp) => !exp.position?.trim() || !exp.company?.trim() || !exp.period?.trim())
+    sections.experience.items.some(
+      (exp) => !exp.position?.trim() || !exp.company?.trim() || !exp.period?.trim(),
+    )
   ) {
     missingForms.push('Work Experience');
   }
@@ -25,7 +27,12 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
   if (
     sections.education.items.length > 0 &&
     sections.education.items.some(
-      (edu) => !edu.school?.trim() || !edu.degree?.trim() || !edu.period?.trim() || !edu.grade?.trim() || !edu.area?.trim()
+      (edu) =>
+        !edu.school?.trim() ||
+        !edu.degree?.trim() ||
+        !edu.period?.trim() ||
+        !edu.grade?.trim() ||
+        !edu.area?.trim(),
     )
   ) {
     missingForms.push('Education');
@@ -98,14 +105,19 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
   // References
   if (
     sections.references.items.length > 0 &&
-    sections.references.items.some((ref) => !ref.name?.trim() || (!ref.email?.trim() && !ref.phone?.trim()))
+    sections.references.items.some(
+      (ref) => !ref.name?.trim() || (!ref.email?.trim() && !ref.phone?.trim()),
+    )
   ) {
     missingForms.push('References');
   }
 
   // Custom Sections
   customSections.forEach((section) => {
-    if (section.items.length > 0 && section.items.some((item) => !item.title?.trim() || !item.description?.trim())) {
+    if (
+      section.items.length > 0 &&
+      section.items.some((item) => !item.title?.trim() || !item.description?.trim())
+    ) {
       missingForms.push(section.name || 'Custom Section');
     }
   });
@@ -119,33 +131,80 @@ export const getSectionCompletionStatus = (sectionId: string, resumeData: Resume
     case 'personal':
       return isBasicsComplete(basics);
     case 'experience':
-      return sections.experience.items.length > 0 && sections.experience.items.every((exp) => exp.position?.trim() && exp.company?.trim() && exp.period?.trim());
+      return (
+        sections.experience.items.length > 0 &&
+        sections.experience.items.every(
+          (exp) => exp.position?.trim() && exp.company?.trim() && exp.period?.trim(),
+        )
+      );
     case 'education':
-      return sections.education.items.length > 0 && sections.education.items.every((edu) => edu.school?.trim() && edu.degree?.trim() && edu.period?.trim() && edu.grade?.trim() && edu.area?.trim());
+      return (
+        sections.education.items.length > 0 &&
+        sections.education.items.every(
+          (edu) =>
+            edu.school?.trim() &&
+            edu.degree?.trim() &&
+            edu.period?.trim() &&
+            edu.grade?.trim() &&
+            edu.area?.trim(),
+        )
+      );
     case 'projects':
-      return sections.projects.items.length > 0 && sections.projects.items.every((proj) => proj.name?.trim() && proj.description?.trim());
+      return (
+        sections.projects.items.length > 0 &&
+        sections.projects.items.every((proj) => proj.name?.trim() && proj.description?.trim())
+      );
     case 'skills':
-      return sections.skills.items.length > 0 && sections.skills.items.every((skill) => skill.name?.trim() && skill.keywords.length > 0);
+      return (
+        sections.skills.items.length > 0 &&
+        sections.skills.items.every((skill) => skill.name?.trim() && skill.keywords.length > 0)
+      );
     case 'languages':
-      return sections.languages.items.length > 0 && sections.languages.items.every((lang) => lang.name?.trim());
+      return (
+        sections.languages.items.length > 0 &&
+        sections.languages.items.every((lang) => lang.name?.trim())
+      );
     case 'interests':
-      return sections.interests.items.length > 0 && sections.interests.items.every((interest) => interest.name?.trim());
+      return (
+        sections.interests.items.length > 0 &&
+        sections.interests.items.every((interest) => interest.name?.trim())
+      );
     case 'awards':
-      return sections.awards.items.length > 0 && sections.awards.items.every((award) => award.title?.trim());
+      return (
+        sections.awards.items.length > 0 &&
+        sections.awards.items.every((award) => award.title?.trim())
+      );
     case 'certifications':
-      return sections.certifications.items.length > 0 && sections.certifications.items.every((cert) => cert.name?.trim() && cert.issuer?.trim());
+      return (
+        sections.certifications.items.length > 0 &&
+        sections.certifications.items.every((cert) => cert.name?.trim() && cert.issuer?.trim())
+      );
     case 'publications':
-      return sections.publications.items.length > 0 && sections.publications.items.every((pub) => pub.name?.trim() && pub.publisher?.trim());
+      return (
+        sections.publications.items.length > 0 &&
+        sections.publications.items.every((pub) => pub.name?.trim() && pub.publisher?.trim())
+      );
     case 'volunteer':
-      return sections.volunteer.items.length > 0 && sections.volunteer.items.every((vol) => vol.organization?.trim() && vol.position?.trim());
+      return (
+        sections.volunteer.items.length > 0 &&
+        sections.volunteer.items.every((vol) => vol.organization?.trim() && vol.position?.trim())
+      );
     case 'references':
-      return sections.references.items.length > 0 && sections.references.items.every((ref) => ref.name?.trim() && (ref.email?.trim() || ref.phone?.trim()));
+      return (
+        sections.references.items.length > 0 &&
+        sections.references.items.every(
+          (ref) => ref.name?.trim() && (ref.email?.trim() || ref.phone?.trim()),
+        )
+      );
     case 'profiles':
       return sections.profiles.items.length > 0;
     case 'settings':
       return true;
     default:
       const custom = customSections.find((s) => s.id === sectionId);
-      return custom ? custom.items.length > 0 && custom.items.every((item) => item.title?.trim() && item.description?.trim()) : false;
+      return custom
+        ? custom.items.length > 0 &&
+            custom.items.every((item) => item.title?.trim() && item.description?.trim())
+        : false;
   }
 };

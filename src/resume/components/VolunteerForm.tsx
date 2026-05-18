@@ -1,7 +1,12 @@
 ﻿import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, HandHelping, Link as LinkIcon, MapPin } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -9,8 +14,8 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const VolunteerForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -88,7 +93,12 @@ export const VolunteerForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -115,9 +125,7 @@ export const VolunteerForm = () => {
                   </Label>
                   <Input
                     value={vol.position}
-                    onChange={(e) =>
-                      updateItem('volunteer', vol.id, { position: e.target.value })
-                    }
+                    onChange={(e) => updateItem('volunteer', vol.id, { position: e.target.value })}
                     placeholder="e.g. Volunteer Coordinator, Event Staff"
                   />
                 </div>
@@ -142,9 +150,7 @@ export const VolunteerForm = () => {
                   <div className="relative">
                     <Input
                       value={vol.period}
-                      onChange={(e) =>
-                        updateItem('volunteer', vol.id, { period: e.target.value })
-                      }
+                      onChange={(e) => updateItem('volunteer', vol.id, { period: e.target.value })}
                       placeholder="e.g. 2021-06 - 2022-01"
                       className="pl-9"
                     />
@@ -183,9 +189,7 @@ export const VolunteerForm = () => {
                   </div>
                   <RichTextEditor
                     value={vol.description || ''}
-                    onChange={(value) =>
-                      updateItem('volunteer', vol.id, { description: value })
-                    }
+                    onChange={(value) => updateItem('volunteer', vol.id, { description: value })}
                     placeholder="Describe your responsibilities and the organization's mission."
                     className="min-h-[100px]"
                   />
@@ -198,4 +202,3 @@ export const VolunteerForm = () => {
     </motion.div>
   );
 };
-

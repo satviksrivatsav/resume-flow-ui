@@ -1,9 +1,10 @@
-﻿import { Plus } from 'lucide-react';
+﻿import { AnimatePresence, motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Button } from '@/shared/components/ui/button';
+
 import { Accordion } from '@/shared/components/ui/accordion';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Button } from '@/shared/components/ui/button';
 
 interface SectionListManagerProps<T extends { id: string }> {
   items: T[];
@@ -12,7 +13,7 @@ interface SectionListManagerProps<T extends { id: string }> {
     item: T,
     index: number,
     isExpanded: boolean,
-    onExpand: (id: string) => void
+    onExpand: (id: string) => void,
   ) => React.ReactNode;
   defaultNewItem: (id: string) => T;
   addButtonLabel?: string;
@@ -28,7 +29,7 @@ export function SectionListManager<T extends { id: string }>({
   emptyMessage = 'No items added yet.',
 }: SectionListManagerProps<T>) {
   const [expandedId, setExpandedId] = useState<string | undefined>(
-    items.length > 0 ? items[0].id : undefined
+    items.length > 0 ? items[0].id : undefined,
   );
 
   // Handle initial expansion when items load asynchronously

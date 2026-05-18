@@ -16,7 +16,7 @@ export const FeaturesSection = () => {
     {
       title: 'AI Resume Writer.',
       description:
-        "Write better bullet points without the stress. Use AI to help you draft professional achievements in seconds.",
+        'Write better bullet points without the stress. Use AI to help you draft professional achievements in seconds.',
       bullets: [
         'Transform raw notes into professional achievements',
         'Tone matching for your specific industry',
@@ -79,8 +79,8 @@ export const FeaturesSection = () => {
             Everything you need to land the job.
           </h2>
           <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl mx-auto">
-            Resume Flow is a simple tool that uses AI to help you build better resumes 
-            without the headache. No subscriptions, just better applications.
+            Resume Flow is a simple tool that uses AI to help you build better resumes without the
+            headache. No subscriptions, just better applications.
           </p>
         </div>
 

@@ -1,10 +1,10 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion';
-import { Eye, EyeOff, Save, RefreshCw, Check, X } from 'lucide-react';
+import { Check, Eye, EyeOff, RefreshCw, Save, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { Logo } from '@/shared/components/ui/Logo';
 import { ExportMenu } from '@/resume/components/ExportMenu';
 import { Button } from '@/shared/components/ui/button';
+import { Logo } from '@/shared/components/ui/Logo';
 import { ThemeToggle } from '@/shared/components/ui/ThemeToggle';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
@@ -134,4 +134,3 @@ export const Topbar = () => {
     </header>
   );
 };
-

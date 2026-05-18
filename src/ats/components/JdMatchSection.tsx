@@ -61,7 +61,9 @@ export function JdMatchSection({ jdMatch }: JdMatchSectionProps) {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-success" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Matched Skills</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                    Matched Skills
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {jdMatch.matched_skills.map((skill, i) => (
@@ -82,7 +84,9 @@ export function JdMatchSection({ jdMatch }: JdMatchSectionProps) {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Missing Skills</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                    Missing Skills
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {jdMatch.missing_skills.map((skill, i) => (
@@ -103,4 +107,3 @@ export function JdMatchSection({ jdMatch }: JdMatchSectionProps) {
     </motion.div>
   );
 }
-

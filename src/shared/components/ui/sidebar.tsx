@@ -8,7 +8,12 @@ import { Input } from '@/shared/components/ui/input';
 import { Separator } from '@/shared/components/ui/separator';
 import { Sheet, SheetContent } from '@/shared/components/ui/sheet';
 import { Skeleton } from '@/shared/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/shared/components/ui/tooltip';
 import { useIsMobile } from '@/shared/hooks/use-mobile';
 import { cn } from '@/shared/lib/utils';
 
@@ -366,10 +371,7 @@ const SidebarContent = React.forwardRef<HTMLDivElement, React.ComponentProps<'di
       <div
         ref={ref}
         data-sidebar="content"
-        className={cn(
-          'flex min-h-0 flex-1 flex-col gap-2 overflow-auto scrollbar-hide',
-          className,
-        )}
+        className={cn('flex min-h-0 flex-1 flex-col gap-2 overflow-auto scrollbar-hide', className)}
         {...props}
       />
     );

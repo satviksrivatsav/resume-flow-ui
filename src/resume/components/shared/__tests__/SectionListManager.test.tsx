@@ -1,10 +1,11 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen, fireEvent } from '@testing-library/react';
-import { SectionListManager } from '../SectionListManager';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { describe, expect, it, vi } from 'vitest';
+
+import { SectionListManager } from '../SectionListManager';
 
 // Mock uuidv4
 vi.mock('uuid', () => ({
@@ -37,7 +38,7 @@ describe('SectionListManager', () => {
         onAdd={onAdd}
         renderItem={renderItem}
         defaultNewItem={defaultNewItem}
-      />
+      />,
     );
 
     expect(screen.getByTestId('item-1')).toBeDefined();
@@ -54,7 +55,7 @@ describe('SectionListManager', () => {
         renderItem={renderItem}
         defaultNewItem={defaultNewItem}
         addButtonLabel="Add Test Item"
-      />
+      />,
     );
 
     const addButton = screen.getByText('Add Test Item');
@@ -71,7 +72,7 @@ describe('SectionListManager', () => {
         renderItem={renderItem}
         defaultNewItem={defaultNewItem}
         emptyMessage="No items yet"
-      />
+      />,
     );
 
     expect(screen.getByText('No items yet')).toBeDefined();

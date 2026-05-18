@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
 
 export type FeatureKey = 'ai' | 'ats' | 'format' | 'templates';
 
@@ -9,14 +9,17 @@ interface FeaturePreviewProps {
 
 export const FeaturePreview = ({ activeFeature }: FeaturePreviewProps) => {
   return (
-    <div data-testid="feature-preview" className="relative w-full aspect-video rounded-3xl overflow-hidden bg-white/[0.01] border border-white/[0.05] flex items-center justify-center p-8">
+    <div
+      data-testid="feature-preview"
+      className="relative w-full aspect-video rounded-3xl overflow-hidden bg-white/[0.01] border border-white/[0.05] flex items-center justify-center p-8"
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={activeFeature}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
           className="w-full h-full flex items-center justify-center"
         >
           {activeFeature === 'ai' && <AIPreview />}
@@ -60,15 +63,19 @@ const ATSPreview = () => {
             {[1, 2, 3].map((i) => (
               <motion.div
                 key={i}
-                animate={{ 
-                  backgroundColor: ["rgba(39, 39, 42, 1)", "rgba(255, 255, 255, 0.2)", "rgba(39, 39, 42, 1)"],
-                  scale: [1, 1.05, 1]
+                animate={{
+                  backgroundColor: [
+                    'rgba(39, 39, 42, 1)',
+                    'rgba(255, 255, 255, 0.2)',
+                    'rgba(39, 39, 42, 1)',
+                  ],
+                  scale: [1, 1.05, 1],
                 }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity, 
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
                   delay: i * 0.4,
-                  ease: "easeInOut" 
+                  ease: 'easeInOut',
                 }}
                 className="h-4 w-12 bg-zinc-800 rounded-sm border border-zinc-700"
               />
@@ -82,19 +89,19 @@ const ATSPreview = () => {
         <div className="h-2 w-full bg-zinc-900 rounded-sm" />
         <div className="h-2 w-5/6 bg-zinc-900 rounded-sm" />
       </div>
-      
-      <motion.div 
-        animate={{ top: ["0%", "100%", "0%"] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+
+      <motion.div
+        animate={{ top: ['0%', '100%', '0%'] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute left-0 right-0 h-[1px] bg-white/50 shadow-[0_0_15px_rgba(255,255,255,0.3)] z-10"
       />
-      
-      <motion.div 
-        animate={{ 
-            top: ["-50%", "100%", "-50%"],
-            opacity: [0, 0.1, 0]
+
+      <motion.div
+        animate={{
+          top: ['-50%', '100%', '-50%'],
+          opacity: [0, 0.1, 0],
         }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute left-0 right-0 h-[50%] bg-gradient-to-b from-transparent via-white/10 to-transparent z-0 pointer-events-none"
       />
     </div>
@@ -106,7 +113,7 @@ const FormatPreview = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLayout(prev => prev === 'left' ? 'center' : 'left');
+      setLayout((prev) => (prev === 'left' ? 'center' : 'left'));
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -120,7 +127,7 @@ const FormatPreview = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-6 flex flex-col items-start gap-4 shadow-2xl"
           >
             <div className="space-y-1">
@@ -144,7 +151,7 @@ const FormatPreview = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-6 flex flex-col items-center text-center gap-4 shadow-2xl"
           >
             <div className="space-y-1 flex flex-col items-center">
@@ -173,12 +180,14 @@ const TemplatesPreview = () => {
     <div className="relative group overflow-hidden bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-[320px] aspect-video flex items-center justify-center p-8 shadow-2xl">
       <div className="w-full space-y-4 transform scale-110">
         <div className="flex items-center gap-3">
-          <div className="text-[10px] font-bold tracking-widest text-white/50 uppercase">Core Skills</div>
+          <div className="text-[10px] font-bold tracking-widest text-white/50 uppercase">
+            Core Skills
+          </div>
           <div className="h-[1px] flex-1 bg-zinc-800" />
         </div>
         <div className="flex flex-wrap gap-2">
           {['React', 'TypeScript', 'Node.js', 'Next.js', 'Tailwind', 'GraphQL'].map((skill, i) => (
-            <motion.span 
+            <motion.span
               key={skill}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -191,15 +200,17 @@ const TemplatesPreview = () => {
         </div>
         <div className="space-y-2 pt-2">
           <div className="flex items-center gap-3">
-            <div className="text-[10px] font-bold tracking-widest text-white/50 uppercase">Proficiency</div>
+            <div className="text-[10px] font-bold tracking-widest text-white/50 uppercase">
+              Proficiency
+            </div>
             <div className="h-[1px] flex-1 bg-zinc-800" />
           </div>
           <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden">
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
-              animate={{ width: "85%" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-              className="h-full bg-white/30" 
+              animate={{ width: '85%' }}
+              transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+              className="h-full bg-white/30"
             />
           </div>
         </div>

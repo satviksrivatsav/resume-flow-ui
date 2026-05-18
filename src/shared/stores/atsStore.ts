@@ -38,7 +38,8 @@ export const useAtsStore = create<AtsState>((set) => ({
   parsedResume: null,
   error: null,
 
-  setResumeFile: (resumeFile) => set({ resumeFile, resumeId: null, resumeName: resumeFile?.name || null }),
+  setResumeFile: (resumeFile) =>
+    set({ resumeFile, resumeId: null, resumeName: resumeFile?.name || null }),
   setResumeId: (resumeId, resumeName = null) => set({ resumeId, resumeName, resumeFile: null }),
   setJdText: (jdText) => set({ jdText, jdFile: null }),
   setJdFile: (jdFile) => set({ jdFile, jdText: '' }),

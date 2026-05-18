@@ -36,11 +36,11 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'recruiter', label: 'Recruiter View', icon: UserSearch },
 ];
 
-export function AtsResultsMain({ 
-  report, 
-  onGoToBuilder, 
-  onSaveReport, 
-  isSaving 
+export function AtsResultsMain({
+  report,
+  onGoToBuilder,
+  onSaveReport,
+  isSaving,
 }: AtsResultsMainProps) {
   const [activeTab, setActiveTab] = useState<Tab>('ats');
 
@@ -79,17 +79,17 @@ export function AtsResultsMain({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onGoToBuilder}
             className="h-8 rounded-full text-[11px] font-medium tracking-wide text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
           >
             Open in Builder →
           </Button>
-          <Button 
-            size="sm" 
-            onClick={onSaveReport} 
+          <Button
+            size="sm"
+            onClick={onSaveReport}
             disabled={isSaving}
             className="h-8 rounded-full text-[11px] font-medium tracking-wide px-5 shadow-sm"
           >
@@ -243,7 +243,11 @@ export function AtsResultsMain({
                   </Section>
                 )}
                 {report.missing_keywords.length > 0 && (
-                  <Section title="Missing Keywords" icon={AlertCircle} titleClass="text-destructive">
+                  <Section
+                    title="Missing Keywords"
+                    icon={AlertCircle}
+                    titleClass="text-destructive"
+                  >
                     <div className="flex flex-wrap gap-2">
                       {report.missing_keywords.map((kw, i) => (
                         <Badge
@@ -334,8 +338,14 @@ function AtsCard({
         <div className="flex items-center gap-2.5">
           <Icon className={cn('w-4 h-4', titleClass ?? 'text-muted-foreground')} />
           <div>
-            <h2 className={cn('text-sm font-semibold', titleClass ?? 'text-foreground')}>{title}</h2>
-            {subtitle && <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{subtitle}</p>}
+            <h2 className={cn('text-sm font-semibold', titleClass ?? 'text-foreground')}>
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                {subtitle}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -358,8 +368,8 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
   return (
     <div className="space-y-6">
       {/* First Impression */}
-      <AtsCard 
-        title="First Impression" 
+      <AtsCard
+        title="First Impression"
         subtitle="What a recruiter sees in 6 seconds"
         icon={UserSearch}
         titleClass="text-foreground"
@@ -371,18 +381,15 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
 
       {/* Likely Concerns */}
       {sim.likely_concerns.length > 0 && (
-        <AtsCard 
-          title="Likely Concerns" 
+        <AtsCard
+          title="Likely Concerns"
           subtitle="Red flags a recruiter may raise"
           icon={AlertTriangle}
           titleClass="text-warning"
         >
           <ul className="space-y-3">
             {sim.likely_concerns.map((concern, i) => (
-              <li
-                key={i}
-                className="flex items-start gap-3 text-sm text-foreground/85"
-              >
+              <li key={i} className="flex items-start gap-3 text-sm text-foreground/85">
                 <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-warning/70" />
                 {concern}
               </li>
@@ -392,8 +399,8 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
       )}
 
       {/* Likely Outcome */}
-      <AtsCard 
-        title="Likely Outcome" 
+      <AtsCard
+        title="Likely Outcome"
         subtitle="Predicted recruiter decision"
         icon={ChevronRight}
         titleClass="text-primary"
@@ -403,5 +410,3 @@ function RecruiterSimulation({ sim }: { sim: RecruiterSimType | undefined }) {
     </div>
   );
 }
-
-

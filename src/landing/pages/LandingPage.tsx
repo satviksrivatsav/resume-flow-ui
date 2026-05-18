@@ -1,10 +1,9 @@
 ﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
 import { FeaturesSection } from '@/landing/components/FeaturesSection';
 import { LandingFooter } from '@/landing/components/LandingFooter';
+import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
 import { PageTransition } from '@/shared/components/layout/PageTransition';
 import { AnimatedResumeHero } from '@/shared/components/ui/AnimatedResumeHero';
 import { MeshGradient } from '@/shared/components/ui/backgrounds';
@@ -35,8 +34,8 @@ export default React.memo(function LandingPage() {
                 </span>
               </h1>
               <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl">
-                Resume Flow is a simple tool that uses AI to help you build better resumes 
-                without the headache. No subscriptions, just better applications.
+                Resume Flow is a simple tool that uses AI to help you build better resumes without
+                the headache. No subscriptions, just better applications.
               </p>
             </div>
 

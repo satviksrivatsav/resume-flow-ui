@@ -35,7 +35,8 @@ export const TailorPendingModal = ({
             Pending Decisions
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
-            You have <span className="text-primary font-bold">{pendingCount}</span> sections that haven't been reviewed yet. Would you like to accept all changes and apply?
+            You have <span className="text-primary font-bold">{pendingCount}</span> sections that
+            haven't been reviewed yet. Would you like to accept all changes and apply?
           </AlertDialogDescription>
         </AlertDialogHeader>
 

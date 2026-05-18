@@ -1,15 +1,15 @@
-﻿import { AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
+import { AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/shared/hooks/use-toast';
 
-import { DeleteAccountModal } from '@/dashboard/components/DeleteAccountModal';
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
+import { DeleteAccountModal } from '@/dashboard/components/DeleteAccountModal';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
+import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { useAuthStore } from '@/shared/stores/authStore';
 
@@ -147,4 +147,3 @@ export default function DangerZonePage() {
     </DashboardLayout>
   );
 }
-

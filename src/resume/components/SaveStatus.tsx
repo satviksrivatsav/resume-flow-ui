@@ -35,7 +35,12 @@ export const SaveStatus = () => {
   return (
     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-background/40 border border-border/50 backdrop-blur-sm select-none">
       <div className="relative flex items-center justify-center w-2 h-2">
-        <span className={cn('absolute inset-0 rounded-full transition-colors duration-300', getStatusColor())} />
+        <span
+          className={cn(
+            'absolute inset-0 rounded-full transition-colors duration-300',
+            getStatusColor(),
+          )}
+        />
         <span
           className={cn(
             'absolute inset-0 rounded-full animate-pulse transition-colors duration-300',
@@ -65,5 +70,3 @@ export const SaveStatus = () => {
     </div>
   );
 };
-
-

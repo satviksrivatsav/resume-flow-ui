@@ -1,19 +1,19 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { AILoadingModal } from '@/shared/components/ui/AILoadingModal';
+import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
-import { Switch } from '@/shared/components/ui/switch';
 import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
+import { Switch } from '@/shared/components/ui/switch';
 import { config } from '@/shared/config/config';
+import { useToast } from '@/shared/hooks/use-toast';
+import { extractTextFromFile } from '@/shared/lib/atsApi';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 import { useTailorStore } from '@/shared/stores/tailorStore';
-import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
-import { extractTextFromFile } from '@/shared/lib/atsApi';
 
 export const TailorForm = () => {
   const { toast } = useToast();
@@ -52,10 +52,18 @@ export const TailorForm = () => {
         setJdFile(file);
         const text = await extractTextFromFile(file);
         setJobDescription(text);
-        toast({ title: 'Success', description: 'Job description extracted from file', variant: 'success' });
+        toast({
+          title: 'Success',
+          description: 'Job description extracted from file',
+          variant: 'success',
+        });
       } catch (err: any) {
         console.error('JD extraction failed:', err);
-        toast({ title: 'Error', description: err.message || 'Failed to extract text from JD file', variant: 'destructive' });
+        toast({
+          title: 'Error',
+          description: err.message || 'Failed to extract text from JD file',
+          variant: 'destructive',
+        });
         setJdFile(null);
       } finally {
         setIsExtractingJd(false);
@@ -102,8 +110,7 @@ export const TailorForm = () => {
       if (
         sectionConfig[key] &&
         section.visible &&
-        section.items &&
-        section.items.some((item: any) => item.visible)
+        section.items?.some((item: any) => item.visible)
       ) {
         sections.push({ id: key, label: sectionConfig[key] });
       }
@@ -251,7 +258,8 @@ export const TailorForm = () => {
               htmlFor="tailor-jd-upload"
               className={cn(
                 'inline-flex items-center gap-2 px-5 h-10 bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all cursor-pointer uppercase tracking-wider hover:text-foreground hover:border-primary/30',
-                (isExtractingJd || isTailoring) && 'opacity-50 cursor-not-allowed pointer-events-none',
+                (isExtractingJd || isTailoring) &&
+                  'opacity-50 cursor-not-allowed pointer-events-none',
               )}
             >
               {isExtractingJd ? (
@@ -290,10 +298,7 @@ export const TailorForm = () => {
                 ? 'Extracting text from file...'
                 : 'Paste the job description here or upload a file above...'
             }
-            className={cn(
-              'min-h-[260px]',
-              isExtractingJd && 'opacity-50 cursor-not-allowed',
-            )}
+            className={cn('min-h-[260px]', isExtractingJd && 'opacity-50 cursor-not-allowed')}
             value={jobDescription}
             onChange={setJobDescription}
             disabled={isExtractingJd || isTailoring}
@@ -417,11 +422,11 @@ export const TailorForm = () => {
         isOpen={isTailoring || isExtractingJd}
         onCancel={handleCancel}
         message={
-          isExtractingJd 
-            ? "Extracting job description content with AI..." 
-            : "Tailoring your resume sections for the job description..."
+          isExtractingJd
+            ? 'Extracting job description content with AI...'
+            : 'Tailoring your resume sections for the job description...'
         }
-        title={isExtractingJd ? "JD Extractor" : "AI Tailor"}
+        title={isExtractingJd ? 'JD Extractor' : 'AI Tailor'}
       />
     </div>
   );

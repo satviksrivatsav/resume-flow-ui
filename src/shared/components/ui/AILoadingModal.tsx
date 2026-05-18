@@ -1,6 +1,8 @@
 ﻿import { X } from 'lucide-react';
+
 import { Button } from '@/shared/components/ui/button';
 import { Dialog, DialogContent } from '@/shared/components/ui/dialog';
+
 import { AILoader } from './AILoader';
 
 interface AILoadingModalProps {
@@ -26,11 +28,7 @@ export function AILoadingModal({
         <div className="relative bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2.5rem] p-10 w-full flex flex-col items-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
           {/* Header context */}
           <div className="text-center mb-8">
-            {title && (
-              <h3 className="text-2xl font-extrabold tracking-tight mb-2">
-                {title}
-              </h3>
-            )}
+            {title && <h3 className="text-2xl font-extrabold tracking-tight mb-2">{title}</h3>}
           </div>
 
           <div className="py-4 w-full">

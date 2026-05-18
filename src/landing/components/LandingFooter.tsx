@@ -68,8 +68,8 @@ export const LandingFooter = () => {
               </span>
             </Link>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
-              An open-source initiative dedicated to simplifying resume optimization with AI.
-              Built for the community, by the community.
+              An open-source initiative dedicated to simplifying resume optimization with AI. Built
+              for the community, by the community.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <a
@@ -248,4 +248,3 @@ export const LandingFooter = () => {
     </footer>
   );
 };
-

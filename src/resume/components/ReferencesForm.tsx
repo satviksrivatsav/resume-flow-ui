@@ -1,16 +1,21 @@
 ﻿import { motion } from 'framer-motion';
 import { ChevronDown, Mail, Phone, User } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
-import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const ReferencesForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -81,7 +86,12 @@ export const ReferencesForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -96,9 +106,7 @@ export const ReferencesForm = () => {
                   <div className="relative">
                     <Input
                       value={ref.name}
-                      onChange={(e) =>
-                        updateItem('references', ref.id, { name: e.target.value })
-                      }
+                      onChange={(e) => updateItem('references', ref.id, { name: e.target.value })}
                       placeholder="e.g. Jane Smith"
                       className="pl-9"
                     />
@@ -110,9 +118,7 @@ export const ReferencesForm = () => {
                   <Label className="font-medium">Position / Relationship</Label>
                   <Input
                     value={ref.position}
-                    onChange={(e) =>
-                      updateItem('references', ref.id, { position: e.target.value })
-                    }
+                    onChange={(e) => updateItem('references', ref.id, { position: e.target.value })}
                     placeholder="e.g. Manager at Previous Co"
                   />
                 </div>
@@ -124,9 +130,7 @@ export const ReferencesForm = () => {
                   <div className="relative">
                     <Input
                       value={ref.email}
-                      onChange={(e) =>
-                        updateItem('references', ref.id, { email: e.target.value })
-                      }
+                      onChange={(e) => updateItem('references', ref.id, { email: e.target.value })}
                       placeholder="e.g. jane@example.com"
                       className="pl-9"
                     />
@@ -141,9 +145,7 @@ export const ReferencesForm = () => {
                   <div className="relative">
                     <Input
                       value={ref.phone}
-                      onChange={(e) =>
-                        updateItem('references', ref.id, { phone: e.target.value })
-                      }
+                      onChange={(e) => updateItem('references', ref.id, { phone: e.target.value })}
                       placeholder="e.g. +1 234 567 890"
                       className="pl-9"
                     />
@@ -171,9 +173,7 @@ export const ReferencesForm = () => {
                   </div>
                   <RichTextEditor
                     value={ref.description || ''}
-                    onChange={(value) =>
-                      updateItem('references', ref.id, { description: value })
-                    }
+                    onChange={(value) => updateItem('references', ref.id, { description: value })}
                     placeholder="Briefly describe how you worked together or what they can speak to."
                     className="min-h-[80px]"
                   />
@@ -186,4 +186,3 @@ export const ReferencesForm = () => {
     </motion.div>
   );
 };
-

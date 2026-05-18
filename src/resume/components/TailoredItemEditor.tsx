@@ -1,8 +1,9 @@
 ﻿import { useEffect, useState } from 'react';
+
+import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TechChipsInput } from '@/shared/components/ui/TechChipsInput';
-import { Input } from '@/shared/components/ui/input';
 import { cn } from '@/shared/lib/utils';
 
 interface TailoredItemEditorProps {
@@ -60,7 +61,7 @@ export const TailoredItemEditor = ({
     return (
       <div className="space-y-4">
         {readOnly ? (
-          <div 
+          <div
             className="text-[14px] leading-[1.8] text-muted-foreground/80 ql-editor ql-editor-preview"
             dangerouslySetInnerHTML={{ __html: localContent }}
           />
@@ -96,13 +97,14 @@ export const TailoredItemEditor = ({
             <div
               className={cn(
                 'text-[14px] leading-[1.8] ql-editor ql-editor-preview',
-                label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90 font-normal',
+                label === 'Description'
+                  ? 'text-muted-foreground/80'
+                  : 'text-foreground/90 font-normal',
               )}
               dangerouslySetInnerHTML={{ __html: value || '' }}
             />
           ) : (
             <div className="text-[14px] leading-[1.8] text-foreground/90 font-normal">
-
               {value || <span className="italic opacity-50">Empty</span>}
             </div>
           )}
@@ -137,16 +139,13 @@ export const TailoredItemEditor = ({
     <div className="space-y-6">
       {/* Headline string wrapped in object */}
       {sectionId === 'headline' &&
-        localContent &&
-        localContent.hasOwnProperty('headline') &&
+        localContent?.hasOwnProperty('headline') &&
         renderField('Headline', localContent.headline, 'headline', 'input')}
 
       {/* Summary content */}
       {sectionId === 'summary' &&
-        localContent &&
-        localContent.hasOwnProperty('content') &&
+        localContent?.hasOwnProperty('content') &&
         renderField('Professional Summary', localContent.content, 'content', 'textarea')}
-
 
       {/* Skills Category Name */}
       {sectionId === 'skills' &&
@@ -154,8 +153,7 @@ export const TailoredItemEditor = ({
         renderField('Category Name', localContent.name, 'name', 'input')}
 
       {/* Keywords (Chips) */}
-      {localContent && localContent.hasOwnProperty('keywords') && Array.isArray(localContent.keywords) && (
-
+      {localContent?.hasOwnProperty('keywords') && Array.isArray(localContent.keywords) && (
         <div className="space-y-2">
           <Label
             className={cn(
@@ -195,7 +193,6 @@ export const TailoredItemEditor = ({
         (localContent.hasOwnProperty('description') ||
           localContent.hasOwnProperty('summary') ||
           localContent.hasOwnProperty('bullets')) &&
-
         sectionId !== 'summary' &&
         sectionId !== 'skills' &&
         renderField('Description', localContent.description, 'description', 'textarea')}
@@ -208,7 +205,6 @@ export const TailoredItemEditor = ({
         !localContent.hasOwnProperty('description') &&
         !localContent.hasOwnProperty('summary') &&
         !localContent.hasOwnProperty('bullets') && (
-
           <div className="p-4 border border-dashed border-primary/20 rounded-xl text-center">
             <p className="text-sm text-muted-foreground">
               No directly editable structured fields found for this item.

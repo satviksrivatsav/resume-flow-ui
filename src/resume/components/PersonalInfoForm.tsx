@@ -8,7 +8,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { PhoneInput } from '@/shared/components/ui/PhoneInput';
 import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
-import { getCountryByCode, cleanPhoneNumber } from '@/shared/lib/countries';
+import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 
 export const PersonalInfoForm = () => {
@@ -21,7 +21,7 @@ export const PersonalInfoForm = () => {
     if (basics.countryCode && getCountryByCode(basics.countryCode.toUpperCase())) {
       setCountryCode(basics.countryCode.toUpperCase());
     }
-    
+
     // Proactively clean the phone number if it contains the dial code
     const cleanedPhone = cleanPhoneNumber(basics.phone, basics.countryCode || countryCode);
     if (cleanedPhone !== basics.phone) {
@@ -185,4 +185,3 @@ export const PersonalInfoForm = () => {
     </motion.div>
   );
 };
-

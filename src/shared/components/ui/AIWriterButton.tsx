@@ -15,7 +15,6 @@ import {
 import { useAIWriterStore } from '@/shared/stores/aiWriterStore';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 
-
 interface AIWriterButtonProps {
   fieldName: string;
   fieldLabel: string;
@@ -40,7 +39,6 @@ export function AIWriterButton({
     openInstructionModal(fieldName, action, fieldValue, onUpdate, resumeData);
     setIsOpen(false);
   };
-
 
   const hasContent = (() => {
     if (!fieldValue) return false;
@@ -71,7 +69,6 @@ export function AIWriterButton({
             <AnimatedIcon icon={Sparkles} preset="portal" className="w-3.5 h-3.5" />
             AI Writer
           </Button>
-
         </motion.div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48">

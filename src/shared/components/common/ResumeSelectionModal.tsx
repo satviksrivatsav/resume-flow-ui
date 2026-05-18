@@ -1,10 +1,11 @@
-﻿import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Search, X, UploadCloud } from 'lucide-react';
+﻿import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2, Search, UploadCloud, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/shared/lib/supabase';
-import { useAuthStore } from '@/shared/stores/authStore';
+
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
+import { supabase } from '@/shared/lib/supabase';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 interface ResumeSelectionModalProps {
   isOpen: boolean;
@@ -19,7 +20,12 @@ interface ResumeRow {
   updated_at: string;
 }
 
-export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }: ResumeSelectionModalProps) {
+export function ResumeSelectionModal({
+  isOpen,
+  onClose,
+  onSelect,
+  onUploadNew,
+}: ResumeSelectionModalProps) {
   const { user } = useAuthStore();
   const [resumes, setResumes] = useState<ResumeRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +56,7 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }:
   }
 
   const filteredResumes = resumes.filter((r) =>
-    r.name.toLowerCase().includes(searchQuery.toLowerCase())
+    r.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -81,7 +87,9 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }:
             <div className="p-7 pb-4">
               <div className="mb-6">
                 <h2 className="text-xl font-bold tracking-tight mb-1">Select Resume</h2>
-                <p className="text-[11px] text-muted-foreground font-medium italic">Choose an existing resume to analyze.</p>
+                <p className="text-[11px] text-muted-foreground font-medium italic">
+                  Choose an existing resume to analyze.
+                </p>
               </div>
 
               <div className="relative">
@@ -99,7 +107,9 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }:
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                   <Loader2 className="w-6 h-6 animate-spin mb-3 text-primary/40" />
-                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40">Fetching records</p>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40">
+                    Fetching records
+                  </p>
                 </div>
               ) : filteredResumes.length > 0 ? (
                 filteredResumes.map((resume) => (
@@ -109,7 +119,9 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }:
                     className="w-full flex items-center justify-between p-3 px-5 rounded-full border border-transparent hover:border-primary/20 hover:bg-primary/5 transition-all group text-left"
                   >
                     <div className="flex flex-col gap-0.5">
-                      <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-[280px]">{resume.name}</p>
+                      <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-[280px]">
+                        {resume.name}
+                      </p>
                       <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest opacity-50">
                         {new Date(resume.updated_at).toLocaleDateString()}
                       </p>
@@ -125,10 +137,7 @@ export function ResumeSelectionModal({ isOpen, onClose, onSelect, onUploadNew }:
 
             <div className="p-7 pt-4 flex flex-col gap-2">
               {onUploadNew && (
-                <Button
-                  onClick={onUploadNew}
-                  className="w-full rounded-full font-bold h-11"
-                >
+                <Button onClick={onUploadNew} className="w-full rounded-full font-bold h-11">
                   <UploadCloud className="h-4 w-4 mr-2" /> Upload New Resume
                 </Button>
               )}

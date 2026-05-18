@@ -1,17 +1,19 @@
 ﻿import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
 import { forwardRef, useMemo } from 'react';
 
-import { useResumeStore } from '@/shared/stores/resumeStore';
+import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, sanitizeResumeData } from '@/shared/lib/utils';
+import { useResumeStore } from '@/shared/stores/resumeStore';
 import { DEFAULT_SECTION_ORDER } from '@/shared/types/resume';
-import { getCountryByCode, cleanPhoneNumber } from '@/shared/lib/countries';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
 const A4_WIDTH = '794px';
 const A4_HEIGHT = '1123px';
 
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: '100%', minWidth: 0 }}>{children}</div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: '100%', minWidth: 0 }}>
+    {children}
+  </div>
 );
 
 const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSSProperties }) => {
@@ -20,7 +22,7 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
   // If it's HTML (contains tags), render it directly
   if (text.includes('<') && text.includes('>')) {
     return (
-      <div 
+      <div
         className="description-content"
         style={{
           ...style,
@@ -345,9 +347,7 @@ const ResumeContent = ({
         <SectionHeader title={sections.awards.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((award: any) => (
           <div key={award.id} style={{ marginBottom: '8px' }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{award.title}</strong>
               <span>{award.date}</span>
             </div>
@@ -375,9 +375,7 @@ const ResumeContent = ({
         <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((cert: any) => (
           <div key={cert.id} style={{ marginBottom: '8px' }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{cert.name}</strong>
               <span>{cert.date}</span>
             </div>
@@ -405,9 +403,7 @@ const ResumeContent = ({
         <SectionHeader title={sections.publications.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((pub: any) => (
           <div key={pub.id} style={{ marginBottom: '8px' }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{pub.name}</strong>
               <span>{pub.date}</span>
             </div>
@@ -435,9 +431,7 @@ const ResumeContent = ({
         <SectionHeader title={sections.volunteer.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((vol: any) => (
           <div key={vol.id} style={{ marginBottom: '10px' }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{vol.position}</strong>
               <span>{vol.period}</span>
             </div>
@@ -533,10 +527,10 @@ const ResumeContent = ({
           {basics.name}
         </h1>
         {basics.headline && (
-          <p 
-            style={{ 
-              fontSize: sizes.heading, 
-              color: '#444', 
+          <p
+            style={{
+              fontSize: sizes.heading,
+              color: '#444',
               margin: '0 0 8px 0',
               overflowWrap: 'break-word',
               wordBreak: 'break-all',
@@ -562,13 +556,19 @@ const ResumeContent = ({
           {basics.email && (
             <IconWrapper>
               <Mail size={12} />
-              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.email}</span>
+              <span
+                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+              >
+                {basics.email}
+              </span>
             </IconWrapper>
           )}
           {basics.phone && (
             <IconWrapper>
               <Phone size={12} />
-              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>
+              <span
+                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+              >
                 {basics.countryCode && `${getCountryByCode(basics.countryCode)?.dialCode} `}
                 {cleanPhoneNumber(basics.phone, basics.countryCode)}
               </span>
@@ -577,13 +577,21 @@ const ResumeContent = ({
           {basics.location && (
             <IconWrapper>
               <MapPin size={12} />
-              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.location}</span>
+              <span
+                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+              >
+                {basics.location}
+              </span>
             </IconWrapper>
           )}
           {basics.url.href && (
             <IconWrapper>
               <Globe size={12} />
-              <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{basics.url.label || basics.url.href}</span>
+              <span
+                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+              >
+                {basics.url.label || basics.url.href}
+              </span>
             </IconWrapper>
           )}
         </div>
@@ -613,12 +621,26 @@ const ResumeContent = ({
                       href={p.website.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: 'inherit', textDecoration: 'none', overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+                      style={{
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-all',
+                        maxWidth: '100%',
+                      }}
                     >
                       {cleanProfileDisplay(p.username)}
                     </a>
                   ) : (
-                    <span style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}>{cleanProfileDisplay(p.username)}</span>
+                    <span
+                      style={{
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-all',
+                        maxWidth: '100%',
+                      }}
+                    >
+                      {cleanProfileDisplay(p.username)}
+                    </span>
                   )}
                 </IconWrapper>
               ))}
@@ -632,7 +654,7 @@ const ResumeContent = ({
         if (renderer) return renderer();
 
         const customSection = customSections.find((s) => s.id === key);
-        if (customSection && customSection.visible) {
+        if (customSection?.visible) {
           const visibleItems = customSection.items.filter(
             (item: any) => item.visible && (item.title || hasContent(item.description)),
           );

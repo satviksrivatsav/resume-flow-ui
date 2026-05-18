@@ -1,14 +1,14 @@
 ﻿import { motion } from 'framer-motion';
 import { Briefcase, CloudUpload, Database, Loader2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useToast } from '@/shared/hooks/use-toast';
 
+import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
 import { AILoadingModal } from '@/shared/components/ui/AILoadingModal';
 import { Button } from '@/shared/components/ui/button';
 import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
-import { useAtsStore } from '@/shared/stores/atsStore';
+import { useToast } from '@/shared/hooks/use-toast';
 import { extractTextFromFile } from '@/shared/lib/atsApi';
-import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
+import { useAtsStore } from '@/shared/stores/atsStore';
 
 interface AtsSetupProps {
   onAnalyze: (file: File | null, jdText: string) => Promise<void>;
@@ -81,10 +81,18 @@ export function AtsSetup({
         setJdFile(file);
         const text = await extractTextFromFile(file);
         setJdText(text);
-        toast({ title: 'Success', description: 'Job description extracted from file', variant: 'success' });
+        toast({
+          title: 'Success',
+          description: 'Job description extracted from file',
+          variant: 'success',
+        });
       } catch (err: any) {
         console.error('JD extraction failed:', err);
-        toast({ title: 'Error', description: err.message || 'Failed to extract text from JD file', variant: 'destructive' });
+        toast({
+          title: 'Error',
+          description: err.message || 'Failed to extract text from JD file',
+          variant: 'destructive',
+        });
         setJdFile(null);
       } finally {
         setIsExtractingJd(false);
@@ -126,7 +134,7 @@ export function AtsSetup({
             Compare your resume with a job description.
           </p>
         </div>
- 
+
         {/* Zone 1: Resume Input */}
         <div className="space-y-3">
           {resumeFile || resumeId ? (
@@ -184,7 +192,7 @@ export function AtsSetup({
               </p>
             </div>
           )}
- 
+
           <Button
             variant="outline"
             onClick={() => setIsSelectModalOpen(true)}
@@ -194,7 +202,7 @@ export function AtsSetup({
             Load from saved
           </Button>
         </div>
- 
+
         {/* Zone 2: Job Description Input */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-2">
@@ -206,14 +214,14 @@ export function AtsSetup({
               {jdFile ? 'File Uploaded' : 'Optional'}
             </span>
           </div>
- 
+
           <div className="relative">
             <RichTextEditor
               placeholder={
-                isExtractingJd 
-                  ? 'Extracting text from file...' 
-                  : jdFile 
-                    ? 'Remove uploaded file to type manually...' 
+                isExtractingJd
+                  ? 'Extracting text from file...'
+                  : jdFile
+                    ? 'Remove uploaded file to type manually...'
                     : 'Paste the job description here...'
               }
               className={`min-h-[160px] ${
@@ -227,15 +235,21 @@ export function AtsSetup({
               <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none flex items-center justify-center" />
             )}
           </div>
- 
+
           <div className="flex items-center gap-3 h-10">
             <label
               htmlFor="jd-file-upload"
               className={`inline-flex items-center gap-2 px-5 h-full bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all uppercase tracking-wider ${
-                jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : 'hover:text-foreground hover:border-primary/30 cursor-pointer active:scale-[0.98]'
+                jdFile || isExtractingJd
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:text-foreground hover:border-primary/30 cursor-pointer active:scale-[0.98]'
               }`}
             >
-              {isExtractingJd ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CloudUpload className="w-3.5 h-3.5" />}
+              {isExtractingJd ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <CloudUpload className="w-3.5 h-3.5" />
+              )}
               {isExtractingJd ? 'Extracting...' : 'Upload JD File'}
             </label>
             <input
@@ -248,9 +262,7 @@ export function AtsSetup({
             />
             {jdFile && (
               <div className="bg-card border border-border/50 rounded-full px-4 h-full flex items-center gap-3 shadow-sm max-w-[200px]">
-                <p className="font-bold text-foreground text-[10px] truncate">
-                  {jdFile.name}
-                </p>
+                <p className="font-bold text-foreground text-[10px] truncate">{jdFile.name}</p>
                 <button
                   onClick={handleClearJdFile}
                   className="text-muted-foreground hover:text-destructive transition-colors"
@@ -261,7 +273,7 @@ export function AtsSetup({
             )}
           </div>
         </div>
- 
+
         {/* Analyze Button */}
         <div className="flex flex-col gap-3 pt-2">
           <Button
@@ -272,7 +284,7 @@ export function AtsSetup({
           >
             {isAnalyzing ? 'Analyzing...' : 'Analyze Resume'}
           </Button>
- 
+
           {hasExistingReport && (
             <Button
               variant="ghost"
@@ -284,22 +296,22 @@ export function AtsSetup({
           )}
         </div>
       </motion.div>
- 
+
       <ResumeSelectionModal
         isOpen={isSelectModalOpen}
         onClose={() => setIsSelectModalOpen(false)}
         onSelect={handleSelectResume}
       />
- 
+
       <AILoadingModal
         isOpen={isAnalyzing || isExtractingJd}
         onCancel={onCancel}
         message={
-          isExtractingJd 
-            ? "Extracting job description content with AI..." 
-            : "Analyzing your resume against the JD..."
+          isExtractingJd
+            ? 'Extracting job description content with AI...'
+            : 'Analyzing your resume against the JD...'
         }
-        title={isExtractingJd ? "JD Extractor" : "ATS Analysis"}
+        title={isExtractingJd ? 'JD Extractor' : 'ATS Analysis'}
       />
     </>
   );

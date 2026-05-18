@@ -30,8 +30,7 @@ export const formatItemContent = (id: string, item: any): string => {
 
   // Awards / Certifications / Publications
   if (item.title) parts.push(`${item.title}`);
-  if (item.name && (id === 'certifications' || id === 'publications'))
-    parts.push(`${item.name}`);
+  if (item.name && (id === 'certifications' || id === 'publications')) parts.push(`${item.name}`);
   if (item.issuer || item.publisher || item.awarder)
     parts.push(item.issuer || item.publisher || item.awarder);
 
@@ -42,13 +41,11 @@ export const formatItemContent = (id: string, item: any): string => {
   if (item.summary) parts.push(stripHtml(item.summary));
   if (item.description) parts.push(stripHtml(item.description));
 
-
   // Experience Roles (nested)
   if (item.roles && Array.isArray(item.roles)) {
     item.roles.forEach((role: any) => {
       if (role.position) parts.push(`- ${role.position}`);
       if (role.description) parts.push(stripHtml(role.description));
-
     });
   }
 
@@ -84,7 +81,6 @@ export const formatSectionContent = (id: string, content: any): string => {
   if (id === 'summary') {
     return stripHtml(content.content || content || '');
   }
-
 
   // Handle section items (Experience, Education, Projects, etc.)
   if (content.items && Array.isArray(content.items)) {

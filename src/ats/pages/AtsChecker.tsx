@@ -2,7 +2,6 @@
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { AtsResultsMain } from '@/ats/components/AtsResultsMain';
 import { AtsResultsSidebar } from '@/ats/components/AtsResultsSidebar';
@@ -10,12 +9,13 @@ import { AtsSetup } from '@/ats/components/AtsSetup';
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
 import { AILoader } from '@/shared/components/ui/AILoader';
 import { Button } from '@/shared/components/ui/button';
+import { useToast } from '@/shared/hooks/use-toast';
 import { analyzeResumeAts, analyzeResumeJsonAts } from '@/shared/lib/atsApi';
 import { supabase } from '@/shared/lib/supabase';
-import { useAuthStore } from '@/shared/stores/authStore';
-import { useAtsStore } from '@/shared/stores/atsStore';
-import { useResumeStore } from '@/shared/stores/resumeStore';
 import { cn, sanitizeResumeData } from '@/shared/lib/utils';
+import { useAtsStore } from '@/shared/stores/atsStore';
+import { useAuthStore } from '@/shared/stores/authStore';
+import { useResumeStore } from '@/shared/stores/resumeStore';
 import { AtsReport } from '@/shared/types/ats';
 import { ResumeData } from '@/shared/types/resume';
 
@@ -44,7 +44,7 @@ export default function AtsChecker() {
   const setResumeData = useResumeStore((state) => state.setResumeData);
   const user = useAuthStore((state) => state.user);
   const [phase, setPhase] = useState<'setup' | 'results'>(
-    searchParams.get('view') === 'true' ? 'results' : 'setup'
+    searchParams.get('view') === 'true' ? 'results' : 'setup',
   );
   const [existingReport, setExistingReport] = useState<AtsReport | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -74,8 +74,8 @@ export default function AtsChecker() {
           .eq('user_id', user.id);
 
         const newSignature = getResumeContentSignature(resumeData);
-        const duplicate = existingResumes?.find(r => 
-          getResumeContentSignature(r.data) === newSignature
+        const duplicate = existingResumes?.find(
+          (r) => getResumeContentSignature(r.data) === newSignature,
         );
 
         if (duplicate) {
@@ -83,10 +83,10 @@ export default function AtsChecker() {
           setResumeId(duplicate.id, duplicate.name);
         } else {
           // Save as a new resume
-          const resumeName = resumeData.basics.name 
-            ? `${resumeData.basics.name}'s Resume` 
+          const resumeName = resumeData.basics.name
+            ? `${resumeData.basics.name}'s Resume`
             : `Resume ${new Date().toLocaleDateString()}`;
-          
+
           const { data: newResume, error: resumeError } = await supabase
             .from('resumes')
             .insert({
@@ -121,7 +121,7 @@ export default function AtsChecker() {
         .single();
 
       if (reportError) throw reportError;
-      
+
       if (savedReport) {
         setReport(reportData, savedReport.id);
       }
@@ -133,36 +133,39 @@ export default function AtsChecker() {
     }
   };
 
-  const checkExistingReport = useCallback(async (id: string, autoLoad = false) => {
-    try {
-      const { data, error } = await supabase
-        .from('ats_reports')
-        .select('id, data')
-        .eq('resume_id', id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+  const checkExistingReport = useCallback(
+    async (id: string, autoLoad = false) => {
+      try {
+        const { data, error } = await supabase
+          .from('ats_reports')
+          .select('id, data')
+          .eq('resume_id', id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+        if (error && error.code !== 'PGRST116') throw error;
 
-      if (data) {
-        const reportData = data.data as AtsReport;
-        setExistingReport(reportData);
-        
-        if (autoLoad) {
-          setReport(reportData, data.id);
-          setPhase('results');
+        if (data) {
+          const reportData = data.data as AtsReport;
+          setExistingReport(reportData);
+
+          if (autoLoad) {
+            setReport(reportData, data.id);
+            setPhase('results');
+          }
         }
+      } catch (err) {
+        console.error('Error checking existing report:', err);
       }
-    } catch (err) {
-      console.error('Error checking existing report:', err);
-    }
-  }, [setReport]);
+    },
+    [setReport],
+  );
 
   // Clear the form and handle parameters whenever the user navigates to the ATS page
   useEffect(() => {
     reset();
-    
+
     if (resumeIdParam) {
       // Fetch the resume name if it's not already in the store
       const fetchResumeName = async () => {
@@ -171,14 +174,14 @@ export default function AtsChecker() {
           .select('name')
           .eq('id', resumeIdParam)
           .single();
-        
+
         if (data?.name) {
           setResumeId(resumeIdParam, data.name);
         } else {
           setResumeId(resumeIdParam);
         }
       };
-      
+
       fetchResumeName();
       checkExistingReport(resumeIdParam, viewParam === 'true');
     }
@@ -194,7 +197,7 @@ export default function AtsChecker() {
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
-        
+
       setReport(existingReport, data?.id);
       setPhase('results');
     }
@@ -247,10 +250,9 @@ export default function AtsChecker() {
     setStatus('idle');
   }, [setStatus]);
 
-
   const handleReset = useCallback(() => {
     abortControllerRef.current?.abort();
-    
+
     if (viewParam === 'true') {
       // If we came from the reports list, go back there
       navigate(-1);
@@ -285,7 +287,7 @@ export default function AtsChecker() {
         .single();
 
       if (error) throw error;
-      
+
       if (savedReport) {
         setReport(report, savedReport.id);
       }
@@ -317,9 +319,7 @@ export default function AtsChecker() {
 
   return (
     <DashboardLayout fullWidth={phase === 'results'}>
-      <div className={cn("flex flex-col w-full relative", phase === 'results' && "h-full")}>
-
-
+      <div className={cn('flex flex-col w-full relative', phase === 'results' && 'h-full')}>
         <AnimatePresence mode="wait">
           {phase === 'setup' ? (
             <motion.div
@@ -340,13 +340,13 @@ export default function AtsChecker() {
                   <span className="text-sm font-semibold">Back</span>
                 </Button>
               </div>
-                <AtsSetup
-                  onAnalyze={handleAnalyze}
-                  onCancel={handleCancel}
-                  isAnalyzing={status === 'analyzing'}
-                  hasExistingReport={!!existingReport}
-                  onViewExistingReport={loadExistingReport}
-                />
+              <AtsSetup
+                onAnalyze={handleAnalyze}
+                onCancel={handleCancel}
+                isAnalyzing={status === 'analyzing'}
+                hasExistingReport={!!existingReport}
+                onViewExistingReport={loadExistingReport}
+              />
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -358,39 +358,37 @@ export default function AtsChecker() {
                 </motion.div>
               )}
             </motion.div>
-          ) : (
-            report ? (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35 }}
-                className="flex-1 flex flex-col min-h-[600px]"
-              >
-                {/* Two-column body: left fixed, right scrolls */}
-                <div className="flex-1 flex min-h-0 overflow-hidden">
-                  {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
-                  <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
-                    <AtsResultsSidebar report={report} onBack={handleReset} />
-                  </div>
-
-                  {/* RIGHT MAIN — 70%, scrollable */}
-                  <div className="flex-1 overflow-y-auto">
-                    <AtsResultsMain 
-                      report={report} 
-                      onGoToBuilder={handleGoToBuilder}
-                      onSaveReport={handleSaveReport}
-                      isSaving={isSaving}
-                    />
-                  </div>
+          ) : report ? (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35 }}
+              className="flex-1 flex flex-col min-h-[600px]"
+            >
+              {/* Two-column body: left fixed, right scrolls */}
+              <div className="flex-1 flex min-h-0 overflow-hidden">
+                {/* LEFT SIDEBAR — 30%, fixed, no scroll */}
+                <div className="w-[30%] shrink-0 border-r border-border/40 overflow-y-auto bg-card/30">
+                  <AtsResultsSidebar report={report} onBack={handleReset} />
                 </div>
-              </motion.div>
-            ) : (
-              <div className="flex-1 flex items-center justify-center h-full min-h-[400px]">
-                <AILoader message="Preparing your analysis report..." size="lg" />
+
+                {/* RIGHT MAIN — 70%, scrollable */}
+                <div className="flex-1 overflow-y-auto">
+                  <AtsResultsMain
+                    report={report}
+                    onGoToBuilder={handleGoToBuilder}
+                    onSaveReport={handleSaveReport}
+                    isSaving={isSaving}
+                  />
+                </div>
               </div>
-            )
+            </motion.div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center h-full min-h-[400px]">
+              <AILoader message="Preparing your analysis report..." size="lg" />
+            </div>
           )}
         </AnimatePresence>
       </div>

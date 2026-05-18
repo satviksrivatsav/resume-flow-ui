@@ -55,4 +55,3 @@ export function EmailChangeModal({ isOpen, onClose, onConfirm, newEmail }: Email
     </AlertDialog>
   );
 }
-

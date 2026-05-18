@@ -1,11 +1,11 @@
 ﻿import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
 import { CreateNewCard, ParseResumeCard, ResumeCard } from '@/dashboard/components/ResumeCard';
 import { Button } from '@/shared/components/ui/button';
+import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { ResumeData } from '@/shared/types/resume';
@@ -94,7 +94,10 @@ export default function Dashboard() {
 
           {isActuallyLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex flex-col bg-muted/10 border border-border/50 rounded-[24px] overflow-hidden">
+                <div
+                  key={i}
+                  className="flex flex-col bg-muted/10 border border-border/50 rounded-[24px] overflow-hidden"
+                >
                   <div className="aspect-[1/1.414] bg-muted/20 m-2 rounded-[18px] animate-pulse" />
                   <div className="p-4 pt-2">
                     <div className="h-4 w-3/4 bg-muted/20 rounded animate-pulse mb-2" />
@@ -108,8 +111,6 @@ export default function Dashboard() {
               ))}
         </div>
       )}
-
-
     </DashboardLayout>
   );
 }

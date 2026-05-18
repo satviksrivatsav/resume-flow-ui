@@ -1,6 +1,6 @@
-﻿import { useState } from 'react';
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { LogOut, UserCircle } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
@@ -16,7 +16,6 @@ import {
 } from '@/shared/components/ui/dropdown-menu';
 import { useSidebar } from '@/shared/components/ui/sidebar-context';
 import { cn } from '@/shared/lib/utils';
-
 import { useAuthStore } from '@/shared/stores/authStore';
 
 export function UserMenu() {

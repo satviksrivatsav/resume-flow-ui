@@ -1,8 +1,8 @@
 ﻿import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
 
-import { Progress } from '@/shared/components/ui/progress';
 import { Button } from '@/shared/components/ui/button';
+import { Progress } from '@/shared/components/ui/progress';
 import { cn } from '@/shared/lib/utils';
 import { AtsReport } from '@/shared/types/ats';
 
@@ -110,10 +110,10 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
       {/* Score wheel */}
       <div className="flex flex-col items-center pt-4 pb-2">
         <ScoreRadialChart score={report.overall_score} grade={gradeLetter} size={220} />
-        <p className="text-[11px] text-muted-foreground mt-4 font-bold uppercase tracking-[0.2em]">ATS Score</p>
+        <p className="text-[11px] text-muted-foreground mt-4 font-bold uppercase tracking-[0.2em]">
+          ATS Score
+        </p>
       </div>
-
-
 
       {/* Section Scores */}
       <div className="rounded-xl border border-border/40 bg-muted/10 p-4">
@@ -176,5 +176,3 @@ export function AtsResultsSidebar({ report, onBack }: AtsResultsSidebarProps) {
     </motion.div>
   );
 }
-
-

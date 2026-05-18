@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { FeaturePreview } from '../FeaturePreview';
-import { describe, it, expect } from 'vitest';
 
 describe('FeaturePreview', () => {
   it('renders correctly for a specific feature', () => {

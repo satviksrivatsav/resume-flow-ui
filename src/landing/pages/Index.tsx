@@ -11,8 +11,9 @@ import {
   NavBody,
   NavItems,
 } from '@/shared/components/ui/resizable-navbar';
-import LandingPage from './LandingPage';
 import { useAuthStore } from '@/shared/stores/authStore';
+
+import LandingPage from './LandingPage';
 
 const Index = () => {
   const { user } = useAuthStore();

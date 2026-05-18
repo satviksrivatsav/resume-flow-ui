@@ -1,6 +1,11 @@
-﻿import { Briefcase, Calendar, ChevronDown, MapPin } from 'lucide-react';
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
+import { Briefcase, Calendar, ChevronDown, MapPin } from 'lucide-react';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
 import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
@@ -8,10 +13,10 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
-import { useResumeStore } from '@/shared/stores/resumeStore';
-import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 import { cn } from '@/shared/lib/utils';
+import { useResumeStore } from '@/shared/stores/resumeStore';
+
+import { SectionListManager } from './shared/SectionListManager';
 
 export const WorkExperienceForm = () => {
   const { resumeData, addItem, updateExperience, deleteExperience } = useResumeStore();
@@ -98,7 +103,12 @@ export const WorkExperienceForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -133,9 +143,7 @@ export const WorkExperienceForm = () => {
                   <div className="relative">
                     <Input
                       value={exp.location}
-                      onChange={(e) =>
-                        updateExperience(exp.id, { location: e.target.value })
-                      }
+                      onChange={(e) => updateExperience(exp.id, { location: e.target.value })}
                       placeholder="e.g. San Francisco, CA"
                       className="pl-9"
                     />
@@ -167,23 +175,19 @@ export const WorkExperienceForm = () => {
                       fieldName="experience"
                       fieldLabel="Work Experience Description"
                       fieldValue={exp.description || ''}
-                      onUpdate={(newText) =>
-                        updateExperience(exp.id, { description: newText })
-                      }
+                      onUpdate={(newText) => updateExperience(exp.id, { description: newText })}
                     />
                   </div>
                   <RichTextEditor
                     value={exp.description || ''}
-                    onChange={(value) =>
-                      updateExperience(exp.id, { description: value })
-                    }
+                    onChange={(value) => updateExperience(exp.id, { description: value })}
                     placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
                     className="min-h-[150px]"
                   />
                   <FieldTip>
-                    Use bullet points and lead with strong action verbs. Quantify impact
-                    where possible — e.g., "Reduced load time by 40%" or "Shipped feature
-                    used by 10k users."
+                    Use bullet points and lead with strong action verbs. Quantify impact where
+                    possible — e.g., "Reduced load time by 40%" or "Shipped feature used by 10k
+                    users."
                   </FieldTip>
                 </div>
               </div>

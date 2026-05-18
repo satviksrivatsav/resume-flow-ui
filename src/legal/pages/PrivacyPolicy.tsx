@@ -1,6 +1,6 @@
-﻿import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/shared/components/ui/button';
@@ -27,7 +27,10 @@ const PrivacyPolicy = () => {
     >
       <div className="container mx-auto max-w-3xl px-6 py-20">
         <Link to="/">
-          <Button variant="ghost" className="mb-16 gap-2 hover:bg-transparent hover:text-primary transition-colors group">
+          <Button
+            variant="ghost"
+            className="mb-16 gap-2 hover:bg-transparent hover:text-primary transition-colors group"
+          >
             <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Button>
@@ -35,9 +38,7 @@ const PrivacyPolicy = () => {
 
         <div className="flex flex-col items-center mb-24">
           <Logo className="w-14 h-14 mb-8" />
-          <h1 className="text-4xl font-bold text-foreground mb-3 tracking-tight">
-            Privacy Policy
-          </h1>
+          <h1 className="text-4xl font-bold text-foreground mb-3 tracking-tight">Privacy Policy</h1>
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 font-bold">
             Last updated: {lastUpdated}
           </p>
@@ -46,7 +47,9 @@ const PrivacyPolicy = () => {
         <div className="divide-y divide-border/30">
           <section className="py-12 first:pt-0">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">01</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                01
+              </span>
               Information We Collect
             </h2>
             <div className="pl-12">
@@ -57,22 +60,27 @@ const PrivacyPolicy = () => {
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">Account Information:</strong> Email address, name, and authentication data
-                    when you create an account or sign in via social providers.
+                    <strong className="text-foreground/90 font-semibold">
+                      Account Information:
+                    </strong>{' '}
+                    Email address, name, and authentication data when you create an account or sign
+                    in via social providers.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">Resume Data:</strong> Personal information, work experience, education,
-                    skills, and other details you enter while building your resume.
+                    <strong className="text-foreground/90 font-semibold">Resume Data:</strong>{' '}
+                    Personal information, work experience, education, skills, and other details you
+                    enter while building your resume.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">Usage Data:</strong> Information about how you interact with our service,
-                    including pages visited and features used.
+                    <strong className="text-foreground/90 font-semibold">Usage Data:</strong>{' '}
+                    Information about how you interact with our service, including pages visited and
+                    features used.
                   </span>
                 </li>
               </ul>
@@ -81,11 +89,15 @@ const PrivacyPolicy = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">02</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                02
+              </span>
               How We Use Your Information
             </h2>
             <div className="pl-12">
-              <p className="text-muted-foreground leading-relaxed mb-4">We use the information we collect to:</p>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                We use the information we collect to:
+              </p>
               <ul className="space-y-3 text-muted-foreground leading-relaxed">
                 <li className="flex gap-3 items-center">
                   <span className="h-1 w-1 rounded-full bg-primary/40" />
@@ -113,44 +125,57 @@ const PrivacyPolicy = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">03</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                03
+              </span>
               Data Storage and Security
             </h2>
             <div className="pl-12">
               <p className="text-muted-foreground leading-relaxed">
                 Your resume data is stored securely in our database. We implement industry-standard
-                security measures to protect your information, including encryption in transit and at
-                rest. Your authentication is handled by Supabase, a trusted authentication provider
-                with enterprise-grade security. When using AI features, your data is securely transmitted 
-                to our custom backend for processing before being sent to third-party AI providers.
+                security measures to protect your information, including encryption in transit and
+                at rest. Your authentication is handled by Supabase, a trusted authentication
+                provider with enterprise-grade security. When using AI features, your data is
+                securely transmitted to our custom backend for processing before being sent to
+                third-party AI providers.
               </p>
             </div>
           </section>
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">04</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                04
+              </span>
               Third-Party Services
             </h2>
             <div className="pl-12">
-              <p className="text-muted-foreground leading-relaxed mb-6">We use the following third-party services:</p>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                We use the following third-party services:
+              </p>
               <ul className="space-y-4 text-muted-foreground leading-relaxed">
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">Supabase:</strong> Authentication, database, and user management.
+                    <strong className="text-foreground/90 font-semibold">Supabase:</strong>{' '}
+                    Authentication, database, and user management.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">AI Service Providers:</strong> Integration with multiple AI models (OpenAI, Gemini, Groq) to power content suggestions and analysis.
+                    <strong className="text-foreground/90 font-semibold">
+                      AI Service Providers:
+                    </strong>{' '}
+                    Integration with multiple AI models (OpenAI, Gemini, Groq) to power content
+                    suggestions and analysis.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
                   <span>
-                    <strong className="text-foreground/90 font-semibold">Social Providers:</strong> Google, GitHub, and LinkedIn for authentication.
+                    <strong className="text-foreground/90 font-semibold">Social Providers:</strong>{' '}
+                    Google, GitHub, and LinkedIn for authentication.
                   </span>
                 </li>
               </ul>
@@ -159,7 +184,9 @@ const PrivacyPolicy = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">05</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                05
+              </span>
               Your Rights
             </h2>
             <div className="pl-12">
@@ -187,21 +214,25 @@ const PrivacyPolicy = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">06</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                06
+              </span>
               Cookies and Local Storage
             </h2>
             <div className="pl-12">
               <p className="text-muted-foreground leading-relaxed">
                 We use local storage and cookies to maintain your session, remember your preferences
-                (like theme settings), and improve your experience. These are essential for the proper
-                functioning of the service.
+                (like theme settings), and improve your experience. These are essential for the
+                proper functioning of the service.
               </p>
             </div>
           </section>
 
           <section className="py-12 last:border-0">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">07</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                07
+              </span>
               Contact Us
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">

@@ -51,7 +51,6 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
 
       {/* Improved - Green toned */}
       <div className="bg-success/5 dark:bg-success/10 p-4 md:p-5 flex flex-col">
-
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-success mt-0.5 shrink-0" />
@@ -78,4 +77,3 @@ export function BulletReviewCard({ review, index }: BulletReviewCardProps) {
     </motion.div>
   );
 }
-

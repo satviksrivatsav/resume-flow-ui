@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef } from 'react';
+
 import { useAuthStore } from '@/shared/stores/authStore';
 
 const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour

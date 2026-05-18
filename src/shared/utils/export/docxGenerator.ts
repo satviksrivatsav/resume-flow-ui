@@ -9,9 +9,9 @@
   TextRun,
 } from 'docx';
 
-import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
+import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
-import { getCountryByCode, cleanPhoneNumber } from '@/shared/lib/countries';
+import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
 
 const renderDescription = (text: string, fontSize: number): Paragraph[] => {
   if (!text) return [];
@@ -115,12 +115,9 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   const localPhone = cleanPhoneNumber(basics.phone, basics.countryCode);
   const formattedPhone = dialCode ? `${dialCode} ${localPhone}` : localPhone;
 
-  const contactInfo = [
-    basics.email,
-    formattedPhone,
-    basics.location,
-    basics.url.href,
-  ].filter((v) => v && v.trim());
+  const contactInfo = [basics.email, formattedPhone, basics.location, basics.url.href].filter(
+    (v) => v && v.trim(),
+  );
 
   const profiles = sections.profiles.items
     .filter((p) => p.visible && (p.network || p.username))
@@ -132,20 +129,22 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        children: allContact.map((item, idx) => [
-          new TextRun({
-            text: item,
-            size: (sizes.base - 1) * 2,
-          }),
-          ...(idx < allContact.length - 1
-            ? [
-                new TextRun({
-                  text: '  |  ',
-                  size: (sizes.base - 1) * 2,
-                }),
-              ]
-            : []),
-        ]).flat(),
+        children: allContact
+          .map((item, idx) => [
+            new TextRun({
+              text: item,
+              size: (sizes.base - 1) * 2,
+            }),
+            ...(idx < allContact.length - 1
+              ? [
+                  new TextRun({
+                    text: '  |  ',
+                    size: (sizes.base - 1) * 2,
+                  }),
+                ]
+              : []),
+          ])
+          .flat(),
         spacing: { after: 320 },
       }),
     );
@@ -221,7 +220,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
       if (hasContent(exp.description)) {
         children.push(...renderDescription(exp.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -239,9 +238,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         new Paragraph({
           children: [
             new TextRun({ text: edu.degree || 'Degree', bold: true, size: sizes.base * 2 }),
-            ...(edu.area
-              ? [new TextRun({ text: ` in ${edu.area}`, size: sizes.base * 2 })]
-              : []),
+            ...(edu.area ? [new TextRun({ text: ` in ${edu.area}`, size: sizes.base * 2 })] : []),
             new TextRun({ text: `\t${edu.period}`, size: sizes.base * 2 }),
           ],
           tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
@@ -261,11 +258,10 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
       if (hasContent(edu.description)) {
         children.push(...renderDescription(edu.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
-
 
   const renderProjects = () => {
     const visibleItems = sections.projects.items.filter(
@@ -315,7 +311,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           }),
         );
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -332,11 +328,16 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
       children.push(
         new Paragraph({
           children: [
-            new TextRun({ text: `${skill.name || 'Category'}: `, bold: true, size: sizes.base * 2 }),
             new TextRun({
-              text: skill.keywords && skill.keywords.length > 0
-                ? skill.keywords.join(', ')
-                : stripHtml(skill.description || ''),
+              text: `${skill.name || 'Category'}: `,
+              bold: true,
+              size: sizes.base * 2,
+            }),
+            new TextRun({
+              text:
+                skill.keywords && skill.keywords.length > 0
+                  ? skill.keywords.join(', ')
+                  : stripHtml(skill.description || ''),
               size: sizes.base * 2,
             }),
           ],
@@ -357,7 +358,11 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         new Paragraph({
           children: [
             new TextRun({ text: lang.name, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${lang.description}`, size: (sizes.base - 1) * 2, color: '666666' }),
+            new TextRun({
+              text: `\t${lang.description}`,
+              size: (sizes.base - 1) * 2,
+              color: '666666',
+            }),
           ],
           tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
           spacing: { after: 80 },
@@ -403,16 +408,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: award.awarder, size: sizes.base * 2 }),
-          ],
+          children: [new TextRun({ text: award.awarder, size: sizes.base * 2 })],
         }),
       );
 
       if (hasContent(award.description)) {
         children.push(...renderDescription(award.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -438,16 +441,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: cert.issuer, size: sizes.base * 2 }),
-          ],
+          children: [new TextRun({ text: cert.issuer, size: sizes.base * 2 })],
         }),
       );
 
       if (hasContent(cert.description)) {
         children.push(...renderDescription(cert.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -473,16 +474,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: vol.organization, size: sizes.base * 2 }),
-          ],
+          children: [new TextRun({ text: vol.organization, size: sizes.base * 2 })],
         }),
       );
 
       if (hasContent(vol.description)) {
         children.push(...renderDescription(vol.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -508,16 +507,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: pub.publisher, size: sizes.base * 2 }),
-          ],
+          children: [new TextRun({ text: pub.publisher, size: sizes.base * 2 })],
         }),
       );
 
       if (hasContent(pub.description)) {
         children.push(...renderDescription(pub.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   };
@@ -588,16 +585,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((item: any) => {
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: item.title, bold: true, size: sizes.base * 2 }),
-          ],
+          children: [new TextRun({ text: item.title, bold: true, size: sizes.base * 2 })],
         }),
       );
 
       if (hasContent(item.description)) {
         children.push(...renderDescription(item.description, sizes.base));
       }
-      
+
       children.push(new Paragraph({ spacing: { after: 200 } }));
     });
   });
@@ -622,5 +617,3 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
   return await Packer.toBlob(doc);
 };
-
-

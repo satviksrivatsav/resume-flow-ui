@@ -12,7 +12,6 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { Topbar } from '@/shared/components/layout/Topbar';
 import { AwardsForm } from '@/resume/components/AwardsForm';
 import { CertificationsForm } from '@/resume/components/CertificationsForm';
 import { CustomSectionForm } from '@/resume/components/CustomSectionForm';
@@ -33,6 +32,7 @@ import { TailorForm } from '@/resume/components/TailorForm';
 import { UnsavedChangesModal } from '@/resume/components/UnsavedChangesModal';
 import { VolunteerForm } from '@/resume/components/VolunteerForm';
 import { WorkExperienceForm } from '@/resume/components/WorkExperienceForm';
+import { Topbar } from '@/shared/components/layout/Topbar';
 import { AIInstructionModal } from '@/shared/components/ui/AIInstructionModal';
 import { AILoadingModal } from '@/shared/components/ui/AILoadingModal';
 import { AIReviewModal } from '@/shared/components/ui/AIReviewModal';

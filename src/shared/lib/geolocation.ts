@@ -266,4 +266,3 @@ export const initializeCountryCode = async (): Promise<string> => {
 export const getCachedCountryCode = (): string => {
   return localStorage.getItem('rf_user_country_code') || 'US';
 };
-

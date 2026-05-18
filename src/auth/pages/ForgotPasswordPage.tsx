@@ -3,14 +3,14 @@ import { ArrowLeft, Loader2, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Logo } from '@/shared/components/ui/Logo';
 import { PageTransition } from '@/shared/components/layout/PageTransition';
-import { Button } from '@/shared/components/ui/button';
 import { HeartbeatPulseBackground } from '@/shared/components/ui/backgrounds';
+import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
-import { useAuthStore } from '@/shared/stores/authStore';
+import { Logo } from '@/shared/components/ui/Logo';
 import { useToast } from '@/shared/hooks/use-toast';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();

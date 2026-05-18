@@ -281,9 +281,7 @@ export const NavbarLogo = ({ visible }: { visible?: boolean }) => {
     <a href="/" className="relative z-20 flex items-center space-x-4 group">
       <Logo
         variant={visible ? 'auto' : 'light'}
-        className={cn(
-          'w-10 h-10 transition-transform duration-300 group-hover:scale-105',
-        )}
+        className={cn('w-10 h-10 transition-transform duration-300 group-hover:scale-105')}
       />
       <span
         className={cn(

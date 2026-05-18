@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { Logo } from '@/shared/components/ui/Logo';
 import { HeartbeatPulseBackground } from '@/shared/components/ui/backgrounds';
+import { Logo } from '@/shared/components/ui/Logo';
 import { useAuthStore } from '@/shared/stores/authStore';
 
 export default function AuthLayout() {

@@ -1,4 +1,5 @@
 ﻿import { motion } from 'framer-motion';
+
 import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Checkbox } from '@/shared/components/ui/checkbox';
@@ -133,4 +134,3 @@ export const AdditionalSectionForm = () => {
     </motion.div>
   );
 };
-

@@ -1,6 +1,6 @@
-﻿import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/shared/components/ui/button';
@@ -27,7 +27,10 @@ const TermsOfService = () => {
     >
       <div className="container mx-auto max-w-3xl px-6 py-20">
         <Link to="/">
-          <Button variant="ghost" className="mb-16 gap-2 hover:bg-transparent hover:text-primary transition-colors group">
+          <Button
+            variant="ghost"
+            className="mb-16 gap-2 hover:bg-transparent hover:text-primary transition-colors group"
+          >
             <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Button>
@@ -46,7 +49,9 @@ const TermsOfService = () => {
         <div className="divide-y divide-border/30">
           <section className="py-12 first:pt-0">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">01</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                01
+              </span>
               Acceptance of Terms
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
@@ -59,24 +64,30 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">02</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                02
+              </span>
               Description of Service
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
               Resume Flow is an AI-powered resume building platform that allows users to create,
-              edit, tailor to job descriptions, analyze ATS compatibility, and export professional resumes. The Service includes features such as resume
-              templates, AI-assisted content generation, PDF export, and cloud storage of resume
-              data.
+              edit, tailor to job descriptions, analyze ATS compatibility, and export professional
+              resumes. The Service includes features such as resume templates, AI-assisted content
+              generation, PDF export, and cloud storage of resume data.
             </div>
           </section>
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">03</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                03
+              </span>
               User Accounts
             </h2>
             <div className="pl-12">
-              <p className="text-muted-foreground leading-relaxed mb-4">To use certain features of the Service, you must:</p>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                To use certain features of the Service, you must:
+              </p>
               <ul className="space-y-3 text-muted-foreground leading-relaxed">
                 <li className="flex gap-3 items-center">
                   <span className="h-1 w-1 rounded-full bg-primary/40" />
@@ -100,7 +111,9 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">04</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                04
+              </span>
               User Content
             </h2>
             <div className="pl-12">
@@ -115,7 +128,10 @@ const TermsOfService = () => {
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
-                  <span>Transmit your content to our backend and third-party AI providers to generate suggestions</span>
+                  <span>
+                    Transmit your content to our backend and third-party AI providers to generate
+                    suggestions
+                  </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
@@ -127,7 +143,9 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">05</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                05
+              </span>
               Acceptable Use
             </h2>
             <div className="pl-12">
@@ -151,19 +169,25 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">06</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                06
+              </span>
               AI-Generated Content
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
-              The Service utilizes various artificial intelligence models (such as OpenAI, Google Gemini, and Groq) via our backend systems to process your inputs and generate content suggestions, tailoring, and ATS feedback. While we
-              strive for accuracy, AI-generated content may contain errors or inaccuracies. You are
-              responsible for reviewing and verifying all AI-generated suggestions.
+              The Service utilizes various artificial intelligence models (such as OpenAI, Google
+              Gemini, and Groq) via our backend systems to process your inputs and generate content
+              suggestions, tailoring, and ATS feedback. While we strive for accuracy, AI-generated
+              content may contain errors or inaccuracies. You are responsible for reviewing and
+              verifying all AI-generated suggestions.
             </div>
           </section>
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">07</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                07
+              </span>
               Intellectual Property
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
@@ -176,19 +200,23 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">08</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                08
+              </span>
               Disclaimer of Warranties
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
-              THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE
-              DO NOT GUARANTEE THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. YOUR
-              USE OF THE SERVICE IS AT YOUR OWN RISK.
+              THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE DO NOT GUARANTEE
+              THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. YOUR USE OF THE SERVICE
+              IS AT YOUR OWN RISK.
             </div>
           </section>
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">09</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                09
+              </span>
               Limitation of Liability
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
@@ -200,19 +228,23 @@ const TermsOfService = () => {
 
           <section className="py-12">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">10</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                10
+              </span>
               Termination
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
               We reserve the right to suspend or terminate your access to the Service at any time
-              for violation of these Terms. You may also delete your account at any time
-              through your account settings.
+              for violation of these Terms. You may also delete your account at any time through
+              your account settings.
             </div>
           </section>
 
           <section className="py-12 last:border-0">
             <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-4">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">11</span>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/5 text-primary text-[10px] font-black border border-primary/10">
+                11
+              </span>
               Contact
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">

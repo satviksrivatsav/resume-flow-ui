@@ -2,9 +2,10 @@
  * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { WorkExperienceForm } from '../WorkExperienceForm';
-import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
+import { describe, expect, it, vi } from 'vitest';
+
+import { WorkExperienceForm } from '../WorkExperienceForm';
 
 // Mock the store
 vi.mock('@/shared/stores/resumeStore', () => ({
@@ -43,7 +44,7 @@ vi.mock('@/shared/components/ui/RichTextEditor', () => ({
 describe('WorkExperienceForm', () => {
   it('renders correctly with items', () => {
     render(<WorkExperienceForm />);
-    
+
     expect(screen.getByText('Test Position')).toBeDefined();
     expect(screen.getByText('Test Company')).toBeDefined();
   });

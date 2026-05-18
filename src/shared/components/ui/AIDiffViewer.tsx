@@ -1,6 +1,6 @@
-﻿import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Info } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+﻿import { AnimatePresence, motion } from 'framer-motion';
+import { Info, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/utils';
@@ -71,7 +71,6 @@ interface AIDiffViewerProps {
   isDiffMode?: boolean;
 }
 
-
 export function AIDiffViewer({
   title,
   description,
@@ -88,7 +87,6 @@ export function AIDiffViewer({
   infoTip,
   isDiffMode = true,
 }: AIDiffViewerProps) {
-
   const [rejectHovered, setRejectHovered] = useState(false);
   const [acceptHovered, setAcceptHovered] = useState(false);
   const [localText, setLocalText] = useState(typeof newText === 'string' ? newText : '');
@@ -123,9 +121,7 @@ export function AIDiffViewer({
           {infoTip && (
             <div className="flex items-center gap-1.5 opacity-60">
               <Info className="w-3.5 h-3.5 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground font-medium italic">
-                {infoTip}
-              </p>
+              <p className="text-xs text-muted-foreground font-medium italic">{infoTip}</p>
             </div>
           )}
         </div>
@@ -170,11 +166,12 @@ export function AIDiffViewer({
         </div>
       </div>
 
-      <div className={cn(
-        "flex-1 grid grid-cols-1 h-[500px] md:h-[600px] max-h-[60vh] overflow-hidden",
-        isDiffMode ? "lg:grid-cols-2 divide-x divide-primary/10" : "lg:grid-cols-1"
-      )}>
-
+      <div
+        className={cn(
+          'flex-1 grid grid-cols-1 h-[500px] md:h-[600px] max-h-[60vh] overflow-hidden',
+          isDiffMode ? 'lg:grid-cols-2 divide-x divide-primary/10' : 'lg:grid-cols-1',
+        )}
+      >
         {/* Original Text */}
         {isDiffMode && (
           <div className="flex flex-col relative group/original overflow-y-auto custom-scrollbar min-h-0">
@@ -183,15 +180,16 @@ export function AIDiffViewer({
                 Original
               </span>
             </div>
-            <div className={cn(
-              "flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-muted-foreground/80",
-              typeof originalText === 'string' && "whitespace-pre-wrap"
-            )}>
+            <div
+              className={cn(
+                'flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-muted-foreground/80',
+                typeof originalText === 'string' && 'whitespace-pre-wrap',
+              )}
+            >
               {originalText || <span className="italic opacity-50">No original content</span>}
             </div>
           </div>
         )}
-
 
         {/* Tailored Text */}
         <div className="flex flex-col relative bg-primary/[0.02] group/tailored overflow-y-auto custom-scrollbar min-h-0">
@@ -201,8 +199,6 @@ export function AIDiffViewer({
               <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-primary">
                 {isDiffMode ? 'Refined' : 'Proposed'}
               </span>
-
-
               <div className="min-w-[40px] flex justify-end">
                 {isEditable && !isEditing && (
                   <button
@@ -215,12 +211,12 @@ export function AIDiffViewer({
               </div>
             </div>
           </div>
-          <div className={cn(
-            "flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-foreground font-normal",
-            typeof newText === 'string' && "whitespace-pre-wrap"
-          )}>
-
-
+          <div
+            className={cn(
+              'flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-foreground font-normal',
+              typeof newText === 'string' && 'whitespace-pre-wrap',
+            )}
+          >
             {isEditable && isEditing ? (
               <div className="flex flex-col gap-2">
                 <textarea
@@ -243,7 +239,6 @@ export function AIDiffViewer({
         </div>
       </div>
 
-
       {footer && (
         <div className="px-8 py-5 border-t border-primary/10 bg-card/50 flex flex-col gap-3">
           {footer}
@@ -252,5 +247,3 @@ export function AIDiffViewer({
     </div>
   );
 }
-
-

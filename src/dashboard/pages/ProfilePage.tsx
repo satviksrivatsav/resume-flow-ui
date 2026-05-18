@@ -1,11 +1,11 @@
 ﻿import { useEffect, useState } from 'react';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
 import { EmailChangeModal } from '@/dashboard/components/EmailChangeModal';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { useToast } from '@/shared/hooks/use-toast';
 import { useAuthStore } from '@/shared/stores/authStore';
 
 export default function ProfilePage() {
@@ -154,9 +154,8 @@ export default function ProfilePage() {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
                     Pro
                   </span>
-                  ) : (
+                ) : (
                   <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
-
                     Unverified
                   </span>
                 )

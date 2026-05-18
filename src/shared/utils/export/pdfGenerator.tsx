@@ -16,10 +16,9 @@ import {
 } from '@react-pdf/renderer';
 import React from 'react';
 
-import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
+import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
-import { getCountryByCode, cleanPhoneNumber } from '@/shared/lib/countries';
-
+import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
 
 interface PDFGeneratorProps {
   resumeData: ResumeData;
@@ -95,8 +94,6 @@ const WebsiteIcon = () => (
     />
   </Svg>
 );
-
-
 
 const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any }) => {
   if (!text) return null;
@@ -360,7 +357,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               <Text style={styles.itemDate}>{edu.period}</Text>
             </View>
             <View style={{ color: '#000', marginBottom: 2 }}>
-              <Text>{edu.school}{edu.grade && ` • ${edu.grade}`}</Text>
+              <Text>
+                {edu.school}
+                {edu.grade && ` • ${edu.grade}`}
+              </Text>
             </View>
             {hasContent(edu.description) && (
               <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
@@ -370,7 +370,6 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       </View>
     );
   };
-
 
   const renderProjects = () => {
     const visibleItems = sections.projects.items.filter(
@@ -398,9 +397,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
             )}
             {proj.keywords && proj.keywords.length > 0 && (
-              <Text style={styles.itemSubtitle}>
-                Technologies: {proj.keywords.join(', ')}
-              </Text>
+              <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>
             )}
           </View>
         ))}
@@ -450,9 +447,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
             style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}
           >
             <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>
-              {lang.description}
-            </Text>
+            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
           </View>
         ))}
       </View>
@@ -470,11 +465,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
         </View>
         <Text style={styles.itemDescription}>
           {visibleItems
-            .map(
-              (i) =>
-                i.name +
-                (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''),
-            )
+            .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
             .join(', ')}
         </Text>
       </View>
@@ -643,14 +634,17 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
         {/* Header — always first */}
         <View style={styles.header}>
           <Text style={styles.name}>{basics.name || 'Your Name'}</Text>
-          {basics.headline && (
-            <Text style={styles.headline}>{basics.headline}</Text>
-          )}
+          {basics.headline && <Text style={styles.headline}>{basics.headline}</Text>}
           <View style={styles.contactRow}>
             {contactInfo.map((item, index) => (
               <View
                 key={index}
-                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 12,
+                  maxWidth: '100%',
+                }}
               >
                 <item.Icon />
                 <Text style={styles.contactItem}>{item.value}</Text>
@@ -661,7 +655,12 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               .map((profile, index) => (
                 <View
                   key={index}
-                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginRight: 12,
+                    maxWidth: '100%',
+                  }}
                 >
                   {profile.website?.href ? (
                     <Link src={profile.website.href} style={styles.contactItem}>

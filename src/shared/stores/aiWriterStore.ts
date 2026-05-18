@@ -14,7 +14,6 @@ interface AIWriterState {
   showInstructionModal: boolean;
   showReviewModal: boolean;
 
-
   // Internal: tracks the in-flight request so it can be aborted
   _abortController: AbortController | null;
 
@@ -42,7 +41,6 @@ interface AIWriterState {
   cancelRequest: () => void;
   setNewText: (text: string) => void;
 }
-
 
 const initialState = {
   isLoading: false,
@@ -76,7 +74,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       onAccept,
     });
   },
-
 
   closeInstructionModal: () => {
     set({ ...initialState });
@@ -117,7 +114,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
       _abortController: abortController,
     });
 
-
     try {
       const request: AIFieldRequest = {
         action: currentAction,
@@ -128,7 +124,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         format: params.format as AIFieldRequest['format'],
         fullResumeData: get().fullResumeData,
       };
-
 
       console.log('\n>>> SENDING TO API:');
       console.log(JSON.stringify(request, null, 2));
@@ -147,7 +142,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         showReviewModal: true,
         _abortController: null,
       });
-
     } catch (error: unknown) {
       clearTimeout(timeoutId);
 
@@ -181,7 +175,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         showReviewModal: true,
         _abortController: null,
       });
-
     }
   },
 
@@ -202,4 +195,3 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
     set({ newText: text });
   },
 }));
-

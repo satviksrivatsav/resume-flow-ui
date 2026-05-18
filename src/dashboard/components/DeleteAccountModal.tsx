@@ -1,4 +1,5 @@
 ﻿import { motion } from 'framer-motion';
+
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 
@@ -25,7 +26,7 @@ export function DeleteAccountModal({ isOpen, onClose, onConfirm }: DeleteAccount
           whileTap="tap"
           variants={{
             hover: { scale: 1.05 },
-            tap: { scale: 0.95 }
+            tap: { scale: 0.95 },
           }}
         >
           <TrashAnimatedIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />

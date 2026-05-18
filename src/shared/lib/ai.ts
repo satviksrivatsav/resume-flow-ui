@@ -12,7 +12,6 @@ export interface AIFieldRequest {
   fullResumeData?: any;
 }
 
-
 export interface AIFieldResponse {
   id: string;
   newText: string;

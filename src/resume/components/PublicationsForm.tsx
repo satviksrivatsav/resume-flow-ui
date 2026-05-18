@@ -1,7 +1,12 @@
 ﻿import { motion } from 'framer-motion';
 import { BookOpen, Calendar, ChevronDown, Link as LinkIcon } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -9,8 +14,8 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const PublicationsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -87,7 +92,12 @@ export const PublicationsForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -101,9 +111,7 @@ export const PublicationsForm = () => {
                   </Label>
                   <Input
                     value={pub.name}
-                    onChange={(e) =>
-                      updateItem('publications', pub.id, { name: e.target.value })
-                    }
+                    onChange={(e) => updateItem('publications', pub.id, { name: e.target.value })}
                     placeholder="e.g. Exploring AI in Modern Web Apps"
                   />
                 </div>
@@ -126,9 +134,7 @@ export const PublicationsForm = () => {
                   <div className="relative">
                     <Input
                       value={pub.date}
-                      onChange={(e) =>
-                        updateItem('publications', pub.id, { date: e.target.value })
-                      }
+                      onChange={(e) => updateItem('publications', pub.id, { date: e.target.value })}
                       placeholder="e.g. 2023-01"
                       className="pl-9"
                     />
@@ -167,9 +173,7 @@ export const PublicationsForm = () => {
                   </div>
                   <RichTextEditor
                     value={pub.description || ''}
-                    onChange={(value) =>
-                      updateItem('publications', pub.id, { description: value })
-                    }
+                    onChange={(value) => updateItem('publications', pub.id, { description: value })}
                     placeholder="Briefly explain the publication's topic or impact."
                     className="min-h-[100px]"
                   />
@@ -182,4 +186,3 @@ export const PublicationsForm = () => {
     </motion.div>
   );
 };
-

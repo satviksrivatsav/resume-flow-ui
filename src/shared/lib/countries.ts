@@ -261,7 +261,7 @@ export const getCountryByDialCode = (dialCode: string): CountryData | undefined 
 
 export const cleanPhoneNumber = (phone: string, countryCode?: string): string => {
   if (!phone) return '';
-  
+
   // Normalize by removing spaces, dashes, and parentheses for matching
   const normalizedPhone = phone.replace(/[\s\-\(\)]/g, '');
 
@@ -288,12 +288,15 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
           }
         }
         if (matched === dialCodeClean.length) {
-          return phone.slice(index).trim().replace(/^[\s\-\(\)\.]+/, '');
+          return phone
+            .slice(index)
+            .trim()
+            .replace(/^[\s\-\(\)\.]+/, '');
         }
       }
     }
   }
-  
+
   // Otherwise, try to find ANY matching dial code at the start
   const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
   for (const country of sortedCountries) {
@@ -314,10 +317,13 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
         }
       }
       if (matched === dialCodeClean.length) {
-        return phone.slice(index).trim().replace(/^[\s\-\(\)\.]+/, '');
+        return phone
+          .slice(index)
+          .trim()
+          .replace(/^[\s\-\(\)\.]+/, '');
       }
     }
   }
-  
+
   return phone.trim();
 };

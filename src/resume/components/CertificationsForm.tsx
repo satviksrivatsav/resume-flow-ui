@@ -1,7 +1,12 @@
 ﻿import { motion } from 'framer-motion';
 import { Award, Calendar, ChevronDown, Link as LinkIcon } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -9,8 +14,8 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const CertificationsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -87,7 +92,12 @@ export const CertificationsForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -182,4 +192,3 @@ export const CertificationsForm = () => {
     </motion.div>
   );
 };
-

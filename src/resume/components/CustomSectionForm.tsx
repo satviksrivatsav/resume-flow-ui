@@ -1,17 +1,22 @@
 ﻿import { motion } from 'framer-motion';
 import { ChevronDown, Plus } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
-import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 import { useUiStore } from '@/shared/stores/uiStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const CustomSectionForm = () => {
   const { resumeData, updateCustomSection } = useResumeStore();
@@ -135,9 +140,7 @@ export const CustomSectionForm = () => {
                       fieldName="custom"
                       fieldLabel={section.name}
                       fieldValue={item.description || ''}
-                      onUpdate={(newText) =>
-                        handleUpdateItem(item.id, { description: newText })
-                      }
+                      onUpdate={(newText) => handleUpdateItem(item.id, { description: newText })}
                     />
                   </div>
                   <RichTextEditor
@@ -155,5 +158,3 @@ export const CustomSectionForm = () => {
     </motion.div>
   );
 };
-
-

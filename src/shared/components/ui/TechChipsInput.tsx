@@ -50,7 +50,6 @@ export const TechChipsInput: React.FC<TechChipsInputProps> = ({
         <Label>
           {label}
           {required && <span className="text-destructive ml-1">*</span>}
-
         </Label>
       )}
       <div className={containerClassName}>

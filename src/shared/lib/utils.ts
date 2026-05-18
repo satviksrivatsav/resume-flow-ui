@@ -18,10 +18,14 @@ export function sanitizeResumeData(data: any): any {
 
     if (obj !== null && typeof obj === 'object') {
       const newObj: any = {};
-      
+
       // If it's an object that SHOULD have an ID but doesn't, or has the placeholder
       // We check if it's likely an item in a list (has some content but the ID is the placeholder)
-      if (obj.id === PLACEHOLDER_ID || (obj.id === undefined && (obj.name || obj.title || obj.school || obj.company || obj.network))) {
+      if (
+        obj.id === PLACEHOLDER_ID ||
+        (obj.id === undefined &&
+          (obj.name || obj.title || obj.school || obj.company || obj.network))
+      ) {
         newObj.id = uuidv4();
       }
 
@@ -46,9 +50,13 @@ export function sanitizeResumeData(data: any): any {
   // Ensure standard sections have the items array sanitized even if they were empty/missing
   if (sanitizedData.sections) {
     Object.keys(sanitizedData.sections).forEach((key) => {
-      if (sanitizedData.sections[key] && sanitizedData.sections[key].items) {
+      if (sanitizedData.sections[key]?.items) {
         sanitizedData.sections[key].items = sanitizedData.sections[key].items.map((item: any) => {
-          if (typeof item === 'object' && item !== null && (!item.id || item.id === PLACEHOLDER_ID)) {
+          if (
+            typeof item === 'object' &&
+            item !== null &&
+            (!item.id || item.id === PLACEHOLDER_ID)
+          ) {
             return { ...item, id: uuidv4() };
           }
           return item;
@@ -82,12 +90,12 @@ export function cleanProfileDisplay(input: string): string {
     const urlString = input.startsWith('http') ? input : `https://${input}`;
     const url = new URL(urlString);
     const segments = url.pathname.split('/').filter(Boolean);
-    
+
     // For LinkedIn, usually it's /in/username
     if (url.hostname.includes('linkedin.com') && segments[0] === 'in' && segments[1]) {
       return segments[1];
     }
-    
+
     return segments[segments.length - 1] || input;
   } catch (e) {
     return input.split('/').filter(Boolean).pop() || input;
@@ -105,19 +113,22 @@ export function hasContent(html: string | undefined | null): boolean {
   return stripped.length > 0;
 }
 /**
- * Inserts zero-width spaces into long continuous strings to allow them to break 
+ * Inserts zero-width spaces into long continuous strings to allow them to break
  * across lines in environments that don't support overflow-wrap (like PDFs).
  */
-export function breakLongWords(str: string, maxLength: number = 50): string {
+export function breakLongWords(str: string, maxLength = 50): string {
   if (!str) return '';
-  return str.split(' ').map(word => {
-    if (word.length > maxLength) {
-      const chunks = [];
-      for (let i = 0; i < word.length; i += maxLength) {
-        chunks.push(word.substring(i, i + maxLength));
+  return str
+    .split(' ')
+    .map((word) => {
+      if (word.length > maxLength) {
+        const chunks = [];
+        for (let i = 0; i < word.length; i += maxLength) {
+          chunks.push(word.substring(i, i + maxLength));
+        }
+        return chunks.join('\u200B');
       }
-      return chunks.join('\u200B');
-    }
-    return word;
-  }).join(' ');
+      return word;
+    })
+    .join(' ');
 }

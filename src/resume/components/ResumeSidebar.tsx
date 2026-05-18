@@ -41,9 +41,8 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { NavItemWrapper, iconVariants } from '@/shared/components/layout/SidebarUtils';
+import { iconVariants, NavItemWrapper } from '@/shared/components/layout/SidebarUtils';
 import { AnimatedIcon, type AnimatedIconPreset } from '@/shared/components/ui/AnimatedIcon';
-import { UnsavedChangesModal } from './UnsavedChangesModal';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -75,17 +74,17 @@ import { useUiStore } from '@/shared/stores/uiStore';
 import { DEFAULT_SECTION_ORDER } from '@/shared/types/resume';
 import { getSectionCompletionStatus } from '@/shared/utils/mandatoryFieldValidator';
 
-
+import { UnsavedChangesModal } from './UnsavedChangesModal';
 
 // Metadata for every static section
 
 // Sidebar navigation sections — personal is always pinned at the top separately
-const STATIC_SIDEBAR_SECTIONS: Array<{
+const STATIC_SIDEBAR_SECTIONS: {
   id: string;
   label: string;
   icon: any;
   preset: AnimatedIconPreset;
-}> = [
+}[] = [
   { id: 'experience', label: 'Work Experience', icon: Briefcase, preset: 'scaleUp' },
   { id: 'education', label: 'Education', icon: GraduationCap, preset: 'scaleUp' },
   { id: 'projects', label: 'Projects', icon: FolderGit2, preset: 'scaleUp' },
@@ -202,14 +201,8 @@ const SortableMenuItem = ({
 export const ResumeSidebar = () => {
   const { state } = useSidebar();
   const { activeTab, setActiveTab } = useUiStore();
-  const {
-    resumeData,
-    addCustomSection,
-    reorderSections,
-    lastSavedData,
-    resetResume,
-    saveResume,
-  } = useResumeStore();
+  const { resumeData, addCustomSection, reorderSections, lastSavedData, resetResume, saveResume } =
+    useResumeStore();
   const navigate = useNavigate();
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState('');
@@ -293,10 +286,12 @@ export const ResumeSidebar = () => {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className={cn(
-        "px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out",
-        state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
-      )}>
+      <SidebarHeader
+        className={cn(
+          'px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out',
+          state === 'expanded' ? 'h-[var(--header-height)]' : 'h-32',
+        )}
+      >
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           <NavItemWrapper className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
@@ -452,7 +447,6 @@ export const ResumeSidebar = () => {
               </span>
             </Button>
           </NavItemWrapper>
-
         </div>
       </SidebarContent>
 
@@ -500,4 +494,3 @@ export const ResumeSidebar = () => {
     </Sidebar>
   );
 };
-

@@ -50,8 +50,6 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
           strokeOpacity={0.2}
         />
 
-
-
         {/* Main progress arc */}
         <motion.circle
           cx={size / 2}
@@ -84,10 +82,14 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
             >
               {Math.round(score)}
             </motion.span>
-            <span className={cn(
-              'absolute top-1/2 -translate-y-1/2 left-full ml-1 text-[10px] font-bold opacity-60',
-              score >= 70 ? 'text-success' : score >= 50 ? 'text-warning' : 'text-destructive'
-            )}>%</span>
+            <span
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 left-full ml-1 text-[10px] font-bold opacity-60',
+                score >= 70 ? 'text-success' : score >= 50 ? 'text-warning' : 'text-destructive',
+              )}
+            >
+              %
+            </span>
           </div>
           <motion.span
             initial={{ opacity: 0 }}
@@ -98,7 +100,7 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
             Match
           </motion.span>
         </div>
-        
+
         <div className="flex flex-col items-center mt-2">
           <motion.span
             initial={{ opacity: 0 }}
@@ -121,4 +123,3 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
     </div>
   );
 }
-

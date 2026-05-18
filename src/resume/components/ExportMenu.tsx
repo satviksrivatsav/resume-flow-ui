@@ -69,7 +69,6 @@ export const ExportMenu = () => {
     }
   };
 
-
   const handleExportDocx = async () => {
     if (!validateAndAuth()) return;
 

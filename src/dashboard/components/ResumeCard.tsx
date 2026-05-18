@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Copy, Edit3, FileSearch, FileText, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/shared/hooks/use-toast';
 
 import { ResumePreview } from '@/resume/components/ResumePreview';
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
@@ -13,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
+import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { sanitizeResumeData } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';

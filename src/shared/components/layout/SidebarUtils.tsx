@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
+import { useState } from 'react';
 
 export const iconVariants: Record<string, Variants> = {
   Resumes: {
@@ -29,7 +29,13 @@ export const iconVariants: Record<string, Variants> = {
   },
 };
 
-export const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+export const NavItemWrapper = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const [isAnimating, setIsAnimating] = useState(false);
   return (
     <motion.div

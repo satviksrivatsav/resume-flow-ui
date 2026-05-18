@@ -1,7 +1,12 @@
 ﻿import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, Trophy } from 'lucide-react';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -9,8 +14,8 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
 import { cn } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
+
 import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 
 export const AwardsForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -86,7 +91,12 @@ export const AwardsForm = () => {
                     <TrashAnimatedIcon className="w-4 h-4" />
                   </Button>
                   <div className="text-muted-foreground p-1">
-                    <ChevronDown className={cn("w-5 h-5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        isExpanded && 'rotate-180',
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -100,9 +110,7 @@ export const AwardsForm = () => {
                   </Label>
                   <Input
                     value={award.title}
-                    onChange={(e) =>
-                      updateItem('awards', award.id, { title: e.target.value })
-                    }
+                    onChange={(e) => updateItem('awards', award.id, { title: e.target.value })}
                     placeholder="e.g. Employee of the Month"
                   />
                 </div>
@@ -111,9 +119,7 @@ export const AwardsForm = () => {
                   <Label className="font-medium">Awarder / Organization</Label>
                   <Input
                     value={award.awarder}
-                    onChange={(e) =>
-                      updateItem('awards', award.id, { awarder: e.target.value })
-                    }
+                    onChange={(e) => updateItem('awards', award.id, { awarder: e.target.value })}
                     placeholder="e.g. Acme Corp"
                   />
                 </div>
@@ -123,9 +129,7 @@ export const AwardsForm = () => {
                   <div className="relative">
                     <Input
                       value={award.date}
-                      onChange={(e) =>
-                        updateItem('awards', award.id, { date: e.target.value })
-                      }
+                      onChange={(e) => updateItem('awards', award.id, { date: e.target.value })}
                       placeholder="e.g. 2022-05"
                       className="pl-9"
                     />
@@ -147,9 +151,7 @@ export const AwardsForm = () => {
                   </div>
                   <RichTextEditor
                     value={award.description || ''}
-                    onChange={(value) =>
-                      updateItem('awards', award.id, { description: value })
-                    }
+                    onChange={(value) => updateItem('awards', award.id, { description: value })}
                     placeholder="Briefly describe the award and why you received it."
                     className="min-h-[100px]"
                   />
@@ -162,4 +164,3 @@ export const AwardsForm = () => {
     </motion.div>
   );
 };
-

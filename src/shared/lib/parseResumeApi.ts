@@ -1,5 +1,6 @@
 ﻿import { config } from '@/shared/config/config';
 import { defaultResumeData, ResumeData } from '@/shared/types/resume';
+
 import { sanitizeResumeData } from './utils';
 
 const API_BASE_URL = config.aiApiUrl;

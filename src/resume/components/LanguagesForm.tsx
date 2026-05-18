@@ -1,14 +1,19 @@
 ﻿import { motion } from 'framer-motion';
 import { ChevronDown, Languages } from 'lucide-react';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/components/ui/accordion';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { TrashAnimatedIcon } from '@/shared/components/ui/TrashAnimatedIcon';
-import { useResumeStore } from '@/shared/stores/resumeStore';
-import { SectionListManager } from './shared/SectionListManager';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/ui/accordion';
 import { cn } from '@/shared/lib/utils';
+import { useResumeStore } from '@/shared/stores/resumeStore';
+
+import { SectionListManager } from './shared/SectionListManager';
 
 export const LanguagesForm = () => {
   const { resumeData, addItem, updateItem, deleteItem } = useResumeStore();
@@ -117,5 +122,3 @@ export const LanguagesForm = () => {
     </motion.div>
   );
 };
-
-

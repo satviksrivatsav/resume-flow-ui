@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+
 import { cn } from '@/shared/lib/utils';
 
 interface LogoProps extends React.SVGProps<SVGSVGElement> {
@@ -21,7 +22,7 @@ export const Logo = ({ className, variant = 'auto', ...props }: LogoProps) => {
         variant === 'auto' && 'text-black dark:text-white',
         variant === 'light' && 'text-white',
         variant === 'dark' && 'text-black',
-        className
+        className,
       )}
       {...props}
     >

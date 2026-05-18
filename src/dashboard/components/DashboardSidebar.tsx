@@ -1,16 +1,9 @@
-﻿import { useState } from 'react';
-import { motion } from 'framer-motion';
-import {
-  AlertTriangle,
-  ArrowLeft,
-  FileText,
-  LogOut,
-  ShieldCheck,
-  User,
-} from 'lucide-react';
+﻿import { motion } from 'framer-motion';
+import { AlertTriangle, ArrowLeft, FileText, LogOut, ShieldCheck, User } from 'lucide-react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { NavItemWrapper, iconVariants } from '@/shared/components/layout/SidebarUtils';
+import { iconVariants, NavItemWrapper } from '@/shared/components/layout/SidebarUtils';
 import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Button } from '@/shared/components/ui/button';
@@ -68,10 +61,12 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-card/50 backdrop-blur-sm">
-      <SidebarHeader className={cn(
-        "px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out",
-        state === 'expanded' ? "h-[var(--header-height)]" : "h-32"
-      )}>
+      <SidebarHeader
+        className={cn(
+          'px-4 border-b border-border flex flex-col justify-center transition-all duration-500 ease-in-out',
+          state === 'expanded' ? 'h-[var(--header-height)]' : 'h-32',
+        )}
+      >
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
           <NavItemWrapper className="flex-1 group-data-[collapsible=icon]:flex-none">
             <Button
