@@ -11,7 +11,7 @@ import { useAuthStore } from '@/stores/authStore';
 export default function SignUpPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signUp, signInWithProvider, isLoading, error, clearError } = useAuthStore();
+  const { signUp, signInWithProvider, isLoading } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
