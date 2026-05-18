@@ -21,7 +21,7 @@ interface EmailChangeModalProps {
 export function EmailChangeModal({ isOpen, onClose, onConfirm, newEmail }: EmailChangeModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="sm:max-w-[440px] bg-background backdrop-blur-xl border-border/50 rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center">
+      <AlertDialogContent className="sm:max-w-[440px] p-8 flex flex-col items-center text-center">
         <AlertDialogHeader className="flex flex-col items-center sm:text-center">
           <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-yellow-500" />
