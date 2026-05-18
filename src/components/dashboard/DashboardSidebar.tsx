@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
   FileText,
   LogOut,
-  Settings,
   ShieldCheck,
   User,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { NavItemWrapper, iconVariants } from '@/components/layout/SidebarUtils';
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -30,35 +30,6 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
-
-// Per-icon hover animation variants — matching ResumeSidebar's pattern
-const iconVariants: Record<string, Variants> = {
-  Resumes: {
-    initial: { y: 0 },
-    hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
-    tap: { y: 0, scale: 0.9 },
-  },
-  'ATS Reports': {
-    initial: { y: 0 },
-    hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
-    tap: { y: 0, scale: 0.9 },
-  },
-  Profile: {
-    initial: { y: 0 },
-    hover: { y: -3, transition: { type: 'spring', stiffness: 400, damping: 10 } },
-    tap: { y: 0, scale: 0.9 },
-  },
-  Settings: {
-    initial: { rotate: 0 },
-    hover: { rotate: 90, transition: { duration: 0.35, ease: 'easeInOut' } },
-    tap: { rotate: 0, scale: 0.9 },
-  },
-  'Danger Zone': {
-    initial: { rotate: 0 },
-    hover: { rotate: [0, -10, 10, 0], transition: { duration: 0.4, ease: 'easeInOut' } },
-    tap: { scale: 0.9 },
-  },
-};
 
 const navItems = [
   {
@@ -81,24 +52,6 @@ const navItems = [
     ],
   },
 ];
-
-// Helper for one-shot hover animations that must complete before returning to initial state
-const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-  const [isAnimating, setIsAnimating] = useState(false);
-  return (
-    <motion.div
-      onMouseEnter={() => setIsAnimating(true)}
-      animate={isAnimating ? 'hover' : 'initial'}
-      onAnimationComplete={() => {
-        if (isAnimating) setIsAnimating(false);
-      }}
-      whileTap="tap"
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-};
 
 export function DashboardSidebar() {
   const { state } = useSidebar();

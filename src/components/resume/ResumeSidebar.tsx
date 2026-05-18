@@ -41,9 +41,9 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { NavItemWrapper, iconVariants } from '@/components/layout/SidebarUtils';
 import { AnimatedIcon, type AnimatedIconPreset } from '@/components/ui/AnimatedIcon';
 import { UnsavedChangesModal } from './UnsavedChangesModal';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -75,24 +75,6 @@ import { DEFAULT_SECTION_ORDER } from '@/types/resume';
 import { getSectionCompletionStatus } from '@/utils/mandatoryFieldValidator';
 
 
-
-// Helper for one-shot hover animations that must complete before returning to initial state
-const NavItemWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-  const [isAnimating, setIsAnimating] = useState(false);
-  return (
-    <motion.div
-      onMouseEnter={() => setIsAnimating(true)}
-      animate={isAnimating ? 'hover' : 'initial'}
-      onAnimationComplete={() => {
-        if (isAnimating) setIsAnimating(false);
-      }}
-      whileTap="tap"
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-};
 
 // Metadata for every static section
 
