@@ -20,8 +20,12 @@ export function DeleteAccountModal({ isOpen, onClose, onConfirm }: DeleteAccount
       icon={<TrashAnimatedIcon className="w-8 h-8 text-destructive" />}
       confirmNode={
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover="hover"
+          whileTap="tap"
+          variants={{
+            hover: { scale: 1.05 },
+            tap: { scale: 0.95 }
+          }}
           className="rounded-full h-11 px-10 font-bold bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-lg shadow-destructive/20 flex items-center justify-center gap-2 group w-full sm:w-auto"
         >
           <TrashAnimatedIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
