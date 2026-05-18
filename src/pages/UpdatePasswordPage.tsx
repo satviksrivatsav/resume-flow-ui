@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2, Lock } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Logo } from '@/components/ui/Logo';
@@ -10,36 +10,50 @@ import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-backgr
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/hooks/use-toast';
 
 export default function UpdatePasswordPage() {
   const navigate = useNavigate();
-  const { updatePassword, isLoading, error, clearError } = useAuthStore();
+  const { toast } = useToast();
+  const { updatePassword, isLoading } = useAuthStore();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [localError, setLocalError] = useState('');
-
-  useEffect(() => {
-    clearError();
-  }, [clearError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError('');
 
     if (password !== confirmPassword) {
-      setLocalError('Passwords do not match');
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Passwords do not match',
+      });
       return;
     }
 
     if (password.length < 6) {
-      setLocalError('Password must be at least 6 characters');
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Password must be at least 6 characters',
+      });
       return;
     }
 
     const result = await updatePassword(password);
-    if (result.message) {
+    if (result.error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: result.error,
+      });
+    } else if (result.message) {
+      toast({
+        title: 'Success',
+        description: 'Password updated successfully',
+      });
       navigate('/dashboard');
     }
   };
@@ -119,12 +133,6 @@ export default function UpdatePasswordPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {(error || localError) && (
-                <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                  {error || localError}
-                </div>
-              )}
-
               <div className="space-y-2">
                 <Label htmlFor="password">New Password</Label>
                 <div className="relative">
@@ -134,11 +142,7 @@ export default function UpdatePasswordPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      clearError();
-                      setLocalError('');
-                    }}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 h-11"
                     required
                   />
@@ -163,10 +167,7 @@ export default function UpdatePasswordPage() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setLocalError('');
-                    }}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10 pr-10 h-11"
                     required
                   />

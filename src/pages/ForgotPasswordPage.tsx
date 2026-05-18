@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Mail } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Logo } from '@/components/ui/Logo';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -10,24 +10,29 @@ import { HeartbeatPulseBackground } from '@/components/ui/heartbeat-pulse-backgr
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
-  const { resetPassword, isLoading, error, clearError } = useAuthStore();
+  const { toast } = useToast();
+  const { resetPassword, isLoading } = useAuthStore();
   const [email, setEmail] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  useEffect(() => {
-    clearError();
-  }, [clearError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
     const result = await resetPassword(email);
-    if (result.message) {
-      setSuccessMessage(result.message);
-      // Optional: clear email or keep it?
+
+    if (result.error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: result.error,
+      });
+    } else if (result.message) {
+      toast({
+        title: 'Success',
+        description: 'Password reset link sent to your email',
+      });
     }
   };
 
@@ -115,17 +120,6 @@ export default function ForgotPasswordPage() {
 
             {/* Reset Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                  {error}
-                </div>
-              )}
-              {successMessage && (
-                <div className="p-3 rounded-lg bg-green-500/10 text-green-500 text-sm">
-                  {successMessage}
-                </div>
-              )}
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -135,11 +129,7 @@ export default function ForgotPasswordPage() {
                     type="email"
                     placeholder="you@example.com"
                     value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      clearError();
-                      setSuccessMessage('');
-                    }}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-11"
                     required
                   />
