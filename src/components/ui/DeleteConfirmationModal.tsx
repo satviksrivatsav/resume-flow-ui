@@ -11,21 +11,23 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-interface DeleteSectionModalProps {
+interface DeleteConfirmationModalProps {
   isOpen: boolean;
   title?: string;
-  sectionName: string;
+  itemName?: string;
+  description?: React.ReactNode;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export function DeleteSectionModal({
+export function DeleteConfirmationModal({
   isOpen,
-  title = 'Delete Section',
-  sectionName,
+  title = 'Delete Item',
+  itemName,
+  description,
   onClose,
   onConfirm,
-}: DeleteSectionModalProps) {
+}: DeleteConfirmationModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="sm:max-w-[440px] bg-background backdrop-blur-xl border-border/50 rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center">
@@ -37,9 +39,13 @@ export function DeleteSectionModal({
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground font-medium py-2">
-            Are you sure you want to delete{' '}
-            <span className="text-foreground font-bold">{sectionName}</span>? This action cannot be
-            undone and all content within this section will be permanently lost.
+            {description ?? (
+              <>
+                Are you sure you want to delete{' '}
+                <span className="text-foreground font-bold">{itemName}</span>? This action cannot be
+                undone and all content will be permanently lost.
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-6 flex sm:flex-row flex-col items-center sm:justify-center sm:space-x-0 gap-3 w-full">

@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { ResumePreview } from '@/components/resume/ResumePreview';
+import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/lib/supabase';
+import { sanitizeResumeData } from '@/lib/utils';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useUiStore } from '@/stores/uiStore';
-import { sanitizeResumeData } from '@/lib/utils';
 import { ResumeData } from '@/types/resume';
 
 interface ResumeRow {
@@ -231,10 +231,10 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         </div>
       </motion.div>
 
-      <DeleteSectionModal
+      <DeleteConfirmationModal
         isOpen={showDeleteModal}
         title="Delete Resume"
-        sectionName={resume.name}
+        itemName={resume.name}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={() => {
           setShowDeleteModal(false);

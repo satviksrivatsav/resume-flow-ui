@@ -11,12 +11,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { Logo } from '@/components/ui/Logo';
 import { Topbar } from '@/components/layout/Topbar';
 import { AwardsForm } from '@/components/resume/AwardsForm';
 import { CertificationsForm } from '@/components/resume/CertificationsForm';
 import { CustomSectionForm } from '@/components/resume/CustomSectionForm';
-import { DeleteSectionModal } from '@/components/resume/DeleteSectionModal';
 import { EducationForm } from '@/components/resume/EducationForm';
 import { InterestsForm } from '@/components/resume/InterestsForm';
 import { LanguagesForm } from '@/components/resume/LanguagesForm';
@@ -37,33 +35,32 @@ import { WorkExperienceForm } from '@/components/resume/WorkExperienceForm';
 import { AIInstructionModal } from '@/components/ui/AIInstructionModal';
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { AIReviewModal } from '@/components/ui/AIReviewModal';
-
 import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
+import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
+import { Logo } from '@/components/ui/Logo';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { TrashAnimatedIcon } from '@/components/ui/TrashAnimatedIcon';
 import { cn } from '@/lib/utils';
+import { useAIWriterStore } from '@/stores/aiWriterStore';
 import { useResumeStore } from '@/stores/resumeStore';
 import { useTailorStore } from '@/stores/tailorStore';
-import { useAIWriterStore } from '@/stores/aiWriterStore';
 import { useUiStore } from '@/stores/uiStore';
-
 
 type ViewMode = 'fit-width' | 'fit-height';
 
 const ResumeBuilder = () => {
   const { activeTab, setActiveTab, showPreview } = useUiStore();
-  const { 
-    viewMode: tailorViewMode, 
-    setViewMode: setTailorViewMode, 
+  const {
+    viewMode: tailorViewMode,
+    setViewMode: setTailorViewMode,
     tailoredSlides,
-    reset: resetTailor
+    reset: resetTailor,
   } = useTailorStore();
   const { isLoading: isAIWriterLoading, cancelRequest: cancelAIWriterRequest } = useAIWriterStore();
   const {
-
     resumeData,
     deleteCustomSection,
     loadResume,
@@ -248,7 +245,7 @@ const ResumeBuilder = () => {
     slides.forEach((slide) => {
       if (slide.decision === 'accept') {
         const { sectionId, tailoredContent, itemIndex, originalContent } = slide;
-        
+
         if (sectionId === 'summary') {
           const content =
             typeof tailoredContent === 'string'
@@ -269,12 +266,12 @@ const ResumeBuilder = () => {
             const customSection = resumeData.customSections.find((s) => s.id === sectionId);
             if (customSection) {
               const updatedItems = customSection.items.map((item: any) =>
-                item.id === originalContent.id ? { ...item, ...tailoredContent } : item
+                item.id === originalContent.id ? { ...item, ...tailoredContent } : item,
               );
               setResumeData({
                 ...resumeData,
                 customSections: resumeData.customSections.map((s) =>
-                  s.id === sectionId ? { ...s, items: updatedItems } : s
+                  s.id === sectionId ? { ...s, items: updatedItems } : s,
                 ),
               });
             }
@@ -376,7 +373,6 @@ const ResumeBuilder = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
-
                     <div className="flex items-end justify-between">
                       <div className="space-y-1">
                         <h2 className="text-2xl font-bold tracking-tight">
@@ -648,8 +644,8 @@ const ResumeBuilder = () => {
         </AnimatePresence>
         <AIInstructionModal />
         <AIReviewModal />
-        <TailorDiffModal 
-          onApply={handleApplyTailoring} 
+        <TailorDiffModal
+          onApply={handleApplyTailoring}
           onDiscard={() => setShowTailorBackModal(true)}
         />
         <AILoadingModal
@@ -659,9 +655,9 @@ const ResumeBuilder = () => {
           title="AI Writer"
         />
 
-        <DeleteSectionModal
+        <DeleteConfirmationModal
           isOpen={showDeleteModal}
-          sectionName={
+          itemName={
             resumeData.customSections.find((s) => s.id === activeTab)?.name ?? 'this section'
           }
           onClose={() => setShowDeleteModal(false)}
