@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,7 @@ interface ReportCardProps {
 }
 
 export function ReportCard({ report, onRefresh }: ReportCardProps) {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const score = report.data.overall_score;
@@ -67,11 +68,11 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
         .delete()
         .eq('id', report.id);
       if (deleteError) throw deleteError;
-      toast.success('Report deleted');
+      toast({ title: 'Success', description: 'Report deleted', variant: 'success' });
       onRefresh();
     } catch (err) {
       console.error('Failed to delete report:', err);
-      toast.error('Failed to delete report');
+      toast({ title: 'Error', description: 'Failed to delete report', variant: 'destructive' });
     } finally {
       setShowDeleteModal(false);
     }

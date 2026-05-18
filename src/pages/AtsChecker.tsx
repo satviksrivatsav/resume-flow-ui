@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { AtsResultsMain } from '@/components/ats/AtsResultsMain';
 import { AtsResultsSidebar } from '@/components/ats/AtsResultsSidebar';
@@ -20,6 +20,7 @@ import { AtsReport } from '@/types/ats';
 import { ResumeData } from '@/types/resume';
 
 export default function AtsChecker() {
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const resumeIdParam = searchParams.get('resumeId');
   const viewParam = searchParams.get('view');
@@ -289,7 +290,11 @@ export default function AtsChecker() {
         setReport(report, savedReport.id);
       }
       setExistingReport(report);
-      toast.success('Report saved to dashboard');
+      toast({
+        title: 'Success',
+        description: 'Report saved to dashboard',
+        variant: 'success',
+      });
     } catch (err) {
       console.error('Error saving report:', err);
       // Optional: show error toast

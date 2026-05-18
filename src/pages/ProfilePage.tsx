@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { EmailChangeModal } from '@/components/profile/EmailChangeModal';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/stores/authStore';
 
 export default function ProfilePage() {
+  const { toast } = useToast();
   const { user, profile, updateProfile, updateEmail, isLoading } = useAuthStore();
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -39,7 +40,11 @@ export default function ProfilePage() {
       });
 
       if (profileResult.error) {
-        toast.error(profileResult.error);
+        toast({
+          title: 'Error',
+          description: profileResult.error,
+          variant: 'destructive',
+        });
         return;
       }
 
@@ -47,11 +52,19 @@ export default function ProfilePage() {
       if (email.trim().toLowerCase() !== user?.email?.toLowerCase()) {
         setShowEmailModal(true);
       } else {
-        toast.success('Profile updated successfully');
+        toast({
+          title: 'Success',
+          description: 'Profile updated successfully',
+          variant: 'success',
+        });
       }
     } catch (error) {
       console.error('Error saving profile:', error);
-      toast.error('An unexpected error occurred');
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -60,13 +73,25 @@ export default function ProfilePage() {
     try {
       const emailResult = await updateEmail(email.trim().toLowerCase());
       if (emailResult.error) {
-        toast.error(emailResult.error);
+        toast({
+          title: 'Error',
+          description: emailResult.error,
+          variant: 'destructive',
+        });
         return;
       }
-      toast.success(`Verification email sent to ${email.trim()}`);
+      toast({
+        title: 'Success',
+        description: `Verification email sent to ${email.trim()}`,
+        variant: 'success',
+      });
     } catch (error) {
       console.error('Error updating email:', error);
-      toast.error('An unexpected error occurred');
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred',
+        variant: 'destructive',
+      });
     }
   };
 

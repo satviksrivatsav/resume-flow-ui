@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Copy, Edit3, FileSearch, FileText, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { ResumePreview } from '@/components/resume/ResumePreview';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
@@ -34,6 +34,7 @@ interface ResumeCardProps {
 }
 
 export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(resume.name);
@@ -83,11 +84,11 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         .eq('id', resume.id);
 
       if (error) throw error;
-      toast.success('Resume renamed');
+      toast({ title: 'Success', description: 'Resume renamed', variant: 'success' });
       setIsRenaming(false);
       onRefresh();
     } catch (error) {
-      toast.error('Failed to rename resume');
+      toast({ title: 'Error', description: 'Failed to rename resume', variant: 'destructive' });
     }
   };
 
@@ -95,10 +96,10 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     try {
       const { error } = await supabase.from('resumes').delete().eq('id', resume.id);
       if (error) throw error;
-      toast.success('Resume deleted');
+      toast({ title: 'Success', description: 'Resume deleted', variant: 'success' });
       onRefresh();
     } catch (error) {
-      toast.error('Failed to delete resume');
+      toast({ title: 'Error', description: 'Failed to delete resume', variant: 'destructive' });
     }
   };
 
@@ -132,10 +133,10 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       });
 
       if (error) throw error;
-      toast.success('Resume duplicated');
+      toast({ title: 'Success', description: 'Resume duplicated', variant: 'success' });
       onRefresh();
     } catch (error) {
-      toast.error('Failed to duplicate resume');
+      toast({ title: 'Error', description: 'Failed to duplicate resume', variant: 'destructive' });
     }
   };
 

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { extractTextFromFile } from '@/lib/atsApi';
 
 export const TailorForm = () => {
+  const { toast } = useToast();
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [isButtonAnimating, setIsButtonAnimating] = useState(false);
   const { resumeData } = useResumeStore();
@@ -51,10 +52,10 @@ export const TailorForm = () => {
         setJdFile(file);
         const text = await extractTextFromFile(file);
         setJobDescription(text);
-        toast.success('Job description extracted from file');
+        toast({ title: 'Success', description: 'Job description extracted from file', variant: 'success' });
       } catch (err: any) {
         console.error('JD extraction failed:', err);
-        toast.error(err.message || 'Failed to extract text from JD file');
+        toast({ title: 'Error', description: err.message || 'Failed to extract text from JD file', variant: 'destructive' });
         setJdFile(null);
       } finally {
         setIsExtractingJd(false);

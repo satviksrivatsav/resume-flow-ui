@@ -1,6 +1,6 @@
 import { AlignLeft, Briefcase, Coffee, List, Smile, Sparkles, Zap } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -21,6 +21,7 @@ const formatOptions = [
 ] as const;
 
 export function AIInstructionModal() {
+  const { toast } = useToast();
   const {
     showInstructionModal,
     currentField,
@@ -49,7 +50,7 @@ export function AIInstructionModal() {
       setFormat(null);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to process request';
-      toast.error(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 

@@ -1,7 +1,7 @@
 import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { CreateNewCard, ParseResumeCard, ResumeCard } from '@/components/dashboard/ResumeCard';
@@ -20,6 +20,7 @@ interface ResumeRow {
 }
 
 export default function Dashboard() {
+  const { toast } = useToast();
   const { user, isInitialized } = useAuthStore();
   const [resumes, setResumes] = useState<ResumeRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,11 @@ export default function Dashboard() {
     } catch (err: any) {
       console.error('Error fetching resumes:', err);
       setError(err.message || 'Failed to fetch resumes');
-      toast.error('Failed to load resumes');
+      toast({
+        title: 'Error',
+        description: 'Failed to load resumes',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

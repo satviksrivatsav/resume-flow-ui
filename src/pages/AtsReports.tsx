@@ -1,6 +1,6 @@
 import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { ReportCard, ScanCard } from '@/components/dashboard/ReportCard';
@@ -22,6 +22,7 @@ interface ReportRow {
 }
 
 export default function AtsReports() {
+  const { toast } = useToast();
   const { user, isInitialized } = useAuthStore();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,11 @@ export default function AtsReports() {
       console.error('Error fetching reports:', err);
       const message = err instanceof Error ? err.message : 'Failed to fetch reports';
       setError(message);
-      toast.error('Failed to load reports');
+      toast({
+        title: 'Error',
+        description: 'Failed to load reports',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

@@ -2,7 +2,7 @@ import { AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { DeleteAccountModal } from '@/components/danger-zone/DeleteAccountModal';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
@@ -16,6 +16,7 @@ import { useAuthStore } from '@/stores/authStore';
 const MotionButton = motion.create(Button);
 
 export default function DangerZonePage() {
+  const { toast } = useToast();
   const { signOut } = useAuthStore();
   const [confirmationText, setConfirmationText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,18 +37,30 @@ export default function DangerZonePage() {
 
       if (error) {
         console.error('Error deleting account:', error);
-        toast.error('Failed to delete account. Please contact support or try again later.');
+        toast({
+          title: 'Error',
+          description: 'Failed to delete account. Please contact support or try again later.',
+          variant: 'destructive',
+        });
         setIsDeleting(false);
         return;
       }
 
       // 2. Sign out and redirect
       await signOut();
-      toast.success('Your account has been successfully deleted.');
+      toast({
+        title: 'Success',
+        description: 'Your account has been successfully deleted.',
+        variant: 'success',
+      });
       navigate('/');
     } catch (error) {
       console.error('Unexpected error during account deletion:', error);
-      toast.error('An unexpected error occurred. Please try again.');
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred. Please try again.',
+        variant: 'destructive',
+      });
       setIsDeleting(false);
     }
   };

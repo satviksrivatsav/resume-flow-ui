@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Briefcase, CloudUpload, Database, Loader2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 import { AILoadingModal } from '@/components/ui/AILoadingModal';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ export function AtsSetup({
   hasExistingReport,
   onViewExistingReport,
 }: AtsSetupProps) {
-
+  const { toast } = useToast();
   const {
     resumeFile,
     resumeId,
@@ -81,10 +81,10 @@ export function AtsSetup({
         setJdFile(file);
         const text = await extractTextFromFile(file);
         setJdText(text);
-        toast.success('Job description extracted from file');
+        toast({ title: 'Success', description: 'Job description extracted from file', variant: 'success' });
       } catch (err: any) {
         console.error('JD extraction failed:', err);
-        toast.error(err.message || 'Failed to extract text from JD file');
+        toast({ title: 'Error', description: err.message || 'Failed to extract text from JD file', variant: 'destructive' });
         setJdFile(null);
       } finally {
         setIsExtractingJd(false);
