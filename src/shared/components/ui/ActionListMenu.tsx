@@ -14,6 +14,7 @@ export interface ActionMenuItem {
   icon?: LucideIcon;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   destructive?: boolean;
+  rightElement?: React.ReactNode;
 }
 
 interface ActionListMenuProps {
@@ -49,7 +50,8 @@ export function ActionListMenu({ trigger, items, align = 'end', className }: Act
                 )}
               >
                 {Icon && <Icon className="w-3.5 h-3.5 mr-2.5 shrink-0" />}
-                {item.label}
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.rightElement}
               </DropdownMenuItem>
             );
           })}

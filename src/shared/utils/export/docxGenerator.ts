@@ -588,8 +588,12 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     references: renderReferences,
   };
 
+  // ── Summary — pinned to top, not reorderable ──────────────────────────────
+  renderSummary();
+
   // ── Dynamic Body ──────────────────────────────────────────────────────────
   sectionOrder.forEach((key) => {
+    if (key === 'summary') return;
     const renderer = sectionRenderers[key];
     if (renderer) renderer();
   });

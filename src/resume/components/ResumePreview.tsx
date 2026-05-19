@@ -539,7 +539,7 @@ const ResumeContent = ({
 
   // Determine render order
   const storedOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
-  const staticIds = DEFAULT_SECTION_ORDER;
+  const staticIds = DEFAULT_SECTION_ORDER.filter((id) => id !== 'summary');
   const customIds = customSections.map((s) => s.id);
   const allIds = [...staticIds, ...customIds];
 
@@ -690,6 +690,9 @@ const ResumeContent = ({
           </div>
         )}
       </PageBreakWrapper>
+
+      {/* Summary — pinned to top, not reorderable */}
+      {renderSummary()}
 
       {/* Dynamic section body — respects orderedAllIds */}
       {orderedAllIds.map((key) => {

@@ -757,11 +757,16 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
           </View>
         </View>
 
+        {/* Summary — pinned to top, not reorderable */}
+        {renderSummary()}
+
         {/* Dynamic body — respects sectionOrder */}
-        {sectionOrder.map((key) => {
-          const renderer = sectionRenderers[key];
-          return renderer ? renderer() : null;
-        })}
+        {sectionOrder
+          .filter((key) => key !== 'summary')
+          .map((key) => {
+            const renderer = sectionRenderers[key];
+            return renderer ? renderer() : null;
+          })}
 
         {/* Custom Sections — always appended */}
         {customSections

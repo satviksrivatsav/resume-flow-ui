@@ -1,18 +1,12 @@
-﻿import { pdf } from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { Download, FileCode, FileJson, FileText, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
 import { useToast } from '@/shared/hooks/use-toast';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { useResumeStore } from '@/shared/stores/resumeStore';
@@ -98,9 +92,46 @@ export const ExportMenu = () => {
     }
   };
 
+  const menuItems = [
+    {
+      label: 'PDF',
+      icon: FileText,
+      rightElement: (
+        <Badge
+          variant="secondary"
+          className="text-[9px] px-1.5 py-0 h-4 bg-success/10 text-success border-success/20 font-bold"
+        >
+          Recommended
+        </Badge>
+      ),
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        void handleExportPDF();
+      },
+    },
+    {
+      label: 'Word (.docx)',
+      icon: FileCode,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        void handleExportDocx();
+      },
+    },
+    {
+      label: 'JSON',
+      icon: FileJson,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        handleExportJSON();
+      },
+    },
+  ];
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <ActionListMenu
+      align="end"
+      className="w-48"
+      trigger={
         <Button
           variant="ghost"
           className="gap-2 bg-primary/5 border border-primary/20 h-10 px-4 rounded-full hover:bg-primary/10 transition-all text-primary font-medium"
@@ -113,34 +144,8 @@ export const ExportMenu = () => {
           )}
           Export
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={handleExportPDF} className="justify-between">
-          <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            <span>PDF</span>
-          </div>
-          <Badge
-            variant="secondary"
-            className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20"
-          >
-            Recommended
-          </Badge>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleExportDocx}>
-          <div className="flex items-center gap-2">
-            <FileCode className="w-4 h-4" />
-            <span>Word (.docx)</span>
-          </div>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleExportJSON}>
-          <div className="flex items-center gap-2">
-            <FileJson className="w-4 h-4" />
-            <span>JSON</span>
-          </div>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      }
+      items={menuItems}
+    />
   );
 };
