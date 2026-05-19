@@ -1,4 +1,4 @@
-﻿import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
+import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
 import { forwardRef, useMemo } from 'react';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
@@ -304,15 +304,17 @@ const ResumeContent = ({
     return (
       <div key="languages" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.languages.name} color={themeColor} sizes={sizes} />
-        {visibleItems.map((lang: any) => (
-          <div
-            key={lang.id}
-            style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}
-          >
-            <span style={{ fontWeight: 'bold' }}>{lang.name}</span>
-            <span style={{ fontSize: '0.9em', color: '#666' }}>{lang.description}</span>
-          </div>
-        ))}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 6px', fontSize: sizes.base }}>
+          {visibleItems.map((lang: any, index: number) => (
+            <span key={lang.id}>
+              <strong style={{ color: '#000' }}>{lang.name}</strong>
+              {lang.description && (
+                <span style={{ color: '#555' }}> ({lang.description})</span>
+              )}
+              {index < visibleItems.length - 1 && <span style={{ marginRight: '4px' }}>,</span>}
+            </span>
+          ))}
+        </div>
       </div>
     );
   };
@@ -324,13 +326,15 @@ const ResumeContent = ({
     return (
       <div key="interests" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.interests.name} color={themeColor} sizes={sizes} />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-          {visibleItems.map((interest: any) => (
-            <span key={interest.id} style={{ fontSize: sizes.base }}>
-              {interest.name}
-              {interest.keywords.length > 0 ? ` (${interest.keywords.join(', ')})` : ''}
-            </span>
-          ))}
+        <div style={{ fontSize: sizes.base, color: '#000', lineHeight: '1.5' }}>
+          {visibleItems
+            .map((interest: any) => {
+              const kwString = interest.keywords && interest.keywords.length > 0
+                ? ` (${interest.keywords.join(', ')})`
+                : '';
+              return interest.name + kwString;
+            })
+            .join(', ')}
         </div>
       </div>
     );

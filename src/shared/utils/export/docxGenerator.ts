@@ -1,4 +1,4 @@
-﻿import {
+import {
   AlignmentType,
   BorderStyle,
   Document,
@@ -351,22 +351,36 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
     children.push(...createSectionTitle(sections.languages.name));
 
-    visibleItems.forEach((lang) => {
-      children.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: lang.name, bold: true, size: sizes.base * 2 }),
-            new TextRun({
-              text: `\t${lang.description}`,
-              size: (sizes.base - 1) * 2,
-              color: '666666',
-            }),
-          ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
-          spacing: { after: 80 },
-        }),
+    const paragraphChildren: any[] = [];
+    visibleItems.forEach((lang, index) => {
+      paragraphChildren.push(
+        new TextRun({ text: lang.name, bold: true, size: sizes.base * 2 })
       );
+      if (lang.description) {
+        paragraphChildren.push(
+          new TextRun({
+            text: ` (${lang.description})`,
+            size: (sizes.base - 1) * 2,
+            color: '555555',
+          })
+        );
+      }
+      if (index < visibleItems.length - 1) {
+        paragraphChildren.push(
+          new TextRun({
+            text: ', ',
+            size: sizes.base * 2,
+          })
+        );
+      }
     });
+
+    children.push(
+      new Paragraph({
+        children: paragraphChildren,
+        spacing: { after: 120 },
+      })
+    );
   };
 
   const renderInterests = () => {

@@ -1,4 +1,4 @@
-﻿// src/utils/export/pdfGenerator.tsx
+// src/utils/export/pdfGenerator.tsx
 // Using local font files from public/fonts folder
 
 import {
@@ -441,15 +441,19 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
         <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
           <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
         </View>
-        {visibleItems.map((lang) => (
-          <View
-            key={lang.id}
-            style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}
-          >
-            <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-            <Text style={{ fontSize: sizes.base - 1, color: '#666' }}>{lang.description}</Text>
-          </View>
-        ))}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          {visibleItems.map((lang, index) => (
+            <View key={lang.id} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 8, marginBottom: 4 }}>
+              <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
+              {lang.description && (
+                <Text style={{ color: '#555', marginLeft: 4 }}>({lang.description})</Text>
+              )}
+              {index < visibleItems.length - 1 && (
+                <Text style={{ marginLeft: 2 }}>,</Text>
+              )}
+            </View>
+          ))}
+        </View>
       </View>
     );
   };
