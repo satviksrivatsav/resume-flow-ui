@@ -6,7 +6,6 @@ import { supabase } from '@/shared/lib/supabase';
 interface Profile {
   id: string;
   name: string | null;
-  username: string | null;
 }
 
 interface AuthState {

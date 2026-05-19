@@ -12,7 +12,6 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const { user, profile, updateProfile, updateEmail, isLoading } = useAuthStore();
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -20,7 +19,6 @@ export default function ProfilePage() {
   useEffect(() => {
     if (profile) {
       setName(profile.name ?? '');
-      setUsername(profile.username ?? '');
     }
   }, [profile]);
 
@@ -33,10 +31,9 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      // 1. Update profile (Name, Username)
+      // 1. Update profile (Name)
       const profileResult = await updateProfile({
         name: name.trim() || null,
-        username: username.trim() || null,
       });
 
       if (profileResult.error) {
@@ -104,7 +101,6 @@ export default function ProfilePage() {
 
   const hasChanges =
     name.trim() !== (profile?.name ?? '') ||
-    username.trim() !== (profile?.username ?? '') ||
     email.trim().toLowerCase() !== (user?.email?.toLowerCase() ?? '');
 
   return (
@@ -129,19 +125,6 @@ export default function ProfilePage() {
               placeholder="Your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="username" className="text-sm font-bold px-1">
-              Username
-            </Label>
-            <Input
-              id="username"
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               className="bg-accent/30 border-border/50 rounded-full h-10 px-5 focus:ring-primary/20 transition-all"
             />
           </div>

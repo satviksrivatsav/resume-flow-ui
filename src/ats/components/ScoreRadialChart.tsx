@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
@@ -97,7 +97,7 @@ export function ScoreRadialChart({ score, grade, size = 200 }: ScoreRadialChartP
             transition={{ delay: 0.4, duration: 0.3 }}
             className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase opacity-80"
           >
-            Match
+            Optimized
           </motion.span>
         </div>
 

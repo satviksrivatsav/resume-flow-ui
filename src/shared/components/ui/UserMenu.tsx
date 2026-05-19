@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { LogOut, UserCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ import { useAuthStore } from '@/shared/stores/authStore';
 
 export function UserMenu() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuthStore();
+  const { user, profile, signOut } = useAuthStore();
   const { state } = useSidebar();
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -59,7 +59,7 @@ export function UserMenu() {
 
   const userEmail = user.email || '';
   const userName =
-    user.user_metadata?.full_name || user.user_metadata?.name || userEmail.split('@')[0];
+    profile?.name || user.user_metadata?.full_name || user.user_metadata?.name || userEmail.split('@')[0];
   const userAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture;
   const initials = userName.slice(0, 2).toUpperCase();
 

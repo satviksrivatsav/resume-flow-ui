@@ -14,6 +14,7 @@ import {
 } from '@/shared/types/resume';
 
 import { useAuthStore } from './authStore';
+import { toast } from '@/shared/hooks/use-toast';
 
 interface ResumeRow {
   id: string;
@@ -94,7 +95,7 @@ interface ResumeStore {
   setLastSaved: (lastSaved: Date | null) => void;
   setLastSavedData: (data: string) => void;
 
-  saveResume: (userId?: string) => Promise<void>;
+  saveResume: (userId?: string, isAutoSave?: boolean) => Promise<void>;
   startAutoSave: (userId?: string) => void;
   stopAutoSave: () => void;
   resetResume: () => void;
@@ -131,7 +132,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       },
     })),
 
-  saveResume: async (userId) => {
+  saveResume: async (userId, isAutoSave = false) => {
     const state = get();
     // If already in progress, don't start another but ensure UI reflects it
     if (state.isSavingInProgress) {
@@ -207,6 +208,10 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     } catch (error) {
       console.error('Error saving:', error);
       set({ saveStatus: 'error' });
+      toast({
+        title: isAutoSave ? 'Autosave failed' : 'Save failed',
+        variant: 'destructive',
+      });
     } finally {
       set({ isSavingInProgress: false });
       // Keep saveStatus for 1 second as requested
@@ -228,7 +233,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const currentDataString = JSON.stringify(state.resumeData);
 
       if (currentDataString !== state.lastSavedData) {
-        await saveResume(userId);
+        await saveResume(userId, true);
       } else {
         // No changes, just schedule the next check
         get().startAutoSave(userId);
