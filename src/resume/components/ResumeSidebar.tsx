@@ -312,7 +312,7 @@ export const ResumeSidebar = () => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70">
-            Build Progress
+            Resume Sections
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
