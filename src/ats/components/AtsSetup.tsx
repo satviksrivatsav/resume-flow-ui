@@ -284,7 +284,7 @@ export function AtsSetup({
           <Button
             size="lg"
             onClick={handleAnalyze}
-            disabled={isAnalyzing || (!resumeFile && !resumeId) || (!jdText && !jdFile)}
+            disabled={isAnalyzing || (!resumeFile && !resumeId)}
             className="w-full rounded-full h-12 font-bold text-sm shadow-none transition-all active:scale-[0.98]"
           >
             {isAnalyzing ? 'Analyzing...' : 'Analyze Resume'}
