@@ -221,7 +221,12 @@ export const ResumeSidebar = () => {
       resumeData.sections.experience.items.length === 0 &&
       resumeData.sections.education.items.length === 0;
 
-    if (isUnchanged || hasNoContent) {
+    // A resume is safe to exit without a confirmation dialog only if:
+    // 1. It is an existing, already-saved resume (not new) and has no unsaved edits.
+    // 2. Or, it is a brand-new resume that is completely empty (nothing to lose).
+    const isSafeToExit = (!isNew && isUnchanged) || (isNew && hasNoContent);
+
+    if (isSafeToExit) {
       if (hasNoContent) resetResume();
       setActiveTab('personal');
       navigate('/dashboard');
