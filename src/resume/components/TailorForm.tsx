@@ -249,7 +249,8 @@ export const TailorForm = () => {
         console.error('Tailoring failed:', result.detail);
         toast({
           title: 'Tailoring Failed',
-          description: result.detail || 'Failed to tailor your resume. Please check the inputs and try again.',
+          description:
+            result.detail || 'Failed to tailor your resume. Please check the inputs and try again.',
           variant: 'destructive',
         });
       }
@@ -398,7 +399,6 @@ export const TailorForm = () => {
           </AnimatePresence>
         </div>
       </div>
-
 
       <div className="pt-2">
         <motion.div

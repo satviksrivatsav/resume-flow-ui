@@ -322,7 +322,7 @@ const ResumeBuilder = () => {
           className="flex items-center justify-center relative"
           style={{
             width: '100%',
-            height: `${((1123 * totalPages) + (24 * (totalPages - 1))) * previewZoom}px`,
+            height: `${(1123 * totalPages + 24 * (totalPages - 1)) * previewZoom}px`,
           }}
         >
           <motion.div
@@ -337,7 +337,7 @@ const ResumeBuilder = () => {
             className="rounded-sm origin-top"
             style={{
               width: '794px',
-              height: `${(1123 * totalPages) + (24 * (totalPages - 1))}px`,
+              height: `${1123 * totalPages + 24 * (totalPages - 1)}px`,
               position: 'absolute',
               top: 0,
             }}
@@ -560,14 +560,18 @@ const ResumeBuilder = () => {
                         className="rounded-sm bg-transparent shrink-0 animate-in fade-in duration-300"
                         style={{
                           width: '794px',
-                          height: `${(1123 * totalPages) + (24 * (totalPages - 1))}px`,
+                          height: `${1123 * totalPages + 24 * (totalPages - 1)}px`,
                           transform: `scale(${fullscreenZoom})`,
                           transformOrigin: 'top center',
                         }}
                       >
                         <ResumePreview onPageCountChange={setTotalPages} />
                       </div>
-                      <div style={{ height: `${((1123 * totalPages) + (24 * (totalPages - 1))) * (fullscreenZoom - 1)}px` }} />
+                      <div
+                        style={{
+                          height: `${(1123 * totalPages + 24 * (totalPages - 1)) * (fullscreenZoom - 1)}px`,
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

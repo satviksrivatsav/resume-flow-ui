@@ -72,9 +72,10 @@ export default function ProfilePage() {
       if (emailResult.error) {
         toast({
           title: 'Error',
-          description: emailResult.error === 'Email is already taken' 
-            ? 'This email address is already in use by another account.' 
-            : 'Failed to update email. Please try again.',
+          description:
+            emailResult.error === 'Email is already taken'
+              ? 'This email address is already in use by another account.'
+              : 'Failed to update email. Please try again.',
           variant: 'destructive',
         });
         return;

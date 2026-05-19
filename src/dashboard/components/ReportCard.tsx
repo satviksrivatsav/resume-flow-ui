@@ -4,9 +4,9 @@ import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-re
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { Button } from '@/shared/components/ui/button';
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
-import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { cn } from '@/shared/lib/utils';
@@ -45,11 +45,6 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
 
   const handleView = () => {
     navigate(`/dashboard/ats?resumeId=${report.resume_id}&view=true`);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowDeleteModal(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -136,7 +131,10 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
             <ActionListMenu
               align="end"
               trigger={
-                <button className="p-1 rounded-full hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="p-1 rounded-full hover:bg-accent transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <MoreVertical className="w-4 h-4 text-muted-foreground" />
                 </button>
               }

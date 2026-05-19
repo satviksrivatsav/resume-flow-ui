@@ -32,7 +32,7 @@ export const ATSMockup = () => {
       }
     };
 
-    runCycle();
+    void runCycle();
     return () => {
       isMounted = false;
     };

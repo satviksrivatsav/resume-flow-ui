@@ -168,8 +168,8 @@ export const ProjectsForm = () => {
                     onAiUpdate={(newText) => updateProject(proj.id, { description: newText })}
                   />
                   <FieldTip>
-                    Briefly explain the project's purpose and highlight your key
-                    contributions. Use bullet points for readability.
+                    Briefly explain the project&apos;s purpose and highlight your key contributions.
+                    Use bullet points for readability.
                   </FieldTip>
                 </div>
               </div>

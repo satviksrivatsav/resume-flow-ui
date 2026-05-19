@@ -184,7 +184,9 @@ export const VolunteerForm = () => {
                     showAIWriter={true}
                     aiFieldName="volunteer"
                     aiFieldValue={vol.description || ''}
-                    onAiUpdate={(newText) => updateItem('volunteer', vol.id, { description: newText })}
+                    onAiUpdate={(newText) =>
+                      updateItem('volunteer', vol.id, { description: newText })
+                    }
                   />
                 </div>
               </div>

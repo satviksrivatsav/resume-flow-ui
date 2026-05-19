@@ -1,11 +1,4 @@
-import {
-  AlignmentType,
-  BorderStyle,
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-} from 'docx';
+import { AlignmentType, BorderStyle, Document, Packer, Paragraph, TextRun } from 'docx';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
@@ -353,16 +346,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
 
     const paragraphChildren: any[] = [];
     visibleItems.forEach((lang, index) => {
-      paragraphChildren.push(
-        new TextRun({ text: lang.name, bold: true, size: sizes.base * 2 })
-      );
+      paragraphChildren.push(new TextRun({ text: lang.name, bold: true, size: sizes.base * 2 }));
       if (lang.description) {
         paragraphChildren.push(
           new TextRun({
             text: ` (${lang.description})`,
             size: (sizes.base - 1) * 2,
             color: '555555',
-          })
+          }),
         );
       }
       if (index < visibleItems.length - 1) {
@@ -370,7 +361,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           new TextRun({
             text: ', ',
             size: sizes.base * 2,
-          })
+          }),
         );
       }
     });
@@ -379,7 +370,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
       new Paragraph({
         children: paragraphChildren,
         spacing: { after: 120 },
-      })
+      }),
     );
   };
 

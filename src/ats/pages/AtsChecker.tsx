@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -32,7 +32,6 @@ export default function AtsChecker() {
     report,
     savedReportId,
     parsedResume,
-    error,
     setResumeId,
     setStatus,
     setReport,
@@ -182,8 +181,8 @@ export default function AtsChecker() {
         }
       };
 
-      fetchResumeName();
-      checkExistingReport(resumeIdParam, viewParam === 'true');
+      void fetchResumeName();
+      void checkExistingReport(resumeIdParam, viewParam === 'true');
     }
   }, [resumeIdParam, viewParam, reset, setResumeId, checkExistingReport]);
 
@@ -235,7 +234,7 @@ export default function AtsChecker() {
 
       // Trigger auto-save
       if (user) {
-        autoSaveReport(result.ats_report, result.parsed_resume);
+        void autoSaveReport(result.ats_report, result.parsed_resume);
       }
     } catch (err: any) {
       if (err.name === 'AbortError') return;

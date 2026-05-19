@@ -43,7 +43,8 @@ export default function UpdatePasswordPage() {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to update your password. Please try again or request a new reset link.',
+        description:
+          'Failed to update your password. Please try again or request a new reset link.',
       });
     } else if (result.message) {
       toast({

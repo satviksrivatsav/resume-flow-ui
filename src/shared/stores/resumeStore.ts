@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
+import { toast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { sanitizeResumeData } from '@/shared/lib/utils';
 import {
@@ -14,7 +15,6 @@ import {
 } from '@/shared/types/resume';
 
 import { useAuthStore } from './authStore';
-import { toast } from '@/shared/hooks/use-toast';
 
 interface ResumeRow {
   id: string;

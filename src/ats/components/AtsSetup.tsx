@@ -90,7 +90,8 @@ export function AtsSetup({
         console.error('JD extraction failed:', err);
         toast({
           title: 'Error',
-          description: 'Failed to extract text from the job description file. Please try again or paste it manually.',
+          description:
+            'Failed to extract text from the job description file. Please try again or paste it manually.',
           variant: 'destructive',
         });
         setJdFile(null);
@@ -170,7 +171,9 @@ export function AtsSetup({
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+              onKeyDown={(e) =>
+                (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()
+              }
               tabIndex={0}
               role="button"
               aria-label="Upload resume"

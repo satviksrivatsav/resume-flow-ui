@@ -66,10 +66,10 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user, isInitialized]);
+  }, [user, isInitialized, toast]);
 
   useEffect(() => {
-    fetchResumes();
+    void fetchResumes();
   }, [fetchResumes]);
 
   const isActuallyLoading = !isInitialized || (loading && resumes.length === 0);

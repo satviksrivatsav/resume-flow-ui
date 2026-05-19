@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ResumePreview } from '@/resume/components/ResumePreview';
-import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
 import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
+import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
 import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { sanitizeResumeData } from '@/shared/lib/utils';
@@ -50,7 +50,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       if (data) setHasReport(true);
     };
 
-    checkReport();
+    void checkReport();
 
     if (!containerRef.current) return;
     const currentContainer = containerRef.current;
@@ -83,7 +83,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       toast({ title: 'Success', description: 'Resume renamed', variant: 'success' });
       setIsRenaming(false);
       onRefresh();
-    } catch (error) {
+    } catch {
       toast({ title: 'Error', description: 'Failed to rename resume', variant: 'destructive' });
     }
   };
@@ -94,7 +94,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       if (error) throw error;
       toast({ title: 'Success', description: 'Resume deleted', variant: 'success' });
       onRefresh();
-    } catch (error) {
+    } catch {
       toast({ title: 'Error', description: 'Failed to delete resume', variant: 'destructive' });
     }
   };
@@ -131,7 +131,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       if (error) throw error;
       toast({ title: 'Success', description: 'Resume duplicated', variant: 'success' });
       onRefresh();
-    } catch (error) {
+    } catch {
       toast({ title: 'Error', description: 'Failed to duplicate resume', variant: 'destructive' });
     }
   };
@@ -162,7 +162,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       icon: Copy,
       onClick: (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
-        handleDuplicate();
+        void handleDuplicate();
       },
     },
     {
@@ -202,8 +202,8 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
                   className="w-full bg-transparent border-b border-primary outline-none text-sm font-bold"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  onBlur={handleRename}
-                  onKeyDown={(e) => e.key === 'Enter' && handleRename()}
+                  onBlur={() => void handleRename()}
+                  onKeyDown={(e) => e.key === 'Enter' && void handleRename()}
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
@@ -213,7 +213,10 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
             <ActionListMenu
               align="end"
               trigger={
-                <button className="p-1 rounded-full hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="p-1 rounded-full hover:bg-accent transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <MoreVertical className="w-4 h-4 text-muted-foreground" />
                 </button>
               }

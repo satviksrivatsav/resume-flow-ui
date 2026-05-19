@@ -1,5 +1,5 @@
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import { forwardRef, useMemo, useState, useEffect, useRef, createContext, useContext } from 'react';
+import { createContext, forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, sanitizeResumeData } from '@/shared/lib/utils';
@@ -8,7 +8,6 @@ import { DEFAULT_SECTION_ORDER } from '@/shared/types/resume';
 
 // A4 size: 210mm × 297mm = 794px × 1123px at 96 DPI
 const A4_WIDTH = '794px';
-const A4_HEIGHT = '1123px';
 
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', maxWidth: '100%', minWidth: 0 }}>
@@ -312,7 +311,11 @@ const ResumeContent = ({
         <SectionHeader title={sections.skills.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {visibleItems.map((skill: any) => (
-            <PageBreakWrapper key={skill.id} id={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
+            <PageBreakWrapper
+              key={skill.id}
+              id={skill.id}
+              style={{ marginBottom: '4px', width: '100%' }}
+            >
               <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
             </PageBreakWrapper>
           ))}
@@ -337,9 +340,7 @@ const ResumeContent = ({
           {visibleItems.map((lang: any, index: number) => (
             <span key={lang.id}>
               <strong style={{ color: '#000' }}>{lang.name}</strong>
-              {lang.description && (
-                <span style={{ color: '#555' }}> ({lang.description})</span>
-              )}
+              {lang.description && <span style={{ color: '#555' }}> ({lang.description})</span>}
               {index < visibleItems.length - 1 && <span style={{ marginRight: '4px' }}>,</span>}
             </span>
           ))}
@@ -358,9 +359,10 @@ const ResumeContent = ({
         <div style={{ fontSize: sizes.base, color: '#000', lineHeight: '1.5' }}>
           {visibleItems
             .map((interest: any) => {
-              const kwString = interest.keywords && interest.keywords.length > 0
-                ? ` (${interest.keywords.join(', ')})`
-                : '';
+              const kwString =
+                interest.keywords && interest.keywords.length > 0
+                  ? ` (${interest.keywords.join(', ')})`
+                  : '';
               return interest.name + kwString;
             })
             .join(', ')}
@@ -605,9 +607,7 @@ const ResumeContent = ({
           {basics.email && (
             <IconWrapper>
               <Mail size={12} />
-              <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
-              >
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}>
                 {basics.email}
               </span>
             </IconWrapper>
@@ -615,9 +615,7 @@ const ResumeContent = ({
           {basics.phone && (
             <IconWrapper>
               <Phone size={12} />
-              <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
-              >
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}>
                 {basics.countryCode && `${getCountryByCode(basics.countryCode)?.dialCode} `}
                 {cleanPhoneNumber(basics.phone, basics.countryCode)}
               </span>
@@ -626,9 +624,7 @@ const ResumeContent = ({
           {basics.location && (
             <IconWrapper>
               <MapPin size={12} />
-              <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
-              >
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}>
                 {basics.location}
               </span>
             </IconWrapper>
@@ -636,9 +632,7 @@ const ResumeContent = ({
           {basics.url.href && (
             <IconWrapper>
               <Globe size={12} />
-              <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
-              >
+              <span style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}>
                 {basics.url.label || basics.url.href}
               </span>
             </IconWrapper>
@@ -731,7 +725,10 @@ const ResumeContent = ({
   );
 };
 
-export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCountChange?: (count: number) => void }>((props, ref) => {
+export const ResumePreview = forwardRef<
+  HTMLDivElement,
+  { data?: any; onPageCountChange?: (count: number) => void }
+>((props, ref) => {
   const { resumeData: storeData } = useResumeStore();
   const rawData = props.data || storeData;
 
@@ -759,26 +756,26 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
   useEffect(() => {
     if (!measurerRef.current) return;
 
-    const observer = new ResizeObserver((entries) => {
+    const observer = new ResizeObserver(() => {
       const measurer = measurerRef.current;
       if (!measurer) return;
 
-      const elements = Array.from(measurer.querySelectorAll('[data-page-break-id]')) as HTMLDivElement[];
-      
+      const elements = Array.from(measurer.querySelectorAll('[data-page-break-id]'));
+
       const newPageBreaks: Record<string, number> = {};
       let cumulativeSpacer = 0;
       let currentPageStart = 0;
       const limit = 1027; // contentPageHeight
-      
+
       const measurerRect = measurer.getBoundingClientRect();
 
       elements.forEach((el) => {
         const id = el.getAttribute('data-page-break-id');
         if (!id) return;
 
-        const spacerEl = el.querySelector('.page-break-spacer') as HTMLDivElement | null;
-        const currentSpacer = spacerEl ? spacerEl.offsetHeight : 0;
-        
+        const spacerEl = el.querySelector('.page-break-spacer');
+        const currentSpacer = spacerEl instanceof HTMLElement ? spacerEl.offsetHeight : 0;
+
         const rect = el.getBoundingClientRect();
         const measuredTop = rect.top - measurerRect.top;
         const measuredBottom = rect.bottom - measurerRect.top;
@@ -906,11 +903,9 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
                 />
               </div>
             </div>
-            
+
             {/* Subtle page indicator at bottom right of each page sheet */}
-            <div 
-              className="absolute bottom-3 right-4 text-[9px] font-semibold text-muted-foreground/30 uppercase tracking-widest pointer-events-none select-none z-30"
-            >
+            <div className="absolute bottom-3 right-4 text-[9px] font-semibold text-muted-foreground/30 uppercase tracking-widest pointer-events-none select-none z-30">
               Page {index + 1} of {totalPages}
             </div>
           </div>

@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -18,10 +18,10 @@ export const TailorMockup = () => {
       setPhase('revealed');
       await new Promise((r) => setTimeout(r, 4000));
 
-      if (isMounted) runCycle();
+      if (isMounted) void runCycle();
     };
 
-    runCycle();
+    void runCycle();
     return () => {
       isMounted = false;
     };

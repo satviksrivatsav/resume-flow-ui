@@ -1,4 +1,4 @@
-﻿import { Github, Globe, Linkedin, Mail, MapPin } from 'lucide-react';
+import { Github, Globe, Linkedin, Mail, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -19,16 +19,18 @@ const SystemStatus = () => {
         const res = await fetch(`${baseUrl}/health`, { method: 'GET' });
         if (res.ok) setStatus('ok');
         else setStatus('error');
-      } catch (err) {
+      } catch {
         setStatus('error');
       }
     };
 
     // Initial check
-    checkHealth();
+    void checkHealth();
 
     // Continuous ping every 5 seconds
-    const interval = setInterval(checkHealth, 5000);
+    const interval = setInterval(() => {
+      void checkHealth();
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);

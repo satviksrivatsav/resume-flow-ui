@@ -104,7 +104,7 @@ export default function UploadResume() {
         setError(
           isNetworkError
             ? 'A network error occurred. Please check your connection and try again.'
-            : 'An error occurred while parsing your resume. Please ensure the file is not password-protected and try again.'
+            : 'An error occurred while parsing your resume. Please ensure the file is not password-protected and try again.',
         );
         setUploadState('error');
       }

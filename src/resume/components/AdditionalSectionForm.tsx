@@ -121,7 +121,7 @@ export const AdditionalSectionForm = () => {
           />
           <FieldTip>
             Use the toolbar to add bullets, bold key terms, or italicise details. Keep each entry
-            focused and relevant to the role you're applying for.
+            focused and relevant to the role you&apos;re applying for.
           </FieldTip>
         </div>
       </div>

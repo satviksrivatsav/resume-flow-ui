@@ -26,9 +26,7 @@ interface ActionListMenuProps {
 export function ActionListMenu({ trigger, items, align = 'end', className }: ActionListMenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        {trigger}
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent
         align={align}
         className={cn(

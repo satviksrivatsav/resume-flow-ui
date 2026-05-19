@@ -43,9 +43,17 @@ export default function SignUpPage() {
     if (result.error) {
       let friendlyError = 'Failed to create your account. Please try again.';
       const errMsg = result.error.toLowerCase();
-      if (errMsg.includes('already registered') || errMsg.includes('already exists') || errMsg.includes('taken')) {
+      if (
+        errMsg.includes('already registered') ||
+        errMsg.includes('already exists') ||
+        errMsg.includes('taken')
+      ) {
         friendlyError = 'An account with this email address already exists.';
-      } else if (errMsg.includes('weak') || errMsg.includes('should be stronger') || errMsg.includes('characters')) {
+      } else if (
+        errMsg.includes('weak') ||
+        errMsg.includes('should be stronger') ||
+        errMsg.includes('characters')
+      ) {
         friendlyError = 'Password is too weak. Please use a stronger password.';
       }
       toast({
@@ -59,7 +67,7 @@ export default function SignUpPage() {
   };
 
   const handleOAuth = (provider: 'google' | 'github' | 'linkedin_oidc') => {
-    signInWithProvider(provider);
+    void signInWithProvider(provider);
   };
 
   return (

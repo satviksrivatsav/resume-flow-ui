@@ -215,7 +215,10 @@ export const ResumeSidebar = () => {
     // Check if the summary is completely empty, ignoring default rich-text wrapper tags like <p><br></p>
     const isSummaryEmpty =
       !resumeData.summary.content ||
-      resumeData.summary.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim().length === 0;
+      resumeData.summary.content
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, '')
+        .trim().length === 0;
 
     // Check if it's a completely empty new resume (no name, no content)
     const hasNoContent =

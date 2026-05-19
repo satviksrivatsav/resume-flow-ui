@@ -26,12 +26,12 @@ export const PersonalInfoForm = () => {
     if (cleanedPhone !== basics.phone) {
       updateBasics({ phone: cleanedPhone });
     }
-  }, [basics.countryCode, basics.phone]);
+  }, [basics.countryCode, basics.phone, countryCode, updateBasics]);
 
   const getProfileUsername = (network: string) => {
     return (
       sections.profiles.items.find((p) => p.network.toLowerCase() === network.toLowerCase())
-        ?.username || ''
+        ?.username ?? ''
     );
   };
 
@@ -175,7 +175,7 @@ export const PersonalInfoForm = () => {
         />
         <FieldTip>
           Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end
-          with what you're looking for. Use the ✨ AI Writer to generate a strong draft.
+          with what you&apos;re looking for. Use the ✨ AI Writer to generate a strong draft.
         </FieldTip>
       </div>
     </motion.div>

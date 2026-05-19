@@ -15,11 +15,7 @@ interface AIWriterButtonProps {
   onUpdate: (newValue: string) => void;
 }
 
-export function AIWriterButton({
-  fieldName,
-  fieldValue,
-  onUpdate,
-}: AIWriterButtonProps) {
+export function AIWriterButton({ fieldName, fieldValue, onUpdate }: AIWriterButtonProps) {
   const { openInstructionModal, isLoading } = useAIWriterStore();
   const { resumeData } = useResumeStore();
   const [isHovered, setIsHovered] = useState(false);

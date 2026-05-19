@@ -51,7 +51,8 @@ export function AIInstructionModal() {
       console.error('AI Request failed:', error);
       toast({
         title: 'AI Generation Failed',
-        description: 'Failed to process your request with AI. Please check your instructions and try again.',
+        description:
+          'Failed to process your request with AI. Please check your instructions and try again.',
         variant: 'destructive',
       });
     }

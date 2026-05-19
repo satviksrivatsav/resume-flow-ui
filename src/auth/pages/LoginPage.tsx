@@ -22,7 +22,12 @@ export default function LoginPage() {
     if (result.error) {
       let friendlyError = 'Failed to sign in. Please try again.';
       const errMsg = result.error.toLowerCase();
-      if (errMsg.includes('invalid login credentials') || errMsg.includes('invalid credentials') || errMsg.includes('password') || errMsg.includes('not found')) {
+      if (
+        errMsg.includes('invalid login credentials') ||
+        errMsg.includes('invalid credentials') ||
+        errMsg.includes('password') ||
+        errMsg.includes('not found')
+      ) {
         friendlyError = 'Invalid email or password. Please check your credentials and try again.';
       } else if (errMsg.includes('confirmed') || errMsg.includes('verification')) {
         friendlyError = 'Please verify your email address before signing in.';
@@ -38,7 +43,7 @@ export default function LoginPage() {
   };
 
   const handleOAuth = (provider: 'google' | 'github' | 'linkedin_oidc') => {
-    signInWithProvider(provider);
+    void signInWithProvider(provider);
   };
 
   return (

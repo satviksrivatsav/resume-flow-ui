@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -55,10 +55,10 @@ const TermsOfService = () => {
               Acceptance of Terms
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
-              By accessing and using Resume Flow ("the Service"), you agree to be bound by these
-              Terms of Service. If you do not agree to these terms, please do not use our service.
-              We reserve the right to modify these terms at any time, and your continued use of the
-              Service constitutes acceptance of any changes.
+              By accessing and using Resume Flow (&quot;the Service&quot;), you agree to be bound by
+              these Terms of Service. If you do not agree to these terms, please do not use our
+              service. We reserve the right to modify these terms at any time, and your continued
+              use of the Service constitutes acceptance of any changes.
             </div>
           </section>
 
@@ -206,9 +206,9 @@ const TermsOfService = () => {
               Disclaimer of Warranties
             </h2>
             <div className="pl-12 text-muted-foreground leading-relaxed">
-              THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. WE DO NOT GUARANTEE
-              THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. YOUR USE OF THE SERVICE
-              IS AT YOUR OWN RISK.
+              THE SERVICE IS PROVIDED &quot;AS IS&quot; WITHOUT WARRANTIES OF ANY KIND. WE DO NOT
+              GUARANTEE THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE. YOUR USE OF
+              THE SERVICE IS AT YOUR OWN RISK.
             </div>
           </section>
 

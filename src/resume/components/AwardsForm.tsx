@@ -146,7 +146,9 @@ export const AwardsForm = () => {
                     showAIWriter={true}
                     aiFieldName="awards"
                     aiFieldValue={award.description || ''}
-                    onAiUpdate={(newText) => updateItem('awards', award.id, { description: newText })}
+                    onAiUpdate={(newText) =>
+                      updateItem('awards', award.id, { description: newText })
+                    }
                   />
                 </div>
               </div>

@@ -17,8 +17,7 @@ interface TailorDiffModalProps {
 }
 
 export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) => {
-  const { viewMode, tailoredSlides, updateDecision, updateTailoredContent } =
-    useTailorStore();
+  const { viewMode, tailoredSlides, updateDecision, updateTailoredContent } = useTailorStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPendingModal, setShowPendingModal] = useState(false);
   const [rejectHovered, setRejectHovered] = useState(false);

@@ -168,7 +168,9 @@ export const PublicationsForm = () => {
                     showAIWriter={true}
                     aiFieldName="publications"
                     aiFieldValue={pub.description || ''}
-                    onAiUpdate={(newText) => updateItem('publications', pub.id, { description: newText })}
+                    onAiUpdate={(newText) =>
+                      updateItem('publications', pub.id, { description: newText })
+                    }
                   />
                 </div>
               </div>

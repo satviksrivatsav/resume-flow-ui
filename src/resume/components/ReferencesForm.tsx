@@ -168,7 +168,9 @@ export const ReferencesForm = () => {
                     showAIWriter={true}
                     aiFieldName="references"
                     aiFieldValue={ref.description || ''}
-                    onAiUpdate={(newText) => updateItem('references', ref.id, { description: newText })}
+                    onAiUpdate={(newText) =>
+                      updateItem('references', ref.id, { description: newText })
+                    }
                   />
                 </div>
               </div>

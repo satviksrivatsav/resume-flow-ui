@@ -507,14 +507,20 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {visibleItems.map((lang, index) => (
-            <View key={lang.id} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 8, marginBottom: 4 }}>
+            <View
+              key={lang.id}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: 8,
+                marginBottom: 4,
+              }}
+            >
               <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
               {lang.description && (
                 <Text style={{ color: '#555', marginLeft: 4 }}>({lang.description})</Text>
               )}
-              {index < visibleItems.length - 1 && (
-                <Text style={{ marginLeft: 2 }}>,</Text>
-              )}
+              {index < visibleItems.length - 1 && <Text style={{ marginLeft: 2 }}>,</Text>}
             </View>
           ))}
         </View>

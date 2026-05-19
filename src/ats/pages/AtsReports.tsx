@@ -64,7 +64,7 @@ export default function AtsReports() {
     } finally {
       setLoading(false);
     }
-  }, [user, isInitialized]);
+  }, [user, isInitialized, toast]);
 
   useEffect(() => {
     void fetchReports();
