@@ -1,5 +1,5 @@
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import { forwardRef, useMemo, useState, useEffect, useRef } from 'react';
+import { forwardRef, useMemo, useState, useEffect, useRef, createContext, useContext } from 'react';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, sanitizeResumeData } from '@/shared/lib/utils';
@@ -77,6 +77,30 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
     </div>
   );
 };
+const PageBreakContext = createContext<Record<string, number>>({});
+
+interface PageBreakWrapperProps {
+  id: string;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+const PageBreakWrapper = ({ id, children, style }: PageBreakWrapperProps) => {
+  const pageBreaks = useContext(PageBreakContext);
+  const spacerHeight = pageBreaks[id] || 0;
+
+  return (
+    <div data-page-break-id={id} style={style}>
+      {spacerHeight > 0 && (
+        <div
+          className="page-break-spacer bg-transparent pointer-events-none select-none"
+          style={{ height: `${spacerHeight}px` }}
+        />
+      )}
+      {children}
+    </div>
+  );
+};
 
 interface ResumeContentProps {
   basics: any;
@@ -132,13 +156,13 @@ const ResumeContent = ({
   const renderSummary = () => {
     if (!summary.visible || !hasContent(summary.content)) return null;
     return (
-      <div key="summary" style={{ marginBottom: '16px' }}>
+      <PageBreakWrapper id="summary" style={{ marginBottom: '16px' }}>
         <SectionHeader title="Summary" color={themeColor} sizes={sizes} />
         <DescriptionRenderer
           text={summary.content}
           style={{ color: '#000', lineHeight: '1.5', margin: 0 }}
         />
-      </div>
+      </PageBreakWrapper>
     );
   };
 
@@ -152,7 +176,7 @@ const ResumeContent = ({
       <div key="experience" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.experience.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((exp: any) => (
-          <div key={exp.id} style={{ marginBottom: '12px' }}>
+          <PageBreakWrapper key={exp.id} id={exp.id} style={{ marginBottom: '12px' }}>
             <div
               style={{
                 display: 'flex',
@@ -180,7 +204,7 @@ const ResumeContent = ({
                 style={{ color: '#000', lineHeight: '1.5' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -196,7 +220,7 @@ const ResumeContent = ({
       <div key="education" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.education.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((edu: any) => (
-          <div key={edu.id} style={{ marginBottom: '12px' }}>
+          <PageBreakWrapper key={edu.id} id={edu.id} style={{ marginBottom: '12px' }}>
             <div
               style={{
                 display: 'flex',
@@ -223,7 +247,7 @@ const ResumeContent = ({
                 style={{ color: '#000', lineHeight: '1.5', marginTop: '2px' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -239,7 +263,7 @@ const ResumeContent = ({
       <div key="projects" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.projects.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((proj: any) => (
-          <div key={proj.id} style={{ marginBottom: '12px' }}>
+          <PageBreakWrapper key={proj.id} id={proj.id} style={{ marginBottom: '12px' }}>
             <div
               style={{
                 display: 'flex',
@@ -271,7 +295,7 @@ const ResumeContent = ({
                 <strong>Tech:</strong> {proj.keywords.join(', ')}
               </div>
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -288,9 +312,9 @@ const ResumeContent = ({
         <SectionHeader title={sections.skills.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {visibleItems.map((skill: any) => (
-            <div key={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
+            <PageBreakWrapper key={skill.id} id={skill.id} style={{ marginBottom: '4px', width: '100%' }}>
               <strong style={{ color: '#000' }}>{skill.name}:</strong> {skill.keywords.join(', ')}
-            </div>
+            </PageBreakWrapper>
           ))}
         </div>
       </div>
@@ -307,7 +331,7 @@ const ResumeContent = ({
     if (!sections.languages.visible || visibleItems.length === 0) return null;
 
     return (
-      <div key="languages" style={{ marginBottom: '16px' }}>
+      <PageBreakWrapper id="languages" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.languages.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 6px', fontSize: sizes.base }}>
           {visibleItems.map((lang: any, index: number) => (
@@ -320,7 +344,7 @@ const ResumeContent = ({
             </span>
           ))}
         </div>
-      </div>
+      </PageBreakWrapper>
     );
   };
 
@@ -329,7 +353,7 @@ const ResumeContent = ({
     if (!sections.interests.visible || visibleItems.length === 0) return null;
 
     return (
-      <div key="interests" style={{ marginBottom: '16px' }}>
+      <PageBreakWrapper id="interests" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.interests.name} color={themeColor} sizes={sizes} />
         <div style={{ fontSize: sizes.base, color: '#000', lineHeight: '1.5' }}>
           {visibleItems
@@ -341,7 +365,7 @@ const ResumeContent = ({
             })
             .join(', ')}
         </div>
-      </div>
+      </PageBreakWrapper>
     );
   };
 
@@ -355,7 +379,7 @@ const ResumeContent = ({
       <div key="awards" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.awards.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((award: any) => (
-          <div key={award.id} style={{ marginBottom: '8px' }}>
+          <PageBreakWrapper key={award.id} id={award.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{award.title}</strong>
               <span>{award.date}</span>
@@ -367,7 +391,7 @@ const ResumeContent = ({
                 style={{ fontSize: sizes.base, color: '#000' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -383,7 +407,7 @@ const ResumeContent = ({
       <div key="certifications" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((cert: any) => (
-          <div key={cert.id} style={{ marginBottom: '8px' }}>
+          <PageBreakWrapper key={cert.id} id={cert.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{cert.name}</strong>
               <span>{cert.date}</span>
@@ -410,7 +434,7 @@ const ResumeContent = ({
                 style={{ fontSize: sizes.base, color: '#000', marginTop: '2px' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -426,7 +450,7 @@ const ResumeContent = ({
       <div key="publications" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.publications.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((pub: any) => (
-          <div key={pub.id} style={{ marginBottom: '8px' }}>
+          <PageBreakWrapper key={pub.id} id={pub.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{pub.name}</strong>
               <span>{pub.date}</span>
@@ -438,7 +462,7 @@ const ResumeContent = ({
                 style={{ fontSize: sizes.base, color: '#000' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -454,7 +478,7 @@ const ResumeContent = ({
       <div key="volunteer" style={{ marginBottom: '16px' }}>
         <SectionHeader title={sections.volunteer.name} color={themeColor} sizes={sizes} />
         {visibleItems.map((vol: any) => (
-          <div key={vol.id} style={{ marginBottom: '10px' }}>
+          <PageBreakWrapper key={vol.id} id={vol.id} style={{ marginBottom: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <strong style={{ color: '#000' }}>{vol.position}</strong>
               <span>{vol.period}</span>
@@ -466,7 +490,7 @@ const ResumeContent = ({
                 style={{ color: '#000', lineHeight: '1.4' }}
               />
             )}
-          </div>
+          </PageBreakWrapper>
         ))}
       </div>
     );
@@ -481,13 +505,13 @@ const ResumeContent = ({
         <SectionHeader title={sections.references.name} color={themeColor} sizes={sizes} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
           {visibleItems.map((ref: any) => (
-            <div key={ref.id} style={{ fontSize: sizes.base }}>
+            <PageBreakWrapper key={ref.id} id={ref.id} style={{ fontSize: sizes.base }}>
               <div style={{ fontWeight: 'bold' }}>{ref.name}</div>
               <div>{ref.position}</div>
               <div style={{ color: '#666' }}>
                 {ref.email} {ref.phone && `| ${ref.phone}`}
               </div>
-            </div>
+            </PageBreakWrapper>
           ))}
         </div>
       </div>
@@ -525,7 +549,8 @@ const ResumeContent = ({
   return (
     <>
       {/* Header — always first */}
-      <div
+      <PageBreakWrapper
+        id="header"
         style={{
           marginBottom: '20px',
           textAlign: 'center',
@@ -670,7 +695,7 @@ const ResumeContent = ({
               ))}
           </div>
         )}
-      </div>
+      </PageBreakWrapper>
 
       {/* Dynamic section body — respects orderedAllIds */}
       {orderedAllIds.map((key) => {
@@ -689,12 +714,12 @@ const ResumeContent = ({
             <div key={customSection.id} style={{ marginBottom: '16px' }}>
               <SectionHeader title={customSection.name} color={themeColor} sizes={sizes} />
               {visibleItems.map((item: any) => (
-                <div key={item.id} style={{ marginBottom: '8px' }}>
+                <PageBreakWrapper key={item.id} id={item.id} style={{ marginBottom: '8px' }}>
                   <div style={{ fontWeight: 'bold' }}>{item.title}</div>
                   {hasContent(item.description) && (
                     <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
                   )}
-                </div>
+                </PageBreakWrapper>
               ))}
             </div>
           );
@@ -727,6 +752,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
   const paddingY = 48; // 48px is exactly 0.5in top/bottom padding at 96 DPI
   const contentPageHeight = pageHeight - paddingY * 2; // 1027px
 
+  const [pageBreaks, setPageBreaks] = useState<Record<string, number>>({});
   const [totalPages, setTotalPages] = useState(1);
   const measurerRef = useRef<HTMLDivElement>(null);
 
@@ -734,103 +760,155 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
     if (!measurerRef.current) return;
 
     const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const scrollHeight = entry.target.scrollHeight;
-        const pages = Math.ceil(scrollHeight / contentPageHeight);
-        const nextPages = Math.max(1, pages);
-        setTotalPages(nextPages);
-        props.onPageCountChange?.(nextPages);
+      const measurer = measurerRef.current;
+      if (!measurer) return;
+
+      const elements = Array.from(measurer.querySelectorAll('[data-page-break-id]')) as HTMLDivElement[];
+      
+      const newPageBreaks: Record<string, number> = {};
+      let cumulativeSpacer = 0;
+      let currentPageStart = 0;
+      const limit = 1027; // contentPageHeight
+      
+      const measurerRect = measurer.getBoundingClientRect();
+
+      elements.forEach((el) => {
+        const id = el.getAttribute('data-page-break-id');
+        if (!id) return;
+
+        const spacerEl = el.querySelector('.page-break-spacer') as HTMLDivElement | null;
+        const currentSpacer = spacerEl ? spacerEl.offsetHeight : 0;
+        
+        const rect = el.getBoundingClientRect();
+        const measuredTop = rect.top - measurerRect.top;
+        const measuredBottom = rect.bottom - measurerRect.top;
+
+        // Calculate coordinates relative to the original document without spacers
+        const originalTop = measuredTop - cumulativeSpacer;
+        const originalBottom = measuredBottom - cumulativeSpacer - currentSpacer;
+        const height = originalBottom - originalTop;
+
+        cumulativeSpacer += currentSpacer;
+
+        if (id === 'header') {
+          currentPageStart = 0;
+          return;
+        }
+
+        const elementTopOnPage = originalTop - currentPageStart;
+        const elementBottomOnPage = elementTopOnPage + height;
+
+        if (elementBottomOnPage > limit) {
+          const spacerNeeded = limit - elementTopOnPage;
+          newPageBreaks[id] = spacerNeeded;
+          currentPageStart = originalTop;
+        } else {
+          newPageBreaks[id] = 0;
+        }
+      });
+
+      if (JSON.stringify(newPageBreaks) !== JSON.stringify(pageBreaks)) {
+        setPageBreaks(newPageBreaks);
       }
+
+      const totalHeight = measurer.scrollHeight;
+      const pages = Math.ceil(totalHeight / 1123);
+      const nextPages = Math.max(1, pages);
+      setTotalPages(nextPages);
+      props.onPageCountChange?.(nextPages);
     });
 
     observer.observe(measurerRef.current);
 
-    // Initial calculation
-    const initialPages = Math.ceil(measurerRef.current.scrollHeight / contentPageHeight);
+    // Initial check
+    const totalHeight = measurerRef.current.scrollHeight;
+    const initialPages = Math.ceil(totalHeight / 1123);
     const nextPages = Math.max(1, initialPages);
     setTotalPages(nextPages);
     props.onPageCountChange?.(nextPages);
 
     return () => observer.disconnect();
-  }, [resumeData, props.onPageCountChange, contentPageHeight]);
+  }, [resumeData, props.onPageCountChange, pageBreaks]);
 
   return (
-    <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
-      {/* 1. Measurer: Invisible off-screen element to calculate height */}
-      <div
-        ref={measurerRef}
-        style={{
-          width: pageWidth,
-          height: 'auto',
-          position: 'absolute',
-          left: '-9999px',
-          top: '-9999px',
-          opacity: 0,
-          pointerEvents: 'none',
-          fontFamily: metadata.typography.fontFamily,
-          fontSize: sizes.base,
-          paddingLeft: pageMargin,
-          paddingRight: pageMargin,
-          paddingTop: 0,
-          paddingBottom: 0,
-          lineHeight: '1.5',
-          backgroundColor: 'white',
-          color: '#000',
-        }}
-      >
-        <ResumeContent
-          basics={basics}
-          summary={summary}
-          sections={sections}
-          customSections={customSections}
-          metadata={metadata}
-          sizes={sizes}
-        />
-      </div>
-
-      {/* 2. Visual Clean Page Splits */}
-      {Array.from({ length: totalPages }).map((_, index) => (
+    <PageBreakContext.Provider value={pageBreaks}>
+      <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
+        {/* 1. Measurer: Invisible off-screen element to calculate height */}
         <div
-          key={index}
-          className="resume-page-sheet shadow-2xl relative bg-white border border-border/10 rounded-sm overflow-hidden animate-in fade-in duration-300"
+          ref={measurerRef}
           style={{
             width: pageWidth,
-            height: `${pageHeight}px`,
+            height: 'auto',
+            position: 'absolute',
+            left: '-9999px',
+            top: '-9999px',
+            opacity: 0,
+            pointerEvents: 'none',
+            fontFamily: metadata.typography.fontFamily,
+            fontSize: sizes.base,
             paddingLeft: pageMargin,
             paddingRight: pageMargin,
-            paddingTop: `${paddingY}px`,
-            paddingBottom: `${paddingY}px`,
+            paddingTop: 0,
+            paddingBottom: 0,
+            lineHeight: '1.5',
+            backgroundColor: 'white',
+            color: '#000',
           }}
         >
-          {/* Inner content wrapper, shifted up by page index */}
+          <ResumeContent
+            basics={basics}
+            summary={summary}
+            sections={sections}
+            customSections={customSections}
+            metadata={metadata}
+            sizes={sizes}
+          />
+        </div>
+
+        {/* 2. Visual Clean Page Splits */}
+        {Array.from({ length: totalPages }).map((_, index) => (
           <div
+            key={index}
+            className="resume-page-sheet shadow-2xl relative bg-white border border-border/10 rounded-sm overflow-hidden animate-in fade-in duration-300"
             style={{
-              fontFamily: metadata.typography.fontFamily,
-              fontSize: sizes.base,
-              color: '#000',
-              transform: `translateY(-${index * contentPageHeight}px)`,
-              height: 'auto',
+              width: pageWidth,
+              height: `${pageHeight}px`,
+              paddingLeft: pageMargin,
+              paddingRight: pageMargin,
+              paddingTop: `${paddingY}px`,
+              paddingBottom: `${paddingY}px`,
             }}
           >
-            <ResumeContent
-              basics={basics}
-              summary={summary}
-              sections={sections}
-              customSections={customSections}
-              metadata={metadata}
-              sizes={sizes}
-            />
+            {/* Inner content wrapper, shifted up by page index */}
+            <div
+              style={{
+                fontFamily: metadata.typography.fontFamily,
+                fontSize: sizes.base,
+                color: '#000',
+                transform: `translateY(-${index * contentPageHeight}px)`,
+                height: 'auto',
+              }}
+            >
+              <ResumeContent
+                basics={basics}
+                summary={summary}
+                sections={sections}
+                customSections={customSections}
+                metadata={metadata}
+                sizes={sizes}
+              />
+            </div>
+            
+            {/* Subtle page indicator at bottom right of each page sheet */}
+            <div 
+              className="absolute bottom-3 right-4 text-[9px] font-semibold text-muted-foreground/30 uppercase tracking-widest pointer-events-none select-none z-30"
+            >
+              Page {index + 1} of {totalPages}
+            </div>
           </div>
-          
-          {/* Subtle page indicator at bottom right of each page sheet */}
-          <div 
-            className="absolute bottom-3 right-4 text-[9px] font-semibold text-muted-foreground/30 uppercase tracking-widest pointer-events-none select-none z-30"
-          >
-            Page {index + 1} of {totalPages}
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </PageBreakContext.Provider>
   );
 });
 
