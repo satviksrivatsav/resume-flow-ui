@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -240,7 +240,16 @@ export default function AtsChecker() {
     } catch (err: any) {
       if (err.name === 'AbortError') return;
       console.error('ATS Analysis Error:', err);
-      setError(err.message || 'Failed to analyze resume');
+      const isNetworkError =
+        !navigator.onLine ||
+        (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
+      toast({
+        title: isNetworkError ? 'Network Error' : 'Analysis Error',
+        description: isNetworkError
+          ? 'A network error occurred. Please check your connection and try again.'
+          : err.message || 'Failed to analyze resume',
+        variant: 'destructive',
+      });
       setStatus('error');
     }
   };
@@ -347,16 +356,6 @@ export default function AtsChecker() {
                 hasExistingReport={!!existingReport}
                 onViewExistingReport={loadExistingReport}
               />
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive flex items-center gap-2"
-                >
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  {error}
-                </motion.div>
-              )}
             </motion.div>
           ) : report ? (
             <motion.div

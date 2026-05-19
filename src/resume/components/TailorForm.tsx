@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -59,9 +59,14 @@ export const TailorForm = () => {
         });
       } catch (err: any) {
         console.error('JD extraction failed:', err);
+        const isNetworkError =
+          !navigator.onLine ||
+          (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
         toast({
-          title: 'Error',
-          description: err.message || 'Failed to extract text from JD file',
+          title: isNetworkError ? 'Network Error' : 'Error',
+          description: isNetworkError
+            ? 'A network error occurred. Please check your connection and try again.'
+            : err.message || 'Failed to extract text from JD file',
           variant: 'destructive',
         });
         setJdFile(null);
@@ -165,14 +170,22 @@ export const TailorForm = () => {
 
   const handleTailor = async () => {
     if (!jobDescription.trim()) {
-      setError('Please provide a job description.');
+      toast({
+        title: 'Validation Error',
+        description: 'Please provide a job description.',
+        variant: 'destructive',
+      });
       return;
     }
 
     const sectionsToSubmit = tailorEntire ? availableSections.map((s) => s.id) : sectionsToTailor;
 
     if (sectionsToSubmit.length === 0) {
-      setError('Please select at least one section to tailor.');
+      toast({
+        title: 'Validation Error',
+        description: 'Please select at least one section to tailor.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -234,12 +247,20 @@ export const TailorForm = () => {
         setTailoredSlides(slides);
         setViewMode('diff');
       } else {
-        setError(result.detail || 'Failed to tailor resume. Please try again.');
+        toast({
+          title: 'Error',
+          description: result.detail || 'Failed to tailor resume. Please try again.',
+          variant: 'destructive',
+        });
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       console.error('Tailoring error:', err);
-      setError('A network error occurred. Please check your connection and try again.');
+      toast({
+        title: 'Network Error',
+        description: 'A network error occurred. Please check your connection and try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsTailoring(false);
     }
@@ -378,16 +399,6 @@ export const TailorForm = () => {
         </div>
       </div>
 
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-3 text-destructive"
-        >
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <p className="text-sm font-medium">{error}</p>
-        </motion.div>
-      )}
 
       <div className="pt-2">
         <motion.div

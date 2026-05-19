@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 
 import { AIFieldRequest, processField } from '@/shared/lib/ai';
 
@@ -165,7 +165,15 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         return;
       }
 
-      const message = error instanceof Error ? error.message : 'Failed to process request';
+      const isNetworkError =
+        !navigator.onLine ||
+        (error instanceof TypeError && error.message.toLowerCase().includes('fetch'));
+
+      const message = isNetworkError
+        ? 'A network error occurred. Please check your connection and try again.'
+        : error instanceof Error
+          ? error.message
+          : 'Failed to process request';
       console.error('\n!!! API ERROR:', message);
       console.log('========================================\n');
 

@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
   ArrowLeft,
@@ -97,7 +97,17 @@ export default function UploadResume() {
           return;
         }
 
-        setError(err instanceof Error ? err.message : 'Failed to parse resume');
+        const isNetworkError =
+          !navigator.onLine ||
+          (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
+
+        setError(
+          isNetworkError
+            ? 'A network error occurred. Please check your connection and try again.'
+            : err instanceof Error
+              ? err.message
+              : 'Failed to parse resume',
+        );
         setUploadState('error');
       }
     },

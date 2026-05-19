@@ -1,4 +1,4 @@
-﻿import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
@@ -51,10 +51,19 @@ export default function Dashboard() {
       setResumes(data || []);
     } catch (err: any) {
       console.error('Error fetching resumes:', err);
-      setError(err.message || 'Failed to fetch resumes');
+      const isNetworkError =
+        !navigator.onLine ||
+        (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
+      setError(
+        isNetworkError
+          ? 'A network error occurred. Please check your connection and try again.'
+          : err.message || 'Failed to fetch resumes',
+      );
       toast({
-        title: 'Error',
-        description: 'Failed to load resumes',
+        title: isNetworkError ? 'Network Error' : 'Error',
+        description: isNetworkError
+          ? 'A network error occurred. Please check your connection and try again.'
+          : 'Failed to load resumes',
         variant: 'destructive',
       });
     } finally {

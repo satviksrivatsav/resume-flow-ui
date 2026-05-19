@@ -1,4 +1,4 @@
-﻿import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
@@ -49,11 +49,20 @@ export default function AtsReports() {
       setReports((data as unknown as ReportRow[]) ?? []);
     } catch (err: unknown) {
       console.error('Error fetching reports:', err);
-      const message = err instanceof Error ? err.message : 'Failed to fetch reports';
+      const isNetworkError =
+        !navigator.onLine ||
+        (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
+      const message = isNetworkError
+        ? 'A network error occurred. Please check your connection and try again.'
+        : err instanceof Error
+          ? err.message
+          : 'Failed to fetch reports';
       setError(message);
       toast({
-        title: 'Error',
-        description: 'Failed to load reports',
+        title: isNetworkError ? 'Network Error' : 'Error',
+        description: isNetworkError
+          ? 'A network error occurred. Please check your connection and try again.'
+          : 'Failed to load reports',
         variant: 'destructive',
       });
     } finally {
