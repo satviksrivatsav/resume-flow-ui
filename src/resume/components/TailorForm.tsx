@@ -248,8 +248,8 @@ export const TailorForm = () => {
       } else {
         console.error('Tailoring failed:', result.detail);
         toast({
-          title: 'Error',
-          description: 'Failed to tailor your resume. Please check the inputs and try again.',
+          title: 'Tailoring Failed',
+          description: result.detail || 'Failed to tailor your resume. Please check the inputs and try again.',
           variant: 'destructive',
         });
       }
