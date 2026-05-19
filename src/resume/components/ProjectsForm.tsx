@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, Link as LinkIcon } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
 import { Input } from '@/shared/components/ui/input';
@@ -155,22 +154,18 @@ export const ProjectsForm = () => {
                 />
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-semibold">
-                      Description / Key Features <span className="text-destructive">*</span>
-                    </Label>
-                    <AIWriterButton
-                      fieldName="projects"
-                      fieldLabel="Project"
-                      fieldValue={proj.description || ''}
-                      onUpdate={(newText) => updateProject(proj.id, { description: newText })}
-                    />
-                  </div>
+                  <Label className="text-sm font-semibold">
+                    Description / Key Features <span className="text-destructive">*</span>
+                  </Label>
                   <RichTextEditor
                     value={proj.description || ''}
                     onChange={(value) => updateProject(proj.id, { description: value })}
                     placeholder="• Built a full-stack app using...&#10;• Implemented real-time updates with..."
                     className="min-h-[150px]"
+                    showAIWriter={true}
+                    aiFieldName="projects"
+                    aiFieldValue={proj.description || ''}
+                    onAiUpdate={(newText) => updateProject(proj.id, { description: newText })}
                   />
                   <FieldTip>
                     Briefly explain the project's purpose and highlight your technical

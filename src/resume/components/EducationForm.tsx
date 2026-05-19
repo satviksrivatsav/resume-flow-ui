@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, GraduationCap, MapPin } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -182,20 +181,16 @@ export const EducationForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-semibold">Description / Achievements</Label>
-                    <AIWriterButton
-                      fieldName="education"
-                      fieldLabel="Education Description"
-                      fieldValue={edu.description || ''}
-                      onUpdate={(newText) => updateEducation(edu.id, { description: newText })}
-                    />
-                  </div>
+                  <Label className="text-sm font-semibold">Description / Achievements</Label>
                   <RichTextEditor
                     value={edu.description || ''}
                     onChange={(value) => updateEducation(edu.id, { description: value })}
                     placeholder="• Relevant coursework: Data Structures, Algorithms&#10;• Dean's List for 4 semesters"
                     className="min-h-[120px]"
+                    showAIWriter={true}
+                    aiFieldName="education"
+                    aiFieldValue={edu.description || ''}
+                    onAiUpdate={(newText) => updateEducation(edu.id, { description: newText })}
                   />
                 </div>
               </div>

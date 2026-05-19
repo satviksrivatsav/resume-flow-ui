@@ -145,9 +145,26 @@ export default function ProfilePage() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email" className="text-sm font-bold px-1">
-              Email Address
-            </Label>
+            <div className="flex items-center justify-between px-1">
+              <Label htmlFor="email" className="text-sm font-bold">
+                Email Address
+              </Label>
+              {email.trim().toLowerCase() === user?.email?.toLowerCase() ? (
+                user?.email_confirmed_at ? (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+                    Pro
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+                    Unverified
+                  </span>
+                )
+              ) : (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+                  Unverified
+                </span>
+              )}
+            </div>
             <Input
               id="email"
               type="email"

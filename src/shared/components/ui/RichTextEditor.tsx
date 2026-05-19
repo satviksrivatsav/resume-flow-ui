@@ -1,10 +1,11 @@
-﻿import 'react-quill-new/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import '@/resume/components/quill-custom.css';
 
 import { Bold, Italic, List, ListOrdered, Strikethrough, Type, Underline } from 'lucide-react';
 import * as React from 'react';
 import ReactQuill from 'react-quill-new';
 
+import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +21,10 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  showAIWriter?: boolean;
+  aiFieldName?: string;
+  aiFieldValue?: string;
+  onAiUpdate?: (newText: string) => void;
 }
 
 const ToolbarButton = ({
@@ -69,6 +74,10 @@ export const RichTextEditor = ({
   placeholder,
   className,
   disabled,
+  showAIWriter = false,
+  aiFieldName,
+  aiFieldValue,
+  onAiUpdate,
 }: RichTextEditorProps) => {
   const editorId = React.useId().replace(/:/g, '');
   const toolbarId = `toolbar-${editorId}`;
@@ -96,53 +105,66 @@ export const RichTextEditor = ({
       <div
         id={toolbarId}
         className={cn(
-          'flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20',
+          'flex items-center justify-between gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20',
           disabled && 'pointer-events-none',
         )}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-0.5">
-          <ToolbarButton className="ql-bold" tooltip="Bold" disabled={disabled}>
-            <Bold className="w-3.5 h-3.5" />
-          </ToolbarButton>
-          <ToolbarButton className="ql-italic" tooltip="Italic" disabled={disabled}>
-            <Italic className="w-3.5 h-3.5" />
-          </ToolbarButton>
-          <ToolbarButton className="ql-underline" tooltip="Underline" disabled={disabled}>
-            <Underline className="w-3.5 h-3.5" />
-          </ToolbarButton>
-          <ToolbarButton className="ql-strike" tooltip="Strikethrough" disabled={disabled}>
-            <Strikethrough className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-0.5">
+            <ToolbarButton className="ql-bold" tooltip="Bold" disabled={disabled}>
+              <Bold className="w-3.5 h-3.5" />
+            </ToolbarButton>
+            <ToolbarButton className="ql-italic" tooltip="Italic" disabled={disabled}>
+              <Italic className="w-3.5 h-3.5" />
+            </ToolbarButton>
+            <ToolbarButton className="ql-underline" tooltip="Underline" disabled={disabled}>
+              <Underline className="w-3.5 h-3.5" />
+            </ToolbarButton>
+            <ToolbarButton className="ql-strike" tooltip="Strikethrough" disabled={disabled}>
+              <Strikethrough className="w-3.5 h-3.5" />
+            </ToolbarButton>
+          </div>
+
+          <div className="w-[1px] h-4 bg-border mx-1.5" />
+
+          <div className="flex items-center gap-0.5">
+            <ToolbarButton
+              className="ql-list"
+              tooltip="Bullet List"
+              value="bullet"
+              disabled={disabled}
+            >
+              <List className="w-3.5 h-3.5" />
+            </ToolbarButton>
+            <ToolbarButton
+              className="ql-list"
+              tooltip="Numbered List"
+              value="ordered"
+              disabled={disabled}
+            >
+              <ListOrdered className="w-3.5 h-3.5" />
+            </ToolbarButton>
+          </div>
+
+          <div className="w-[1px] h-4 bg-border mx-1.5" />
+
+          <ToolbarButton className="ql-clean" tooltip="Clear Formatting" disabled={disabled}>
+            <Type className="w-3.5 h-3.5" />
           </ToolbarButton>
         </div>
 
-        <div className="w-[1px] h-4 bg-border mx-1.5" />
-
-        <div className="flex items-center gap-0.5">
-          <ToolbarButton
-            className="ql-list"
-            tooltip="Bullet List"
-            value="bullet"
-            disabled={disabled}
-          >
-            <List className="w-3.5 h-3.5" />
-          </ToolbarButton>
-          <ToolbarButton
-            className="ql-list"
-            tooltip="Numbered List"
-            value="ordered"
-            disabled={disabled}
-          >
-            <ListOrdered className="w-3.5 h-3.5" />
-          </ToolbarButton>
-        </div>
-
-        <div className="w-[1px] h-4 bg-border mx-1.5" />
-
-        <ToolbarButton className="ql-clean" tooltip="Clear Formatting" disabled={disabled}>
-          <Type className="w-3.5 h-3.5" />
-        </ToolbarButton>
+        {showAIWriter && aiFieldName && onAiUpdate && (
+          <div className="ml-auto flex items-center pr-1 select-none pointer-events-auto shrink-0">
+            <AIWriterButton
+              fieldName={aiFieldName}
+              fieldLabel=""
+              fieldValue={aiFieldValue ?? value}
+              onUpdate={onAiUpdate}
+            />
+          </div>
+        )}
       </div>
 
       <ReactQuill

@@ -1,6 +1,5 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Checkbox } from '@/shared/components/ui/checkbox';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
 import { Input } from '@/shared/components/ui/input';
@@ -110,19 +109,15 @@ export const AdditionalSectionForm = () => {
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="font-medium">Content</Label>
-            <AIWriterButton
-              fieldName="description"
-              fieldLabel="Section Content"
-              fieldValue={(section as any).description || ''}
-              onUpdate={(newText) => updateCustomSection(section.id, { description: newText })}
-            />
-          </div>
+          <Label className="font-medium">Content</Label>
           <RichTextEditor
             value={(section as any).description || ''}
             onChange={(value) => updateCustomSection(section.id, { description: value })}
             placeholder="Describe your achievements or details here..."
+            showAIWriter={true}
+            aiFieldName="description"
+            aiFieldValue={(section as any).description || ''}
+            onAiUpdate={(newText) => updateCustomSection(section.id, { description: newText })}
           />
           <FieldTip>
             Use the toolbar to add bullets, bold key terms, or italicise details. Keep each entry

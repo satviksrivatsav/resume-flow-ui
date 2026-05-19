@@ -1,4 +1,4 @@
-﻿import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Briefcase, FileSearch, FileText, MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -6,12 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/shared/components/ui/button';
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
+import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { cn } from '@/shared/lib/utils';
@@ -74,6 +69,26 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
     }
   };
 
+  const menuItems = [
+    {
+      label: 'View Report',
+      icon: FileSearch,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        handleView();
+      },
+    },
+    {
+      label: 'Delete',
+      icon: Trash2,
+      destructive: true,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setShowDeleteModal(true);
+      },
+    },
+  ];
+
   return (
     <>
       <motion.div
@@ -118,26 +133,15 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
             <h3 className="font-bold text-sm truncate pr-2 group-hover:text-primary transition-colors">
               {report.resumes?.name ?? 'Untitled Resume'}
             </h3>
-            <DropdownMenu>
-              <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-                <button className="p-1 rounded-lg hover:bg-accent transition-colors">
+            <ActionListMenu
+              align="end"
+              trigger={
+                <button className="p-1 rounded-lg hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
                   <MoreVertical className="w-4 h-4 text-muted-foreground" />
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleView}>
-                  <FileSearch className="w-4 h-4 mr-2" />
-                  View Report
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
-                  onClick={handleDeleteClick}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              }
+              items={menuItems}
+            />
           </div>
 
           <div className="flex items-center gap-1.5 mb-2">

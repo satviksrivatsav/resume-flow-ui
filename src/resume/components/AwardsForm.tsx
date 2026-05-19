@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, Trophy } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -138,22 +137,16 @@ export const AwardsForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">Description</Label>
-                    <AIWriterButton
-                      fieldName="awards"
-                      fieldLabel="Award"
-                      fieldValue={award.description || ''}
-                      onUpdate={(newText) =>
-                        updateItem('awards', award.id, { description: newText })
-                      }
-                    />
-                  </div>
+                  <Label className="font-medium">Description</Label>
                   <RichTextEditor
                     value={award.description || ''}
                     onChange={(value) => updateItem('awards', award.id, { description: value })}
                     placeholder="Briefly describe the award and why you received it."
                     className="min-h-[100px]"
+                    showAIWriter={true}
+                    aiFieldName="awards"
+                    aiFieldValue={award.description || ''}
+                    onAiUpdate={(newText) => updateItem('awards', award.id, { description: newText })}
                   />
                 </div>
               </div>

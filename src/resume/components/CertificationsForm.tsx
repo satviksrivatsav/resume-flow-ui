@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Award, Calendar, ChevronDown, Link as LinkIcon } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -164,17 +163,7 @@ export const CertificationsForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">Description</Label>
-                    <AIWriterButton
-                      fieldName="certifications"
-                      fieldLabel="Certification"
-                      fieldValue={cert.description || ''}
-                      onUpdate={(newText) =>
-                        updateItem('certifications', cert.id, { description: newText })
-                      }
-                    />
-                  </div>
+                  <Label className="font-medium">Description</Label>
                   <RichTextEditor
                     value={cert.description || ''}
                     onChange={(value) =>
@@ -182,6 +171,12 @@ export const CertificationsForm = () => {
                     }
                     placeholder="Optional details about the certification."
                     className="min-h-[80px]"
+                    showAIWriter={true}
+                    aiFieldName="certifications"
+                    aiFieldValue={cert.description || ''}
+                    onAiUpdate={(newText) =>
+                      updateItem('certifications', cert.id, { description: newText })
+                    }
                   />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -132,22 +131,18 @@ export const CustomSectionForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">
-                      Description <span className="text-destructive">*</span>
-                    </Label>
-                    <AIWriterButton
-                      fieldName="custom"
-                      fieldLabel={section.name}
-                      fieldValue={item.description || ''}
-                      onUpdate={(newText) => handleUpdateItem(item.id, { description: newText })}
-                    />
-                  </div>
+                  <Label className="font-medium">
+                    Description <span className="text-destructive">*</span>
+                  </Label>
                   <RichTextEditor
                     value={item.description || ''}
                     onChange={(value) => handleUpdateItem(item.id, { description: value })}
                     placeholder="Describe this item in detail..."
                     className="min-h-[100px]"
+                    showAIWriter={true}
+                    aiFieldName="custom"
+                    aiFieldValue={item.description || ''}
+                    onAiUpdate={(newText) => handleUpdateItem(item.id, { description: newText })}
                   />
                 </div>
               </div>

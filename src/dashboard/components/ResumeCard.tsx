@@ -1,4 +1,4 @@
-﻿import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Copy, Edit3, FileSearch, FileText, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -6,12 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ResumePreview } from '@/resume/components/ResumePreview';
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
+import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { sanitizeResumeData } from '@/shared/lib/utils';
@@ -141,6 +136,46 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     }
   };
 
+  const menuItems = [
+    ...(hasReport
+      ? [
+          {
+            label: 'View ATS Report',
+            icon: FileSearch,
+            onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              navigate(`/dashboard/ats?resumeId=${resume.id}&view=true`);
+            },
+          },
+        ]
+      : []),
+    {
+      label: 'Rename',
+      icon: Edit3,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setIsRenaming(true);
+      },
+    },
+    {
+      label: 'Duplicate',
+      icon: Copy,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        handleDuplicate();
+      },
+    },
+    {
+      label: 'Delete',
+      icon: Trash2,
+      destructive: true,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setShowDeleteModal(true);
+      },
+    },
+  ];
+
   return (
     <>
       <motion.div
@@ -175,54 +210,15 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
                 resume.name
               )}
             </h3>
-            <DropdownMenu>
-              <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-                <button className="p-1 rounded-lg hover:bg-accent transition-colors">
+            <ActionListMenu
+              align="end"
+              trigger={
+                <button className="p-1 rounded-lg hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
                   <MoreVertical className="w-4 h-4 text-muted-foreground" />
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {hasReport && (
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/dashboard/ats?resumeId=${resume.id}&view=true`);
-                    }}
-                  >
-                    <FileSearch className="w-4 h-4 mr-2" />
-                    View ATS Report
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsRenaming(true);
-                  }}
-                >
-                  <Edit3 className="w-4 h-4 mr-2" />
-                  Rename
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDuplicate();
-                  }}
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowDeleteModal(true);
-                  }}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              }
+              items={menuItems}
+            />
           </div>
 
           <div className="flex items-center gap-2">

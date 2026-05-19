@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronDown, Mail, Phone, User } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -160,22 +159,16 @@ export const ReferencesForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">Summary / Context</Label>
-                    <AIWriterButton
-                      fieldName="references"
-                      fieldLabel="Reference"
-                      fieldValue={ref.description || ''}
-                      onUpdate={(newText) =>
-                        updateItem('references', ref.id, { description: newText })
-                      }
-                    />
-                  </div>
+                  <Label className="font-medium">Summary / Context</Label>
                   <RichTextEditor
                     value={ref.description || ''}
                     onChange={(value) => updateItem('references', ref.id, { description: value })}
                     placeholder="Briefly describe how you worked together or what they can speak to."
                     className="min-h-[80px]"
+                    showAIWriter={true}
+                    aiFieldName="references"
+                    aiFieldValue={ref.description || ''}
+                    onAiUpdate={(newText) => updateItem('references', ref.id, { description: newText })}
                   />
                 </div>
               </div>

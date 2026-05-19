@@ -1,8 +1,7 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -160,22 +159,19 @@ export const PersonalInfoForm = () => {
       </div>
 
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="summary" className="text-base font-semibold">
-            Professional Summary
-          </Label>
-          <AIWriterButton
-            fieldName="summary"
-            fieldLabel="Summary"
-            fieldValue={summary.content || ''}
-            onUpdate={(newText) => updateSummary({ content: newText })}
-          />
-        </div>
+        <Label htmlFor="summary" className="text-base font-semibold">
+          Professional Summary
+        </Label>
         <RichTextEditor
+          id="summary"
           value={summary.content}
           onChange={(value) => updateSummary({ content: value })}
           placeholder="A brief summary of your professional background and career goals..."
           className="min-h-[120px]"
+          showAIWriter={true}
+          aiFieldName="summary"
+          aiFieldValue={summary.content || ''}
+          onAiUpdate={(newText) => updateSummary({ content: newText })}
         />
         <FieldTip>
           Keep it concise (2–4 sentences). Lead with your title, highlight your top skills, and end

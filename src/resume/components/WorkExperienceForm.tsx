@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Briefcase, Calendar, ChevronDown, MapPin } from 'lucide-react';
 
 import {
@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
-import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import { Button } from '@/shared/components/ui/button';
 import { FieldTip } from '@/shared/components/ui/FieldTip';
 import { Input } from '@/shared/components/ui/input';
@@ -167,22 +166,18 @@ export const WorkExperienceForm = () => {
                 </div>
 
                 <div className="md:col-span-2 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-semibold">
-                      Key Achievements & Responsibilities
-                    </Label>
-                    <AIWriterButton
-                      fieldName="experience"
-                      fieldLabel="Work Experience Description"
-                      fieldValue={exp.description || ''}
-                      onUpdate={(newText) => updateExperience(exp.id, { description: newText })}
-                    />
-                  </div>
+                  <Label className="text-sm font-semibold">
+                    Key Achievements & Responsibilities
+                  </Label>
                   <RichTextEditor
                     value={exp.description || ''}
                     onChange={(value) => updateExperience(exp.id, { description: value })}
                     placeholder="• Led a team of 5 developers to ship X feature&#10;• Improved app performance by 40% through Y optimization"
                     className="min-h-[150px]"
+                    showAIWriter={true}
+                    aiFieldName="experience"
+                    aiFieldValue={exp.description || ''}
+                    onAiUpdate={(newText) => updateExperience(exp.id, { description: newText })}
                   />
                   <FieldTip>
                     Use bullet points and lead with strong action verbs. Quantify impact where
