@@ -36,7 +36,7 @@ Font.registerHyphenationCallback((word) => {
   return [word];
 });
 
-// Registering default fonts
+// Registering all available fonts matching the FONT_FAMILIES of the application
 Font.register({
   family: 'Roboto',
   fonts: [
@@ -50,6 +50,70 @@ Font.register({
   fonts: [
     { src: '/fonts/OpenSans-Regular.ttf', fontWeight: 400 },
     { src: '/fonts/OpenSans-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Lato',
+  fonts: [
+    { src: '/fonts/Lato-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Lato-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Montserrat',
+  fonts: [
+    { src: '/fonts/Montserrat-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Montserrat-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Raleway',
+  fonts: [
+    { src: '/fonts/Raleway-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Raleway-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Caladea',
+  fonts: [
+    { src: '/fonts/Caladea-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Caladea-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Lora',
+  fonts: [
+    { src: '/fonts/Lora-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Lora-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Roboto Slab',
+  fonts: [
+    { src: '/fonts/RobotoSlab-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/RobotoSlab-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Playfair Display',
+  fonts: [
+    { src: '/fonts/PlayfairDisplay-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/PlayfairDisplay-Bold.ttf', fontWeight: 700 },
+  ],
+});
+
+Font.register({
+  family: 'Merriweather',
+  fonts: [
+    { src: '/fonts/Merriweather-Regular.ttf', fontWeight: 400 },
+    { src: '/fonts/Merriweather-Bold.ttf', fontWeight: 700 },
   ],
 });
 
