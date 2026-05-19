@@ -172,7 +172,9 @@ export const EducationForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="font-medium">Grade / GPA</Label>
+                  <Label className="font-medium">
+                    Grade / GPA <span className="text-destructive">*</span>
+                  </Label>
                   <Input
                     value={edu.grade}
                     onChange={(e) => updateEducation(edu.id, { grade: e.target.value })}
