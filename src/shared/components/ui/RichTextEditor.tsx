@@ -1,9 +1,11 @@
-import 'react-quill-new/dist/quill.snow.css';
 import '@/resume/components/quill-custom.css';
 
 import { Bold, Italic, List, ListOrdered, Strikethrough, Type, Underline } from 'lucide-react';
 import * as React from 'react';
-import ReactQuill from 'react-quill-new';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import UnderlineExtension from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder';
 
 import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import {
@@ -28,31 +30,32 @@ interface RichTextEditorProps {
 }
 
 const ToolbarButton = ({
-  className,
   tooltip,
   children,
-  value,
   delayDuration = 400,
   disabled,
+  isActive,
+  onMouseDown,
 }: {
-  className: string;
   tooltip: string;
   children: React.ReactNode;
-  value?: string;
   delayDuration?: number;
   disabled?: boolean;
+  isActive?: boolean;
+  onMouseDown: (e: React.MouseEvent) => void;
 }) => (
   <TooltipProvider delayDuration={delayDuration}>
     <Tooltip>
       <TooltipTrigger asChild>
         <button
+          type="button"
           className={cn(
             'custom-toolbar-button transition-colors hover:bg-muted p-1 rounded-md',
-            className,
+            isActive && 'ql-active',
             disabled && 'opacity-50 cursor-not-allowed',
           )}
-          value={value}
           disabled={disabled}
+          onMouseDown={onMouseDown}
         >
           {children}
         </button>
@@ -79,20 +82,71 @@ export const RichTextEditor = ({
   aiFieldValue,
   onAiUpdate,
 }: RichTextEditorProps) => {
-  const editorId = React.useId().replace(/:/g, '');
-  const toolbarId = `toolbar-${editorId}`;
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: false,
+        codeBlock: false,
+      }),
+      UnderlineExtension,
+      Placeholder.configure({
+        placeholder: placeholder || '',
+      }),
+    ],
+    content: value,
+    editable: !disabled,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      // Handle empty content state
+      const isEmpty = html === '<p></p>' || html === '';
+      onChange(isEmpty ? '' : html);
+    },
+  });
 
-  const modules = React.useMemo(
-    () => ({
-      toolbar: {
-        container: `#${toolbarId}`,
-      },
-    }),
-    [toolbarId],
-  );
+  // Keep content in sync when value changes externally
+  React.useEffect(() => {
+    if (!editor) return;
 
-  // 'list' is the format name, 'bullet' and 'ordered' are attributes
-  const formats = ['bold', 'italic', 'underline', 'strike', 'list'];
+    const currentHtml = editor.getHTML();
+    if (value !== currentHtml) {
+      const isInputEmpty = !value || value === '<p></p>';
+      const isEditorEmpty = !currentHtml || currentHtml === '<p></p>';
+      if (isInputEmpty && isEditorEmpty) return;
+
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
+
+  // Keep editable state in sync
+  React.useEffect(() => {
+    if (editor) {
+      editor.setEditable(!disabled);
+    }
+  }, [disabled, editor]);
+
+  if (!editor) {
+    return (
+      <div
+        className={cn(
+          'rich-text-editor-container bg-background rounded-2xl border border-input overflow-hidden transition-all duration-200 shadow-sm font-normal opacity-50',
+          className,
+        )}
+      >
+        <div className="flex items-center justify-between gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20">
+          <div className="flex items-center gap-0.5">
+            <Bold className="w-3.5 h-3.5 opacity-50 m-1.5" />
+            <Italic className="w-3.5 h-3.5 opacity-50 m-1.5" />
+            <Underline className="w-3.5 h-3.5 opacity-50 m-1.5" />
+            <Strikethrough className="w-3.5 h-3.5 opacity-50 m-1.5" />
+            <div className="w-[1px] h-4 bg-border mx-1.5" />
+            <List className="w-3.5 h-3.5 opacity-50 m-1.5" />
+            <ListOrdered className="w-3.5 h-3.5 opacity-50 m-1.5" />
+          </div>
+        </div>
+        <div className="min-h-[120px]" />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -103,7 +157,6 @@ export const RichTextEditor = ({
       )}
     >
       <div
-        id={toolbarId}
         className={cn(
           'flex items-center justify-between gap-0.5 px-2 py-1.5 border-b border-input bg-muted/20',
           disabled && 'pointer-events-none',
@@ -113,16 +166,48 @@ export const RichTextEditor = ({
       >
         <div className="flex items-center gap-0.5">
           <div className="flex items-center gap-0.5">
-            <ToolbarButton className="ql-bold" tooltip="Bold" disabled={disabled}>
+            <ToolbarButton
+              tooltip="Bold"
+              disabled={disabled}
+              isActive={editor.isActive('bold')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleBold().run();
+              }}
+            >
               <Bold className="w-3.5 h-3.5" />
             </ToolbarButton>
-            <ToolbarButton className="ql-italic" tooltip="Italic" disabled={disabled}>
+            <ToolbarButton
+              tooltip="Italic"
+              disabled={disabled}
+              isActive={editor.isActive('italic')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleItalic().run();
+              }}
+            >
               <Italic className="w-3.5 h-3.5" />
             </ToolbarButton>
-            <ToolbarButton className="ql-underline" tooltip="Underline" disabled={disabled}>
+            <ToolbarButton
+              tooltip="Underline"
+              disabled={disabled}
+              isActive={editor.isActive('underline')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleUnderline().run();
+              }}
+            >
               <Underline className="w-3.5 h-3.5" />
             </ToolbarButton>
-            <ToolbarButton className="ql-strike" tooltip="Strikethrough" disabled={disabled}>
+            <ToolbarButton
+              tooltip="Strikethrough"
+              disabled={disabled}
+              isActive={editor.isActive('strike')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleStrike().run();
+              }}
+            >
               <Strikethrough className="w-3.5 h-3.5" />
             </ToolbarButton>
           </div>
@@ -131,18 +216,24 @@ export const RichTextEditor = ({
 
           <div className="flex items-center gap-0.5">
             <ToolbarButton
-              className="ql-list"
               tooltip="Bullet List"
-              value="bullet"
               disabled={disabled}
+              isActive={editor.isActive('bulletList')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleBulletList().run();
+              }}
             >
               <List className="w-3.5 h-3.5" />
             </ToolbarButton>
             <ToolbarButton
-              className="ql-list"
               tooltip="Numbered List"
-              value="ordered"
               disabled={disabled}
+              isActive={editor.isActive('orderedList')}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().toggleOrderedList().run();
+              }}
             >
               <ListOrdered className="w-3.5 h-3.5" />
             </ToolbarButton>
@@ -150,7 +241,14 @@ export const RichTextEditor = ({
 
           <div className="w-[1px] h-4 bg-border mx-1.5" />
 
-          <ToolbarButton className="ql-clean" tooltip="Clear Formatting" disabled={disabled}>
+          <ToolbarButton
+            tooltip="Clear Formatting"
+            disabled={disabled}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              editor.chain().focus().clearNodes().unsetAllMarks().run();
+            }}
+          >
             <Type className="w-3.5 h-3.5" />
           </ToolbarButton>
         </div>
@@ -167,15 +265,9 @@ export const RichTextEditor = ({
         )}
       </div>
 
-      <ReactQuill
+      <EditorContent
+        editor={editor}
         id={id}
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder}
-        readOnly={disabled}
       />
     </div>
   );
