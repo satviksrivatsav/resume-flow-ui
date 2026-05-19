@@ -21,21 +21,36 @@ interface ActionListMenuProps {
   trigger: React.ReactNode;
   items: ActionMenuItem[];
   align?: 'start' | 'end' | 'center';
+  side?: 'top' | 'right' | 'bottom' | 'left';
   className?: string;
+  header?: React.ReactNode;
 }
 
-export function ActionListMenu({ trigger, items, align = 'end', className }: ActionListMenuProps) {
+export function ActionListMenu({
+  trigger,
+  items,
+  align = 'end',
+  side,
+  className,
+  header,
+}: ActionListMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent
         align={align}
+        side={side}
         className={cn(
           'p-0 overflow-hidden min-w-[160px] bg-popover rounded-xl border border-border/60 shadow-md',
           className,
         )}
       >
         <div className="flex flex-col">
+          {header && (
+            <div className="select-none">
+              {header}
+            </div>
+          )}
           {items.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -49,7 +64,7 @@ export function ActionListMenu({ trigger, items, align = 'end', className }: Act
                     : 'text-foreground hover:bg-accent/60 focus:bg-accent/60 focus:text-accent-foreground',
                 )}
               >
-                {Icon && <Icon className="w-3.5 h-3.5 mr-2.5 shrink-0" />}
+                {Icon && <Icon className="w-3.5 h-3.5 mr-2.5 shrink-0 text-current" />}
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.rightElement}
               </DropdownMenuItem>

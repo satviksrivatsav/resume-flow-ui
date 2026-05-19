@@ -1,19 +1,9 @@
-import { motion } from 'framer-motion';
 import { LogOut, UserCircle } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AnimatedIcon } from '@/shared/components/ui/AnimatedIcon';
+import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Button } from '@/shared/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
 import { useSidebar } from '@/shared/components/ui/sidebar-context';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/stores/authStore';
@@ -22,22 +12,32 @@ export function UserMenu() {
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuthStore();
   const { state } = useSidebar();
-  const [isAnimating, setIsAnimating] = useState(false);
 
   if (!user) {
     if (state === 'collapsed') {
+      const guestItems = [
+        {
+          label: 'Log in',
+          onClick: () => navigate('/login'),
+        },
+        {
+          label: 'Sign up',
+          onClick: () => navigate('/signup'),
+        },
+      ];
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <ActionListMenu
+          align="end"
+          side="right"
+          className="w-40"
+          trigger={
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
               <UserCircle className="h-5 w-5" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="end" className="w-40">
-            <DropdownMenuItem onClick={() => navigate('/login')}>Log in</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/signup')}>Sign up</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          }
+          items={guestItems}
+        />
       );
     }
 
@@ -71,9 +71,34 @@ export function UserMenu() {
     navigate('/');
   };
 
+  const menuItems = [
+    {
+      label: 'Log out',
+      icon: LogOut,
+      destructive: true,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        void handleSignOut();
+      },
+    },
+  ];
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <ActionListMenu
+      align="end"
+      side={state === 'collapsed' ? 'right' : 'top'}
+      className="w-56"
+      header={
+        <div className="flex flex-col space-y-1 px-4 py-3 border-b border-border/40 select-none bg-muted/5">
+          <div className="text-xs font-bold uppercase tracking-wide text-foreground truncate">
+            {userName}
+          </div>
+          <div className="text-[10px] text-muted-foreground truncate font-medium">
+            {userEmail}
+          </div>
+        </div>
+      }
+      trigger={
         <Button
           variant="ghost"
           className={cn(
@@ -108,37 +133,8 @@ export function UserMenu() {
             </div>
           )}
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56"
-        align={state === 'collapsed' ? 'end' : 'end'}
-        side={state === 'collapsed' ? 'right' : 'bottom'}
-        forceMount
-      >
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{userName}</p>
-            <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <motion.div
-          onMouseEnter={() => setIsAnimating(true)}
-          animate={isAnimating ? 'hover' : 'initial'}
-          onAnimationComplete={() => {
-            if (isAnimating) setIsAnimating(false);
-          }}
-          whileTap="tap"
-        >
-          <DropdownMenuItem
-            onClick={handleSignOut}
-            className="text-destructive focus:text-destructive"
-          >
-            <AnimatedIcon icon={LogOut} preset="slideRight" className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </motion.div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      }
+      items={menuItems}
+    />
   );
 }
