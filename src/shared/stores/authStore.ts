@@ -1,4 +1,4 @@
-﻿import { Session, User } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
 import { supabase } from '@/shared/lib/supabase';
@@ -297,7 +297,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: false });
       return {};
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Update email failed';
+      let message = error instanceof Error ? error.message : 'Update email failed';
+      if (
+        message.toLowerCase().includes('already exists') ||
+        message.toLowerCase().includes('already in use') ||
+        message.toLowerCase().includes('taken')
+      ) {
+        message = 'Email is already taken';
+      }
       set({ isLoading: false, error: message });
       return { error: message };
     }
