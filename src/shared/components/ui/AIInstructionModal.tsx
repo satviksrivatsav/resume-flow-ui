@@ -1,4 +1,4 @@
-﻿import { AlignLeft, Briefcase, Coffee, List, Smile, Sparkles, Zap } from 'lucide-react';
+import { AlignLeft, Briefcase, Coffee, List, Smile, Sparkles, Zap } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
@@ -37,7 +37,6 @@ export function AIInstructionModal() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async () => {
-    console.log('🚀 Submitting AI Request...');
     try {
       await submitAIRequest({
         instruction: instruction || undefined,

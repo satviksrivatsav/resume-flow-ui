@@ -1,4 +1,4 @@
-﻿import { config } from '@/shared/config/config';
+import { config } from '@/shared/config/config';
 import { defaultResumeData, ResumeData } from '@/shared/types/resume';
 
 import { sanitizeResumeData } from './utils';
@@ -51,8 +51,6 @@ export async function parseResume(file: File, signal?: AbortSignal): Promise<Res
   };
 
   const finalData = sanitizeResumeData(mergedData);
-
-  console.log('[Parser] Merged resume data with unique IDs:', finalData);
 
   return finalData;
 }

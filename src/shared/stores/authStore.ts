@@ -42,7 +42,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initialize: async () => {
     if (get().isInitialized) return;
 
-    console.log('[AuthStore] initialize: starting');
     try {
       // 1. Get initial session
       const {
@@ -51,8 +50,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       } = await supabase.auth.getSession();
 
       if (error) throw error;
-
-      console.log('[AuthStore] initialize: session found', !!session);
 
       set({
         session,
@@ -71,8 +68,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // 2. Listen for ongoing auth changes (sign-in, sign-out, token refresh)
       supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('[AuthStore] onAuthStateChange:', event, !!session);
-
         const currentUser = get().user;
         const newUser = session?.user ?? null;
 
@@ -84,7 +79,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           // the profile hasn't been loaded yet (avoids a redundant fetch when
           // INITIAL_SESSION fires right after our own initialization above).
           if (newUser && (newUser.id !== currentUser?.id || !get().profile)) {
-            console.log('[AuthStore] SIGNED_IN: fetching profile for', newUser.id);
             await promoteAnonymousResume(newUser.id);
             await get().fetchProfile();
           }
@@ -94,7 +88,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           // Profile was already fetched during initialize(); only re-fetch if
           // somehow missing (e.g. fetchProfile failed earlier).
           if (!get().profile) {
-            console.log('[AuthStore] INITIAL_SESSION: profile missing, re-fetching');
             await get().fetchProfile();
           }
         }
@@ -243,7 +236,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { user } = get();
     if (!user) return;
 
-    console.log('[AuthStore] fetchProfile: fetching for', user.id);
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -253,7 +245,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (error) throw error;
 
-      console.log('[AuthStore] fetchProfile: result', !!data);
       set({ profile: data });
     } catch (error: unknown) {
       console.error('[AuthStore] fetchProfile error:', error);

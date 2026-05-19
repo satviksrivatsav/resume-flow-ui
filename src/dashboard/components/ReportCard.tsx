@@ -136,7 +136,7 @@ export function ReportCard({ report, onRefresh }: ReportCardProps) {
             <ActionListMenu
               align="end"
               trigger={
-                <button className="p-1 rounded-lg hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
+                <button className="p-1 rounded-full hover:bg-accent transition-colors" onClick={(e) => e.stopPropagation()}>
                   <MoreVertical className="w-4 h-4 text-muted-foreground" />
                 </button>
               }

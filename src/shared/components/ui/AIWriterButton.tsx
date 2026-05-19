@@ -26,7 +26,6 @@ export function AIWriterButton({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAction = (action: 'REWRITE' | 'GENERATE') => {
-    console.log('🔘 AI Writer Button clicked:', { fieldName, action });
     openInstructionModal(fieldName, action, fieldValue, onUpdate, resumeData);
   };
 

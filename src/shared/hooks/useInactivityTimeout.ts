@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useAuthStore } from '@/shared/stores/authStore';
 
@@ -19,7 +19,6 @@ export const useInactivityTimeout = () => {
       const elapsed = now - lastActivityTime.current;
 
       if (elapsed > INACTIVITY_LIMIT) {
-        console.log('[InactivityTimeout] Limit reached, signing out...');
         void signOut();
       } else {
         lastActivityTime.current = now;

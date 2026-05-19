@@ -61,7 +61,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
   ...initialState,
 
   openInstructionModal: (field, action, text, onAccept, fullResumeData) => {
-    console.log('📝 Opening Instruction Modal', { field, action });
     set({
       currentField: field,
       currentAction: action,
@@ -82,7 +81,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
   cancelRequest: () => {
     const { _abortController } = get();
     if (_abortController) {
-      console.log('🚫 Cancelling in-flight AI request');
       _abortController.abort();
     }
     set({ ...initialState });
@@ -92,16 +90,9 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
     const { currentField, currentAction, originalText } = get();
     if (!currentField || !currentAction) return;
 
-    console.log('\n========== AI WRITER REQUEST ==========');
-    console.log('Field:', currentField);
-    console.log('Action:', currentAction);
-    console.log('Original Text:', originalText);
-    console.log('Params:', params);
-
     // Create a fresh AbortController for this request
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => {
-      console.log('⏱️ AI request timed out');
       abortController.abort(new Error('TimeoutError'));
     }, 20000);
 
@@ -125,16 +116,9 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
         fullResumeData: get().fullResumeData,
       };
 
-      console.log('\n>>> SENDING TO API:');
-      console.log(JSON.stringify(request, null, 2));
-
       const response = await processField(request, abortController.signal);
 
       clearTimeout(timeoutId);
-
-      console.log('\n<<< API RESPONSE:');
-      console.log(JSON.stringify(response, null, 2));
-      console.log('========================================\n');
 
       set({
         newText: response.newText,
@@ -160,7 +144,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
 
       // Aborts are intentional — just close silently, don't surface an error
       if (error instanceof Error && error.name === 'AbortError') {
-        console.log('🚫 Request aborted by user');
         // cancelRequest already reset the state, nothing more to do
         return;
       }
@@ -175,7 +158,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
           ? error.message
           : 'Failed to process request';
       console.error('\n!!! API ERROR:', message);
-      console.log('========================================\n');
 
       set({
         error: message,
@@ -188,7 +170,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
 
   acceptChanges: () => {
     const { newText, onAccept } = get();
-    console.log('✅ Accepting changes');
     if (newText && onAccept) {
       onAccept(newText);
     }
@@ -196,7 +177,6 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
   },
 
   discardChanges: () => {
-    console.log('❌ Discarding changes');
     set({ ...initialState });
   },
   setNewText: (text: string) => {

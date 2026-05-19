@@ -1,4 +1,4 @@
-﻿import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
 import { supabase } from '@/shared/lib/supabase';
@@ -228,7 +228,6 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const currentDataString = JSON.stringify(state.resumeData);
 
       if (currentDataString !== state.lastSavedData) {
-        console.log('Autosaving...');
         await saveResume(userId);
       } else {
         // No changes, just schedule the next check
