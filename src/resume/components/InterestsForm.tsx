@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
 import {
@@ -112,7 +112,7 @@ export const InterestsForm = () => {
                   <Input
                     value={interest.name}
                     onChange={(e) => updateItem('interests', interest.id, { name: e.target.value })}
-                    placeholder="e.g. Photography, Hiking, Open Source"
+                    placeholder="e.g. Photography, Hiking, Volunteering"
                   />
                 </div>
 

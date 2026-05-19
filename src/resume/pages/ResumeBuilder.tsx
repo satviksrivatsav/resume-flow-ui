@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Maximize2,
   MoveHorizontal,
@@ -208,9 +208,9 @@ const ResumeBuilder = () => {
       case 'education':
         return 'List your academic qualifications and achievements.';
       case 'projects':
-        return 'Showcase your best projects and technical contributions.';
+        return 'Showcase your projects and key contributions.';
       case 'skills':
-        return 'Categorize your professional and technical expertise.';
+        return 'Categorize your professional skills and core competencies.';
       case 'profiles':
         return 'Add links to your social and professional networks.';
       case 'languages':

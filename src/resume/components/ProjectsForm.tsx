@@ -43,7 +43,7 @@ export const ProjectsForm = () => {
         onAdd={(newItem) => addItem('projects', newItem)}
         defaultNewItem={defaultNewItem}
         addButtonLabel="Add Project"
-        emptyMessage="Showcase your personal projects, open-source contributions, or key works."
+        emptyMessage="Showcase your personal projects, individual contributions, or key works."
         renderItem={(proj, index, isExpanded) => (
           <AccordionItem
             key={proj.id}
@@ -147,10 +147,10 @@ export const ProjectsForm = () => {
                 </div>
 
                 <TechChipsInput
-                  label="Technologies Used"
+                  label="Skills / Tools Used"
                   value={proj.keywords}
                   onChange={(techs) => updateProject(proj.id, { keywords: techs })}
-                  placeholder="Type a technology and press Enter"
+                  placeholder="Type a skill or tool and press Enter"
                 />
 
                 <div className="space-y-3">
@@ -168,7 +168,7 @@ export const ProjectsForm = () => {
                     onAiUpdate={(newText) => updateProject(proj.id, { description: newText })}
                   />
                   <FieldTip>
-                    Briefly explain the project's purpose and highlight your technical
+                    Briefly explain the project's purpose and highlight your key
                     contributions. Use bullet points for readability.
                   </FieldTip>
                 </div>

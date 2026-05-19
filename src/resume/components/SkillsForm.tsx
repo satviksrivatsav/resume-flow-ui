@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronDown, Wrench } from 'lucide-react';
 
 import {
@@ -40,7 +40,7 @@ export const SkillsForm = () => {
         onAdd={(newItem) => addItem('skills', newItem)}
         defaultNewItem={defaultNewItem}
         addButtonLabel="Add Skill Category"
-        emptyMessage="Group your skills into categories like 'Languages', 'Frameworks', or 'Tools'."
+        emptyMessage="Group your skills into categories like 'Core Competencies', 'Soft Skills', or 'Tools & Software'."
         renderItem={(skill, index, isExpanded) => (
           <AccordionItem
             key={skill.id}
@@ -105,7 +105,7 @@ export const SkillsForm = () => {
                   <Input
                     value={skill.name}
                     onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-                    placeholder="e.g. Programming Languages, Tools, Soft Skills"
+                    placeholder="e.g. Soft Skills, Management, Tools & Software"
                     className="font-medium"
                   />
                 </div>
