@@ -873,30 +873,38 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
             style={{
               width: pageWidth,
               height: `${pageHeight}px`,
-              paddingLeft: pageMargin,
-              paddingRight: pageMargin,
-              paddingTop: `${paddingY}px`,
-              paddingBottom: `${paddingY}px`,
             }}
           >
-            {/* Inner content wrapper, shifted up by page index */}
+            {/* Strict Content Box Container: exactly matches the A4 content zone */}
             <div
               style={{
-                fontFamily: metadata.typography.fontFamily,
-                fontSize: sizes.base,
-                color: '#000',
-                transform: `translateY(-${index * contentPageHeight}px)`,
-                height: 'auto',
+                position: 'absolute',
+                left: pageMargin,
+                right: pageMargin,
+                top: `${paddingY}px`,
+                bottom: `${paddingY}px`,
+                overflow: 'hidden',
               }}
             >
-              <ResumeContent
-                basics={basics}
-                summary={summary}
-                sections={sections}
-                customSections={customSections}
-                metadata={metadata}
-                sizes={sizes}
-              />
+              {/* Inner content wrapper, shifted up by page index */}
+              <div
+                style={{
+                  fontFamily: metadata.typography.fontFamily,
+                  fontSize: sizes.base,
+                  color: '#000',
+                  transform: `translateY(-${index * contentPageHeight}px)`,
+                  height: 'auto',
+                }}
+              >
+                <ResumeContent
+                  basics={basics}
+                  summary={summary}
+                  sections={sections}
+                  customSections={customSections}
+                  metadata={metadata}
+                  sizes={sizes}
+                />
+              </div>
             </div>
             
             {/* Subtle page indicator at bottom right of each page sheet */}
