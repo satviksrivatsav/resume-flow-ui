@@ -118,7 +118,8 @@ const ResumeBuilder = () => {
     if (!previewPanelRef.current) return;
 
     const container = previewPanelRef.current;
-    const rect = container.getBoundingClientRect();
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
 
     // A4 dimensions in pixels
     const resumeWidth = 794;
@@ -127,11 +128,11 @@ const ResumeBuilder = () => {
     let zoom = 1;
 
     if (viewMode === 'fit-height') {
-      const containerHeight = rect.height - 200;
-      zoom = containerHeight / resumeHeight;
+      const availableHeight = containerHeight - 160;
+      zoom = availableHeight / resumeHeight;
     } else {
-      const containerWidth = rect.width - 60;
-      zoom = containerWidth / resumeWidth;
+      const availableWidth = containerWidth - 64;
+      zoom = availableWidth / resumeWidth;
     }
 
     setPreviewZoom(Math.max(0.15, Math.min(zoom, 1.2)));
@@ -139,15 +140,21 @@ const ResumeBuilder = () => {
 
   useEffect(() => {
     if (showPreview) {
-      calculateZoom();
+      // Small delay to ensure transitions have started/completed
+      const timer = setTimeout(calculateZoom, 0);
+      return () => clearTimeout(timer);
     }
   }, [showPreview, activeTab, viewMode, calculateZoom]);
 
   useEffect(() => {
     if (!previewPanelRef.current || !showPreview) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-      calculateZoom();
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === previewPanelRef.current) {
+          calculateZoom();
+        }
+      }
     });
 
     resizeObserver.observe(previewPanelRef.current);
@@ -240,6 +247,19 @@ const ResumeBuilder = () => {
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   const handleApplyTailoring = useCallback(() => {
     const slides = useTailorStore.getState().tailoredSlides;
@@ -363,7 +383,7 @@ const ResumeBuilder = () => {
               <div
                 className={cn(
                   'h-full overflow-y-auto transition-all duration-300 ease-in-out px-4 md:px-8 custom-scrollbar',
-                  showPreview ? 'w-full lg:w-[55%] xl:w-[60%]' : 'w-full',
+                  showPreview ? 'w-full lg:w-[50%] xl:w-[45%]' : 'w-full',
                 )}
               >
                 <div className="max-w-3xl mx-auto space-y-6 pt-[calc(var(--header-height)+1rem)] pb-20">

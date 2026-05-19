@@ -180,11 +180,11 @@ export function AIDiffViewer({
             </div>
             <div
               className={cn(
-                'flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-muted-foreground/80',
+                'flex-1 p-6 pt-4 text-[14px] leading-[1.8] text-muted-foreground/80 font-normal',
                 typeof originalText === 'string' && 'whitespace-pre-wrap',
               )}
             >
-              {originalText || <span className="italic opacity-50">No original content</span>}
+              {originalText || <span className="italic opacity-50 font-normal">No original content</span>}
             </div>
           </div>
         )}

@@ -58,11 +58,15 @@ export const TailoredItemEditor = ({
   }, [content]); // only re-run if external content prop changes identity entirely
 
   if (typeof localContent === 'string') {
+    const isHtml = /<[a-z][\s\S]*>/i.test(localContent);
     return (
       <div className="space-y-4">
         {readOnly ? (
           <div
-            className="text-[14px] leading-[1.8] text-muted-foreground/80 ql-editor ql-editor-preview"
+            className={cn(
+              'text-[14px] leading-[1.8] text-muted-foreground/80 ql-editor ql-editor-preview font-normal',
+              !isHtml && 'whitespace-pre-wrap',
+            )}
             dangerouslySetInnerHTML={{ __html: localContent }}
           />
         ) : (
@@ -72,7 +76,7 @@ export const TailoredItemEditor = ({
               setLocalContent(value);
               onChange?.(value);
             }}
-            className="text-[14px] leading-[1.8]"
+            className="text-[14px] leading-[1.8] font-normal"
             placeholder="Edit content..."
           />
         )}
@@ -96,10 +100,11 @@ export const TailoredItemEditor = ({
           {type === 'textarea' ? (
             <div
               className={cn(
-                'text-[14px] leading-[1.8] ql-editor ql-editor-preview',
+                'text-[14px] leading-[1.8] ql-editor ql-editor-preview font-normal',
                 label === 'Description'
                   ? 'text-muted-foreground/80'
-                  : 'text-foreground/90 font-normal',
+                  : 'text-foreground/90',
+                !/<[a-z][\s\S]*>/i.test(value || '') && 'whitespace-pre-wrap',
               )}
               dangerouslySetInnerHTML={{ __html: value || '' }}
             />

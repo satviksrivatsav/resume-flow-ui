@@ -120,6 +120,15 @@
 /* Custom list styling */
 .ql-editor ul, .ql-editor ol {
   padding-left: 1.5rem !important;
+  margin-bottom: 0.5rem;
+}
+
+.ql-editor ul {
+  list-style-type: disc !important;
+}
+
+.ql-editor ol {
+  list-style-type: decimal !important;
 }
 
 .ql-editor li {

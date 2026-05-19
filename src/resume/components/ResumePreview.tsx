@@ -15,7 +15,15 @@ const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSSProperties }) => {
+const DescriptionRenderer = ({
+  text,
+  style,
+  idPrefix = 'desc',
+}: {
+  text?: string;
+  style?: React.CSSProperties;
+  idPrefix?: string;
+}) => {
   if (!text) return null;
 
   // Clean the text by replacing non-breaking spaces with standard space characters.
@@ -52,31 +60,39 @@ const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSS
           const content = bulletMatch[3];
 
           return (
-            <div key={i} style={{ display: 'flex', marginBottom: '2px', alignItems: 'flex-start' }}>
-              <span
-                style={{
-                  width: '1.2em',
-                  flexShrink: 0,
-                  marginLeft: indent ? `${indent.length * 8}px` : 0,
-                }}
+            <PageBreakWrapper key={i} id={`${idPrefix}-line-${i}`}>
+              <div
+                style={{ display: 'flex', marginBottom: '2px', alignItems: 'flex-start' }}
               >
-                {bulletChar}
-              </span>
-              <span style={{ flex: 1 }}>{content}</span>
-            </div>
+                <span
+                  style={{
+                    width: '1.2em',
+                    flexShrink: 0,
+                    marginLeft: indent ? `${indent.length * 8}px` : 0,
+                  }}
+                >
+                  {bulletChar}
+                </span>
+                <span style={{ flex: 1 }}>{content}</span>
+              </div>
+            </PageBreakWrapper>
           );
         }
 
         return (
-          <div key={i} style={{ minHeight: '1.2em' }}>
-            {line}
-          </div>
+          <PageBreakWrapper key={i} id={`${idPrefix}-line-${i}`}>
+            <div style={{ minHeight: '1.2em' }}>{line}</div>
+          </PageBreakWrapper>
         );
       })}
     </div>
   );
 };
-const PageBreakContext = createContext<Record<string, number>>({});
+
+const PageBreakContext = createContext<{
+  breaks: Record<string, number>;
+  disabled?: boolean;
+}>({ breaks: {} });
 
 interface PageBreakWrapperProps {
   id: string;
@@ -85,8 +101,8 @@ interface PageBreakWrapperProps {
 }
 
 const PageBreakWrapper = ({ id, children, style }: PageBreakWrapperProps) => {
-  const pageBreaks = useContext(PageBreakContext);
-  const spacerHeight = pageBreaks[id] || 0;
+  const { breaks, disabled } = useContext(PageBreakContext);
+  const spacerHeight = !disabled ? breaks[id] || 0 : 0;
 
   return (
     <div data-page-break-id={id} style={style}>
@@ -110,20 +126,37 @@ interface ResumeContentProps {
   sizes: { base: string; heading: string; name: string };
 }
 
-const SectionHeader = ({ title, color, sizes }: { title: string; color: string; sizes: any }) => (
-  <div
-    style={{
-      borderBottom: `1px solid ${color}`,
-      paddingBottom: '2px',
-      marginBottom: '10px',
-      pageBreakAfter: 'avoid',
-    }}
-  >
-    <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: color, margin: 0 }}>
-      {title.toUpperCase()}
-    </h2>
-  </div>
-);
+const SectionHeader = ({
+  title,
+  color,
+  sizes,
+  id,
+}: {
+  title: string;
+  color: string;
+  sizes: any;
+  id?: string;
+}) => {
+  const content = (
+    <div
+      style={{
+        borderBottom: `1px solid ${color}`,
+        paddingBottom: '2px',
+        marginBottom: '10px',
+        pageBreakAfter: 'avoid',
+      }}
+    >
+      <h2 style={{ fontSize: sizes.heading, fontWeight: 'bold', color: color, margin: 0 }}>
+        {title.toUpperCase()}
+      </h2>
+    </div>
+  );
+
+  if (id) {
+    return <PageBreakWrapper id={id}>{content}</PageBreakWrapper>;
+  }
+  return content;
+};
 
 const ResumeContent = ({
   basics,
@@ -160,6 +193,7 @@ const ResumeContent = ({
         <DescriptionRenderer
           text={summary.content}
           style={{ color: '#000', lineHeight: '1.5', margin: 0 }}
+          idPrefix="summary"
         />
       </PageBreakWrapper>
     );
@@ -173,7 +207,12 @@ const ResumeContent = ({
 
     return (
       <div key="experience" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.experience.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.experience.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-experience"
+        />
         {visibleItems.map((exp: any) => (
           <PageBreakWrapper key={exp.id} id={exp.id} style={{ marginBottom: '12px' }}>
             <div
@@ -201,6 +240,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={exp.description}
                 style={{ color: '#000', lineHeight: '1.5' }}
+                idPrefix={exp.id}
               />
             )}
           </PageBreakWrapper>
@@ -217,7 +257,12 @@ const ResumeContent = ({
 
     return (
       <div key="education" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.education.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.education.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-education"
+        />
         {visibleItems.map((edu: any) => (
           <PageBreakWrapper key={edu.id} id={edu.id} style={{ marginBottom: '12px' }}>
             <div
@@ -244,6 +289,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={edu.description}
                 style={{ color: '#000', lineHeight: '1.5', marginTop: '2px' }}
+                idPrefix={edu.id}
               />
             )}
           </PageBreakWrapper>
@@ -260,7 +306,12 @@ const ResumeContent = ({
 
     return (
       <div key="projects" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.projects.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.projects.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-projects"
+        />
         {visibleItems.map((proj: any) => (
           <PageBreakWrapper key={proj.id} id={proj.id} style={{ marginBottom: '12px' }}>
             <div
@@ -287,6 +338,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={proj.description}
                 style={{ color: '#000', lineHeight: '1.5' }}
+                idPrefix={proj.id}
               />
             )}
             {proj.keywords && proj.keywords.length > 0 && (
@@ -308,7 +360,12 @@ const ResumeContent = ({
 
     return (
       <div key="skills" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.skills.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.skills.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-skills"
+        />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {visibleItems.map((skill: any) => (
             <PageBreakWrapper
@@ -379,7 +436,12 @@ const ResumeContent = ({
 
     return (
       <div key="awards" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.awards.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.awards.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-awards"
+        />
         {visibleItems.map((award: any) => (
           <PageBreakWrapper key={award.id} id={award.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
@@ -391,6 +453,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={award.description}
                 style={{ fontSize: sizes.base, color: '#000' }}
+                idPrefix={award.id}
               />
             )}
           </PageBreakWrapper>
@@ -407,7 +470,12 @@ const ResumeContent = ({
 
     return (
       <div key="certifications" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.certifications.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.certifications.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-certifications"
+        />
         {visibleItems.map((cert: any) => (
           <PageBreakWrapper key={cert.id} id={cert.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
@@ -434,6 +502,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={cert.description}
                 style={{ fontSize: sizes.base, color: '#000', marginTop: '2px' }}
+                idPrefix={cert.id}
               />
             )}
           </PageBreakWrapper>
@@ -450,7 +519,12 @@ const ResumeContent = ({
 
     return (
       <div key="publications" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.publications.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.publications.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-publications"
+        />
         {visibleItems.map((pub: any) => (
           <PageBreakWrapper key={pub.id} id={pub.id} style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
@@ -462,6 +536,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={pub.description}
                 style={{ fontSize: sizes.base, color: '#000' }}
+                idPrefix={pub.id}
               />
             )}
           </PageBreakWrapper>
@@ -478,7 +553,12 @@ const ResumeContent = ({
 
     return (
       <div key="volunteer" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.volunteer.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.volunteer.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-volunteer"
+        />
         {visibleItems.map((vol: any) => (
           <PageBreakWrapper key={vol.id} id={vol.id} style={{ marginBottom: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
@@ -490,6 +570,7 @@ const ResumeContent = ({
               <DescriptionRenderer
                 text={vol.description}
                 style={{ color: '#000', lineHeight: '1.4' }}
+                idPrefix={vol.id}
               />
             )}
           </PageBreakWrapper>
@@ -504,7 +585,12 @@ const ResumeContent = ({
 
     return (
       <div key="references" style={{ marginBottom: '16px' }}>
-        <SectionHeader title={sections.references.name} color={themeColor} sizes={sizes} />
+        <SectionHeader
+          title={sections.references.name}
+          color={themeColor}
+          sizes={sizes}
+          id="header-references"
+        />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
           {visibleItems.map((ref: any) => (
             <PageBreakWrapper key={ref.id} id={ref.id} style={{ fontSize: sizes.base }}>
@@ -709,12 +795,21 @@ const ResumeContent = ({
 
           return (
             <div key={customSection.id} style={{ marginBottom: '16px' }}>
-              <SectionHeader title={customSection.name} color={themeColor} sizes={sizes} />
+              <SectionHeader
+                title={customSection.name}
+                color={themeColor}
+                sizes={sizes}
+                id={`header-${customSection.id}`}
+              />
               {visibleItems.map((item: any) => (
                 <PageBreakWrapper key={item.id} id={item.id} style={{ marginBottom: '8px' }}>
                   <div style={{ fontWeight: 'bold' }}>{item.title}</div>
                   {hasContent(item.description) && (
-                    <DescriptionRenderer text={item.description} style={{ color: '#000' }} />
+                    <DescriptionRenderer
+                      text={item.description}
+                      style={{ color: '#000' }}
+                      idPrefix={item.id}
+                    />
                   )}
                 </PageBreakWrapper>
               ))}
@@ -768,36 +863,42 @@ export const ResumePreview = forwardRef<
       const measurer = measurerRef.current;
       if (!measurer) return;
 
+      // The measurer is rendered with PageBreakContext.Provider disabled: true
+      // So all elements have spacerHeight = 0.
       const elements = Array.from(measurer.querySelectorAll('[data-page-break-id]'));
+      const measurerRect = measurer.getBoundingClientRect();
 
       const newPageBreaks: Record<string, number> = {};
-      let currentPageStart = 0;
+      let cumulativeSpacer = 0;
       const limit = 1027; // contentPageHeight
-
-      const measurerRect = measurer.getBoundingClientRect();
 
       elements.forEach((el) => {
         const id = el.getAttribute('data-page-break-id');
         if (!id) return;
 
         const rect = el.getBoundingClientRect();
-        const originalTop = rect.top - measurerRect.top;
-        const originalBottom = rect.bottom - measurerRect.top;
-        const height = originalBottom - originalTop;
+        const height = rect.bottom - rect.top;
+        const cleanTop = rect.top - measurerRect.top;
 
-        if (id === 'header') {
-          currentPageStart = 0;
-          return;
-        }
+        const actualTop = cleanTop + cumulativeSpacer;
+        const pageIndex = Math.floor(actualTop / limit);
+        const pageEnd = (pageIndex + 1) * limit;
 
-        const elementTopOnPage = originalTop - currentPageStart;
-        const elementBottomOnPage = elementTopOnPage + height;
+        // Protection for headers and specific sections
+        const isHeader =
+          id.startsWith('header-') ||
+          id === 'summary' ||
+          id === 'languages' ||
+          id === 'interests';
+        const threshold = isHeader ? 40 : 2;
 
-        if (elementBottomOnPage > limit) {
-          const spacerNeeded = limit - elementTopOnPage;
-          if (spacerNeeded > 0 && spacerNeeded < limit) {
+        if (actualTop + height > pageEnd - threshold) {
+          // If it doesn't fit, and it's not already at the top of a page
+          const offsetOnPage = actualTop % limit;
+          if (offsetOnPage > 1) {
+            const spacerNeeded = limit - offsetOnPage;
             newPageBreaks[id] = spacerNeeded;
-            currentPageStart = originalTop;
+            cumulativeSpacer += spacerNeeded;
           } else {
             newPageBreaks[id] = 0;
           }
@@ -814,8 +915,7 @@ export const ResumePreview = forwardRef<
       });
 
       const totalHeight = measurer.scrollHeight;
-      const totalSpacersHeight = Object.values(newPageBreaks).reduce((a, b) => a + b, 0);
-      const pages = Math.ceil((totalHeight + totalSpacersHeight) / 1123);
+      const pages = Math.ceil((totalHeight + cumulativeSpacer) / 1123);
       const nextPages = Math.max(1, pages);
       setTotalPages(nextPages);
       onPageCountChangeRef.current?.(nextPages);
@@ -823,52 +923,47 @@ export const ResumePreview = forwardRef<
 
     observer.observe(measurerRef.current);
 
-    // Initial check
-    const totalHeight = measurerRef.current.scrollHeight;
-    const initialPages = Math.ceil(totalHeight / 1123);
-    const nextPages = Math.max(1, initialPages);
-    setTotalPages(nextPages);
-    onPageCountChangeRef.current?.(nextPages);
-
     return () => observer.disconnect();
   }, [resumeData]);
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
-      {/* 1. Measurer: Invisible off-screen element to calculate height */}
-      <div
-        ref={measurerRef}
-        style={{
-          width: pageWidth,
-          height: 'auto',
-          position: 'absolute',
-          left: '-9999px',
-          top: '-9999px',
-          opacity: 0,
-          pointerEvents: 'none',
-          fontFamily: metadata.typography.fontFamily,
-          fontSize: sizes.base,
-          paddingLeft: pageMargin,
-          paddingRight: pageMargin,
-          paddingTop: 0,
-          paddingBottom: 0,
-          lineHeight: '1.5',
-          backgroundColor: 'white',
-          color: '#000',
-        }}
-      >
-        <ResumeContent
-          basics={basics}
-          summary={summary}
-          sections={sections}
-          customSections={customSections}
-          metadata={metadata}
-          sizes={sizes}
-        />
-      </div>
+      {/* 1. Measurer: Invisible off-screen element to calculate height WITHOUT spacers first */}
+      <PageBreakContext.Provider value={{ breaks: {}, disabled: true }}>
+        <div
+          ref={measurerRef}
+          style={{
+            width: pageWidth,
+            height: 'auto',
+            position: 'absolute',
+            left: '-9999px',
+            top: '-9999px',
+            opacity: 0,
+            pointerEvents: 'none',
+            fontFamily: metadata.typography.fontFamily,
+            fontSize: sizes.base,
+            paddingLeft: pageMargin,
+            paddingRight: pageMargin,
+            paddingTop: 0,
+            paddingBottom: 0,
+            lineHeight: '1.5',
+            backgroundColor: 'white',
+            color: '#000',
+          }}
+        >
+          <ResumeContent
+            basics={basics}
+            summary={summary}
+            sections={sections}
+            customSections={customSections}
+            metadata={metadata}
+            sizes={sizes}
+          />
+        </div>
+      </PageBreakContext.Provider>
 
-      {/* 2. Visual Clean Page Splits */}
-      <PageBreakContext.Provider value={pageBreaks}>
+      {/* 2. Visual Clean Page Splits WITH spacers */}
+      <PageBreakContext.Provider value={{ breaks: pageBreaks }}>
         {Array.from({ length: totalPages }).map((_, index) => (
           <div
             key={index}
