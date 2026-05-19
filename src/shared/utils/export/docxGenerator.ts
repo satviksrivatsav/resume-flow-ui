@@ -461,6 +461,20 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         }),
       );
 
+      if (cert.website.href) {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: cert.website.label || cert.website.href,
+                size: (sizes.base - 1) * 2,
+                color: primaryColor,
+              }),
+            ],
+          }),
+        );
+      }
+
       if (hasContent(cert.description)) {
         children.push(...renderDescription(cert.description, sizes.base));
       }

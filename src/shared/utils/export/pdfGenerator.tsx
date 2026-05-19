@@ -525,6 +525,11 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               </View>
               <Text style={styles.itemDate}>{cert.date}</Text>
             </View>
+            {cert.website?.href && (
+              <Link src={cert.website.href} style={styles.link}>
+                {cert.website.label || cert.website.href}
+              </Link>
+            )}
             {hasContent(cert.description) && (
               <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
             )}

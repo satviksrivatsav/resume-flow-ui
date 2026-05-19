@@ -384,6 +384,21 @@ const ResumeContent = ({
               <span>{cert.date}</span>
             </div>
             <div style={{ fontSize: '0.9em', color: '#666' }}>{cert.issuer}</div>
+            {cert.website?.href && (
+              <div style={{ fontSize: '0.9em', marginTop: '2px' }}>
+                <a
+                  href={cert.website.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: themeColor,
+                    textDecoration: 'none',
+                  }}
+                >
+                  {cert.website.label || cert.website.href}
+                </a>
+              </div>
+            )}
             {hasContent(cert.description) && (
               <DescriptionRenderer
                 text={cert.description}
