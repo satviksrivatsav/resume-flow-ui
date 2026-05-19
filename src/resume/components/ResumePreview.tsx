@@ -19,22 +19,27 @@ const IconWrapper = ({ children }: { children: React.ReactNode }) => (
 const DescriptionRenderer = ({ text, style }: { text?: string; style?: React.CSSProperties }) => {
   if (!text) return null;
 
+  // Clean the text by replacing non-breaking spaces with standard space characters.
+  // This allows the browser to wrap lines at standard word boundaries naturally.
+  const cleanedText = text.replace(/\u00A0/g, ' ').replace(/&nbsp;/g, ' ');
+
   // If it's HTML (contains tags), render it directly
-  if (text.includes('<') && text.includes('>')) {
+  if (cleanedText.includes('<') && cleanedText.includes('>')) {
     return (
       <div
         className="description-content"
         style={{
           ...style,
-          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          wordBreak: 'normal',
         }}
-        dangerouslySetInnerHTML={{ __html: text }}
+        dangerouslySetInnerHTML={{ __html: cleanedText }}
       />
     );
   }
 
   // Fallback for plain text with manual bullets
-  const lines = text.split('\n');
+  const lines = cleanedText.split('\n');
   return (
     <div style={style}>
       {lines.map((line, i) => {
@@ -538,7 +543,7 @@ const ResumeContent = ({
             color: themeColor,
             margin: '0 0 4px 0',
             overflowWrap: 'break-word',
-            wordBreak: 'break-all',
+            wordBreak: 'normal',
             width: '100%',
             maxWidth: '100%',
           }}
@@ -552,7 +557,7 @@ const ResumeContent = ({
               color: '#444',
               margin: '0 0 8px 0',
               overflowWrap: 'break-word',
-              wordBreak: 'break-all',
+              wordBreak: 'normal',
               width: '100%',
               maxWidth: '100%',
             }}
@@ -576,7 +581,7 @@ const ResumeContent = ({
             <IconWrapper>
               <Mail size={12} />
               <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
               >
                 {basics.email}
               </span>
@@ -586,7 +591,7 @@ const ResumeContent = ({
             <IconWrapper>
               <Phone size={12} />
               <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
               >
                 {basics.countryCode && `${getCountryByCode(basics.countryCode)?.dialCode} `}
                 {cleanPhoneNumber(basics.phone, basics.countryCode)}
@@ -597,7 +602,7 @@ const ResumeContent = ({
             <IconWrapper>
               <MapPin size={12} />
               <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
               >
                 {basics.location}
               </span>
@@ -607,7 +612,7 @@ const ResumeContent = ({
             <IconWrapper>
               <Globe size={12} />
               <span
-                style={{ overflowWrap: 'break-word', wordBreak: 'break-all', maxWidth: '100%' }}
+                style={{ overflowWrap: 'break-word', wordBreak: 'normal', maxWidth: '100%' }}
               >
                 {basics.url.label || basics.url.href}
               </span>
@@ -644,7 +649,7 @@ const ResumeContent = ({
                         color: 'inherit',
                         textDecoration: 'none',
                         overflowWrap: 'break-word',
-                        wordBreak: 'break-all',
+                        wordBreak: 'normal',
                         maxWidth: '100%',
                       }}
                     >
@@ -654,7 +659,7 @@ const ResumeContent = ({
                     <span
                       style={{
                         overflowWrap: 'break-word',
-                        wordBreak: 'break-all',
+                        wordBreak: 'normal',
                         maxWidth: '100%',
                       }}
                     >

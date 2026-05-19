@@ -75,6 +75,7 @@ export function stripHtml(html: string): string {
     .replace(/<li>/gi, '\n• ')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
+    .replace(/\u00A0/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
