@@ -75,6 +75,7 @@ const ResumeBuilder = () => {
   const [previewZoom, setPreviewZoom] = useState(0.5);
   const [fullscreenZoom, setFullscreenZoom] = useState(1.0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTailorBackModal, setShowTailorBackModal] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
@@ -321,7 +322,7 @@ const ResumeBuilder = () => {
           className="flex items-center justify-center relative"
           style={{
             width: '100%',
-            height: `${1123 * previewZoom}px`,
+            height: `${((1123 * totalPages) + (24 * (totalPages - 1))) * previewZoom}px`,
           }}
         >
           <motion.div
@@ -333,15 +334,15 @@ const ResumeBuilder = () => {
               damping: 25,
               opacity: { duration: 0.2 },
             }}
-            className="shadow-2xl rounded-sm origin-top"
+            className="rounded-sm origin-top"
             style={{
               width: '794px',
-              height: '1123px',
+              height: `${(1123 * totalPages) + (24 * (totalPages - 1))}px`,
               position: 'absolute',
               top: 0,
             }}
           >
-            <ResumePreview />
+            <ResumePreview onPageCountChange={setTotalPages} />
           </motion.div>
         </div>
       </div>
@@ -556,17 +557,17 @@ const ResumeBuilder = () => {
                   <div className="min-h-full flex flex-col items-center py-24">
                     <div className="my-auto">
                       <div
-                        className="shadow-2xl rounded-sm bg-white shrink-0"
+                        className="rounded-sm bg-transparent shrink-0 animate-in fade-in duration-300"
                         style={{
                           width: '794px',
-                          height: '1123px',
+                          height: `${(1123 * totalPages) + (24 * (totalPages - 1))}px`,
                           transform: `scale(${fullscreenZoom})`,
                           transformOrigin: 'top center',
                         }}
                       >
-                        <ResumePreview />
+                        <ResumePreview onPageCountChange={setTotalPages} />
                       </div>
-                      <div style={{ height: `${1123 * (fullscreenZoom - 1)}px` }} />
+                      <div style={{ height: `${((1123 * totalPages) + (24 * (totalPages - 1))) * (fullscreenZoom - 1)}px` }} />
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import { Github, Globe, Linkedin, Mail, MapPin, Phone, Twitter } from 'lucide-react';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, useState, useEffect, useRef } from 'react';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, sanitizeResumeData } from '@/shared/lib/utils';
@@ -706,7 +706,7 @@ const ResumeContent = ({
   );
 };
 
-export const ResumePreview = forwardRef<HTMLDivElement, { data?: any }>((props, ref) => {
+export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCountChange?: (count: number) => void }>((props, ref) => {
   const { resumeData: storeData } = useResumeStore();
   const rawData = props.data || storeData;
 
@@ -722,34 +722,106 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any }>((props, 
   };
 
   const pageWidth = A4_WIDTH;
-  const pageHeight = A4_HEIGHT;
+  const pageHeight = 1123; // base A4 height in pixels
   const pageMargin = '0.5in';
 
+  const [totalPages, setTotalPages] = useState(1);
+  const measurerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!measurerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const scrollHeight = entry.target.scrollHeight;
+        const pages = Math.ceil(scrollHeight / pageHeight);
+        const nextPages = Math.max(1, pages);
+        setTotalPages(nextPages);
+        props.onPageCountChange?.(nextPages);
+      }
+    });
+
+    observer.observe(measurerRef.current);
+
+    // Initial calculation
+    const initialPages = Math.ceil(measurerRef.current.scrollHeight / pageHeight);
+    const nextPages = Math.max(1, initialPages);
+    setTotalPages(nextPages);
+    props.onPageCountChange?.(nextPages);
+
+    return () => observer.disconnect();
+  }, [resumeData, props.onPageCountChange]);
+
   return (
-    <div
-      ref={ref}
-      className="resume-preview-content"
-      style={{
-        width: pageWidth,
-        minHeight: pageHeight,
-        overflow: 'hidden',
-        fontFamily: metadata.typography.fontFamily,
-        fontSize: sizes.base,
-        backgroundColor: 'white',
-        color: '#000',
-        padding: pageMargin,
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-      }}
-    >
-      <ResumeContent
-        basics={basics}
-        summary={summary}
-        sections={sections}
-        customSections={customSections}
-        metadata={metadata}
-        sizes={sizes}
-      />
+    <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
+      {/* 1. Measurer: Invisible off-screen element to calculate height */}
+      <div
+        ref={measurerRef}
+        style={{
+          width: pageWidth,
+          height: 'auto',
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px',
+          opacity: 0,
+          pointerEvents: 'none',
+          fontFamily: metadata.typography.fontFamily,
+          fontSize: sizes.base,
+          padding: pageMargin,
+          lineHeight: '1.5',
+          backgroundColor: 'white',
+          color: '#000',
+        }}
+      >
+        <ResumeContent
+          basics={basics}
+          summary={summary}
+          sections={sections}
+          customSections={customSections}
+          metadata={metadata}
+          sizes={sizes}
+        />
+      </div>
+
+      {/* 2. Visual Clean Page Splits */}
+      {Array.from({ length: totalPages }).map((_, index) => (
+        <div
+          key={index}
+          className="resume-page-sheet shadow-2xl relative bg-white border border-border/10 rounded-sm overflow-hidden animate-in fade-in duration-300"
+          style={{
+            width: pageWidth,
+            height: `${pageHeight}px`,
+          }}
+        >
+          {/* Inner content wrapper, shifted up by page index */}
+          <div
+            style={{
+              padding: pageMargin,
+              fontFamily: metadata.typography.fontFamily,
+              fontSize: sizes.base,
+              color: '#000',
+              transform: `translateY(-${index * pageHeight}px)`,
+              height: 'auto',
+            }}
+          >
+            <ResumeContent
+              basics={basics}
+              summary={summary}
+              sections={sections}
+              customSections={customSections}
+              metadata={metadata}
+              sizes={sizes}
+            />
+          </div>
+          
+          {/* Subtle page indicator at bottom right of each page sheet */}
+          <div 
+            className="absolute bottom-3 right-4 text-[9px] font-semibold text-muted-foreground/30 uppercase tracking-widest pointer-events-none select-none z-30"
+          >
+            Page {index + 1} of {totalPages}
+          </div>
+        </div>
+      ))}
     </div>
   );
 });
