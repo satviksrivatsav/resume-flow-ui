@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,13 +31,17 @@ export function SectionListManager<T extends { id: string }>({
   const [expandedId, setExpandedId] = useState<string | undefined>(
     items.length > 0 ? items[0].id : undefined,
   );
+  const [hasInitialExpanded, setHasInitialExpanded] = useState(items.length > 0);
 
   // Handle initial expansion when items load asynchronously
   useEffect(() => {
-    if (items.length > 0 && !expandedId) {
+    if (items.length === 0) {
+      setHasInitialExpanded(false);
+    } else if (!hasInitialExpanded) {
       setExpandedId(items[0].id);
+      setHasInitialExpanded(true);
     }
-  }, [items, expandedId]);
+  }, [items, hasInitialExpanded]);
 
   const handleAdd = () => {
     const id = uuidv4();
