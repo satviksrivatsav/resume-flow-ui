@@ -42,7 +42,7 @@ export default function ProfilePage() {
       if (profileResult.error) {
         toast({
           title: 'Error',
-          description: profileResult.error,
+          description: 'Failed to update your profile. Please try again.',
           variant: 'destructive',
         });
         return;
@@ -62,7 +62,7 @@ export default function ProfilePage() {
       console.error('Error saving profile:', error);
       toast({
         title: 'Error',
-        description: 'An unexpected error occurred',
+        description: 'Failed to save changes. Please try again.',
         variant: 'destructive',
       });
     }
@@ -75,7 +75,9 @@ export default function ProfilePage() {
       if (emailResult.error) {
         toast({
           title: 'Error',
-          description: emailResult.error,
+          description: emailResult.error === 'Email is already taken' 
+            ? 'This email address is already in use by another account.' 
+            : 'Failed to update email. Please try again.',
           variant: 'destructive',
         });
         return;
@@ -89,7 +91,7 @@ export default function ProfilePage() {
       console.error('Error updating email:', error);
       toast({
         title: 'Error',
-        description: 'An unexpected error occurred',
+        description: 'Failed to update email. Please try again.',
         variant: 'destructive',
       });
     }

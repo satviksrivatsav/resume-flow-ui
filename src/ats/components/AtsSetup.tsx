@@ -90,7 +90,7 @@ export function AtsSetup({
         console.error('JD extraction failed:', err);
         toast({
           title: 'Error',
-          description: err.message || 'Failed to extract text from JD file',
+          description: 'Failed to extract text from the job description file. Please try again or paste it manually.',
           variant: 'destructive',
         });
         setJdFile(null);

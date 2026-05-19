@@ -1,4 +1,4 @@
-﻿import { ArrowLeft, Eye, EyeOff, Github, Loader2, Lock, Mail } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Github, Loader2, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -41,9 +41,16 @@ export default function SignUpPage() {
 
     const result = await signUp(email, password);
     if (result.error) {
+      let friendlyError = 'Failed to create your account. Please try again.';
+      const errMsg = result.error.toLowerCase();
+      if (errMsg.includes('already registered') || errMsg.includes('already exists') || errMsg.includes('taken')) {
+        friendlyError = 'An account with this email address already exists.';
+      } else if (errMsg.includes('weak') || errMsg.includes('should be stronger') || errMsg.includes('characters')) {
+        friendlyError = 'Password is too weak. Please use a stronger password.';
+      }
       toast({
-        title: 'Error',
-        description: result.error,
+        title: 'Signup Failed',
+        description: friendlyError,
         variant: 'destructive',
       });
     } else {

@@ -247,7 +247,7 @@ export default function AtsChecker() {
         title: isNetworkError ? 'Network Error' : 'Analysis Error',
         description: isNetworkError
           ? 'A network error occurred. Please check your connection and try again.'
-          : err.message || 'Failed to analyze resume',
+          : 'An error occurred while analyzing your resume. Please check the inputs and try again.',
         variant: 'destructive',
       });
       setStatus('error');
@@ -275,13 +275,32 @@ export default function AtsChecker() {
   }, [reset, navigate, viewParam]);
 
   const handleSaveReport = async () => {
-    if (!report || !storeResumeId || isSaving) return;
+    if (!report) return;
+    if (isSaving) return;
+
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'You must be signed in to save reports to your dashboard.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!storeResumeId) {
+      toast({
+        title: 'Save Blocked',
+        description: 'No active resume session was found. Please select or load a resume first.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     try {
       setIsSaving(true);
       const upsertData: any = {
         resume_id: storeResumeId,
-        user_id: user?.id,
+        user_id: user.id,
         data: report,
       };
 
@@ -308,7 +327,11 @@ export default function AtsChecker() {
       });
     } catch (err) {
       console.error('Error saving report:', err);
-      // Optional: show error toast
+      toast({
+        title: 'Error Saving Report',
+        description: 'Failed to save the report to your dashboard. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }

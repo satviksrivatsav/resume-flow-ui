@@ -54,16 +54,13 @@ export default function Dashboard() {
       const isNetworkError =
         !navigator.onLine ||
         (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
-      setError(
-        isNetworkError
-          ? 'A network error occurred. Please check your connection and try again.'
-          : err.message || 'Failed to fetch resumes',
-      );
+      const message = isNetworkError
+        ? 'A network error occurred. Please check your connection and try again.'
+        : 'Failed to load your resumes. Please try again later.';
+      setError(message);
       toast({
         title: isNetworkError ? 'Network Error' : 'Error',
-        description: isNetworkError
-          ? 'A network error occurred. Please check your connection and try again.'
-          : 'Failed to load resumes',
+        description: message,
         variant: 'destructive',
       });
     } finally {

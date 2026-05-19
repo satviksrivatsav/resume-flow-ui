@@ -48,8 +48,12 @@ export function AIInstructionModal() {
       setTone(null);
       setFormat(null);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Failed to process request';
-      toast({ title: 'Error', description: message, variant: 'destructive' });
+      console.error('AI Request failed:', error);
+      toast({
+        title: 'AI Generation Failed',
+        description: 'Failed to process your request with AI. Please check your instructions and try again.',
+        variant: 'destructive',
+      });
     }
   };
 

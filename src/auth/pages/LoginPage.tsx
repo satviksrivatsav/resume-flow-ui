@@ -1,4 +1,4 @@
-﻿import { ArrowLeft, Eye, EyeOff, Github, Loader2, Lock, Mail } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Github, Loader2, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -20,9 +20,16 @@ export default function LoginPage() {
     e.preventDefault();
     const result = await signIn(email, password);
     if (result.error) {
+      let friendlyError = 'Failed to sign in. Please try again.';
+      const errMsg = result.error.toLowerCase();
+      if (errMsg.includes('invalid login credentials') || errMsg.includes('invalid credentials') || errMsg.includes('password') || errMsg.includes('not found')) {
+        friendlyError = 'Invalid email or password. Please check your credentials and try again.';
+      } else if (errMsg.includes('confirmed') || errMsg.includes('verification')) {
+        friendlyError = 'Please verify your email address before signing in.';
+      }
       toast({
-        title: 'Error',
-        description: result.error,
+        title: 'Sign In Failed',
+        description: friendlyError,
         variant: 'destructive',
       });
     } else {

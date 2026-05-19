@@ -54,15 +54,11 @@ export default function AtsReports() {
         (err instanceof TypeError && err.message.toLowerCase().includes('fetch'));
       const message = isNetworkError
         ? 'A network error occurred. Please check your connection and try again.'
-        : err instanceof Error
-          ? err.message
-          : 'Failed to fetch reports';
+        : 'Failed to load your ATS reports. Please try again later.';
       setError(message);
       toast({
         title: isNetworkError ? 'Network Error' : 'Error',
-        description: isNetworkError
-          ? 'A network error occurred. Please check your connection and try again.'
-          : 'Failed to load reports',
+        description: message,
         variant: 'destructive',
       });
     } finally {

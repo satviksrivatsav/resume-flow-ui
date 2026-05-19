@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: result.error,
+        description: 'Failed to send password reset email. Please check the email address and try again.',
       });
     } else if (result.message) {
       toast({

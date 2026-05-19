@@ -154,10 +154,8 @@ export const useAIWriterStore = create<AIWriterState>((set, get) => ({
 
       const message = isNetworkError
         ? 'A network error occurred. Please check your connection and try again.'
-        : error instanceof Error
-          ? error.message
-          : 'Failed to process request';
-      console.error('\n!!! API ERROR:', message);
+        : 'Failed to process your request with AI. Please try again.';
+      console.error('\n!!! API ERROR:', error);
 
       set({
         error: message,

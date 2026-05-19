@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
+import { ChevronDown, CloudUpload, Loader2, Sparkles, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { AILoadingModal } from '@/shared/components/ui/AILoadingModal';
@@ -30,7 +30,6 @@ export const TailorForm = () => {
     setTailoredSlides,
     setViewMode,
     setError,
-    error,
   } = useTailorStore();
 
   const [tailorEntire, setTailorEntire] = useState(true);
@@ -66,7 +65,7 @@ export const TailorForm = () => {
           title: isNetworkError ? 'Network Error' : 'Error',
           description: isNetworkError
             ? 'A network error occurred. Please check your connection and try again.'
-            : err.message || 'Failed to extract text from JD file',
+            : 'Failed to extract text from the job description file. Please try again or paste it manually.',
           variant: 'destructive',
         });
         setJdFile(null);
@@ -247,9 +246,10 @@ export const TailorForm = () => {
         setTailoredSlides(slides);
         setViewMode('diff');
       } else {
+        console.error('Tailoring failed:', result.detail);
         toast({
           title: 'Error',
-          description: result.detail || 'Failed to tailor resume. Please try again.',
+          description: 'Failed to tailor your resume. Please check the inputs and try again.',
           variant: 'destructive',
         });
       }
