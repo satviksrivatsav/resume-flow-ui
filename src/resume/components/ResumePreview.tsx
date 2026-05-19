@@ -753,6 +753,11 @@ export const ResumePreview = forwardRef<
   const [totalPages, setTotalPages] = useState(1);
   const measurerRef = useRef<HTMLDivElement>(null);
 
+  const onPageCountChangeRef = useRef(props.onPageCountChange);
+  useEffect(() => {
+    onPageCountChangeRef.current = props.onPageCountChange;
+  });
+
   useEffect(() => {
     if (!measurerRef.current) return;
 
@@ -763,7 +768,6 @@ export const ResumePreview = forwardRef<
       const elements = Array.from(measurer.querySelectorAll('[data-page-break-id]'));
 
       const newPageBreaks: Record<string, number> = {};
-      let cumulativeSpacer = 0;
       let currentPageStart = 0;
       const limit = 1027; // contentPageHeight
 
@@ -773,19 +777,10 @@ export const ResumePreview = forwardRef<
         const id = el.getAttribute('data-page-break-id');
         if (!id) return;
 
-        const spacerEl = el.querySelector('.page-break-spacer');
-        const currentSpacer = spacerEl instanceof HTMLElement ? spacerEl.offsetHeight : 0;
-
         const rect = el.getBoundingClientRect();
-        const measuredTop = rect.top - measurerRect.top;
-        const measuredBottom = rect.bottom - measurerRect.top;
-
-        // Calculate coordinates relative to the original document without spacers
-        const originalTop = measuredTop - cumulativeSpacer;
-        const originalBottom = measuredBottom - cumulativeSpacer - currentSpacer;
+        const originalTop = rect.top - measurerRect.top;
+        const originalBottom = rect.bottom - measurerRect.top;
         const height = originalBottom - originalTop;
-
-        cumulativeSpacer += currentSpacer;
 
         if (id === 'header') {
           currentPageStart = 0;
@@ -797,22 +792,30 @@ export const ResumePreview = forwardRef<
 
         if (elementBottomOnPage > limit) {
           const spacerNeeded = limit - elementTopOnPage;
-          newPageBreaks[id] = spacerNeeded;
-          currentPageStart = originalTop;
+          if (spacerNeeded > 0 && spacerNeeded < limit) {
+            newPageBreaks[id] = spacerNeeded;
+            currentPageStart = originalTop;
+          } else {
+            newPageBreaks[id] = 0;
+          }
         } else {
           newPageBreaks[id] = 0;
         }
       });
 
-      if (JSON.stringify(newPageBreaks) !== JSON.stringify(pageBreaks)) {
-        setPageBreaks(newPageBreaks);
-      }
+      setPageBreaks((prev) => {
+        if (JSON.stringify(prev) !== JSON.stringify(newPageBreaks)) {
+          return newPageBreaks;
+        }
+        return prev;
+      });
 
       const totalHeight = measurer.scrollHeight;
-      const pages = Math.ceil(totalHeight / 1123);
+      const totalSpacersHeight = Object.values(newPageBreaks).reduce((a, b) => a + b, 0);
+      const pages = Math.ceil((totalHeight + totalSpacersHeight) / 1123);
       const nextPages = Math.max(1, pages);
       setTotalPages(nextPages);
-      props.onPageCountChange?.(nextPages);
+      onPageCountChangeRef.current?.(nextPages);
     });
 
     observer.observe(measurerRef.current);
@@ -822,47 +825,47 @@ export const ResumePreview = forwardRef<
     const initialPages = Math.ceil(totalHeight / 1123);
     const nextPages = Math.max(1, initialPages);
     setTotalPages(nextPages);
-    props.onPageCountChange?.(nextPages);
+    onPageCountChangeRef.current?.(nextPages);
 
     return () => observer.disconnect();
-  }, [resumeData, props.onPageCountChange, pageBreaks]);
+  }, [resumeData]);
 
   return (
-    <PageBreakContext.Provider value={pageBreaks}>
-      <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
-        {/* 1. Measurer: Invisible off-screen element to calculate height */}
-        <div
-          ref={measurerRef}
-          style={{
-            width: pageWidth,
-            height: 'auto',
-            position: 'absolute',
-            left: '-9999px',
-            top: '-9999px',
-            opacity: 0,
-            pointerEvents: 'none',
-            fontFamily: metadata.typography.fontFamily,
-            fontSize: sizes.base,
-            paddingLeft: pageMargin,
-            paddingRight: pageMargin,
-            paddingTop: 0,
-            paddingBottom: 0,
-            lineHeight: '1.5',
-            backgroundColor: 'white',
-            color: '#000',
-          }}
-        >
-          <ResumeContent
-            basics={basics}
-            summary={summary}
-            sections={sections}
-            customSections={customSections}
-            metadata={metadata}
-            sizes={sizes}
-          />
-        </div>
+    <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
+      {/* 1. Measurer: Invisible off-screen element to calculate height */}
+      <div
+        ref={measurerRef}
+        style={{
+          width: pageWidth,
+          height: 'auto',
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px',
+          opacity: 0,
+          pointerEvents: 'none',
+          fontFamily: metadata.typography.fontFamily,
+          fontSize: sizes.base,
+          paddingLeft: pageMargin,
+          paddingRight: pageMargin,
+          paddingTop: 0,
+          paddingBottom: 0,
+          lineHeight: '1.5',
+          backgroundColor: 'white',
+          color: '#000',
+        }}
+      >
+        <ResumeContent
+          basics={basics}
+          summary={summary}
+          sections={sections}
+          customSections={customSections}
+          metadata={metadata}
+          sizes={sizes}
+        />
+      </div>
 
-        {/* 2. Visual Clean Page Splits */}
+      {/* 2. Visual Clean Page Splits */}
+      <PageBreakContext.Provider value={pageBreaks}>
         {Array.from({ length: totalPages }).map((_, index) => (
           <div
             key={index}
@@ -910,8 +913,8 @@ export const ResumePreview = forwardRef<
             </div>
           </div>
         ))}
-      </div>
-    </PageBreakContext.Provider>
+      </PageBreakContext.Provider>
+    </div>
   );
 });
 
