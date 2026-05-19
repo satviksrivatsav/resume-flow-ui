@@ -724,6 +724,8 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
   const pageWidth = A4_WIDTH;
   const pageHeight = 1123; // base A4 height in pixels
   const pageMargin = '0.5in';
+  const paddingY = 48; // 48px is exactly 0.5in top/bottom padding at 96 DPI
+  const contentPageHeight = pageHeight - paddingY * 2; // 1027px
 
   const [totalPages, setTotalPages] = useState(1);
   const measurerRef = useRef<HTMLDivElement>(null);
@@ -734,7 +736,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const scrollHeight = entry.target.scrollHeight;
-        const pages = Math.ceil(scrollHeight / pageHeight);
+        const pages = Math.ceil(scrollHeight / contentPageHeight);
         const nextPages = Math.max(1, pages);
         setTotalPages(nextPages);
         props.onPageCountChange?.(nextPages);
@@ -744,13 +746,13 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
     observer.observe(measurerRef.current);
 
     // Initial calculation
-    const initialPages = Math.ceil(measurerRef.current.scrollHeight / pageHeight);
+    const initialPages = Math.ceil(measurerRef.current.scrollHeight / contentPageHeight);
     const nextPages = Math.max(1, initialPages);
     setTotalPages(nextPages);
     props.onPageCountChange?.(nextPages);
 
     return () => observer.disconnect();
-  }, [resumeData, props.onPageCountChange]);
+  }, [resumeData, props.onPageCountChange, contentPageHeight]);
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-6 w-full select-none origin-top">
@@ -767,7 +769,10 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
           pointerEvents: 'none',
           fontFamily: metadata.typography.fontFamily,
           fontSize: sizes.base,
-          padding: pageMargin,
+          paddingLeft: pageMargin,
+          paddingRight: pageMargin,
+          paddingTop: 0,
+          paddingBottom: 0,
           lineHeight: '1.5',
           backgroundColor: 'white',
           color: '#000',
@@ -791,16 +796,19 @@ export const ResumePreview = forwardRef<HTMLDivElement, { data?: any; onPageCoun
           style={{
             width: pageWidth,
             height: `${pageHeight}px`,
+            paddingLeft: pageMargin,
+            paddingRight: pageMargin,
+            paddingTop: `${paddingY}px`,
+            paddingBottom: `${paddingY}px`,
           }}
         >
           {/* Inner content wrapper, shifted up by page index */}
           <div
             style={{
-              padding: pageMargin,
               fontFamily: metadata.typography.fontFamily,
               fontSize: sizes.base,
               color: '#000',
-              transform: `translateY(-${index * pageHeight}px)`,
+              transform: `translateY(-${index * contentPageHeight}px)`,
               height: 'auto',
             }}
           >
