@@ -159,6 +159,38 @@ const WebsiteIcon = () => (
   </Svg>
 );
 
+const GithubIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path
+      d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+      stroke="#000"
+      strokeWidth={2}
+      fill="none"
+    />
+    <Path d="M9 18c-4.51 2-5-2-7-2" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const LinkedinIcon = () => (
+  <Svg width={8} height={8} viewBox="0 0 24 24" style={{ marginRight: 4 }}>
+    <Path
+      d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+      stroke="#000"
+      strokeWidth={2}
+      fill="none"
+    />
+    <Rect x="2" y="9" width="4" height="12" stroke="#000" strokeWidth={2} fill="none" />
+    <Circle cx="4" cy="4" r="2" stroke="#000" strokeWidth={2} fill="none" />
+  </Svg>
+);
+
+const getProfileIcon = (network: string) => {
+  const n = network.toLowerCase();
+  if (n.includes('github')) return <GithubIcon />;
+  if (n.includes('linkedin')) return <LinkedinIcon />;
+  return <WebsiteIcon />;
+};
+
 const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any }) => {
   if (!text) return null;
 
@@ -181,6 +213,7 @@ const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any })
             <View
               key={i}
               style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'flex-start' }}
+              wrap={false}
             >
               <Text
                 style={{ width: 12, flexShrink: 0, marginLeft: indent ? indent.length * 4 : 0 }}
@@ -193,7 +226,7 @@ const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any })
         }
 
         return (
-          <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2 }}>
+          <Text key={i} style={{ marginBottom: line.trim() === '' ? 4 : 2 }} wrap={false}>
             {line}
           </Text>
         );
@@ -254,7 +287,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       flexShrink: 1,
     },
     section: {
-      marginBottom: 14,
+      marginBottom: 16,
     },
     sectionTitleContainer: {
       borderBottomWidth: 1,
@@ -342,10 +375,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   const formattedPhone = dialCode ? `${dialCode} ${localPhone}` : localPhone;
 
   const contactInfo = [
-    { value: basics.email, Icon: MailIcon },
+    { value: basics.email, Icon: MailIcon, isLink: true, prefix: 'mailto:' },
     { value: formattedPhone, Icon: PhoneIcon },
     { value: basics.location, Icon: MapPinIcon },
-    { value: basics.url.href, Icon: WebsiteIcon },
+    { value: basics.url.href, Icon: WebsiteIcon, isLink: true, prefix: '' },
   ].filter((item) => item.value && item.value.trim());
 
   const sectionOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
@@ -354,7 +387,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   const renderSummary = () =>
     hasContent(summary.content) && summary.visible ? (
       <View key="summary" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={20}>
           <Text style={styles.sectionTitle}>Summary</Text>
         </View>
         <PDFDescriptionRenderer text={summary.content} style={styles.itemDescription} />
@@ -369,29 +402,31 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="experience" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={40}>
           <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
         </View>
 
         {visibleItems.map((exp) => (
-          <View key={exp.id} style={{ marginBottom: 12 }} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                  <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
-                  {exp.company && <Text style={{ fontWeight: 400 }}>, {exp.company}</Text>}
-                </Text>
+          <View key={exp.id} style={{ marginBottom: 12 }}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                    <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
+                    {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
+                  </Text>
+                </View>
+                <Text style={styles.itemDate}>{exp.period}</Text>
               </View>
-              <Text style={styles.itemDate}>{exp.period}</Text>
+              {exp.location ? (
+                <Text style={{ fontSize: sizes.base * 0.9, color: '#666', marginBottom: 4 }}>
+                  {exp.location}
+                </Text>
+              ) : null}
             </View>
-            {exp.location && (
-              <Text style={{ fontSize: sizes.base * 0.9, color: '#666', marginBottom: 4 }}>
-                {exp.location}
-              </Text>
-            )}
-            {hasContent(exp.description) && (
+            {hasContent(exp.description) ? (
               <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -406,29 +441,31 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="education" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={40}>
           <Text style={styles.sectionTitle}>{sections.education.name}</Text>
         </View>
         {visibleItems.map((edu) => (
-          <View key={edu.id} style={{ marginBottom: 12 }} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                  <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
-                  {edu.area && <Text style={{ fontWeight: 400 }}> in {edu.area}</Text>}
+          <View key={edu.id} style={{ marginBottom: 12 }}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                    <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
+                    {edu.area ? <Text style={{ fontWeight: 400 }}> in {edu.area}</Text> : null}
+                  </Text>
+                </View>
+                <Text style={styles.itemDate}>{edu.period}</Text>
+              </View>
+              <View style={{ color: '#000', marginBottom: 2 }}>
+                <Text>
+                  {edu.school}
+                  {edu.grade ? ` • ${edu.grade}` : ''}
                 </Text>
               </View>
-              <Text style={styles.itemDate}>{edu.period}</Text>
             </View>
-            <View style={{ color: '#000', marginBottom: 2 }}>
-              <Text>
-                {edu.school}
-                {edu.grade && ` • ${edu.grade}`}
-              </Text>
-            </View>
-            {hasContent(edu.description) && (
+            {hasContent(edu.description) ? (
               <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -443,26 +480,28 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="projects" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={150}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={40}>
           <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
         </View>
         {visibleItems.map((proj) => (
-          <View key={proj.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
-              <Text style={styles.itemDate}>{proj.period}</Text>
+          <View key={proj.id} style={styles.itemContainer}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
+                <Text style={styles.itemDate}>{proj.period}</Text>
+              </View>
+              {proj.website.href ? (
+                <Link src={proj.website.href} style={styles.link}>
+                  {proj.website.label || proj.website.href}
+                </Link>
+              ) : null}
             </View>
-            {proj.website.href && (
-              <Link src={proj.website.href} style={styles.link}>
-                {proj.website.label || proj.website.href}
-              </Link>
-            )}
-            {hasContent(proj.description) && (
+            {hasContent(proj.description) ? (
               <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
-            )}
-            {proj.keywords && proj.keywords.length > 0 && (
+            ) : null}
+            {proj.keywords && proj.keywords.length > 0 ? (
               <Text style={styles.itemSubtitle}>Technologies: {proj.keywords.join(', ')}</Text>
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -477,7 +516,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="skills" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={20}>
           <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
         </View>
         <View style={styles.skillsContainer}>
@@ -502,10 +541,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="languages" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={20}>
           <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }} wrap={false}>
           {visibleItems.map((lang, index) => (
             <View
               key={lang.id}
@@ -517,10 +556,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               }}
             >
               <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
-              {lang.description && (
+              {lang.description ? (
                 <Text style={{ color: '#555', marginLeft: 4 }}>({lang.description})</Text>
-              )}
-              {index < visibleItems.length - 1 && <Text style={{ marginLeft: 2 }}>,</Text>}
+              ) : null}
+              {index < visibleItems.length - 1 ? <Text style={{ marginLeft: 2 }}>,</Text> : null}
             </View>
           ))}
         </View>
@@ -534,7 +573,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="interests" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={50}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={20}>
           <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
         </View>
         <Text style={styles.itemDescription}>
@@ -554,21 +593,23 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="awards" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={30}>
           <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
         </View>
         {visibleItems.map((award) => (
-          <View key={award.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{award.title}</Text>
-                <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+          <View key={award.id} style={styles.itemContainer}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{award.title}</Text>
+                  <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+                </View>
+                <Text style={styles.itemDate}>{award.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{award.date}</Text>
             </View>
-            {hasContent(award.description) && (
+            {hasContent(award.description) ? (
               <PDFDescriptionRenderer text={award.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -583,26 +624,28 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="certifications" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={30}>
           <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
         </View>
         {visibleItems.map((cert) => (
-          <View key={cert.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{cert.name}</Text>
-                <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+          <View key={cert.id} style={styles.itemContainer}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{cert.name}</Text>
+                  <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                </View>
+                <Text style={styles.itemDate}>{cert.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{cert.date}</Text>
+              {cert.website?.href ? (
+                <Link src={cert.website.href} style={styles.link}>
+                  {cert.website.label || cert.website.href}
+                </Link>
+              ) : null}
             </View>
-            {cert.website?.href && (
-              <Link src={cert.website.href} style={styles.link}>
-                {cert.website.label || cert.website.href}
-              </Link>
-            )}
-            {hasContent(cert.description) && (
+            {hasContent(cert.description) ? (
               <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -617,21 +660,23 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="volunteer" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={30}>
           <Text style={styles.sectionTitle}>{sections.volunteer.name}</Text>
         </View>
         {visibleItems.map((vol) => (
-          <View key={vol.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{vol.position}</Text>
-                <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+          <View key={vol.id} style={styles.itemContainer}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{vol.position}</Text>
+                  <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+                </View>
+                <Text style={styles.itemDate}>{vol.period}</Text>
               </View>
-              <Text style={styles.itemDate}>{vol.period}</Text>
             </View>
-            {hasContent(vol.description) && (
+            {hasContent(vol.description) ? (
               <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -646,21 +691,23 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="publications" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={30}>
           <Text style={styles.sectionTitle}>{sections.publications.name}</Text>
         </View>
         {visibleItems.map((pub) => (
-          <View key={pub.id} style={styles.itemContainer} wrap={false}>
-            <View style={styles.itemHeader}>
-              <View style={styles.itemHeaderLeft}>
-                <Text style={styles.itemTitle}>{pub.name}</Text>
-                <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+          <View key={pub.id} style={styles.itemContainer}>
+            <View wrap={false}>
+              <View style={styles.itemHeader}>
+                <View style={styles.itemHeaderLeft}>
+                  <Text style={styles.itemTitle}>{pub.name}</Text>
+                  <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+                </View>
+                <Text style={styles.itemDate}>{pub.date}</Text>
               </View>
-              <Text style={styles.itemDate}>{pub.date}</Text>
             </View>
-            {hasContent(pub.description) && (
+            {hasContent(pub.description) ? (
               <PDFDescriptionRenderer text={pub.description} style={styles.itemDescription} />
-            )}
+            ) : null}
           </View>
         ))}
       </View>
@@ -673,16 +720,16 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="references" style={styles.section}>
-        <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+        <View style={styles.sectionTitleContainer} minPresenceAhead={20}>
           <Text style={styles.sectionTitle}>{sections.references.name}</Text>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }} wrap={false}>
           {visibleItems.map((ref) => (
             <View key={ref.id} style={{ width: '45%', marginBottom: 8 }}>
               <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
               <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
               <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
-                {ref.email} {ref.phone && `| ${ref.phone}`}
+                {ref.email} {ref.phone ? `| ${ref.phone}` : ''}
               </Text>
             </View>
           ))}
@@ -711,11 +758,11 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header — always first */}
-        <View style={styles.header}>
+        <View style={styles.header} wrap={false}>
           <Text style={styles.name}>{basics.name || 'Your Name'}</Text>
-          {basics.headline && <Text style={styles.headline}>{basics.headline}</Text>}
+          {basics.headline ? <Text style={styles.headline}>{basics.headline}</Text> : null}
           <View style={styles.contactRow}>
-            {contactInfo.map((item, index) => (
+            {contactInfo.map((item: any, index) => (
               <View
                 key={index}
                 style={{
@@ -726,35 +773,58 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
                 }}
               >
                 <item.Icon />
-                <Text style={styles.contactItem}>{item.value}</Text>
+                {item.isLink ? (
+                  <Link
+                    src={item.prefix + item.value}
+                    style={{
+                      ...styles.contactItem,
+                      color: metadata.theme.primary || '#1f2937',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    <Text>{item.value}</Text>
+                  </Link>
+                ) : (
+                  <Text style={styles.contactItem}>{item.value}</Text>
+                )}
               </View>
             ))}
-            {sections.profiles.items
-              .filter((p) => p.visible && (p.network || p.username))
-              .map((profile, index) => (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginRight: 12,
-                    maxWidth: '100%',
-                  }}
-                >
-                  {profile.website?.href ? (
-                    <Link src={profile.website.href} style={styles.contactItem}>
-                      <Text>
-                        {profile.network}: {cleanProfileDisplay(profile.username)}
-                      </Text>
-                    </Link>
-                  ) : (
-                    <Text style={styles.contactItem}>
-                      {profile.network}: {cleanProfileDisplay(profile.username)}
-                    </Text>
-                  )}
-                </View>
-              ))}
           </View>
+          {sections.profiles.items.filter((p: any) => p.visible && (p.network || p.username)).length > 0 ? (
+            <View style={{ ...styles.contactRow, marginTop: 4 }}>
+              {sections.profiles.items
+                .filter((p: any) => p.visible && (p.network || p.username))
+                .map((profile: any, index: number) => (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginRight: 12,
+                      maxWidth: '100%',
+                    }}
+                  >
+                    {getProfileIcon(profile.network)}
+                    {profile.website?.href ? (
+                      <Link
+                        src={profile.website.href}
+                        style={{
+                          ...styles.contactItem,
+                          color: metadata.theme.primary || '#1f2937',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        <Text>{profile.website.href}</Text>
+                      </Link>
+                    ) : (
+                      <Text style={styles.contactItem}>
+                        {profile.network}: {profile.username}
+                      </Text>
+                    )}
+                  </View>
+                ))}
+            </View>
+          ) : null}
         </View>
 
         {/* Summary — pinned to top, not reorderable */}
@@ -779,18 +849,20 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
             return (
               <View key={section.id} style={styles.section}>
-                <View style={styles.sectionTitleContainer} minPresenceAhead={100}>
+                <View style={styles.sectionTitleContainer} minPresenceAhead={30}>
                   <Text style={styles.sectionTitle}>{section.name}</Text>
                 </View>
                 {visibleItems.map((item: any) => (
-                  <View key={item.id} style={styles.itemContainer} wrap={false}>
-                    <Text style={styles.itemTitle}>{item.title}</Text>
-                    {hasContent(item.description) && (
+                  <View key={item.id} style={styles.itemContainer}>
+                    <View wrap={false}>
+                      <Text style={styles.itemTitle}>{item.title}</Text>
+                    </View>
+                    {hasContent(item.description) ? (
                       <PDFDescriptionRenderer
                         text={item.description}
                         style={styles.itemDescription}
                       />
-                    )}
+                    ) : null}
                   </View>
                 ))}
               </View>

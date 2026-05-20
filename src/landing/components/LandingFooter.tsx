@@ -119,7 +119,7 @@ export const LandingFooter = () => {
               </li>
               <li>
                 <Link
-                  to="/upload"
+                  to="/dashboard/upload"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
                   Resume Parser
@@ -127,7 +127,7 @@ export const LandingFooter = () => {
               </li>
               <li>
                 <Link
-                  to="/ats"
+                  to="/dashboard/ats"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"
                 >
                   ATS Checker

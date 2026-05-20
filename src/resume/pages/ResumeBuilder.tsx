@@ -19,7 +19,6 @@ import { EducationForm } from '@/resume/components/EducationForm';
 import { InterestsForm } from '@/resume/components/InterestsForm';
 import { LanguagesForm } from '@/resume/components/LanguagesForm';
 import { PersonalInfoForm } from '@/resume/components/PersonalInfoForm';
-import { ProfilesForm } from '@/resume/components/ProfilesForm';
 import { ProjectsForm } from '@/resume/components/ProjectsForm';
 import { PublicationsForm } from '@/resume/components/PublicationsForm';
 import { ReferencesForm } from '@/resume/components/ReferencesForm';
@@ -383,7 +382,7 @@ const ResumeBuilder = () => {
               <div
                 className={cn(
                   'h-full overflow-y-auto transition-all duration-300 ease-in-out px-4 md:px-8 custom-scrollbar',
-                  showPreview ? 'w-full lg:w-[50%] xl:w-[45%]' : 'w-full',
+                  showPreview ? 'w-full lg:w-[50%] xl:w-[50%]' : 'w-full',
                 )}
               >
                 <div className="max-w-3xl mx-auto space-y-6 pt-[calc(var(--header-height)+1rem)] pb-20">
@@ -432,9 +431,6 @@ const ResumeBuilder = () => {
                       </TabsContent>
                       <TabsContent value="skills">
                         <SkillsForm />
-                      </TabsContent>
-                      <TabsContent value="profiles">
-                        <ProfilesForm />
                       </TabsContent>
                       <TabsContent value="languages">
                         <LanguagesForm />

@@ -191,13 +191,16 @@ export const ResumeSettings = () => {
                   <DialogTitle>Choose a custom color</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-full h-24 rounded-2xl overflow-hidden border border-input relative">
+                  <div className="w-full h-24 rounded-2xl overflow-hidden border border-input relative flex items-center justify-center">
                     <input
                       type="color"
                       value={modalColor}
                       onChange={(e) => setModalColor(e.target.value)}
-                      className="absolute inset-[-10px] w-[calc(100%+20px)] h-[calc(100%+20px)] cursor-pointer bg-transparent border-none"
+                      className="absolute inset-[-10px] w-[calc(100%+20px)] h-[calc(100%+20px)] cursor-pointer bg-transparent border-none z-10"
                     />
+                    <div className="w-10 h-10 bg-black/80 rounded-full flex items-center justify-center pointer-events-none z-20 shadow-md">
+                      <Pencil className="w-5 h-5 text-white" />
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 w-full">
                     <Input

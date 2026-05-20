@@ -109,7 +109,9 @@ export const AdditionalSectionForm = () => {
         </div>
 
         <div className="space-y-3">
-          <Label className="font-medium">Content</Label>
+          <Label className="font-medium">
+            Content <span className="text-destructive">*</span>
+          </Label>
           <RichTextEditor
             value={(section as any).description || ''}
             onChange={(value) => updateCustomSection(section.id, { description: value })}

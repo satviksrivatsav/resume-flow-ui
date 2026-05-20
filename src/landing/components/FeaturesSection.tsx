@@ -39,7 +39,7 @@ export const FeaturesSection = () => {
       ctaText: 'Resume Parser',
       mockup: <ParserMockup />,
       reverse: true,
-      link: '/upload',
+      link: '/dashboard/upload',
     },
     {
       title: 'ATS Resume Checker.',
@@ -53,7 +53,7 @@ export const FeaturesSection = () => {
       ctaText: 'Check My Resume',
       mockup: <ATSMockup />,
       reverse: false,
-      link: '/ats',
+      link: '/dashboard/ats',
     },
     {
       title: 'Job Description Tailor.',

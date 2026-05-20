@@ -72,11 +72,11 @@ export default React.memo(function LandingPage() {
         isOpen={isResumeSelectionModalOpen}
         onClose={() => setIsResumeSelectionModalOpen(false)}
         onSelect={(id) => {
-          navigate(`/ats?resumeId=${id}`);
+          navigate(`/dashboard/ats?resumeId=${id}`);
           setIsResumeSelectionModalOpen(false);
         }}
         onUploadNew={() => {
-          navigate('/ats');
+          navigate('/dashboard/ats');
           setIsResumeSelectionModalOpen(false);
         }}
       />

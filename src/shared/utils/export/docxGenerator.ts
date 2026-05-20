@@ -186,6 +186,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((exp) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: exp.position || 'Position', bold: true, size: sizes.base * 2 }),
             ...(exp.company

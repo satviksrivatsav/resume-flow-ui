@@ -114,6 +114,16 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
 
   // Custom Sections
   customSections.forEach((section) => {
+    // 1. Check if it's an "Additional" style section (one with a top-level description)
+    const asAdditional = section as any;
+    if (asAdditional.description !== undefined) {
+      if (!section.name?.trim() || !asAdditional.description?.trim()) {
+        missingForms.push(section.name || 'Additional Section');
+      }
+      return;
+    }
+
+    // 2. Otherwise check standard custom sections with items
     if (
       section.items.length > 0 &&
       section.items.some((item) => !item.title?.trim() || !item.description?.trim())
@@ -202,9 +212,18 @@ export const getSectionCompletionStatus = (sectionId: string, resumeData: Resume
       return true;
     default:
       const custom = customSections.find((s) => s.id === sectionId);
-      return custom
-        ? custom.items.length > 0 &&
-            custom.items.every((item) => item.title?.trim() && item.description?.trim())
-        : false;
+      if (!custom) return false;
+
+      // 1. Check Additional style
+      const asAdditional = custom as any;
+      if (asAdditional.description !== undefined) {
+        return !!(custom.name?.trim() && asAdditional.description?.trim());
+      }
+
+      // 2. Standard custom section with items
+      return (
+        custom.items.length > 0 &&
+        custom.items.every((item) => item.title?.trim() && item.description?.trim())
+      );
   }
 };

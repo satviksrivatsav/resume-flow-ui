@@ -106,9 +106,7 @@ export const ProfilesForm = () => {
             <AccordionContent className="p-0">
               <div className="p-6 space-y-4">
                 <div className="space-y-2">
-                  <Label className="font-medium">
-                    Network <span className="text-destructive">*</span>
-                  </Label>
+                  <Label className="font-medium">Network</Label>
                   <div className="relative">
                     <Input
                       value={profile.network}

@@ -88,7 +88,14 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route path="/resume-builder" element={<ResumeBuilder />} />
+        <Route
+          path="/resume-builder"
+          element={
+            <ProtectedRoute>
+              <ResumeBuilder />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard/upload"
           element={
