@@ -438,15 +438,24 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
   const sectionOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
 
-  const renderLinkedTitle = (titleNode: React.ReactNode, website?: { href: string }) => {
-    if (website?.href) {
-      return (
-        <Link src={website.href} style={{ textDecoration: 'none' }}>
-          {titleNode}
+  const renderItemWebsite = (website?: { label?: string; href?: string }) => {
+    if (!website?.href || !website.href.trim()) return null;
+    const displayText = website.label?.trim() || website.href.trim();
+    return (
+      <View style={{ marginTop: 2 }}>
+        <Link
+          src={website.href}
+          style={{
+            fontSize: sizes.base - 1,
+            color: metadata.theme.primary || '#1f2937',
+            textDecoration: 'underline',
+            lineHeight: effectiveLineHeight,
+          }}
+        >
+          <Text>{displayText}</Text>
         </Link>
-      );
-    }
-    return titleNode;
+      </View>
+    );
   };
 
   const renderSummary = () =>
@@ -491,13 +500,11 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               headerElement={
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
-                    {renderLinkedTitle(
-                      <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                        <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
-                        {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
-                      </Text>,
-                      exp.website
-                    )}
+                    <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                      <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
+                      {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
+                    </Text>
+                    {renderItemWebsite(exp.website)}
                   </View>
                   <Text style={styles.itemDate}>{exp.period}</Text>
                 </View>
@@ -534,13 +541,17 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               headerElement={
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
-                    {renderLinkedTitle(
-                      <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                        <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
-                        {edu.area ? <Text style={{ fontWeight: 400 }}> in {edu.area}</Text> : null}
-                      </Text>,
-                      edu.website
-                    )}
+                    <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                      <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
+                      {edu.area ? <Text style={{ fontWeight: 400 }}> in {edu.area}</Text> : null}
+                    </Text>
+                    {edu.school ? (
+                      <Text style={styles.itemSubtitle}>
+                        <Text style={{ fontWeight: 700 }}>{edu.school}</Text>
+                        {edu.grade ? <Text style={{ fontWeight: 400 }}> • {edu.grade}</Text> : null}
+                      </Text>
+                    ) : null}
+                    {renderItemWebsite(edu.website)}
                   </View>
                   <Text style={styles.itemDate}>{edu.period}</Text>
                 </View>
@@ -576,10 +587,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               }
               headerElement={
                 <View style={styles.itemHeader}>
-                  {renderLinkedTitle(
-                    <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>,
-                    proj.website
-                  )}
+                  <View style={styles.itemHeaderLeft}>
+                    <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
+                    {renderItemWebsite(proj.website)}
+                  </View>
                   <Text style={styles.itemDate}>{proj.period}</Text>
                 </View>
               }
@@ -750,8 +761,9 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               headerElement={
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
-                    {renderLinkedTitle(<Text style={styles.itemTitle}>{cert.name}</Text>, cert.website)}
+                    <Text style={styles.itemTitle}>{cert.name}</Text>
                     <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                    {renderItemWebsite(cert.website)}
                   </View>
                   <Text style={styles.itemDate}>{cert.date}</Text>
                 </View>
@@ -788,8 +800,9 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               headerElement={
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
-                    {renderLinkedTitle(<Text style={styles.itemTitle}>{vol.position}</Text>, vol.website)}
+                    <Text style={styles.itemTitle}>{vol.position}</Text>
                     <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+                    {renderItemWebsite(vol.website)}
                   </View>
                   <Text style={styles.itemDate}>{vol.period}</Text>
                 </View>
@@ -826,8 +839,9 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               headerElement={
                 <View style={styles.itemHeader}>
                   <View style={styles.itemHeaderLeft}>
-                    {renderLinkedTitle(<Text style={styles.itemTitle}>{pub.name}</Text>, pub.website)}
+                    <Text style={styles.itemTitle}>{pub.name}</Text>
                     <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+                    {renderItemWebsite(pub.website)}
                   </View>
                   <Text style={styles.itemDate}>{pub.date}</Text>
                 </View>

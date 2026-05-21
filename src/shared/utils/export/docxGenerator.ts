@@ -1,10 +1,10 @@
-import { AlignmentType, BorderStyle, Document, Packer, Paragraph, TextRun } from 'docx';
+import { AlignmentType, BorderStyle, Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
 
-const renderDescription = (text: string, fontSize: number): Paragraph[] => {
+const renderDescription = (text: string, fontSize: number, lineSpacing: number): Paragraph[] => {
   if (!text) return [];
 
   const processedText = stripHtml(text);
@@ -32,10 +32,10 @@ const renderDescription = (text: string, fontSize: number): Paragraph[] => {
             }),
           ],
           indent: {
-            left: (indent ? indent.length * 4 : 0) + 240,
+            left: (indent ? indent.length * 40 : 0) + 240,
             hanging: 240,
           },
-          spacing: { after: 40, line: 360 }, // 360 twips = 1.5 line spacing
+          spacing: { after: 40, line: lineSpacing },
         }),
       );
     } else {
@@ -47,7 +47,7 @@ const renderDescription = (text: string, fontSize: number): Paragraph[] => {
               size: fontSize * 2,
             }),
           ],
-          spacing: { after: line.trim() === '' ? 80 : 40, line: 360 },
+          spacing: { after: line.trim() === '' ? 80 : 40, line: lineSpacing },
         }),
       );
     }
@@ -65,8 +65,20 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     heading: baseSize + 2,
     name: baseSize * 2,
   };
+  const fontFamily = metadata.typography.fontFamily || 'Roboto';
   const primaryColor = (metadata.theme.primary || '#1f2937').replace('#', '');
   const sectionOrder = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
+
+  // ── Spacing and Sizing Helper ─────────────────────────────────────────────
+  const baseLineHeight = metadata.typography.lineHeight || 1.5;
+  const effectiveLineHeight = Math.max(1.0, baseLineHeight);
+  const spacingScale = baseLineHeight / 1.5;
+
+  const getSpacingTwips = (basePoints: number) => {
+    return Math.round(basePoints * spacingScale * 20);
+  };
+
+  const lineSpacingTwips = Math.round(effectiveLineHeight * 240);
 
   const children: any[] = [];
 
@@ -82,6 +94,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           color: primaryColor,
         }),
       ],
+      spacing: { after: getSpacingTwips(6) },
     }),
   );
 
@@ -96,7 +109,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
             color: '444444',
           }),
         ],
-        spacing: { after: 160 },
+        spacing: { after: getSpacingTwips(10) },
       }),
     );
   }
@@ -106,37 +119,101 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   const localPhone = cleanPhoneNumber(basics.phone, basics.countryCode);
   const formattedPhone = dialCode ? `${dialCode} ${localPhone}` : localPhone;
 
-  const contactInfo = [basics.email, formattedPhone, basics.location, basics.url.href].filter(
-    (v) => v && v.trim(),
+  const contactInfo = [
+    { value: basics.email, isLink: true, prefix: 'mailto:' },
+    { value: formattedPhone, isLink: false },
+    { value: basics.location, isLink: false },
+    { value: basics.url.href, isLink: true, prefix: '' },
+  ].filter((item) => item.value && item.value.trim());
+
+  const visibleProfiles = sections.profiles.items.filter(
+    (p: any) => p.visible && (p.network || p.username || p.website?.href),
   );
 
-  const profiles = sections.profiles.items
-    .filter((p) => p.visible && (p.network || p.username))
-    .map((p) => `${p.network}: ${cleanProfileDisplay(p.username)}`);
+  if (contactInfo.length > 0) {
+    const contactParagraphChildren: any[] = [];
+    contactInfo.forEach((item, index) => {
+      if (item.isLink) {
+        contactParagraphChildren.push(
+          new ExternalHyperlink({
+            children: [
+              new TextRun({
+                text: item.value,
+                size: (sizes.base - 1) * 2,
+                color: primaryColor,
+                underline: {},
+              }),
+            ],
+            link: item.prefix + item.value,
+          })
+        );
+      } else {
+        contactParagraphChildren.push(
+          new TextRun({
+            text: item.value,
+            size: (sizes.base - 1) * 2,
+          })
+        );
+      }
+      if (index < contactInfo.length - 1) {
+        contactParagraphChildren.push(
+          new TextRun({
+            text: '   |   ',
+            size: (sizes.base - 1) * 2,
+          })
+        );
+      }
+    });
 
-  const allContact = [...contactInfo, ...profiles];
-
-  if (allContact.length > 0) {
     children.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        children: allContact
-          .map((item, idx) => [
-            new TextRun({
-              text: item,
-              size: (sizes.base - 1) * 2,
-            }),
-            ...(idx < allContact.length - 1
-              ? [
-                  new TextRun({
-                    text: '  |  ',
-                    size: (sizes.base - 1) * 2,
-                  }),
-                ]
-              : []),
-          ])
-          .flat(),
-        spacing: { after: 320 },
+        children: contactParagraphChildren,
+        spacing: { after: visibleProfiles.length > 0 ? getSpacingTwips(4) : getSpacingTwips(20) },
+      }),
+    );
+  }
+
+  if (visibleProfiles.length > 0) {
+    const profileParagraphChildren: any[] = [];
+    visibleProfiles.forEach((profile, index) => {
+      if (profile.website?.href) {
+        profileParagraphChildren.push(
+          new ExternalHyperlink({
+            children: [
+              new TextRun({
+                text: profile.website.href,
+                size: (sizes.base - 1) * 2,
+                color: primaryColor,
+                underline: {},
+              }),
+            ],
+            link: profile.website.href,
+          })
+        );
+      } else {
+        profileParagraphChildren.push(
+          new TextRun({
+            text: `${profile.network}${profile.username ? `: ${profile.username}` : ''}`,
+            size: (sizes.base - 1) * 2,
+          })
+        );
+      }
+      if (index < visibleProfiles.length - 1) {
+        profileParagraphChildren.push(
+          new TextRun({
+            text: '   |   ',
+            size: (sizes.base - 1) * 2,
+          })
+        );
+      }
+    });
+
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: profileParagraphChildren,
+        spacing: { after: getSpacingTwips(20) },
       }),
     );
   }
@@ -162,16 +239,37 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
             size: 6,
           },
         },
-        spacing: { before: 280, after: 200 },
+        spacing: { before: getSpacingTwips(18), after: getSpacingTwips(10) },
       }),
     ];
+  };
+
+  const createItemWebsiteParagraph = (website?: { label?: string; href?: string }) => {
+    if (!website?.href || !website.href.trim()) return null;
+    const displayText = website.label?.trim() || website.href.trim();
+    return new Paragraph({
+      children: [
+        new ExternalHyperlink({
+          children: [
+            new TextRun({
+              text: displayText,
+              size: (sizes.base - 1) * 2,
+              color: primaryColor,
+              underline: {},
+            }),
+          ],
+          link: website.href,
+        }),
+      ],
+      spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
+    });
   };
 
   // ── Section Renderers ──────────────────────────────────────────────────────
   const renderSummary = () => {
     if (hasContent(summary.content) && summary.visible) {
       children.push(...createSectionTitle('Summary'));
-      children.push(...renderDescription(summary.content, sizes.base));
+      children.push(...renderDescription(summary.content, sizes.base, lineSpacingTwips));
     }
   };
 
@@ -194,26 +292,21 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               : []),
             new TextRun({ text: `\t${exp.period}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      if (exp.location) {
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: exp.location, size: (sizes.base - 1) * 2, color: '666666' }),
-            ],
-            spacing: { after: 80 },
-          }),
-        );
+      const websitePara = createItemWebsiteParagraph(exp.website);
+      if (websitePara) {
+        children.push(websitePara);
       }
 
       if (hasContent(exp.description)) {
-        children.push(...renderDescription(exp.description, sizes.base));
+        children.push(...renderDescription(exp.description, sizes.base, lineSpacingTwips));
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -228,30 +321,39 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((edu) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: edu.degree || 'Degree', bold: true, size: sizes.base * 2 }),
             ...(edu.area ? [new TextRun({ text: ` in ${edu.area}`, size: sizes.base * 2 })] : []),
             new TextRun({ text: `\t${edu.period}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      children.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: edu.school || 'School', size: sizes.base * 2 }),
-            ...(edu.grade ? [new TextRun({ text: ` • ${edu.grade}`, size: sizes.base * 2 })] : []),
-          ],
-          spacing: { after: 80 },
-        }),
-      );
-
-      if (hasContent(edu.description)) {
-        children.push(...renderDescription(edu.description, sizes.base));
+      if (edu.school) {
+        children.push(
+          new Paragraph({
+            children: [
+               new TextRun({ text: edu.school, bold: true, size: sizes.base * 2 }),
+               ...(edu.grade ? [new TextRun({ text: ` • ${edu.grade}`, size: sizes.base * 2 })] : []),
+            ],
+            spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
+          })
+        );
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      const websitePara = createItemWebsiteParagraph(edu.website);
+      if (websitePara) {
+        children.push(websitePara);
+      }
+
+      if (hasContent(edu.description)) {
+        children.push(...renderDescription(edu.description, sizes.base, lineSpacingTwips));
+      }
+
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -266,30 +368,23 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((proj) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: proj.name || 'Project', bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${proj.period}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${proj.period}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      if (proj.website.href) {
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: proj.website.label || proj.website.href,
-                size: (sizes.base - 1) * 2,
-                color: primaryColor,
-              }),
-            ],
-          }),
-        );
+      const websitePara = createItemWebsiteParagraph(proj.website);
+      if (websitePara) {
+        children.push(websitePara);
       }
 
       if (hasContent(proj.description)) {
-        children.push(...renderDescription(proj.description, sizes.base));
+        children.push(...renderDescription(proj.description, sizes.base, lineSpacingTwips));
       }
 
       if (proj.keywords && proj.keywords.length > 0) {
@@ -299,12 +394,12 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               new TextRun({ text: 'Technologies: ', bold: true, size: sizes.base * 2 }),
               new TextRun({ text: proj.keywords.join(', '), size: sizes.base * 2 }),
             ],
-            spacing: { after: 80 },
+            spacing: { after: getSpacingTwips(4), line: lineSpacingTwips },
           }),
         );
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -333,7 +428,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               size: sizes.base * 2,
             }),
           ],
-          spacing: { after: 80 },
+          spacing: { after: getSpacingTwips(4), line: lineSpacingTwips },
         }),
       );
     });
@@ -352,7 +447,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         paragraphChildren.push(
           new TextRun({
             text: ` (${lang.description})`,
-            size: (sizes.base - 1) * 2,
+            size: sizes.base * 2,
             color: '555555',
           }),
         );
@@ -370,7 +465,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     children.push(
       new Paragraph({
         children: paragraphChildren,
-        spacing: { after: 120 },
+        spacing: { after: getSpacingTwips(12), line: lineSpacingTwips },
       }),
     );
   };
@@ -387,10 +482,11 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           new TextRun({
             text: visibleItems
               .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
-              .join(', '),
+               .join(', '),
             size: sizes.base * 2,
           }),
         ],
+        spacing: { after: getSpacingTwips(12), line: lineSpacingTwips },
       }),
     );
   };
@@ -406,25 +502,28 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((award) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: award.title, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${award.date}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${award.date}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
       children.push(
         new Paragraph({
           children: [new TextRun({ text: award.awarder, size: sizes.base * 2 })],
+          spacing: { after: getSpacingTwips(4), line: lineSpacingTwips },
         }),
       );
 
       if (hasContent(award.description)) {
-        children.push(...renderDescription(award.description, sizes.base));
+        children.push(...renderDescription(award.description, sizes.base, lineSpacingTwips));
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -439,39 +538,33 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((cert) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: cert.name, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${cert.date}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${cert.date}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
       children.push(
         new Paragraph({
           children: [new TextRun({ text: cert.issuer, size: sizes.base * 2 })],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      if (cert.website.href) {
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: cert.website.label || cert.website.href,
-                size: (sizes.base - 1) * 2,
-                color: primaryColor,
-              }),
-            ],
-          }),
-        );
+      const websitePara = createItemWebsiteParagraph(cert.website);
+      if (websitePara) {
+        children.push(websitePara);
       }
 
       if (hasContent(cert.description)) {
-        children.push(...renderDescription(cert.description, sizes.base));
+        children.push(...renderDescription(cert.description, sizes.base, lineSpacingTwips));
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -486,25 +579,33 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((vol) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: vol.position, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${vol.period}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${vol.period}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
       children.push(
         new Paragraph({
           children: [new TextRun({ text: vol.organization, size: sizes.base * 2 })],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      if (hasContent(vol.description)) {
-        children.push(...renderDescription(vol.description, sizes.base));
+      const websitePara = createItemWebsiteParagraph(vol.website);
+      if (websitePara) {
+        children.push(websitePara);
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      if (hasContent(vol.description)) {
+        children.push(...renderDescription(vol.description, sizes.base, lineSpacingTwips));
+      }
+
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -519,25 +620,33 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((pub) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: pub.name, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${pub.date}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${pub.date}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
       children.push(
         new Paragraph({
           children: [new TextRun({ text: pub.publisher, size: sizes.base * 2 })],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      if (hasContent(pub.description)) {
-        children.push(...renderDescription(pub.description, sizes.base));
+      const websitePara = createItemWebsiteParagraph(pub.website);
+      if (websitePara) {
+        children.push(websitePara);
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      if (hasContent(pub.description)) {
+        children.push(...renderDescription(pub.description, sizes.base, lineSpacingTwips));
+      }
+
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   };
 
@@ -550,26 +659,34 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     visibleItems.forEach((ref) => {
       children.push(
         new Paragraph({
+          keepNext: true,
           children: [
             new TextRun({ text: ref.name, bold: true, size: sizes.base * 2 }),
-            new TextRun({ text: `\t${ref.position}`, size: (sizes.base - 1) * 2 }),
+            new TextRun({ text: `\t${ref.position}`, size: sizes.base * 2 }),
           ],
-          tabStops: [{ type: AlignmentType.RIGHT, position: 10000 }],
+          tabStops: [{ type: AlignmentType.RIGHT, position: 10300 }],
+          spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
         }),
       );
 
-      children.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `${ref.email}${ref.phone ? ` | ${ref.phone}` : ''}`,
-              size: (sizes.base - 2) * 2,
-              color: '666666',
-            }),
-          ],
-          spacing: { after: 120 },
-        }),
-      );
+      const contactDetails: string[] = [];
+      if (ref.email) contactDetails.push(ref.email);
+      if (ref.phone) contactDetails.push(ref.phone);
+
+      if (contactDetails.length > 0) {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: contactDetails.join(' | '),
+                size: (sizes.base - 1) * 2,
+                color: '666666',
+              }),
+            ],
+            spacing: { after: getSpacingTwips(12), line: lineSpacingTwips },
+          }),
+        );
+      }
     });
   };
 
@@ -612,27 +729,39 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
       children.push(
         new Paragraph({
           children: [new TextRun({ text: item.title, bold: true, size: sizes.base * 2 })],
+          spacing: { after: getSpacingTwips(4), line: lineSpacingTwips },
         }),
       );
 
       if (hasContent(item.description)) {
-        children.push(...renderDescription(item.description, sizes.base));
+        children.push(...renderDescription(item.description, sizes.base, lineSpacingTwips));
       }
 
-      children.push(new Paragraph({ spacing: { after: 200 } }));
+      children.push(new Paragraph({ spacing: { after: getSpacingTwips(12) } }));
     });
   });
 
   const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: {
+            font: fontFamily,
+            size: sizes.base * 2,
+            color: '000000',
+          },
+        },
+      },
+    },
     sections: [
       {
         properties: {
           page: {
             margin: {
-              top: 720, // 0.5 inch
-              right: 720,
-              bottom: 720,
-              left: 720,
+              top: 800,
+              right: 800,
+              bottom: 800,
+              left: 800,
             },
           },
         },

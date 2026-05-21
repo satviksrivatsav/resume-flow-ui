@@ -70,6 +70,7 @@ const ResumeBuilder = () => {
     stopAutoSave,
     updateSummary,
     updateItem,
+    updateMetadata,
     saveStatus,
   } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
@@ -457,8 +458,8 @@ const ResumeBuilder = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-6"
                   >
-                    <div className="flex items-end justify-between">
-                      <div className="space-y-1">
+                    <div className="flex items-end justify-between gap-4">
+                      <div className="space-y-1 flex-grow flex-1">
                         <h2 className="text-2xl font-bold tracking-tight">
                           {getSectionTitle(activeTab)}
                         </h2>
@@ -466,6 +467,35 @@ const ResumeBuilder = () => {
                           {getSectionDescription(activeTab)}
                         </p>
                       </div>
+
+                      {activeTab === 'settings' && (
+                        <button
+                          onClick={() => {
+                            updateMetadata({
+                              theme: {
+                                ...resumeData.metadata.theme,
+                                primary: '#1f2937',
+                              },
+                              typography: {
+                                fontFamily: 'Open Sans',
+                                fontSize: 11,
+                                lineHeight: 1.5,
+                              },
+                            });
+                          }}
+                          className="rounded-full flex items-center justify-center transition-colors border border-border bg-background text-foreground/70 hover:text-foreground hover:bg-accent focus-visible:outline-none shadow-sm shrink-0"
+                          style={{
+                            width: '56px',
+                            height: '56px',
+                            fontSize: '10px',
+                            fontFamily: "'Open Sans', sans-serif",
+                          }}
+                          title="Reset Settings to Defaults"
+                          type="button"
+                        >
+                          <RotateCcw className="w-5 h-5" strokeWidth={2} />
+                        </button>
+                      )}
 
                       {resumeData.customSections.some((s) => s.id === activeTab) && (
                         <Button

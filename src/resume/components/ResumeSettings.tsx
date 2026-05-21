@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Pencil } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
@@ -179,12 +179,13 @@ export const ResumeSettings = () => {
                   whileHover={{ y: -4, scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                  className="w-16 h-14 relative transition-colors bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
+                  className="w-16 h-14 relative transition-colors flex items-center justify-center flex-shrink-0 drop-shadow-sm hover:drop-shadow-md will-change-transform border-none outline-none"
                   style={{
+                    backgroundColor: metadata.theme.primary,
                     clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
                   }}
                 >
-                  <Pencil className="w-5 h-5 text-white" />
+                  <Pencil className="w-5 h-5 text-white drop-shadow-sm" />
                 </motion.button>
               </DialogTrigger>
               <DialogContent className="rounded-3xl">
