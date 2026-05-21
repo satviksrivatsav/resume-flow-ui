@@ -34,7 +34,6 @@ export const ResumePreview = forwardRef<
 
   const resumeData = useMemo(() => sanitizeResumeData(rawData), [rawData]);
   const [layers, setLayers] = useState<PdfLayer[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
   const layerIdRef = useRef(0);
 
   useImperativeHandle(ref, () => ({
@@ -88,40 +87,37 @@ export const ResumePreview = forwardRef<
 
   useEffect(() => {
     let isMounted = true;
-    setIsGenerating(true);
 
-    const timeoutId = setTimeout(async () => {
-      try {
-        const asPdf = pdf(<PDFGenerator resumeData={resumeData} />);
-        const blob = await asPdf.toBlob();
-        const url = URL.createObjectURL(blob);
+    const timeoutId = setTimeout(() => {
+      void (async () => {
+        try {
+          const asPdf = pdf(<PDFGenerator resumeData={resumeData} />);
+          const blob = await asPdf.toBlob();
+          const url = URL.createObjectURL(blob);
 
-        if (isMounted) {
-          setLayers((prev) => {
-            const id = `layer_${layerIdRef.current++}`;
-            const nextLayer: PdfLayer = {
-              id,
-              blobUrl: url,
-              numPages: 0,
-              phase: prev.length === 0 ? 'active' : 'staged',
-              renderedPages: [],
-            };
+          if (isMounted) {
+            setLayers((prev) => {
+              const id = `layer_${layerIdRef.current++}`;
+              const nextLayer: PdfLayer = {
+                id,
+                blobUrl: url,
+                numPages: 0,
+                phase: prev.length === 0 ? 'active' : 'staged',
+                renderedPages: [],
+              };
 
-            // If it's the first layer, just return it
-            if (prev.length === 0) return [nextLayer];
+              // If it's the first layer, just return it
+              if (prev.length === 0) return [nextLayer];
 
-            // Otherwise, keep existing active layer and add the staged one
-            const active = prev.filter((l) => l.phase === 'active');
-            return [...active, nextLayer];
-          });
+              // Otherwise, keep existing active layer and add the staged one
+              const active = prev.filter((l) => l.phase === 'active');
+              return [...active, nextLayer];
+            });
+          }
+        } catch (error) {
+          console.error('Failed to generate PDF preview:', error);
         }
-      } catch (error) {
-        console.error('Failed to generate PDF preview:', error);
-      } finally {
-        if (isMounted) {
-          setIsGenerating(false);
-        }
-      }
+      })();
     }, 400);
 
     return () => {

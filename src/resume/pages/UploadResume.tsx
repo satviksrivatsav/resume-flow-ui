@@ -117,7 +117,7 @@ export default function UploadResume() {
       e.preventDefault();
       setDragActive(false);
       const file = e.dataTransfer.files[0];
-      if (file) handleFile(file);
+      if (file) void handleFile(file);
     },
     [handleFile],
   );
@@ -132,7 +132,7 @@ export default function UploadResume() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      handleFile(file);
+      void handleFile(file);
       // Clear the input value so the same file can be selected again
       e.target.value = '';
     }

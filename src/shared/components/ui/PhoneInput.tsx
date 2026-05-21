@@ -1,4 +1,4 @@
-﻿import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { cleanPhoneNumber, COUNTRIES, CountryData, getCountryByCode } from '@/shared/lib/countries';
@@ -23,7 +23,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const [search, setSearch] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedCountry = getCountryByCode(countryCode) || COUNTRIES[0];
+  const selectedCountry = getCountryByCode(countryCode) ?? COUNTRIES[0];
 
   const filteredCountries = COUNTRIES.filter(
     (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.dialCode.includes(search),
@@ -80,15 +80,15 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             onChange={(e) => {
               let val = e.target.value;
               // If user tries to type/paste the dial code, strip it
-              const dialCodeClean = selectedCountry.dialCode.replace(/[\s\-\(\)]/g, '');
-              const valClean = val.replace(/[\s\-\(\)]/g, '');
+              const dialCodeClean = selectedCountry.dialCode.replace(/[\s\-()]/g, '');
+              const valClean = val.replace(/[\s\-()]/g, '');
 
               if (valClean.startsWith(dialCodeClean)) {
                 // Find where the dial code ends in the original string
                 let index = 0;
                 let matched = 0;
                 while (index < val.length && matched < dialCodeClean.length) {
-                  if (/[\s\-\(\)]/.test(val[index])) {
+                  if (/[\s\-()]/.test(val[index])) {
                     index++;
                     continue;
                   }
@@ -103,7 +103,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
               }
 
               // Basic cleanup - only numbers and common symbols
-              val = val.replace(/[^\d\s\-\(\)]/g, '');
+              val = val.replace(/[^\d\s\-()]/g, '');
               onChange(val.trim());
             }}
             placeholder={placeholder}
@@ -117,6 +117,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         <div className="absolute z-50 top-full left-0 mt-1 w-[300px] max-h-60 overflow-y-auto overflow-x-hidden rounded-2xl border border-input bg-background shadow-lg">
           {/* Search */}
           <div className="sticky top-0 bg-background p-2 border-b z-10">
+            {}
+            {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
             <input
               type="text"
               value={search}

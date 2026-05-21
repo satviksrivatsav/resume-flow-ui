@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Search, UploadCloud, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -32,28 +32,28 @@ export function ResumeSelectionModal({
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    async function fetchResumes() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('resumes')
+          .select('id, name, updated_at')
+          .eq('user_id', user?.id)
+          .order('updated_at', { ascending: false });
+
+        if (error) throw error;
+        setResumes(data || []);
+      } catch (err) {
+        console.error('Error fetching resumes for selection:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     if (isOpen && user) {
-      fetchResumes();
+      void fetchResumes();
     }
   }, [isOpen, user]);
-
-  async function fetchResumes() {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('resumes')
-        .select('id, name, updated_at')
-        .eq('user_id', user?.id)
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      setResumes(data || []);
-    } catch (err) {
-      console.error('Error fetching resumes for selection:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const filteredResumes = resumes.filter((r) =>
     r.name.toLowerCase().includes(searchQuery.toLowerCase()),

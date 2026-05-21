@@ -13,7 +13,7 @@ describe('FeatureCard', () => {
         description="Test description"
         icon={Sparkles}
         isActive={false}
-        onClick={() => {}}
+        onClick={() => undefined}
       />,
     );
     expect(screen.getByText('AI Assistant')).toBeDefined();

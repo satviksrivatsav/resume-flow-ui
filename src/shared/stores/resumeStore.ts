@@ -232,16 +232,18 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     const { stopAutoSave, saveResume } = get();
     stopAutoSave();
 
-    const timer = setTimeout(async () => {
-      const state = get();
-      const currentDataString = JSON.stringify(state.resumeData);
+    const timer = setTimeout(() => {
+      void (async () => {
+        const state = get();
+        const currentDataString = JSON.stringify(state.resumeData);
 
-      if (currentDataString !== state.lastSavedData) {
-        await saveResume(userId, true);
-      } else {
-        // No changes, just schedule the next check
-        get().startAutoSave(userId);
-      }
+        if (currentDataString !== state.lastSavedData) {
+          await saveResume(userId, true);
+        } else {
+          // No changes, just schedule the next check
+          get().startAutoSave(userId);
+        }
+      })();
     }, 30000);
 
     set({ autoSaveTimer: timer });
@@ -460,7 +462,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       try {
         const url = new URL(input.startsWith('http') ? input : `https://${input}`);
         href = url.href;
-      } catch (e) {
+      } catch {
         // Fallback
         href = input.startsWith('http') ? input : `https://${input}`;
       }

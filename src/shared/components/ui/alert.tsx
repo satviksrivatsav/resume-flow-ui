@@ -1,4 +1,6 @@
-﻿import { cva, type VariantProps } from 'class-variance-authority';
+/* eslint-disable jsx-a11y/heading-has-content */
+/* eslint-disable react/prop-types */
+import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '@/shared/lib/utils';

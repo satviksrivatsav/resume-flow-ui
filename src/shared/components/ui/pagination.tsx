@@ -1,4 +1,6 @@
-﻿import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable react/prop-types */
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import * as React from 'react';
 
 import { ButtonProps, buttonVariants } from '@/shared/components/ui/button';

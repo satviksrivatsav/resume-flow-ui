@@ -1,4 +1,4 @@
-﻿import { Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import React, { useRef } from 'react';
 
 import { Label } from '@/shared/components/ui/label';
@@ -24,7 +24,7 @@ export const MonthYearPicker: React.FC<MonthYearPickerProps> = ({
     if (!disabled && inputRef.current) {
       try {
         inputRef.current.showPicker();
-      } catch (e) {
+      } catch {
         inputRef.current.focus();
       }
     }

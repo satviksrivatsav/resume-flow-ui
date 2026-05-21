@@ -1,4 +1,6 @@
-﻿import * as TogglePrimitive from '@radix-ui/react-toggle';
+/* eslint-disable react/prop-types */
+/* eslint-disable react-refresh/only-export-components */
+import * as TogglePrimitive from '@radix-ui/react-toggle';
 import { type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 

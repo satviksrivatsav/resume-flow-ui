@@ -9,7 +9,7 @@ interface AIWriterState {
   currentAction: 'REWRITE' | 'GENERATE' | null;
   originalText: string;
   newText: string | null;
-  fullResumeData: any | null;
+  fullResumeData: any;
   error: string | null;
   showInstructionModal: boolean;
   showReviewModal: boolean;

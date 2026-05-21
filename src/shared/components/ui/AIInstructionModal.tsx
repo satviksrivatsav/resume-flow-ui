@@ -99,7 +99,7 @@ export function AIInstructionModal() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
                   e.preventDefault();
-                  handleSubmit();
+                  void handleSubmit();
                 }
               }}
             />

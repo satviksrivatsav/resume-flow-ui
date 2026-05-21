@@ -1,4 +1,4 @@
-﻿// Local timezone-based country detection (no external API needed)
+// Local timezone-based country detection (no external API needed)
 
 // Mapping of IANA timezones to country codes
 // Covers all countries in the COUNTRIES list
@@ -232,7 +232,7 @@ export const initializeCountryCode = async (): Promise<string> => {
       if (!store.resumeData.basics.countryCode || store.resumeData.basics.countryCode === 'US') {
         store.updateBasics({ countryCode: code });
       }
-    } catch (e) {
+    } catch {
       // Store might not be ready yet
     }
   };

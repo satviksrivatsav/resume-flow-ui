@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 
 import { cn } from '@/shared/lib/utils';
@@ -127,7 +127,7 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       const [item] = payload;
-      const key = `${labelKey || item.dataKey || item.name || 'value'}`;
+      const key = `${labelKey || String(item.dataKey || '') || String(item.name || '') || 'value'}`;
       const itemConfig = getPayloadConfigFromPayload(config, item, key);
       const value =
         !labelKey && typeof label === 'string' ? config[label]?.label || label : itemConfig?.label;
@@ -161,7 +161,7 @@ const ChartTooltipContent = React.forwardRef<
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">
           {payload.map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || 'value'}`;
+            const key = `${nameKey || String(item.name || '') || String(item.dataKey || '') || 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const indicatorColor = color || item.payload.fill || item.color;
 
@@ -257,7 +257,7 @@ const ChartLegendContent = React.forwardRef<
       )}
     >
       {payload.map((item) => {
-        const key = `${nameKey || item.dataKey || 'value'}`;
+        const key = `${nameKey || String(item.dataKey || 'value')}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (

@@ -1,4 +1,6 @@
-﻿import { Slot } from '@radix-ui/react-slot';
+/* eslint-disable react/prop-types */
+/* eslint-disable react-refresh/only-export-components */
+import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
 import { PanelLeft } from 'lucide-react';
 import * as React from 'react';

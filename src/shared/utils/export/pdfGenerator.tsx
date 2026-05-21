@@ -17,7 +17,7 @@ import {
 import React from 'react';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
-import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
+import { hasContent, stripHtml } from '@/shared/lib/utils';
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
 
 interface PDFGeneratorProps {

@@ -98,7 +98,7 @@ export function cleanProfileDisplay(input: string): string {
     }
 
     return segments[segments.length - 1] || input;
-  } catch (e) {
+  } catch {
     return input.split('/').filter(Boolean).pop() || input;
   }
 }

@@ -181,8 +181,8 @@ export const WorkExperienceForm = () => {
                   />
                   <FieldTip>
                     Use bullet points and lead with strong action verbs. Quantify impact where
-                    possible — e.g., "Reduced load time by 40%" or "Shipped feature used by 10k
-                    users."
+                    possible — e.g., &quot;Reduced load time by 40%&quot; or &quot;Shipped feature
+                    used by 10k users.&quot;
                   </FieldTip>
                 </div>
               </div>

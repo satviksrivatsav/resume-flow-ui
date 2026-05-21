@@ -263,20 +263,20 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
   if (!phone) return '';
 
   // Normalize by removing spaces, dashes, and parentheses for matching
-  const normalizedPhone = phone.replace(/[\s\-\(\)]/g, '');
+  const normalizedPhone = phone.replace(/[\s\-()]/g, '');
 
   // If we have a country code, try to strip its specific dial code
   if (countryCode) {
     const country = getCountryByCode(countryCode);
     if (country) {
-      const dialCodeClean = country.dialCode.replace(/[\s\-\(\)]/g, '');
+      const dialCodeClean = country.dialCode.replace(/[\s\-()]/g, '');
       if (normalizedPhone.startsWith(dialCodeClean)) {
         // Return original phone but with dial code portion removed
         // We find where the dial code ends in the original string
         let index = 0;
         let matched = 0;
         while (index < phone.length && matched < dialCodeClean.length) {
-          if (/[\s\-\(\)]/.test(phone[index])) {
+          if (/[\s\-()]/.test(phone[index])) {
             index++;
             continue;
           }
@@ -291,7 +291,7 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
           return phone
             .slice(index)
             .trim()
-            .replace(/^[\s\-\(\)\.]+/, '');
+            .replace(/^[\s\-().]+/, '');
         }
       }
     }
@@ -300,12 +300,12 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
   // Otherwise, try to find ANY matching dial code at the start
   const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
   for (const country of sortedCountries) {
-    const dialCodeClean = country.dialCode.replace(/[\s\-\(\)]/g, '');
+    const dialCodeClean = country.dialCode.replace(/[\s\-()]/g, '');
     if (normalizedPhone.startsWith(dialCodeClean)) {
       let index = 0;
       let matched = 0;
       while (index < phone.length && matched < dialCodeClean.length) {
-        if (/[\s\-\(\)]/.test(phone[index])) {
+        if (/[\s\-()]/.test(phone[index])) {
           index++;
           continue;
         }
@@ -320,7 +320,7 @@ export const cleanPhoneNumber = (phone: string, countryCode?: string): string =>
         return phone
           .slice(index)
           .trim()
-          .replace(/^[\s\-\(\)\.]+/, '');
+          .replace(/^[\s\-().]+/, '');
       }
     }
   }

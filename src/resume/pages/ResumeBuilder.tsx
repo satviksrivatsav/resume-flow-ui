@@ -56,7 +56,6 @@ const ResumeBuilder = () => {
   const {
     viewMode: tailorViewMode,
     setViewMode: setTailorViewMode,
-    tailoredSlides,
     reset: resetTailor,
   } = useTailorStore();
   const { isLoading: isAIWriterLoading, cancelRequest: cancelAIWriterRequest } = useAIWriterStore();
@@ -368,15 +367,7 @@ const ResumeBuilder = () => {
     resetTailor();
     setTailorViewMode('form');
     setShowTailorBackModal(false);
-  }, [
-    tailoredSlides,
-    resumeData,
-    updateSummary,
-    updateItem,
-    setResumeData,
-    resetTailor,
-    setTailorViewMode,
-  ]);
+  }, [resumeData, updateSummary, updateItem, setResumeData, resetTailor, setTailorViewMode]);
 
   const handleTailorDiscard = () => {
     resetTailor();

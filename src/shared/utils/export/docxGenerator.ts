@@ -9,7 +9,7 @@ import {
 } from 'docx';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
-import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
+import { hasContent, stripHtml } from '@/shared/lib/utils';
 import { DEFAULT_SECTION_ORDER, ResumeData } from '@/shared/types/resume';
 
 const renderDescription = (text: string, fontSize: number, lineSpacing: number): Paragraph[] => {
@@ -20,7 +20,7 @@ const renderDescription = (text: string, fontSize: number, lineSpacing: number):
   const paragraphs: Paragraph[] = [];
 
   lines.forEach((line) => {
-    const bulletMatch = /^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/.exec(line);
+    const bulletMatch = /^(\s*)([•\-*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/.exec(line);
 
     if (bulletMatch) {
       const indent = bulletMatch[1];
@@ -706,7 +706,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
     education: renderEducation,
     projects: renderProjects,
     skills: renderSkills,
-    profiles: () => {}, // Handled in header
+    profiles: () => undefined, // Handled in header
     languages: renderLanguages,
     interests: renderInterests,
     awards: renderAwards,
