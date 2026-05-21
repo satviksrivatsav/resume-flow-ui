@@ -5,7 +5,7 @@
 
 export const config = {
   // AI and Parser Backend
-  aiApiUrl: import.meta.env.VITE_AI_API_URL || 'http://localhost:8001/api/v1',
+  aiApiUrl: import.meta.env.VITE_AI_API_URL || 'https://resume-flow-ai-theta.vercel.app/api/v1',
 
   // Supabase Configuration
   supabase: {
