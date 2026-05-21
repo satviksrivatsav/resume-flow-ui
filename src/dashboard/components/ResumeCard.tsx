@@ -126,6 +126,7 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         user_id: resume.user_id,
         name: finalName,
         data: newData,
+        thumbnail_url: resume.thumbnail_url,
         updated_at: new Date().toISOString(),
       });
 
