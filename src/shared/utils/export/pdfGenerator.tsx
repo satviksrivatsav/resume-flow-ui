@@ -191,55 +191,72 @@ const getProfileIcon = (network: string) => {
   return <WebsiteIcon />;
 };
 
-const PDFDescriptionRenderer = ({ text, style }: { text?: string; style?: any }) => {
-  if (!text) return null;
+// Prevents text from overflowing its container horizontally
+const safeTextStyle = {
+  minWidth: 0,
+  maxWidth: '100%',
+  flexShrink: 1,
+};
 
-  const processedText = stripHtml(text);
-  const lines = processedText.split('\n');
+const PDFDescriptionRenderer = ({
+  text,
+  style,
+  titleElement,
+  headerElement,
+}: {
+  text?: string;
+  style?: any;
+  titleElement?: React.ReactNode;
+  headerElement?: React.ReactNode;
+}) => {
+  if (!text && !titleElement && !headerElement) return null;
+
+  const processedText = stripHtml(text || '');
+  const lines = processedText
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l !== '');
+
+  // Each line is individually atomic (wrap={false}) so a single line
+  // never splits across pages. If it doesn't fit, the whole line moves.
+  const renderLine = (line: string, index: number) => {
+    const bulletMatch = /^•\s*(.*)/.exec(line);
+    if (bulletMatch) {
+      return (
+        <View key={index} style={{ flexDirection: 'row', width: '100%', marginBottom: 2 }} wrap={false}>
+          <Text style={{ ...style, ...safeTextStyle, width: 12, flexShrink: 0 }}>•</Text>
+          <Text style={{ ...style, ...safeTextStyle, flex: 1 }}>{bulletMatch[1]}</Text>
+        </View>
+      );
+    }
+    return (
+      <Text key={index} style={{ ...style, ...safeTextStyle, marginBottom: 2, width: '100%' }} wrap={false}>
+        {line}
+      </Text>
+    );
+  };
 
   return (
-    <View style={style}>
-      {lines.map((line, i) => {
-        const bulletMatch = /^(\s*)([•\-\*·\u2022\u2023\u2043\u204c\u204d\u2219])\s+(.*)/.exec(
-          line,
-        );
+    <View style={{ width: '100%' }}>
+      {/* Title with minPresenceAhead: ensures at least 30pt of content
+          follows the title on the same page. If there isn't enough room,
+          the title moves to the next page instead of being orphaned. */}
+      {titleElement && (
+        <View minPresenceAhead={30} style={{ width: '100%' }}>
+          {titleElement}
+        </View>
+      )}
 
-        if (bulletMatch) {
-          const indent = bulletMatch[1];
-          const bulletChar = bulletMatch[2];
-          const content = bulletMatch[3];
+      {/* Header (item title/subtitle/date row) with minPresenceAhead:
+          ensures at least the first description line follows on same page. */}
+      {headerElement && (
+        <View minPresenceAhead={16} style={{ width: '100%' }}>
+          {headerElement}
+        </View>
+      )}
 
-          return (
-            <View
-              key={i}
-              style={{ flexDirection: 'row', marginBottom: 2, alignItems: 'flex-start' }}
-              wrap={true}
-            >
-              <Text
-                style={{
-                  ...style,
-                  width: 12,
-                  flexShrink: 0,
-                  marginLeft: indent ? indent.length * 4 : 0,
-                }}
-              >
-                {bulletChar}
-              </Text>
-              <Text style={{ ...style, flex: 1 }}>{content}</Text>
-            </View>
-          );
-        }
-
-        return (
-          <Text
-            key={i}
-            style={{ ...style, marginBottom: line.trim() === '' ? 4 : 2 }}
-            wrap={true}
-          >
-            {line}
-          </Text>
-        );
-      })}
+      {/* Each line breaks atomically — a line either fits or moves entirely */}
+      {lines.map((line, i) => renderLine(line, i))}
     </View>
   );
 };
@@ -256,22 +273,27 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   const fontFamily = metadata.typography.fontFamily || 'Roboto';
 
   const baseLineHeight = metadata.typography.lineHeight || 1.5;
-  const effectiveLineHeight = Math.max(1.1, baseLineHeight);
+  const effectiveLineHeight = Math.max(1.0, baseLineHeight);
   const spacingScale = baseLineHeight / 1.5;
 
   const getSpacing = (base: number) => base * spacingScale;
+
+  const PAGE_MARGINS = 40;
 
   const styles = StyleSheet.create({
     page: {
       fontFamily: fontFamily,
       fontSize: sizes.base,
       color: '#000000',
-      padding: 36,
+      padding: PAGE_MARGINS,
       backgroundColor: '#ffffff',
-      lineHeight: effectiveLineHeight,
+    },
+    contentBox: {
+      flexDirection: 'column',
+      width: '100%',
     },
     header: {
-      marginBottom: getSpacing(16),
+      marginBottom: getSpacing(20),
       alignItems: 'center',
       width: '100%',
     },
@@ -279,7 +301,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       fontSize: sizes.name,
       fontWeight: 700,
       color: metadata.theme.primary || '#1f2937',
-      marginBottom: getSpacing(4),
+      marginBottom: getSpacing(6),
       textAlign: 'center',
       width: '100%',
       lineHeight: 1.1,
@@ -287,10 +309,10 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     headline: {
       fontSize: sizes.heading,
       color: '#444444',
-      marginBottom: getSpacing(8),
+      marginBottom: getSpacing(10),
       textAlign: 'center',
       width: '100%',
-      lineHeight: effectiveLineHeight,
+      lineHeight: 1.2,
     },
     contactRow: {
       flexDirection: 'row',
@@ -299,23 +321,26 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       color: '#000000',
       justifyContent: 'center',
       width: '100%',
-      lineHeight: effectiveLineHeight,
     },
     contactItem: {
-      marginRight: 8,
+      marginRight: 10,
       flexShrink: 1,
-      lineHeight: effectiveLineHeight,
+      lineHeight: 1.3,
     },
     section: {
-      marginBottom: getSpacing(16),
+      marginBottom: getSpacing(18),
+      width: '100%',
+      flexDirection: 'column',
     },
     sectionTitleContainer: {
       paddingBottom: getSpacing(10),
+      width: '100%',
     },
     sectionTitleUnderline: {
       borderBottomWidth: 1,
       borderBottomColor: metadata.theme.primary || '#1f2937',
       paddingBottom: getSpacing(4),
+      width: '100%',
     },
     sectionTitle: {
       fontSize: sizes.heading,
@@ -326,14 +351,16 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       lineHeight: 1.1,
     },
     itemContainer: {
-      marginBottom: getSpacing(10),
+      marginBottom: getSpacing(12),
+      width: '100%',
+      flexDirection: 'column',
     },
     itemHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: getSpacing(4),
       alignItems: 'flex-start',
-      lineHeight: effectiveLineHeight,
+      width: '100%',
     },
     itemHeaderLeft: {
       flex: 1,
@@ -355,23 +382,28 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
       fontSize: sizes.base - 1,
       color: '#000000',
       lineHeight: effectiveLineHeight,
+      flexShrink: 0,
     },
     itemLocation: {
       fontSize: sizes.base - 1,
       color: '#000000',
       marginBottom: getSpacing(4),
       lineHeight: effectiveLineHeight,
+      width: '100%',
     },
     itemDescription: {
       fontSize: sizes.base,
       color: '#000000',
       lineHeight: effectiveLineHeight,
+      width: '100%',
     },
     skillsContainer: {
       flexDirection: 'column',
+      width: '100%',
     },
     skillRow: {
       marginBottom: getSpacing(4),
+      width: '100%',
     },
     skillName: {
       fontWeight: 700,
@@ -406,15 +438,31 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
   const sectionOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
 
+  const renderLinkedTitle = (titleNode: React.ReactNode, website?: { href: string }) => {
+    if (website?.href) {
+      return (
+        <Link src={website.href} style={{ textDecoration: 'none' }}>
+          {titleNode}
+        </Link>
+      );
+    }
+    return titleNode;
+  };
+
   const renderSummary = () =>
     hasContent(summary.content) && summary.visible ? (
       <View key="summary" style={styles.section}>
-        <View style={styles.sectionTitleContainer}>
-          <View style={styles.sectionTitleUnderline}>
-            <Text style={styles.sectionTitle}>Summary</Text>
-          </View>
-        </View>
-        <PDFDescriptionRenderer text={summary.content} style={styles.itemDescription} />
+        <PDFDescriptionRenderer
+          text={summary.content}
+          style={styles.itemDescription}
+          titleElement={
+            <View style={styles.sectionTitleContainer}>
+              <View style={styles.sectionTitleUnderline}>
+                <Text style={styles.sectionTitle}>Summary</Text>
+              </View>
+            </View>
+          }
+        />
       </View>
     ) : null;
 
@@ -427,28 +475,34 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="experience" style={styles.section}>
         {visibleItems.map((exp, index) => (
-          <View key={exp.id} style={{ marginBottom: getSpacing(12) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
+          <View key={exp.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={exp.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.experience.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {renderLinkedTitle(
+                      <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                        <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
+                        {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
+                      </Text>,
+                      exp.website
+                    )}
+                  </View>
+                  <Text style={styles.itemDate}>{exp.period}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                    <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
-                    {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
-                  </Text>
-                </View>
-                <Text style={styles.itemDate}>{exp.period}</Text>
-              </View>
-            </View>
-            {hasContent(exp.description) ? (
-              <PDFDescriptionRenderer text={exp.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -464,28 +518,34 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="education" style={styles.section}>
         {visibleItems.map((edu, index) => (
-          <View key={edu.id} style={{ marginBottom: getSpacing(12) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.education.name}</Text>
+          <View key={edu.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={edu.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.education.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {renderLinkedTitle(
+                      <Text style={{ ...styles.itemTitle, color: '#000' }}>
+                        <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
+                        {edu.area ? <Text style={{ fontWeight: 400 }}> in {edu.area}</Text> : null}
+                      </Text>,
+                      edu.website
+                    )}
+                  </View>
+                  <Text style={styles.itemDate}>{edu.period}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={{ ...styles.itemTitle, color: '#000' }}>
-                    <Text style={{ fontWeight: 700 }}>{edu.degree}</Text>
-                    {edu.area ? <Text style={{ fontWeight: 400 }}> in {edu.area}</Text> : null}
-                  </Text>
-                </View>
-                <Text style={styles.itemDate}>{edu.period}</Text>
-              </View>
-            </View>
-            {hasContent(edu.description) ? (
-              <PDFDescriptionRenderer text={edu.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -501,23 +561,29 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="projects" style={styles.section}>
         {visibleItems.map((proj, index) => (
-          <View key={proj.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
+          <View key={proj.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={proj.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.projects.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  {renderLinkedTitle(
+                    <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>,
+                    proj.website
+                  )}
+                  <Text style={styles.itemDate}>{proj.period}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <Text style={styles.itemTitle}>{proj.name || 'Project'}</Text>
-                <Text style={styles.itemDate}>{proj.period}</Text>
-              </View>
-            </View>
-            {hasContent(proj.description) ? (
-              <PDFDescriptionRenderer text={proj.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -532,15 +598,21 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="skills" style={styles.section}>
-        <View style={styles.sectionTitleContainer}>
-          <View style={styles.sectionTitleUnderline}>
-            <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
+        <View minPresenceAhead={30} style={{ width: '100%' }}>
+          <View style={styles.sectionTitleContainer}>
+            <View style={styles.sectionTitleUnderline}>
+              <Text style={styles.sectionTitle}>{sections.skills.name}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.skillsContainer}>
           {visibleItems.map((skill) => (
-            <View key={skill.id} style={{ ...styles.skillRow, marginBottom: getSpacing(4) }} wrap={false}>
-              <Text style={styles.skillItems}>
+            <View
+              key={skill.id}
+              style={{ ...styles.skillRow, marginBottom: getSpacing(4), width: '100%' }}
+              wrap={false}
+            >
+              <Text style={{ ...styles.skillItems, ...safeTextStyle }}>
                 <Text style={styles.skillName}>{skill.name || 'Category'}:</Text>{' '}
                 {skill.keywords && skill.keywords.length > 0
                   ? skill.keywords.join(', ')
@@ -559,21 +631,28 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="languages" style={styles.section}>
-        <View style={styles.sectionTitleContainer}>
-          <View style={styles.sectionTitleUnderline}>
-            <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
+        <View minPresenceAhead={30} style={{ width: '100%' }}>
+          <View style={styles.sectionTitleContainer}>
+            <View style={styles.sectionTitleUnderline}>
+              <Text style={styles.sectionTitle}>{sections.languages.name}</Text>
+            </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {visibleItems.map((lang, index) => (
             <View
               key={lang.id}
-              style={{ flexDirection: 'row', alignItems: 'center', marginRight: 8, marginBottom: getSpacing(4) }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: 8,
+                marginBottom: getSpacing(4),
+              }}
               wrap={false}
             >
-              <Text style={{ fontWeight: 700 }}>{lang.name}</Text>
+              <Text style={{ ...safeTextStyle, fontWeight: 700 }}>{lang.name}</Text>
               {lang.description ? (
-                <Text style={{ color: '#555', marginLeft: 4 }}>({lang.description})</Text>
+                <Text style={{ ...safeTextStyle, color: '#555', marginLeft: 4 }}>({lang.description})</Text>
               ) : null}
               {index < visibleItems.length - 1 ? <Text style={{ marginLeft: 2 }}>,</Text> : null}
             </View>
@@ -587,18 +666,23 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     const visibleItems = sections.interests.items.filter((i) => i.visible && i.name);
     if (!sections.interests.visible || visibleItems.length === 0) return null;
 
+    const content = visibleItems
+      .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
+      .join(', ');
+
     return (
       <View key="interests" style={styles.section}>
-        <View style={styles.sectionTitleContainer}>
-          <View style={styles.sectionTitleUnderline}>
-            <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
-          </View>
-        </View>
-        <Text style={styles.itemDescription}>
-          {visibleItems
-            .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
-            .join(', ')}
-        </Text>
+        <PDFDescriptionRenderer
+          text={content}
+          style={styles.itemDescription}
+          titleElement={
+            <View style={styles.sectionTitleContainer}>
+              <View style={styles.sectionTitleUnderline}>
+                <Text style={styles.sectionTitle}>{sections.interests.name}</Text>
+              </View>
+            </View>
+          }
+        />
       </View>
     );
   };
@@ -612,26 +696,29 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="awards" style={styles.section}>
         {visibleItems.map((award, index) => (
-          <View key={award.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
+          <View key={award.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={award.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.awards.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    <Text style={styles.itemTitle}>{award.title}</Text>
+                    <Text style={styles.itemSubtitle}>{award.awarder}</Text>
+                  </View>
+                  <Text style={styles.itemDate}>{award.date}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{award.title}</Text>
-                  <Text style={styles.itemSubtitle}>{award.awarder}</Text>
-                </View>
-                <Text style={styles.itemDate}>{award.date}</Text>
-              </View>
-            </View>
-            {hasContent(award.description) ? (
-              <PDFDescriptionRenderer text={award.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -647,26 +734,29 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="certifications" style={styles.section}>
         {visibleItems.map((cert, index) => (
-          <View key={cert.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
+          <View key={cert.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={cert.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.certifications.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {renderLinkedTitle(<Text style={styles.itemTitle}>{cert.name}</Text>, cert.website)}
+                    <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                  </View>
+                  <Text style={styles.itemDate}>{cert.date}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{cert.name}</Text>
-                  <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
-                </View>
-                <Text style={styles.itemDate}>{cert.date}</Text>
-              </View>
-            </View>
-            {hasContent(cert.description) ? (
-              <PDFDescriptionRenderer text={cert.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -682,26 +772,29 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="volunteer" style={styles.section}>
         {visibleItems.map((vol, index) => (
-          <View key={vol.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.volunteer.name}</Text>
+          <View key={vol.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={vol.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.volunteer.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {renderLinkedTitle(<Text style={styles.itemTitle}>{vol.position}</Text>, vol.website)}
+                    <Text style={styles.itemSubtitle}>{vol.organization}</Text>
+                  </View>
+                  <Text style={styles.itemDate}>{vol.period}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{vol.position}</Text>
-                  <Text style={styles.itemSubtitle}>{vol.organization}</Text>
-                </View>
-                <Text style={styles.itemDate}>{vol.period}</Text>
-              </View>
-            </View>
-            {hasContent(vol.description) ? (
-              <PDFDescriptionRenderer text={vol.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -717,26 +810,29 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
     return (
       <View key="publications" style={styles.section}>
         {visibleItems.map((pub, index) => (
-          <View key={pub.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-            <View wrap={false}>
-              {index === 0 && (
-                <View style={styles.sectionTitleContainer}>
-                  <View style={styles.sectionTitleUnderline}>
-                    <Text style={styles.sectionTitle}>{sections.publications.name}</Text>
+          <View key={pub.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+            <PDFDescriptionRenderer
+              text={pub.description}
+              style={styles.itemDescription}
+              titleElement={
+                index === 0 ? (
+                  <View style={styles.sectionTitleContainer}>
+                    <View style={styles.sectionTitleUnderline}>
+                      <Text style={styles.sectionTitle}>{sections.publications.name}</Text>
+                    </View>
                   </View>
+                ) : null
+              }
+              headerElement={
+                <View style={styles.itemHeader}>
+                  <View style={styles.itemHeaderLeft}>
+                    {renderLinkedTitle(<Text style={styles.itemTitle}>{pub.name}</Text>, pub.website)}
+                    <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
+                  </View>
+                  <Text style={styles.itemDate}>{pub.date}</Text>
                 </View>
-              )}
-              <View style={styles.itemHeader}>
-                <View style={styles.itemHeaderLeft}>
-                  <Text style={styles.itemTitle}>{pub.name}</Text>
-                  <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
-                </View>
-                <Text style={styles.itemDate}>{pub.date}</Text>
-              </View>
-            </View>
-            {hasContent(pub.description) ? (
-              <PDFDescriptionRenderer text={pub.description} style={styles.itemDescription} />
-            ) : null}
+              }
+            />
           </View>
         ))}
       </View>
@@ -749,17 +845,19 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
 
     return (
       <View key="references" style={styles.section}>
-        <View style={styles.sectionTitleContainer}>
-          <View style={styles.sectionTitleUnderline}>
-            <Text style={styles.sectionTitle}>{sections.references.name}</Text>
+        <View minPresenceAhead={30} style={{ width: '100%' }}>
+          <View style={styles.sectionTitleContainer}>
+            <View style={styles.sectionTitleUnderline}>
+              <Text style={styles.sectionTitle}>{sections.references.name}</Text>
+            </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {visibleItems.map((ref) => (
-            <View key={ref.id} style={{ width: '45%', marginBottom: getSpacing(8) }} wrap={false}>
-              <Text style={{ fontWeight: 700 }}>{ref.name}</Text>
-              <Text style={{ fontSize: sizes.base - 1 }}>{ref.position}</Text>
-              <Text style={{ fontSize: sizes.base - 2, color: '#666' }}>
+            <View key={ref.id} style={{ width: '45%', marginBottom: getSpacing(12), marginRight: 15 }} wrap={false}>
+              <Text style={{ ...safeTextStyle, fontWeight: 700 }}>{ref.name}</Text>
+              <Text style={{ ...safeTextStyle, fontSize: sizes.base - 1 }}>{ref.position}</Text>
+              <Text style={{ ...safeTextStyle, fontSize: sizes.base - 2, color: '#666' }}>
                 {ref.email} {ref.phone ? `| ${ref.phone}` : ''}
               </Text>
             </View>
@@ -788,105 +886,115 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.header} wrap={false}>
-          <Text style={styles.name}>{basics.name || 'Your Name'}</Text>
-          {basics.headline ? <Text style={styles.headline}>{basics.headline}</Text> : null}
-          <View style={styles.contactRow}>
-            {contactInfo.map((item: any, index) => (
-              <View
-                key={index}
-                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
-              >
-                <item.Icon />
-                {item.isLink ? (
-                  <Link
-                    src={item.prefix + item.value}
-                    style={{ ...styles.contactItem, color: metadata.theme.primary || '#1f2937', textDecoration: 'underline' }}
-                  >
-                    <Text>{item.value}</Text>
-                  </Link>
-                ) : (
-                  <Text style={styles.contactItem}>{item.value}</Text>
-                )}
-              </View>
-            ))}
-          </View>
-          {sections.profiles.items.filter((p: any) => p.visible && (p.network || p.username || p.website?.href)).length > 0 ? (
-            <View style={{ ...styles.contactRow, marginTop: 4 }}>
-              {sections.profiles.items
-                .filter((p: any) => p.visible && (p.network || p.username || p.website?.href))
-                .map((profile: any, index: number) => (
-                  <View
-                    key={index}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 12,
-                      maxWidth: '100%',
-                    }}
-                  >
-                    {getProfileIcon(profile.network)}
-                    {profile.website?.href ? (
-                      <Link
-                        src={profile.website.href}
-                        style={{
-                          ...styles.contactItem,
-                          color: metadata.theme.primary || '#1f2937',
-                          textDecoration: 'underline',
-                        }}
-                      >
-                        <Text>{profile.website.href}</Text>
-                      </Link>
-                    ) : (
-                      <Text style={styles.contactItem}>
-                        {profile.network}{profile.username ? `: ${profile.username}` : ''}
-                      </Text>
-                    )}
-                  </View>
-                ))}
+        <View style={styles.contentBox}>
+          <View style={styles.header} wrap={false}>
+            <Text style={styles.name}>{basics.name || 'Your Name'}</Text>
+            {basics.headline ? <Text style={styles.headline}>{basics.headline}</Text> : null}
+            <View style={styles.contactRow}>
+              {contactInfo.map((item: any, index) => (
+                <View
+                  key={index}
+                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
+                >
+                  <item.Icon />
+                  {item.isLink ? (
+                    <Link
+                      src={item.prefix + item.value}
+                      style={{
+                        ...styles.contactItem,
+                        color: metadata.theme.primary || '#1f2937',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      <Text>{item.value}</Text>
+                    </Link>
+                  ) : (
+                    <Text style={styles.contactItem}>{item.value}</Text>
+                  )}
+                </View>
+              ))}
             </View>
-          ) : null}
-        </View>
-
-        {renderSummary()}
-
-        {sectionOrder
-          .filter((key) => key !== 'summary')
-          .map((key) => {
-            const renderer = sectionRenderers[key];
-            return renderer ? renderer() : null;
-          })}
-
-        {customSections
-          .filter((s) => s.visible && s.items.length > 0)
-          .map((section) => {
-            const visibleItems = section.items.filter(
-              (item: any) => item.visible && (item.title || hasContent(item.description)),
-            );
-            if (visibleItems.length === 0) return null;
-
-            return (
-              <View key={section.id} style={styles.section}>
-                {visibleItems.map((item: any, index: number) => (
-                  <View key={item.id} style={{ ...styles.itemContainer, marginBottom: getSpacing(10) }}>
-                    <View wrap={false}>
-                      {index === 0 && (
-                        <View style={styles.sectionTitleContainer}>
-                          <View style={styles.sectionTitleUnderline}>
-                            <Text style={styles.sectionTitle}>{section.name}</Text>
-                          </View>
-                        </View>
+            {sections.profiles.items.filter(
+              (p: any) => p.visible && (p.network || p.username || p.website?.href),
+            ).length > 0 ? (
+              <View style={{ ...styles.contactRow, marginTop: 4 }}>
+                {sections.profiles.items
+                  .filter((p: any) => p.visible && (p.network || p.username || p.website?.href))
+                  .map((profile: any, index: number) => (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginRight: 12,
+                        maxWidth: '100%',
+                      }}
+                    >
+                      {getProfileIcon(profile.network)}
+                      {profile.website?.href ? (
+                        <Link
+                          src={profile.website.href}
+                          style={{
+                            ...styles.contactItem,
+                            color: metadata.theme.primary || '#1f2937',
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          <Text>{profile.website.href}</Text>
+                        </Link>
+                      ) : (
+                        <Text style={styles.contactItem}>
+                          {profile.network}
+                          {profile.username ? `: ${profile.username}` : ''}
+                        </Text>
                       )}
-                      <Text style={styles.itemTitle}>{item.title}</Text>
                     </View>
-                    {hasContent(item.description) ? (
-                      <PDFDescriptionRenderer text={item.description} style={styles.itemDescription} />
-                    ) : null}
-                  </View>
-                ))}
+                  ))}
               </View>
-            );
-          })}
+            ) : null}
+          </View>
+
+          {renderSummary()}
+
+          {sectionOrder
+            .filter((key) => key !== 'summary')
+            .map((key) => {
+              const renderer = sectionRenderers[key];
+              return renderer ? renderer() : null;
+            })}
+
+          {customSections
+            .filter((s) => s.visible && s.items.length > 0)
+            .map((section) => {
+              const visibleItems = section.items.filter(
+                (item: any) => item.visible && (item.title || hasContent(item.description)),
+              );
+              if (visibleItems.length === 0) return null;
+
+              return (
+                <View key={section.id} style={styles.section}>
+                  {visibleItems.map((item: any, index: number) => (
+                    <View key={item.id} style={{ marginBottom: getSpacing(12), width: '100%' }}>
+                      <PDFDescriptionRenderer
+                        text={item.description}
+                        style={styles.itemDescription}
+                        titleElement={
+                          index === 0 ? (
+                            <View style={styles.sectionTitleContainer}>
+                              <View style={styles.sectionTitleUnderline}>
+                                <Text style={styles.sectionTitle}>{section.name}</Text>
+                              </View>
+                            </View>
+                          ) : null
+                        }
+                        headerElement={<Text style={styles.itemTitle}>{item.title}</Text>}
+                      />
+                    </View>
+                  ))}
+                </View>
+              );
+            })}
+        </View>
       </Page>
     </Document>
   );
