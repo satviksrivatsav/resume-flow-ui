@@ -44,16 +44,33 @@ export const TailoredItemEditor = ({
         !updated.description &&
         (updated.summary || (updated.bullets && Array.isArray(updated.bullets)))
       ) {
-        let desc = updated.summary ?? '';
-        if (updated.bullets && Array.isArray(updated.bullets) && updated.bullets.length > 0) {
-          if (desc) desc += '\n\n';
-          desc += updated.bullets.map((b: string) => `• ${b}`).join('\n');
-        }
-        if (desc) {
-          updated.description = desc;
-          delete updated.summary;
-          delete updated.bullets;
-          changed = true;
+        const cleanVal = (val: string | undefined): string => {
+          if (!val) return '';
+          return val
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, '')
+            .replace(/&#8203;/g, '')
+            .replace(/[\u200B-\u200D\uFEFF]/g, '')
+            .trim();
+        };
+
+        const cleanSummary = cleanVal(updated.summary);
+        const activeBullets = (updated.bullets ?? [])
+          .map((b: string) => b)
+          .filter((b: string) => cleanVal(b).length > 0);
+
+        if (cleanSummary || activeBullets.length > 0) {
+          let desc = updated.summary ?? '';
+          if (activeBullets.length > 0) {
+            if (desc) desc += '\n\n';
+            desc += activeBullets.map((b: string) => `• ${b}`).join('\n');
+          }
+          if (desc) {
+            updated.description = desc;
+            delete updated.summary;
+            delete updated.bullets;
+            changed = true;
+          }
         }
       }
 

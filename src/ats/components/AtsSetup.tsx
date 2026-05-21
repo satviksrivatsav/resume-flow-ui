@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Briefcase, CloudUpload, Database, Loader2, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
 import { AILoadingModal } from '@/shared/components/ui/AILoadingModal';
@@ -49,6 +49,23 @@ export function AtsSetup({
   const [dragActive, setDragActive] = useState(false);
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [isExtractingJd, setIsExtractingJd] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      setIsExtractingJd(false);
+    };
+  }, []);
+
+  const handleLocalCancel = () => {
+    if (isExtractingJd) {
+      abortControllerRef.current?.abort();
+      setIsExtractingJd(false);
+    } else {
+      onCancel();
+    }
+  };
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -76,10 +93,12 @@ export function AtsSetup({
   const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
       try {
         setIsExtractingJd(true);
         setJdFile(file);
-        const text = await extractTextFromFile(file);
+        const text = await extractTextFromFile(file, controller.signal);
         setJdText(text);
         toast({
           title: 'Success',
@@ -87,6 +106,9 @@ export function AtsSetup({
           variant: 'success',
         });
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         console.error('JD extraction failed:', err);
         toast({
           title: 'Error',
@@ -313,7 +335,7 @@ export function AtsSetup({
 
       <AILoadingModal
         isOpen={isAnalyzing || isExtractingJd}
-        onCancel={onCancel}
+        onCancel={handleLocalCancel}
         message={
           isExtractingJd
             ? 'Extracting job description content with AI...'

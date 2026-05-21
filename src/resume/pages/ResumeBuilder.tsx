@@ -70,7 +70,7 @@ const ResumeBuilder = () => {
     updateSummary,
     updateItem,
     updateMetadata,
-    saveStatus,
+    setSyncThumbnailFn,
   } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
@@ -84,66 +84,77 @@ const ResumeBuilder = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Sync thumbnail on successful save
-  useEffect(() => {
-    // Only trigger sync when save is successful AND we have a valid ID
-    if (saveStatus === 'success' && resumeData.id) {
-      const syncThumbnail = async () => {
-        try {
-          // Check if preview is actually mounted
-          if (!previewRef.current) {
-            console.log('Thumbnail sync skipped: Preview is not visible (hidden by user)');
-            return;
-          }
+  // Callback to sync thumbnail on successful save
+  const syncThumbnail = useCallback(async () => {
+    try {
+      // Check if preview is actually mounted
+      if (!previewRef.current) {
+        return;
+      }
 
-          // Add a small delay to ensure the PDF/Canvas is fully rendered
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Add a small delay to ensure the PDF/Canvas is fully rendered
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          const blob = await previewRef.current.captureThumbnail();
-          if (!blob) {
-            // This is logged inside captureThumbnail as well
-            return;
-          }
+      const blob = await previewRef.current.captureThumbnail();
+      if (!blob) {
+        return;
+      }
 
-          const fileName = `${resumeData.id}.webp`;
+      // Always fetch the freshest state from store to ensure we have the new ID for fresh resumes
+      const currentId = useResumeStore.getState().resumeData.id;
+      if (!currentId) {
+        return;
+      }
 
-          // Use { upsert: true } to overwrite existing thumbnails
-          const { error: uploadError } = await supabase.storage
-            .from('resume-thumbnails')
-            .upload(fileName, blob, {
-              contentType: 'image/webp',
-              upsert: true,
-            });
+      const fileName = `${currentId}.webp`;
 
-          if (uploadError) {
-            // Log but don't throw, we don't want to break the builder for a thumbnail error
-            console.error('Thumbnail upload error (check if storage bucket exists):', uploadError);
-            return;
-          }
+      // Use { upsert: true } to overwrite existing thumbnails
+      const { error: uploadError } = await supabase.storage
+        .from('resume-thumbnails')
+        .upload(fileName, blob, {
+          contentType: 'image/webp',
+          upsert: true,
+        });
 
-          const { data: publicUrlData } = supabase.storage
-            .from('resume-thumbnails')
-            .getPublicUrl(fileName);
+      if (uploadError) {
+        // Log but don't throw, we don't want to break the builder for a thumbnail error
+        console.error('Thumbnail upload error (check if storage bucket exists):', uploadError);
+        return;
+      }
 
-          const { error: updateError } = await supabase
-            .from('resumes')
-            .update({ thumbnail_url: publicUrlData.publicUrl })
-            .eq('id', resumeData.id);
+      const { data: publicUrlData } = supabase.storage
+        .from('resume-thumbnails')
+        .getPublicUrl(fileName);
 
-          if (updateError) {
-            console.error('Thumbnail database update error:', updateError);
-          } else {
-            console.log('Thumbnail synced successfully');
-          }
-        } catch (err) {
-          // Catch any unexpected errors in the sync process
-          console.error('Unexpected error during thumbnail sync:', err);
-        }
-      };
+      const { error: updateError } = await supabase
+        .from('resumes')
+        .update({ thumbnail_url: publicUrlData.publicUrl })
+        .eq('id', currentId);
 
-      void syncThumbnail();
+      if (updateError) {
+        console.error('Thumbnail database update error:', updateError);
+      }
+    } catch (err) {
+      // Catch any unexpected errors in the sync process
+      console.error('Unexpected error during thumbnail sync:', err);
     }
-  }, [saveStatus, resumeData.id]);
+  }, []);
+
+  // Register the sync function to the global store so that saveResume can trigger & await it
+  useEffect(() => {
+    setSyncThumbnailFn(syncThumbnail);
+    return () => {
+      setSyncThumbnailFn(null);
+    };
+  }, [syncThumbnail, setSyncThumbnailFn]);
+
+  // Cancel active AI Writer requests and reset tailoring state on unmount
+  useEffect(() => {
+    return () => {
+      cancelAIWriterRequest();
+      resetTailor();
+    };
+  }, [cancelAIWriterRequest, resetTailor]);
 
   // Initialize resume data
   useEffect(() => {

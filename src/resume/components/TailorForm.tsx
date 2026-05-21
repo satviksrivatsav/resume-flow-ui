@@ -37,19 +37,30 @@ export const TailorForm = () => {
   const [jdFile, setJdFile] = useState<File | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      setIsTailoring(false);
+      setIsExtractingJd(false);
+    };
+  }, [setIsTailoring, setIsExtractingJd]);
+
   const handleCancel = () => {
     abortControllerRef.current?.abort();
     setIsTailoring(false);
     setIsExtractingJd(false);
+    setViewMode('form');
   };
 
   const handleJdFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
       try {
         setIsExtractingJd(true);
         setJdFile(file);
-        const text = await extractTextFromFile(file);
+        const text = await extractTextFromFile(file, controller.signal);
         setJobDescription(text);
         toast({
           title: 'Success',
@@ -57,6 +68,9 @@ export const TailorForm = () => {
           variant: 'success',
         });
       } catch (err: any) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         console.error('JD extraction failed:', err);
         const isNetworkError =
           !navigator.onLine ||
@@ -212,10 +226,195 @@ export const TailorForm = () => {
 
       if (result.success) {
         const slides: any[] = [];
+
+        // Helper to check if a content value (string, object, or array) is empty
+        const isContentEmpty = (content: any): boolean => {
+          if (!content) return true;
+
+          if (typeof content === 'string') {
+            return (
+              content
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, '')
+                .replace(/&#8203;/g, '')
+                .replace(/[\u200B-\u200D\uFEFF]/g, '')
+                .trim().length === 0
+            );
+          }
+
+          if (typeof content === 'object') {
+            if (Array.isArray(content)) {
+              return content.length === 0 || content.every(isContentEmpty);
+            }
+
+            // Check specific text/rich-text fields
+            const textFields = ['headline', 'content', 'name', 'description', 'summary'];
+            let hasAnyTextField = false;
+            let allTextFieldsEmpty = true;
+
+            for (const key of textFields) {
+              if (key in content) {
+                hasAnyTextField = true;
+                const val = content[key];
+                if (val && typeof val === 'string') {
+                  const clean = val
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/&nbsp;/g, '')
+                    .replace(/&#8203;/g, '')
+                    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+                    .trim();
+                  if (clean.length > 0) {
+                    allTextFieldsEmpty = false;
+                  }
+                }
+              }
+            }
+
+            // Check keywords array
+            if ('keywords' in content) {
+              hasAnyTextField = true;
+              const kws = content.keywords;
+              if (Array.isArray(kws) && kws.length > 0) {
+                const hasVal = kws.some((kw) => typeof kw === 'string' && kw.trim().length > 0);
+                if (hasVal) {
+                  allTextFieldsEmpty = false;
+                }
+              }
+            }
+
+            // Check bullets array
+            if ('bullets' in content) {
+              hasAnyTextField = true;
+              const bullets = content.bullets;
+              if (Array.isArray(bullets) && bullets.length > 0) {
+                const hasVal = bullets.some((b) => typeof b === 'string' && b.trim().length > 0);
+                if (hasVal) {
+                  allTextFieldsEmpty = false;
+                }
+              }
+            }
+
+            if (hasAnyTextField) {
+              return allTextFieldsEmpty;
+            }
+
+            // Fallback: check all keys in object except id, visible
+            const keys = Object.keys(content);
+            if (keys.length === 0) return true;
+
+            for (const key of keys) {
+              if (key === 'id' || key === 'visible') continue;
+              const val = content[key];
+              if (val && typeof val === 'string') {
+                const clean = val
+                  .replace(/<[^>]*>/g, '')
+                  .replace(/&nbsp;/g, '')
+                  .replace(/&#8203;/g, '')
+                  .replace(/[\u200B-\u200D\uFEFF]/g, '')
+                  .trim();
+                if (clean.length > 0) return false;
+              }
+              if (Array.isArray(val) && val.length > 0) {
+                const hasVal = val.some((v) => typeof v === 'string' && v.trim().length > 0);
+                if (hasVal) return false;
+              }
+            }
+            return true;
+          }
+
+          return false;
+        };
+
+        const cleanText = (val: any): string => {
+          if (!val || typeof val !== 'string') return '';
+          return val
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, '')
+            .replace(/&#8203;/g, '')
+            .replace(/[\u200B-\u200D\uFEFF]/g, '')
+            .trim();
+        };
+
+        const getConsolidatedDescription = (item: any): string => {
+          if (!item) return '';
+          if (item.description) return cleanText(item.description);
+
+          let desc = item.summary ?? '';
+          if (item.bullets && Array.isArray(item.bullets) && item.bullets.length > 0) {
+            const activeBullets = item.bullets
+              .map((b: string) => cleanText(b))
+              .filter((b: string) => b.length > 0);
+            if (activeBullets.length > 0) {
+              if (desc) desc += '\n\n';
+              desc += activeBullets.map((b: string) => `• ${b}`).join('\n');
+            }
+          }
+          return cleanText(desc);
+        };
+
+        const hasChangesToReview = (sectId: string, orig: any, tail: any): boolean => {
+          if (!orig && !tail) return false;
+
+          if (sectId === 'headline') {
+            const origHeadline = cleanText(typeof orig === 'string' ? orig : orig?.headline);
+            const tailHeadline = cleanText(typeof tail === 'string' ? tail : tail?.headline);
+            return (
+              origHeadline !== tailHeadline && (origHeadline.length > 0 || tailHeadline.length > 0)
+            );
+          }
+
+          if (sectId === 'summary') {
+            const origContent = cleanText(typeof orig === 'string' ? orig : orig?.content);
+            const tailContent = cleanText(typeof tail === 'string' ? tail : tail?.content);
+            return (
+              origContent !== tailContent && (origContent.length > 0 || tailContent.length > 0)
+            );
+          }
+
+          if (sectId === 'skills') {
+            const origName = cleanText(orig?.name);
+            const tailName = cleanText(tail?.name);
+
+            const origKeywords = Array.isArray(orig?.keywords)
+              ? orig.keywords.map(cleanText).filter(Boolean)
+              : [];
+            const tailKeywords = Array.isArray(tail?.keywords)
+              ? tail.keywords.map(cleanText).filter(Boolean)
+              : [];
+
+            const nameChanged =
+              origName !== tailName && (origName.length > 0 || tailName.length > 0);
+            const keywordsChanged =
+              origKeywords.length !== tailKeywords.length ||
+              origKeywords.some((kw, i) => kw !== tailKeywords[i]);
+
+            const hasKeywords = origKeywords.length > 0 || tailKeywords.length > 0;
+            const hasNames = origName.length > 0 || tailName.length > 0;
+
+            return (nameChanged && hasNames) || (keywordsChanged && hasKeywords);
+          }
+
+          const origDesc = getConsolidatedDescription(orig);
+          const tailDesc = getConsolidatedDescription(tail);
+
+          return origDesc !== tailDesc && (origDesc.length > 0 || tailDesc.length > 0);
+        };
+
         result.data.tailoredSections.forEach((section: any) => {
           if (section.tailoredContent?.items && Array.isArray(section.tailoredContent.items)) {
             section.tailoredContent.items.forEach((item: any, index: number) => {
               const origItem = section.originalContent?.items?.[index] || {};
+
+              // Skip card if both original and tailored contents are empty
+              if (isContentEmpty(origItem) && isContentEmpty(item)) {
+                return;
+              }
+
+              // Skip card if there are no changes in reviewable/editable fields
+              if (!hasChangesToReview(section.sectionId, origItem, item)) {
+                return;
+              }
+
               const title =
                 item.company ||
                 item.school ||
@@ -234,6 +433,25 @@ export const TailorForm = () => {
               });
             });
           } else {
+            // Skip card if both original and tailored contents are empty
+            if (
+              isContentEmpty(section.originalContent) &&
+              isContentEmpty(section.tailoredContent)
+            ) {
+              return;
+            }
+
+            // Skip card if there are no changes in reviewable/editable fields
+            if (
+              !hasChangesToReview(
+                section.sectionId,
+                section.originalContent,
+                section.tailoredContent,
+              )
+            ) {
+              return;
+            }
+
             slides.push({
               slideId: section.sectionId,
               sectionId: section.sectionId,
@@ -243,8 +461,17 @@ export const TailorForm = () => {
             });
           }
         });
-        setTailoredSlides(slides);
-        setViewMode('diff');
+
+        if (slides.length === 0) {
+          toast({
+            title: 'No Changes Suggested',
+            description: 'AI did not suggest any content changes for the selected sections.',
+            variant: 'default',
+          });
+        } else {
+          setTailoredSlides(slides);
+          setViewMode('diff');
+        }
       } else {
         console.error('Tailoring failed:', result.detail);
         toast({
@@ -272,14 +499,14 @@ export const TailorForm = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between px-2">
           <div className="px-2">
-            <h3 className="text-lg font-bold">Job Description</h3>
+            <h3 className="text-lg font-bold whitespace-nowrap">Job Description</h3>
           </div>
 
           <div className="flex items-center gap-2">
             <label
               htmlFor="tailor-jd-upload"
               className={cn(
-                'inline-flex items-center gap-2 px-5 h-10 bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all cursor-pointer uppercase tracking-wider hover:text-foreground hover:border-primary/30',
+                'inline-flex items-center gap-2 px-5 h-10 bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all cursor-pointer uppercase tracking-wider hover:text-foreground hover:border-primary/30 whitespace-nowrap',
                 (isExtractingJd || isTailoring) &&
                   'opacity-50 cursor-not-allowed pointer-events-none',
               )}
@@ -304,7 +531,7 @@ export const TailorForm = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleClearJdFile}
-                className="h-10 rounded-full text-[10px] font-bold text-muted-foreground hover:text-destructive gap-1.5 px-3 transition-colors"
+                className="h-10 rounded-full text-[10px] font-bold text-muted-foreground hover:text-destructive gap-1.5 px-3 transition-colors whitespace-nowrap"
               >
                 <X className="w-3 h-3" />
                 Clear
@@ -312,6 +539,14 @@ export const TailorForm = () => {
             )}
           </div>
         </div>
+
+        {jdFile && !isExtractingJd && (
+          <div className="px-2 flex justify-start">
+            <div className="bg-primary/10 border border-primary/20 text-primary px-4 h-9 rounded-full flex items-center text-[10px] font-bold uppercase tracking-wider max-w-full min-w-0 animate-in fade-in zoom-in-95 duration-200">
+              <span className="truncate">File: {jdFile.name}</span>
+            </div>
+          </div>
+        )}
 
         <div className="relative">
           <RichTextEditor
@@ -327,11 +562,6 @@ export const TailorForm = () => {
           />
           {isExtractingJd && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none" />
-          )}
-          {jdFile && !isExtractingJd && (
-            <div className="absolute top-6 right-6 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
-              File: {jdFile.name}
-            </div>
           )}
         </div>
       </div>

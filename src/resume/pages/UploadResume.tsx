@@ -8,7 +8,7 @@ import {
   ServerCrash,
   Timer,
 } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DashboardLayout } from '@/dashboard/components/DashboardLayout';
@@ -35,6 +35,12 @@ export default function UploadResume() {
   const setResumeData = useResumeStore((state) => state.setResumeData);
   const abortControllerRef = useRef<AbortController | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();

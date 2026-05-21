@@ -49,6 +49,13 @@ export default function AtsChecker() {
   const [isSaving, setIsSaving] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      setStatus('idle');
+    };
+  }, [setStatus]);
+
   const getResumeContentSignature = (data: unknown) => {
     return JSON.stringify(data, (key, value: unknown) => {
       if (['id', 'updated_at', 'created_at', 'user_id', 'name', 'metadata'].includes(key)) {

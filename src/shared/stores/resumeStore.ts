@@ -89,11 +89,13 @@ interface ResumeStore {
   lastSaved: Date | null;
   lastSavedData: string;
   autoSaveTimer: any;
+  syncThumbnailFn: (() => Promise<void>) | null;
   setIsSaving: (isSaving: boolean) => void;
   setIsSavingInProgress: (isSaving: boolean) => void;
   setSaveStatus: (status: 'idle' | 'saving' | 'success' | 'error') => void;
   setLastSaved: (lastSaved: Date | null) => void;
   setLastSavedData: (data: string) => void;
+  setSyncThumbnailFn: (fn: (() => Promise<void>) | null) => void;
 
   saveResume: (userId?: string, isAutoSave?: boolean) => Promise<void>;
   startAutoSave: (userId?: string) => void;
@@ -115,12 +117,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   lastSaved: null,
   lastSavedData: '',
   autoSaveTimer: null,
+  syncThumbnailFn: null,
 
   setIsSaving: (isSaving) => set({ isSaving }),
   setIsSavingInProgress: (isSavingInProgress) => set({ isSavingInProgress }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setLastSaved: (lastSaved) => set({ lastSaved }),
   setLastSavedData: (lastSavedData) => set({ lastSavedData }),
+  setSyncThumbnailFn: (syncThumbnailFn) => set({ syncThumbnailFn }),
 
   setResumeData: (data) => set({ resumeData: sanitizeResumeData(data) }),
 
@@ -209,6 +213,12 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       }
 
       set({ lastSaved: new Date(), saveStatus: 'success' });
+
+      // Trigger and await thumbnail generation and synchronization
+      const syncFn = get().syncThumbnailFn;
+      if (syncFn) {
+        await syncFn();
+      }
     } catch (error) {
       console.error('Error saving:', error);
       set({ saveStatus: 'error' });

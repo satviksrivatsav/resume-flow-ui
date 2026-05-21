@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { CheckCircle2, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -120,7 +120,7 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
               }
               footer={
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3 bg-primary/5 px-2 py-1 rounded-full border border-primary/10">
+                  <div className="flex items-center gap-3 bg-primary/5 px-2 rounded-full border border-primary/10 h-10">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -159,10 +159,10 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
                           if (currentIndex < totalSlides - 1) setTimeout(nextSlide, 300);
                         }}
                         className={cn(
-                          'gap-2 rounded-full px-5 h-9 text-sm transition-all duration-300',
+                          'gap-2 rounded-full px-5 h-10 text-sm transition-all duration-300 border',
                           currentSlide?.decision === 'reject'
-                            ? 'bg-destructive text-white border-none'
-                            : 'text-destructive hover:bg-destructive/10 border border-destructive/20',
+                            ? 'bg-destructive text-white border-transparent'
+                            : 'text-destructive hover:bg-destructive/10 border-destructive/20',
                         )}
                       >
                         <DrawableX draw={rejectHovered} />
@@ -182,10 +182,10 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
                           if (currentIndex < totalSlides - 1) setTimeout(nextSlide, 300);
                         }}
                         className={cn(
-                          'gap-2 rounded-full px-5 h-9 text-sm transition-all duration-300',
+                          'gap-2 rounded-full px-5 h-10 text-sm transition-all duration-300 border',
                           currentSlide?.decision === 'accept'
-                            ? 'bg-success text-white hover:bg-success/90 border-none'
-                            : 'text-success hover:bg-success/10 border border-success/20',
+                            ? 'bg-success text-white border-transparent'
+                            : 'text-success hover:bg-success/10 border-success/20',
                         )}
                       >
                         <DrawableCheck draw={acceptHovered} />
@@ -196,7 +196,7 @@ export const TailorDiffModal = ({ onApply, onDiscard }: TailorDiffModalProps) =>
 
                   <Button
                     className={cn(
-                      'h-9 px-5 rounded-full font-bold text-sm gap-2 transition-all duration-500',
+                      'h-10 px-5 rounded-full font-bold text-sm gap-2 transition-all duration-500',
                       tailoredSlides.every((s) => s.decision)
                         ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]'
                         : 'bg-muted text-muted-foreground hover:bg-muted/80',
