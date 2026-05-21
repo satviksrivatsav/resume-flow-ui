@@ -4,29 +4,29 @@ import { ThemeProvider } from 'next-themes';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
-import { Toaster as Sonner } from '@/components/ui/sonner';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
-
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import AuthLayout from './components/layout/AuthLayout';
-import AtsChecker from './pages/AtsChecker';
-import AtsReports from './pages/AtsReports';
-import DangerZonePage from './pages/DangerZonePage';
-import Dashboard from './pages/Dashboard';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import Index from './pages/Index';
-import LoginPage from './pages/LoginPage';
-import NotFound from './pages/NotFound';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ProfilePage from './pages/ProfilePage';
-import ResumeBuilder from './pages/ResumeBuilder';
-import SettingsPage from './pages/SettingsPage';
-import SignUpPage from './pages/SignUpPage';
-import TermsOfService from './pages/TermsOfService';
-import UpdatePasswordPage from './pages/UpdatePasswordPage';
-import UploadResume from './pages/UploadResume';
-import { useAuthStore } from './stores/authStore';
+import AtsChecker from '@/ats/pages/AtsChecker';
+import AtsReports from '@/ats/pages/AtsReports';
+import { ProtectedRoute } from '@/auth/components/ProtectedRoute';
+import { PublicRoute } from '@/auth/components/PublicRoute';
+import ForgotPasswordPage from '@/auth/pages/ForgotPasswordPage';
+import LoginPage from '@/auth/pages/LoginPage';
+import SignUpPage from '@/auth/pages/SignUpPage';
+import UpdatePasswordPage from '@/auth/pages/UpdatePasswordPage';
+import DangerZonePage from '@/dashboard/pages/DangerZonePage';
+import Dashboard from '@/dashboard/pages/Dashboard';
+import ProfilePage from '@/dashboard/pages/ProfilePage';
+import Index from '@/landing/pages/Index';
+import PrivacyPolicy from '@/legal/pages/PrivacyPolicy';
+import TermsOfService from '@/legal/pages/TermsOfService';
+import ResumeBuilder from '@/resume/pages/ResumeBuilder';
+import UploadResume from '@/resume/pages/UploadResume';
+import AuthLayout from '@/shared/components/layout/AuthLayout';
+import { FaviconManager } from '@/shared/components/layout/FaviconManager';
+import { Toaster } from '@/shared/components/ui/toaster';
+import { TooltipProvider } from '@/shared/components/ui/tooltip';
+import { useInactivityTimeout } from '@/shared/hooks/useInactivityTimeout';
+import NotFound from '@/shared/pages/NotFound';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 const queryClient = new QueryClient();
 
@@ -45,20 +45,39 @@ function AnimatedRoutes() {
 
         {/* Auth routes share a layout so panels can slide between each other */}
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignUpPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicRoute>
+                <ForgotPasswordPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/update-password"
+            element={
+              <ProtectedRoute>
+                <UpdatePasswordPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
-
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="/update-password"
-          element={
-            <ProtectedRoute>
-              {' '}
-              <UpdatePasswordPage />{' '}
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/dashboard"
           element={
@@ -84,14 +103,6 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/dashboard/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/dashboard/danger"
           element={
             <ProtectedRoute>
@@ -99,9 +110,30 @@ function AnimatedRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route path="/resume-builder" element={<ResumeBuilder />} />
-        <Route path="/upload" element={<UploadResume />} />
-        <Route path="/ats" element={<AtsChecker />} />
+        <Route
+          path="/resume-builder"
+          element={
+            <ProtectedRoute>
+              <ResumeBuilder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/upload"
+          element={
+            <ProtectedRoute>
+              <UploadResume />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/ats"
+          element={
+            <ProtectedRoute>
+              <AtsChecker />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
 
@@ -115,12 +147,17 @@ function AnimatedRoutes() {
 function AppContent() {
   const { initialize } = useAuthStore();
 
+  // Register inactivity timeout monitoring
+  useInactivityTimeout();
+
   useEffect(() => {
     void initialize();
+    void import('@/shared/lib/geolocation').then((m) => m.initializeCountryCode());
   }, [initialize]);
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <FaviconManager />
       <div className="min-h-screen font-sans antialiased">
         <AnimatedRoutes />
       </div>
@@ -140,7 +177,6 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
         <AppContent />
       </TooltipProvider>
     </QueryClientProvider>

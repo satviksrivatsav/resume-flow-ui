@@ -1,0 +1,85 @@
+﻿import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { FeaturesSection } from '@/landing/components/FeaturesSection';
+import { LandingFooter } from '@/landing/components/LandingFooter';
+import { ResumeSelectionModal } from '@/shared/components/common/ResumeSelectionModal';
+import { PageTransition } from '@/shared/components/layout/PageTransition';
+import { AnimatedResumeHero } from '@/shared/components/ui/AnimatedResumeHero';
+import { MeshGradient } from '@/shared/components/ui/backgrounds';
+import { useAuthStore } from '@/shared/stores/authStore';
+
+export default React.memo(function LandingPage() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const [isResumeSelectionModalOpen, setIsResumeSelectionModalOpen] = useState(false);
+
+  return (
+    <PageTransition className="w-full bg-black relative">
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <MeshGradient />
+      </div>
+
+      {/* Hero Section - Natural Vertical Flow */}
+      <div className="relative min-h-screen w-full z-20 flex flex-col items-center pt-24 md:pt-32 pb-0">
+        <div className="container relative z-10 grid lg:grid-cols-12 gap-12 px-6 h-full pb-0 flex-1">
+          <div className="lg:col-span-6 lg:pr-12 space-y-10 self-start pt-8 md:pt-12">
+            <div className="space-y-6 text-left">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.05]">
+                You&apos;ve Done the Work.
+                <br />
+                Let&apos;s Make Sure It{' '}
+                <span className="bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-100 bg-clip-text text-transparent animate-gradient-flow">
+                  Shows.
+                </span>
+              </h1>
+              <p className="mt-6 text-sm md:text-base text-zinc-400 max-w-xl">
+                Resume Flow is a simple tool that uses AI to help you build better resumes without
+                the headache. No subscriptions, just better applications.
+              </p>
+            </div>
+
+            {/* CTAs Group */}
+            <div className="flex flex-col items-start gap-8">
+              <div className="flex flex-row flex-wrap items-center gap-4">
+                <button
+                  onClick={() => navigate(user ? '/dashboard' : '/login')}
+                  className="whitespace-nowrap w-full sm:w-auto px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-all text-sm"
+                >
+                  Build your resume now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 flex justify-center lg:justify-end self-start">
+            <AnimatedResumeHero className="w-full max-w-xl lg:max-w-2xl lg:-translate-y-12" />
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div id="features" className="w-full relative z-10 bg-black border-t border-white/5 -mt-24">
+        <FeaturesSection />
+      </div>
+
+      {/* Footer Section */}
+      <div className="w-full relative z-20 bg-black">
+        <LandingFooter />
+      </div>
+
+      <ResumeSelectionModal
+        isOpen={isResumeSelectionModalOpen}
+        onClose={() => setIsResumeSelectionModalOpen(false)}
+        onSelect={(id) => {
+          navigate(`/dashboard/ats?resumeId=${id}`);
+          setIsResumeSelectionModalOpen(false);
+        }}
+        onUploadNew={() => {
+          navigate('/dashboard/ats');
+          setIsResumeSelectionModalOpen(false);
+        }}
+      />
+    </PageTransition>
+  );
+});
