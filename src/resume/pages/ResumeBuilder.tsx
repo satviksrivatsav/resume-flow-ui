@@ -107,7 +107,7 @@ const ResumeBuilder = () => {
           }
 
           const fileName = `${resumeData.id}.webp`;
-          
+
           // Use { upsert: true } to overwrite existing thumbnails
           const { error: uploadError } = await supabase.storage
             .from('resume-thumbnails')

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -6,10 +6,20 @@ import { RichTextEditor } from '@/shared/components/ui/RichTextEditor';
 import { TechChipsInput } from '@/shared/components/ui/TechChipsInput';
 import { cn } from '@/shared/lib/utils';
 
+interface TailoredContentObject {
+  headline?: string;
+  content?: string;
+  name?: string;
+  keywords?: string[];
+  description?: string;
+  summary?: string;
+  bullets?: string[];
+}
+
 interface TailoredItemEditorProps {
   sectionId: string;
-  content: any;
-  onChange?: (newContent: any) => void;
+  content: TailoredContentObject | string | null | undefined;
+  onChange?: (newContent: TailoredContentObject | string | null | undefined) => void;
   readOnly?: boolean;
 }
 
@@ -19,12 +29,14 @@ export const TailoredItemEditor = ({
   onChange,
   readOnly = false,
 }: TailoredItemEditorProps) => {
-  const [localContent, setLocalContent] = useState<any>(content);
+  const [localContent, setLocalContent] = useState<
+    TailoredContentObject | string | null | undefined
+  >(content);
 
   // Initialize local state, merging summary/bullets into description if needed
   useEffect(() => {
     if (typeof content === 'object' && content !== null) {
-      const updated = { ...content };
+      const updated = { ...content } as TailoredContentObject;
       let changed = false;
 
       // If there are bullets or a summary but no description, merge them into description
@@ -32,7 +44,7 @@ export const TailoredItemEditor = ({
         !updated.description &&
         (updated.summary || (updated.bullets && Array.isArray(updated.bullets)))
       ) {
-        let desc = updated.summary || '';
+        let desc = updated.summary ?? '';
         if (updated.bullets && Array.isArray(updated.bullets) && updated.bullets.length > 0) {
           if (desc) desc += '\n\n';
           desc += updated.bullets.map((b: string) => `• ${b}`).join('\n');
@@ -84,13 +96,20 @@ export const TailoredItemEditor = ({
     );
   }
 
-  const handleChange = (field: string, value: any) => {
-    const updated = { ...localContent, [field]: value };
-    setLocalContent(updated);
-    onChange?.(updated);
+  const handleChange = (field: keyof TailoredContentObject, value: string | string[]) => {
+    if (typeof localContent === 'object' && localContent !== null) {
+      const updated = { ...localContent, [field]: value };
+      setLocalContent(updated);
+      onChange?.(updated);
+    }
   };
 
-  const renderField = (label: string, value: any, field: string, type: 'input' | 'textarea') => {
+  const renderField = (
+    label: string,
+    value: string | undefined,
+    field: keyof TailoredContentObject,
+    type: 'input' | 'textarea',
+  ) => {
     if (readOnly) {
       return (
         <div className="space-y-2">
@@ -101,16 +120,14 @@ export const TailoredItemEditor = ({
             <div
               className={cn(
                 'text-[14px] leading-[1.8] ql-editor ql-editor-preview font-normal',
-                label === 'Description'
-                  ? 'text-muted-foreground/80'
-                  : 'text-foreground/90',
-                !/<[a-z][\s\S]*>/i.test(value || '') && 'whitespace-pre-wrap',
+                label === 'Description' ? 'text-muted-foreground/80' : 'text-foreground/90',
+                !/<[a-z][\s\S]*>/i.test(value ?? '') && 'whitespace-pre-wrap',
               )}
-              dangerouslySetInnerHTML={{ __html: value || '' }}
+              dangerouslySetInnerHTML={{ __html: value ?? '' }}
             />
           ) : (
             <div className="text-[14px] leading-[1.8] text-foreground/90 font-normal">
-              {value || <span className="italic opacity-50">Empty</span>}
+              {value ?? <span className="italic opacity-50">Empty</span>}
             </div>
           )}
         </div>
@@ -124,13 +141,13 @@ export const TailoredItemEditor = ({
         </Label>
         {type === 'input' ? (
           <Input
-            value={value || ''}
+            value={value ?? ''}
             onChange={(e) => handleChange(field, e.target.value)}
             placeholder={`Edit ${label.toLowerCase()}...`}
           />
         ) : (
           <RichTextEditor
-            value={value || ''}
+            value={value ?? ''}
             onChange={(value) => handleChange(field, value)}
             className="text-[14px] leading-[1.8]"
             placeholder={`Edit ${label.toLowerCase()}...`}
@@ -140,25 +157,31 @@ export const TailoredItemEditor = ({
     );
   };
 
+  const contentObj =
+    typeof localContent === 'object' && localContent !== null ? localContent : null;
+
   return (
     <div className="space-y-6">
       {/* Headline string wrapped in object */}
       {sectionId === 'headline' &&
-        localContent?.hasOwnProperty('headline') &&
-        renderField('Headline', localContent.headline, 'headline', 'input')}
+        contentObj &&
+        'headline' in contentObj &&
+        renderField('Headline', contentObj.headline, 'headline', 'input')}
 
       {/* Summary content */}
       {sectionId === 'summary' &&
-        localContent?.hasOwnProperty('content') &&
-        renderField('Professional Summary', localContent.content, 'content', 'textarea')}
+        contentObj &&
+        'content' in contentObj &&
+        renderField('Professional Summary', contentObj.content, 'content', 'textarea')}
 
       {/* Skills Category Name */}
       {sectionId === 'skills' &&
-        localContent.hasOwnProperty('name') &&
-        renderField('Category Name', localContent.name, 'name', 'input')}
+        contentObj &&
+        'name' in contentObj &&
+        renderField('Category Name', contentObj.name, 'name', 'input')}
 
       {/* Keywords (Chips) */}
-      {localContent?.hasOwnProperty('keywords') && Array.isArray(localContent.keywords) && (
+      {contentObj && 'keywords' in contentObj && Array.isArray(contentObj.keywords) && (
         <div className="space-y-2">
           <Label
             className={cn(
@@ -170,8 +193,8 @@ export const TailoredItemEditor = ({
           </Label>
           {readOnly ? (
             <div className="flex flex-wrap gap-2 py-2">
-              {localContent.keywords.length > 0 ? (
-                localContent.keywords.map((kw: string, i: number) => (
+              {contentObj.keywords.length > 0 ? (
+                contentObj.keywords.map((kw: string, i: number) => (
                   <span
                     key={i}
                     className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-[11px] font-bold uppercase tracking-wider text-primary/80"
@@ -185,7 +208,7 @@ export const TailoredItemEditor = ({
             </div>
           ) : (
             <TechChipsInput
-              value={localContent.keywords}
+              value={contentObj.keywords}
               onChange={(techs) => handleChange('keywords', techs)}
               placeholder="Type a keyword and press Enter"
             />
@@ -194,22 +217,20 @@ export const TailoredItemEditor = ({
       )}
 
       {/* Description / Consolidated Bullets */}
-      {localContent &&
-        (localContent.hasOwnProperty('description') ||
-          localContent.hasOwnProperty('summary') ||
-          localContent.hasOwnProperty('bullets')) &&
+      {contentObj &&
+        ('description' in contentObj || 'summary' in contentObj || 'bullets' in contentObj) &&
         sectionId !== 'summary' &&
         sectionId !== 'skills' &&
-        renderField('Description', localContent.description, 'description', 'textarea')}
+        renderField('Description', contentObj.description, 'description', 'textarea')}
 
       {/* Fallback if no known editable fields are found */}
-      {localContent &&
+      {contentObj &&
         sectionId !== 'headline' &&
         sectionId !== 'summary' &&
-        !localContent.hasOwnProperty('keywords') &&
-        !localContent.hasOwnProperty('description') &&
-        !localContent.hasOwnProperty('summary') &&
-        !localContent.hasOwnProperty('bullets') && (
+        !('keywords' in contentObj) &&
+        !('description' in contentObj) &&
+        !('summary' in contentObj) &&
+        !('bullets' in contentObj) && (
           <div className="p-4 border border-dashed border-primary/20 rounded-xl text-center">
             <p className="text-sm text-muted-foreground">
               No directly editable structured fields found for this item.

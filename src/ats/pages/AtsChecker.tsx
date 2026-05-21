@@ -49,8 +49,8 @@ export default function AtsChecker() {
   const [isSaving, setIsSaving] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const getResumeContentSignature = (data: any) => {
-    return JSON.stringify(data, (key, value) => {
+  const getResumeContentSignature = (data: unknown) => {
+    return JSON.stringify(data, (key, value: unknown) => {
       if (['id', 'updated_at', 'created_at', 'user_id', 'name', 'metadata'].includes(key)) {
         return undefined;
       }
@@ -72,8 +72,14 @@ export default function AtsChecker() {
           .select('id, data, name')
           .eq('user_id', user.id);
 
+        const resumesList = (existingResumes ?? []) as {
+          id: string;
+          data: Record<string, unknown>;
+          name: string;
+        }[];
+
         const newSignature = getResumeContentSignature(resumeData);
-        const duplicate = existingResumes?.find(
+        const duplicate = resumesList.find(
           (r) => getResumeContentSignature(r.data) === newSignature,
         );
 
@@ -91,19 +97,30 @@ export default function AtsChecker() {
             .insert({
               user_id: user.id,
               name: resumeName,
-              data: sanitizeResumeData(resumeData),
+              data: sanitizeResumeData(resumeData) as Record<string, unknown>,
             })
             .select('id')
             .single();
 
           if (resumeError) throw resumeError;
-          targetResumeId = newResume.id;
+          const typedNewResume = newResume as { id: string } | null;
+          if (!typedNewResume) throw new Error('Failed to save new resume');
+          targetResumeId = typedNewResume.id;
           setResumeId(targetResumeId, resumeName);
         }
       }
 
+      if (!targetResumeId) throw new Error('No resume ID available to save report');
+
+      interface AtsReportUpsert {
+        id?: string;
+        resume_id: string;
+        user_id: string;
+        data: AtsReport;
+      }
+
       // Now save the report
-      const upsertData: any = {
+      const upsertData: AtsReportUpsert = {
         resume_id: targetResumeId,
         user_id: user.id,
         data: reportData,
@@ -121,8 +138,9 @@ export default function AtsChecker() {
 
       if (reportError) throw reportError;
 
-      if (savedReport) {
-        setReport(reportData, savedReport.id);
+      const typedSavedReport = savedReport as { id: string } | null;
+      if (typedSavedReport) {
+        setReport(reportData, typedSavedReport.id);
       }
       setExistingReport(reportData);
     } catch (err) {
@@ -146,11 +164,12 @@ export default function AtsChecker() {
         if (error && error.code !== 'PGRST116') throw error;
 
         if (data) {
-          const reportData = data.data as AtsReport;
+          const typedData = data as { id: string; data: unknown };
+          const reportData = typedData.data as AtsReport;
           setExistingReport(reportData);
 
           if (autoLoad) {
-            setReport(reportData, data.id);
+            setReport(reportData, typedData.id);
             setPhase('results');
           }
         }
@@ -174,8 +193,9 @@ export default function AtsChecker() {
           .eq('id', resumeIdParam)
           .single();
 
-        if (data?.name) {
-          setResumeId(resumeIdParam, data.name);
+        const typedData = data as { name?: string } | null;
+        if (typedData?.name) {
+          setResumeId(resumeIdParam, typedData.name);
         } else {
           setResumeId(resumeIdParam);
         }
@@ -197,7 +217,8 @@ export default function AtsChecker() {
         .limit(1)
         .single();
 
-      setReport(existingReport, data?.id);
+      const typedData = data as { id?: string } | null;
+      setReport(existingReport, typedData?.id);
       setPhase('results');
     }
   }, [existingReport, setReport, storeResumeId]);
@@ -212,7 +233,10 @@ export default function AtsChecker() {
 
       let result: { parsed_resume: ResumeData; ats_report: AtsReport };
       if (file) {
-        result = await analyzeResumeAts(file, jd, abortController.signal);
+        result = (await analyzeResumeAts(file, jd, abortController.signal)) as {
+          parsed_resume: ResumeData;
+          ats_report: AtsReport;
+        };
       } else if (storeResumeId) {
         // Fetch resume data from supabase
         const { data: resumeData, error: resumeError } = await supabase
@@ -222,7 +246,13 @@ export default function AtsChecker() {
           .single();
 
         if (resumeError) throw resumeError;
-        result = await analyzeResumeJsonAts(resumeData.data, jd, abortController.signal);
+        const typedResumeData = resumeData as { data: Record<string, unknown> } | null;
+        if (!typedResumeData) throw new Error('No resume data found');
+        result = (await analyzeResumeJsonAts(
+          typedResumeData.data as unknown as ResumeData,
+          jd,
+          abortController.signal,
+        )) as { parsed_resume: ResumeData; ats_report: AtsReport };
       } else {
         throw new Error('No resume provided');
       }
@@ -236,8 +266,8 @@ export default function AtsChecker() {
       if (user) {
         void autoSaveReport(result.ats_report, result.parsed_resume);
       }
-    } catch (err: any) {
-      if (err.name === 'AbortError') return;
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') return;
       console.error('ATS Analysis Error:', err);
       const isNetworkError =
         !navigator.onLine ||
@@ -297,7 +327,14 @@ export default function AtsChecker() {
 
     try {
       setIsSaving(true);
-      const upsertData: any = {
+      interface AtsReportUpsert {
+        id?: string;
+        resume_id: string;
+        user_id: string;
+        data: AtsReport;
+      }
+
+      const upsertData: AtsReportUpsert = {
         resume_id: storeResumeId,
         user_id: user.id,
         data: report,
@@ -315,8 +352,9 @@ export default function AtsChecker() {
 
       if (error) throw error;
 
-      if (savedReport) {
-        setReport(report, savedReport.id);
+      const typedSavedReport = savedReport as { id: string } | null;
+      if (typedSavedReport) {
+        setReport(report, typedSavedReport.id);
       }
       setExistingReport(report);
       toast({

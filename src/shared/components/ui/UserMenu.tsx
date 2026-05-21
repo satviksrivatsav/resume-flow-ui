@@ -93,9 +93,7 @@ export function UserMenu() {
           <div className="text-xs font-bold uppercase tracking-wide text-foreground truncate">
             {userName}
           </div>
-          <div className="text-[10px] text-muted-foreground truncate font-medium">
-            {userEmail}
-          </div>
+          <div className="text-[10px] text-muted-foreground truncate font-medium">{userEmail}</div>
         </div>
       }
       trigger={

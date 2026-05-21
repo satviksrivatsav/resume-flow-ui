@@ -184,7 +184,9 @@ export function AIDiffViewer({
                 typeof originalText === 'string' && 'whitespace-pre-wrap',
               )}
             >
-              {originalText || <span className="italic opacity-50 font-normal">No original content</span>}
+              {originalText || (
+                <span className="italic opacity-50 font-normal">No original content</span>
+              )}
             </div>
           </div>
         )}

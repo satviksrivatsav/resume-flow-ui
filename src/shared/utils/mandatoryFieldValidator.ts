@@ -1,4 +1,4 @@
-﻿import { ResumeData } from '@/shared/types/resume';
+import { ResumeData } from '@/shared/types/resume';
 
 export const isBasicsComplete = (basics: ResumeData['basics']) => {
   return !!(basics.name?.trim() && basics.email?.trim() && basics.phone?.trim());
@@ -115,9 +115,9 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
   // Custom Sections
   customSections.forEach((section) => {
     // 1. Check if it's an "Additional" style section (one with a top-level description)
-    const asAdditional = section as any;
+    const asAdditional = section as typeof section & { description?: string };
     if (asAdditional.description !== undefined) {
-      if (!section.name?.trim() || !asAdditional.description?.trim()) {
+      if (!section.name?.trim() || !asAdditional.description.trim()) {
         missingForms.push(section.name || 'Additional Section');
       }
       return;
@@ -126,7 +126,10 @@ export const getMissingMandatorySections = (resumeData: ResumeData): string[] =>
     // 2. Otherwise check standard custom sections with items
     if (
       section.items.length > 0 &&
-      section.items.some((item) => !item.title?.trim() || !item.description?.trim())
+      section.items.some((item: unknown) => {
+        const customItem = item as { title?: string; description?: string };
+        return !customItem.title?.trim() || !customItem.description?.trim();
+      })
     ) {
       missingForms.push(section.name || 'Custom Section');
     }
@@ -210,20 +213,24 @@ export const getSectionCompletionStatus = (sectionId: string, resumeData: Resume
       return sections.profiles.items.length > 0;
     case 'settings':
       return true;
-    default:
+    default: {
       const custom = customSections.find((s) => s.id === sectionId);
       if (!custom) return false;
 
       // 1. Check Additional style
-      const asAdditional = custom as any;
+      const asAdditional = custom as typeof custom & { description?: string };
       if (asAdditional.description !== undefined) {
-        return !!(custom.name?.trim() && asAdditional.description?.trim());
+        return !!(custom.name?.trim() && asAdditional.description.trim());
       }
 
       // 2. Standard custom section with items
       return (
         custom.items.length > 0 &&
-        custom.items.every((item) => item.title?.trim() && item.description?.trim())
+        custom.items.every((item: unknown) => {
+          const customItem = item as { title?: string; description?: string };
+          return !!(customItem.title?.trim() && customItem.description?.trim());
+        })
       );
+    }
   }
 };

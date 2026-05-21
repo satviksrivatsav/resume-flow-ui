@@ -86,7 +86,7 @@ export function AtsSetup({
           description: 'Job description extracted from file',
           variant: 'success',
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('JD extraction failed:', err);
         toast({
           title: 'Error',
@@ -233,13 +233,13 @@ export function AtsSetup({
                     : 'Paste the job description here...'
               }
               className={`min-h-[160px] ${
-                jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : ''
+                !!jdFile || isExtractingJd ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               value={jdText}
               onChange={setJdText}
               disabled={!!jdFile || isExtractingJd}
             />
-            {(jdFile || isExtractingJd) && (
+            {(!!jdFile || isExtractingJd) && (
               <div className="absolute inset-0 bg-background/5 rounded-[2rem] pointer-events-none flex items-center justify-center" />
             )}
           </div>
@@ -248,7 +248,7 @@ export function AtsSetup({
             <label
               htmlFor="jd-file-upload"
               className={`inline-flex items-center gap-2 px-5 h-full bg-background border border-border/50 rounded-full text-[11px] font-bold text-muted-foreground transition-all uppercase tracking-wider ${
-                jdFile || isExtractingJd
+                !!jdFile || isExtractingJd
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:text-foreground hover:border-primary/30 cursor-pointer active:scale-[0.98]'
               }`}
@@ -268,7 +268,7 @@ export function AtsSetup({
               onChange={handleJdFileUpload}
               disabled={!!jdFile}
             />
-            {jdFile && (
+            {!!jdFile && (
               <div className="bg-card border border-border/50 rounded-full px-4 h-full flex items-center gap-3 shadow-sm max-w-[200px]">
                 <p className="font-bold text-foreground text-[10px] truncate">{jdFile.name}</p>
                 <button

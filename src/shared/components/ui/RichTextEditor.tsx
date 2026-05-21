@@ -1,11 +1,11 @@
 import '@/resume/components/quill-custom.css';
 
+import Placeholder from '@tiptap/extension-placeholder';
+import UnderlineExtension from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import { Bold, Italic, List, ListOrdered, Strikethrough, Type, Underline } from 'lucide-react';
 import * as React from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import UnderlineExtension from '@tiptap/extension-underline';
-import Placeholder from '@tiptap/extension-placeholder';
 
 import { AIWriterButton } from '@/shared/components/ui/AIWriterButton';
 import {
@@ -265,10 +265,7 @@ export const RichTextEditor = ({
         )}
       </div>
 
-      <EditorContent
-        editor={editor}
-        id={id}
-      />
+      <EditorContent editor={editor} id={id} />
     </div>
   );
 };

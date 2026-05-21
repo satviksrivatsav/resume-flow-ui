@@ -1,3 +1,6 @@
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
 import { pdf } from '@react-pdf/renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -7,9 +10,6 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { sanitizeResumeData } from '@/shared/lib/utils';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 import { PDFGenerator } from '@/shared/utils/export/pdfGenerator';
-
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -41,7 +41,7 @@ export const ResumePreview = forwardRef<
     captureThumbnail: async () => {
       let attempts = 0;
       const maxAttempts = 10;
-      
+
       const findCanvas = () => {
         // Find all canvases and pick the first one from a resume sheet in the ACTIVE layer
         const canvases = document.querySelectorAll('.pdf-layer-active .resume-page-sheet canvas');
@@ -49,7 +49,7 @@ export const ResumePreview = forwardRef<
       };
 
       let canvas = findCanvas();
-      
+
       // Wait for canvas to be available and have content
       while ((!canvas || canvas.width === 0) && attempts < maxAttempts) {
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -58,18 +58,26 @@ export const ResumePreview = forwardRef<
       }
 
       if (!canvas || canvas.width === 0) {
-        console.warn('Thumbnail capture failed: Canvas not found or empty after', attempts, 'attempts');
+        console.warn(
+          'Thumbnail capture failed: Canvas not found or empty after',
+          attempts,
+          'attempts',
+        );
         return null;
       }
 
       return new Promise((resolve) => {
         try {
-          canvas!.toBlob((blob) => {
-            if (!blob) {
-              console.warn('Canvas.toBlob returned null');
-            }
-            resolve(blob);
-          }, 'image/webp', 0.8);
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                console.warn('Canvas.toBlob returned null');
+              }
+              resolve(blob);
+            },
+            'image/webp',
+            0.8,
+          );
         } catch (err) {
           console.error('Error during canvas.toBlob:', err);
           resolve(null);
@@ -81,13 +89,13 @@ export const ResumePreview = forwardRef<
   useEffect(() => {
     let isMounted = true;
     setIsGenerating(true);
-    
+
     const timeoutId = setTimeout(async () => {
       try {
         const asPdf = pdf(<PDFGenerator resumeData={resumeData} />);
         const blob = await asPdf.toBlob();
         const url = URL.createObjectURL(blob);
-        
+
         if (isMounted) {
           setLayers((prev) => {
             const id = `layer_${layerIdRef.current++}`;
@@ -101,9 +109,9 @@ export const ResumePreview = forwardRef<
 
             // If it's the first layer, just return it
             if (prev.length === 0) return [nextLayer];
-            
+
             // Otherwise, keep existing active layer and add the staged one
-            const active = prev.filter(l => l.phase === 'active');
+            const active = prev.filter((l) => l.phase === 'active');
             return [...active, nextLayer];
           });
         }
@@ -125,44 +133,51 @@ export const ResumePreview = forwardRef<
   // Clean up object URLs when layers are removed
   const cleanupLayer = (layerId: string) => {
     setLayers((prev) => {
-      const layer = prev.find(l => l.id === layerId);
+      const layer = prev.find((l) => l.id === layerId);
       if (layer) {
         URL.revokeObjectURL(layer.blobUrl);
       }
-      return prev.filter(l => l.id !== layerId);
+      return prev.filter((l) => l.id !== layerId);
     });
   };
 
   const handlePageRenderSuccess = (layerId: string, pageNumber: number) => {
     setLayers((prev) => {
-      const layer = prev.find(l => l.id === layerId);
+      const layer = prev.find((l) => l.id === layerId);
       if (!layer || layer.renderedPages.includes(pageNumber)) return prev;
 
       const updatedRenderedPages = [...layer.renderedPages, pageNumber];
-      
+
       // If all pages in a staged layer are rendered, promote it to active
-      if (layer.phase === 'staged' && updatedRenderedPages.length >= layer.numPages && layer.numPages > 0) {
-        return prev.map(l => {
-          if (l.id === layerId) return { ...l, phase: 'active', renderedPages: updatedRenderedPages };
+      if (
+        layer.phase === 'staged' &&
+        updatedRenderedPages.length >= layer.numPages &&
+        layer.numPages > 0
+      ) {
+        return prev.map((l) => {
+          if (l.id === layerId)
+            return { ...l, phase: 'active', renderedPages: updatedRenderedPages };
           if (l.phase === 'active') return { ...l, phase: 'exiting' };
           return l;
         });
       }
 
-      return prev.map(l => l.id === layerId ? { ...l, renderedPages: updatedRenderedPages } : l);
+      return prev.map((l) =>
+        l.id === layerId ? { ...l, renderedPages: updatedRenderedPages } : l,
+      );
     });
   };
 
   const handleDocumentLoadSuccess = (layerId: string, numPages: number) => {
     setLayers((prev) => {
-      const layer = prev.find(l => l.id === layerId);
+      const layer = prev.find((l) => l.id === layerId);
       if (!layer) return prev;
 
       if (props.onPageCountChange && layer.phase === 'active') {
         props.onPageCountChange(numPages);
       }
 
-      return prev.map(l => l.id === layerId ? { ...l, numPages } : l);
+      return prev.map((l) => (l.id === layerId ? { ...l, numPages } : l));
     });
   };
 
@@ -171,7 +186,7 @@ export const ResumePreview = forwardRef<
   return (
     <div className="flex flex-col items-center gap-6 w-full select-none origin-top relative min-h-[1123px]">
       {layers.length === 0 && (
-        <div 
+        <div
           className="flex flex-col items-center justify-center w-full bg-white shadow-2xl border border-border/10 rounded-sm"
           style={{ height: '1123px', maxWidth: PAGE_WIDTH }}
         >

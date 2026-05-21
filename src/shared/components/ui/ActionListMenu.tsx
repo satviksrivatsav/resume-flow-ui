@@ -46,11 +46,7 @@ export function ActionListMenu({
         )}
       >
         <div className="flex flex-col">
-          {header && (
-            <div className="select-none">
-              {header}
-            </div>
-          )}
+          {header && <div className="select-none">{header}</div>}
           {items.map((item, index) => {
             const Icon = item.icon;
             return (

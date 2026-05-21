@@ -223,14 +223,22 @@ const PDFDescriptionRenderer = ({
     const bulletMatch = /^•\s*(.*)/.exec(line);
     if (bulletMatch) {
       return (
-        <View key={index} style={{ flexDirection: 'row', width: '100%', marginBottom: 2 }} wrap={false}>
+        <View
+          key={index}
+          style={{ flexDirection: 'row', width: '100%', marginBottom: 2 }}
+          wrap={false}
+        >
           <Text style={{ ...style, ...safeTextStyle, width: 12, flexShrink: 0 }}>•</Text>
           <Text style={{ ...style, ...safeTextStyle, flex: 1 }}>{bulletMatch[1]}</Text>
         </View>
       );
     }
     return (
-      <Text key={index} style={{ ...style, ...safeTextStyle, marginBottom: 2, width: '100%' }} wrap={false}>
+      <Text
+        key={index}
+        style={{ ...style, ...safeTextStyle, marginBottom: 2, width: '100%' }}
+        wrap={false}
+      >
         {line}
       </Text>
     );
@@ -439,7 +447,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
   const sectionOrder: string[] = metadata.sectionOrder ?? DEFAULT_SECTION_ORDER;
 
   const renderItemWebsite = (website?: { label?: string; href?: string }) => {
-    if (!website?.href || !website.href.trim()) return null;
+    if (!website?.href?.trim()) return null;
     const displayText = website.label?.trim() || website.href.trim();
     return (
       <View style={{ marginTop: 2 }}>
@@ -502,7 +510,9 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
                   <View style={styles.itemHeaderLeft}>
                     <Text style={{ ...styles.itemTitle, color: '#000' }}>
                       <Text style={{ fontWeight: 700 }}>{exp.position}</Text>
-                      {exp.company ? <Text style={{ fontWeight: 400 }}>, {exp.company}</Text> : null}
+                      {exp.company ? (
+                        <Text style={{ fontWeight: 400 }}>, {exp.company}</Text>
+                      ) : null}
                     </Text>
                     {renderItemWebsite(exp.website)}
                   </View>
@@ -663,7 +673,9 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
             >
               <Text style={{ ...safeTextStyle, fontWeight: 700 }}>{lang.name}</Text>
               {lang.description ? (
-                <Text style={{ ...safeTextStyle, color: '#555', marginLeft: 4 }}>({lang.description})</Text>
+                <Text style={{ ...safeTextStyle, color: '#555', marginLeft: 4 }}>
+                  ({lang.description})
+                </Text>
               ) : null}
               {index < visibleItems.length - 1 ? <Text style={{ marginLeft: 2 }}>,</Text> : null}
             </View>
@@ -868,7 +880,11 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
           {visibleItems.map((ref) => (
-            <View key={ref.id} style={{ width: '45%', marginBottom: getSpacing(12), marginRight: 15 }} wrap={false}>
+            <View
+              key={ref.id}
+              style={{ width: '45%', marginBottom: getSpacing(12), marginRight: 15 }}
+              wrap={false}
+            >
               <Text style={{ ...safeTextStyle, fontWeight: 700 }}>{ref.name}</Text>
               <Text style={{ ...safeTextStyle, fontSize: sizes.base - 1 }}>{ref.position}</Text>
               <Text style={{ ...safeTextStyle, fontSize: sizes.base - 2, color: '#666' }}>
@@ -908,7 +924,12 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ resumeData }) => {
               {contactInfo.map((item: any, index) => (
                 <View
                   key={index}
-                  style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12, maxWidth: '100%' }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginRight: 12,
+                    maxWidth: '100%',
+                  }}
                 >
                   <item.Icon />
                   {item.isLink ? (

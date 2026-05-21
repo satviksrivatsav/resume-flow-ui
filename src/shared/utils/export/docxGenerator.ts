@@ -1,4 +1,12 @@
-import { AlignmentType, BorderStyle, Document, ExternalHyperlink, Packer, Paragraph, TextRun } from 'docx';
+import {
+  AlignmentType,
+  BorderStyle,
+  Document,
+  ExternalHyperlink,
+  Packer,
+  Paragraph,
+  TextRun,
+} from 'docx';
 
 import { cleanPhoneNumber, getCountryByCode } from '@/shared/lib/countries';
 import { cleanProfileDisplay, hasContent, stripHtml } from '@/shared/lib/utils';
@@ -145,14 +153,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               }),
             ],
             link: item.prefix + item.value,
-          })
+          }),
         );
       } else {
         contactParagraphChildren.push(
           new TextRun({
             text: item.value,
             size: (sizes.base - 1) * 2,
-          })
+          }),
         );
       }
       if (index < contactInfo.length - 1) {
@@ -160,7 +168,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           new TextRun({
             text: '   |   ',
             size: (sizes.base - 1) * 2,
-          })
+          }),
         );
       }
     });
@@ -189,14 +197,14 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
               }),
             ],
             link: profile.website.href,
-          })
+          }),
         );
       } else {
         profileParagraphChildren.push(
           new TextRun({
             text: `${profile.network}${profile.username ? `: ${profile.username}` : ''}`,
             size: (sizes.base - 1) * 2,
-          })
+          }),
         );
       }
       if (index < visibleProfiles.length - 1) {
@@ -204,7 +212,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           new TextRun({
             text: '   |   ',
             size: (sizes.base - 1) * 2,
-          })
+          }),
         );
       }
     });
@@ -245,7 +253,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
   };
 
   const createItemWebsiteParagraph = (website?: { label?: string; href?: string }) => {
-    if (!website?.href || !website.href.trim()) return null;
+    if (!website?.href?.trim()) return null;
     const displayText = website.label?.trim() || website.href.trim();
     return new Paragraph({
       children: [
@@ -336,11 +344,13 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
         children.push(
           new Paragraph({
             children: [
-               new TextRun({ text: edu.school, bold: true, size: sizes.base * 2 }),
-               ...(edu.grade ? [new TextRun({ text: ` • ${edu.grade}`, size: sizes.base * 2 })] : []),
+              new TextRun({ text: edu.school, bold: true, size: sizes.base * 2 }),
+              ...(edu.grade
+                ? [new TextRun({ text: ` • ${edu.grade}`, size: sizes.base * 2 })]
+                : []),
             ],
             spacing: { after: getSpacingTwips(2), line: lineSpacingTwips },
-          })
+          }),
         );
       }
 
@@ -482,7 +492,7 @@ export const generateDocx = async (resumeData: ResumeData): Promise<Blob> => {
           new TextRun({
             text: visibleItems
               .map((i) => i.name + (i.keywords.length > 0 ? ` (${i.keywords.join(', ')})` : ''))
-               .join(', '),
+              .join(', '),
             size: sizes.base * 2,
           }),
         ],

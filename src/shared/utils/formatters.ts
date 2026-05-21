@@ -1,17 +1,48 @@
-﻿import { stripHtml } from '@/shared/lib/utils';
+import { stripHtml } from '@/shared/lib/utils';
+
+export interface ResumeItem {
+  company?: string;
+  organization?: string;
+  position?: string;
+  school?: string;
+  degree?: string;
+  area?: string;
+  name?: string;
+  network?: string;
+  username?: string;
+  title?: string;
+  issuer?: string;
+  publisher?: string;
+  awarder?: string;
+  date?: string;
+  period?: string;
+  summary?: string;
+  description?: string;
+  roles?: { position?: string; description?: string }[];
+  bullets?: string[];
+  keywords?: string[];
+  level?: number;
+}
+
+export interface SectionContent {
+  content?: string;
+  items?: ResumeItem[];
+}
 
 /**
-
  * Formats a single structured resume item into human-readable text.
  */
-export const formatItemContent = (id: string, item: any): string => {
+export const formatItemContent = (
+  id: string,
+  item: ResumeItem | string | null | undefined,
+): string => {
   if (!item) return '';
   if (typeof item === 'string') return item;
 
   const parts: string[] = [];
 
   // Experience / Volunteer
-  if (item.company || item.organization) parts.push(`${item.company || item.organization}`);
+  if (item.company ?? item.organization) parts.push(`${item.company ?? item.organization}`);
   if (item.position) parts.push(item.position);
 
   // Education
@@ -31,11 +62,11 @@ export const formatItemContent = (id: string, item: any): string => {
   // Awards / Certifications / Publications
   if (item.title) parts.push(`${item.title}`);
   if (item.name && (id === 'certifications' || id === 'publications')) parts.push(`${item.name}`);
-  if (item.issuer || item.publisher || item.awarder)
-    parts.push(item.issuer || item.publisher || item.awarder);
+  if (item.issuer ?? item.publisher ?? item.awarder)
+    parts.push(item.issuer ?? item.publisher ?? item.awarder);
 
   // Dates
-  if (item.date || item.period) parts.push(item.date || item.period);
+  if (item.date ?? item.period) parts.push(item.date ?? item.period);
 
   // General description/summary
   if (item.summary) parts.push(stripHtml(item.summary));
@@ -43,7 +74,7 @@ export const formatItemContent = (id: string, item: any): string => {
 
   // Experience Roles (nested)
   if (item.roles && Array.isArray(item.roles)) {
-    item.roles.forEach((role: any) => {
+    item.roles.forEach((role) => {
       if (role.position) parts.push(`- ${role.position}`);
       if (role.description) parts.push(stripHtml(role.description));
     });
@@ -73,26 +104,29 @@ export const formatItemContent = (id: string, item: any): string => {
 /**
  * Formats structured resume sections into human-readable text for the diff viewer.
  */
-export const formatSectionContent = (id: string, content: any): string => {
+export const formatSectionContent = (
+  id: string,
+  content: SectionContent | string | null | undefined,
+): string => {
   if (!content) return '';
   if (typeof content === 'string') return content;
 
   // Summary
   if (id === 'summary') {
-    return stripHtml(content.content || content || '');
+    return stripHtml(typeof content === 'string' ? content : (content.content ?? ''));
   }
 
   // Handle section items (Experience, Education, Projects, etc.)
   if (content.items && Array.isArray(content.items)) {
     return content.items
-      .map((item: any) => formatItemContent(id, item))
+      .map((item) => formatItemContent(id, item))
       .filter(Boolean)
       .join('\n\n' + '─'.repeat(20) + '\n\n');
   }
 
   // If it's a single item (flattened slides), format it directly
   if (typeof content === 'object') {
-    return formatItemContent(id, content);
+    return formatItemContent(id, content as ResumeItem);
   }
 
   // Fallback to pretty JSON if we can't format it
