@@ -1,12 +1,21 @@
 import { formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Copy, Edit3, FileSearch, FileText, MoreVertical, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import {
+  Copy,
+  Download,
+  Edit3,
+  FileSearch,
+  FileText,
+  MoreVertical,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ResumePreview } from '@/resume/components/ResumePreview';
 import { ActionListMenu } from '@/shared/components/ui/ActionListMenu';
 import { DeleteConfirmationModal } from '@/shared/components/ui/DeleteConfirmationModal';
+import { Logo } from '@/shared/components/ui/Logo';
 import { useToast } from '@/shared/hooks/use-toast';
 import { supabase } from '@/shared/lib/supabase';
 import { sanitizeResumeData } from '@/shared/lib/utils';
@@ -14,11 +23,14 @@ import { useResumeStore } from '@/shared/stores/resumeStore';
 import { useUiStore } from '@/shared/stores/uiStore';
 import { ResumeData } from '@/shared/types/resume';
 
+import { ExportResumeModal } from './ExportResumeModal';
+
 interface ResumeRow {
   id: string;
   user_id: string;
   name: string;
   data: ResumeData;
+  thumbnail_url?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -33,10 +45,9 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
   const navigate = useNavigate();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(resume.name);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.25);
   const [hasReport, setHasReport] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   useEffect(() => {
     const checkReport = async () => {
@@ -51,16 +62,6 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
     };
 
     void checkReport();
-
-    if (!containerRef.current) return;
-    const currentContainer = containerRef.current;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setScale(entry.contentRect.width / 794);
-      }
-    });
-    observer.observe(currentContainer);
-    return () => observer.disconnect();
   }, [resume.id]);
 
   const handleOpen = () => {
@@ -166,6 +167,14 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
       },
     },
     {
+      label: 'Export',
+      icon: Download,
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setShowExportModal(true);
+      },
+    },
+    {
       label: 'Delete',
       icon: Trash2,
       destructive: true,
@@ -183,14 +192,19 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
         onClick={handleOpen}
       >
         <div className="aspect-[1/1.414] bg-background m-2 rounded-[18px] overflow-hidden relative shadow-inner">
-          <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div
-              className="absolute top-0 left-0 origin-top-left"
-              style={{ width: '794px', height: '1123px', transform: `scale(${scale})` }}
-            >
-              <ResumePreview data={resume.data} />
+          {resume.thumbnail_url ? (
+            <img
+              src={resume.thumbnail_url}
+              alt={resume.name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-accent/5 opacity-20 grayscale">
+              <Logo className="w-16 h-16 mb-2" />
+              <p className="text-[10px] font-bold tracking-widest uppercase">No Preview</p>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="p-4 pt-2">
@@ -231,6 +245,13 @@ export function ResumeCard({ resume, onRefresh }: ResumeCardProps) {
           </div>
         </div>
       </motion.div>
+
+      <ExportResumeModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        resumeData={resume.data}
+        resumeName={resume.name}
+      />
 
       <DeleteConfirmationModal
         isOpen={showDeleteModal}

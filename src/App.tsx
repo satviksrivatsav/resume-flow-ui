@@ -1,4 +1,4 @@
-﻿import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from 'next-themes';
 import { useEffect } from 'react';
@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import AtsChecker from '@/ats/pages/AtsChecker';
 import AtsReports from '@/ats/pages/AtsReports';
 import { ProtectedRoute } from '@/auth/components/ProtectedRoute';
+import { PublicRoute } from '@/auth/components/PublicRoute';
 import ForgotPasswordPage from '@/auth/pages/ForgotPasswordPage';
 import LoginPage from '@/auth/pages/LoginPage';
 import SignUpPage from '@/auth/pages/SignUpPage';
@@ -44,9 +45,30 @@ function AnimatedRoutes() {
 
         {/* Auth routes share a layout so panels can slide between each other */}
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignUpPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicRoute>
+                <ForgotPasswordPage />
+              </PublicRoute>
+            }
+          />
           <Route
             path="/update-password"
             element={

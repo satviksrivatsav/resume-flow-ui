@@ -173,10 +173,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
           }
         }
 
+        // Prepare sanitized data for storage in the JSONB column
+        // We remove top-level fields that are already in separate columns
+        const { id: _id, user_id: _uid, thumbnail_url: _turl, ...restOfData } = currentResumeData;
+        
         const upsertData: any = {
           user_id: finalUserId,
           name: finalName || 'Untitled Resume',
-          data: { ...currentResumeData, name: finalName },
+          data: { ...restOfData, name: finalName },
           updated_at: new Date().toISOString(),
         };
 

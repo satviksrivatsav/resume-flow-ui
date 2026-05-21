@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
+import { Slider } from '@/shared/components/ui/slider';
 import { useResumeStore } from '@/shared/stores/resumeStore';
 
 const THEME_COLORS = [
@@ -305,6 +306,35 @@ export const ResumeSettings = () => {
               {size.label}
             </motion.button>
           ))}
+        </div>
+      </div>
+
+      {/* Line Height */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium">Line Height</h3>
+          <p className="text-xs font-mono text-muted-foreground">
+            {metadata.typography.lineHeight || 1.5}
+          </p>
+        </div>
+        <div className="px-2 pt-2 pb-4">
+          <Slider
+            min={0.8}
+            max={2.5}
+            step={0.1}
+            value={[metadata.typography.lineHeight || 1.5]}
+            onValueChange={(val) =>
+              updateMetadata({
+                typography: { ...metadata.typography, lineHeight: val[0] },
+              })
+            }
+            className="w-full"
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground px-1">
+          <span>Compact</span>
+          <span>Standard</span>
+          <span>Loose</span>
         </div>
       </div>
     </motion.div>

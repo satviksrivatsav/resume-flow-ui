@@ -220,6 +220,7 @@ export interface ResumeMetadata {
   typography: {
     fontFamily: string;
     fontSize: number;
+    lineHeight: number;
   };
   theme: {
     primary: string;
@@ -294,6 +295,7 @@ export const defaultResumeData: ResumeData = {
     typography: {
       fontFamily: 'Open Sans',
       fontSize: 11,
+      lineHeight: 1.5,
     },
     theme: {
       primary: '#1f2937',

@@ -22,7 +22,7 @@ import { PersonalInfoForm } from '@/resume/components/PersonalInfoForm';
 import { ProjectsForm } from '@/resume/components/ProjectsForm';
 import { PublicationsForm } from '@/resume/components/PublicationsForm';
 import { ReferencesForm } from '@/resume/components/ReferencesForm';
-import { ResumePreview } from '@/resume/components/ResumePreview';
+import { ResumePreview, ResumePreviewHandle } from '@/resume/components/ResumePreview';
 import { ResumeSettings } from '@/resume/components/ResumeSettings';
 import { ResumeSidebar } from '@/resume/components/ResumeSidebar';
 import { SkillsForm } from '@/resume/components/SkillsForm';
@@ -42,6 +42,7 @@ import { Logo } from '@/shared/components/ui/Logo';
 import { SidebarProvider } from '@/shared/components/ui/sidebar';
 import { Slider } from '@/shared/components/ui/slider';
 import { Tabs, TabsContent } from '@/shared/components/ui/tabs';
+import { supabase } from '@/shared/lib/supabase';
 import { cn } from '@/shared/lib/utils';
 import { useAIWriterStore } from '@/shared/stores/aiWriterStore';
 import { useResumeStore } from '@/shared/stores/resumeStore';
@@ -69,6 +70,7 @@ const ResumeBuilder = () => {
     stopAutoSave,
     updateSummary,
     updateItem,
+    saveStatus,
   } = useResumeStore();
   const [viewMode, setViewMode] = useState<ViewMode>('fit-width');
   const [previewZoom, setPreviewZoom] = useState(0.5);
@@ -78,8 +80,70 @@ const ResumeBuilder = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTailorBackModal, setShowTailorBackModal] = useState(false);
   const previewPanelRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<ResumePreviewHandle>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Sync thumbnail on successful save
+  useEffect(() => {
+    // Only trigger sync when save is successful AND we have a valid ID
+    if (saveStatus === 'success' && resumeData.id) {
+      const syncThumbnail = async () => {
+        try {
+          // Check if preview is actually mounted
+          if (!previewRef.current) {
+            console.log('Thumbnail sync skipped: Preview is not visible (hidden by user)');
+            return;
+          }
+
+          // Add a small delay to ensure the PDF/Canvas is fully rendered
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          const blob = await previewRef.current.captureThumbnail();
+          if (!blob) {
+            // This is logged inside captureThumbnail as well
+            return;
+          }
+
+          const fileName = `${resumeData.id}.webp`;
+          
+          // Use { upsert: true } to overwrite existing thumbnails
+          const { error: uploadError } = await supabase.storage
+            .from('resume-thumbnails')
+            .upload(fileName, blob, {
+              contentType: 'image/webp',
+              upsert: true,
+            });
+
+          if (uploadError) {
+            // Log but don't throw, we don't want to break the builder for a thumbnail error
+            console.error('Thumbnail upload error (check if storage bucket exists):', uploadError);
+            return;
+          }
+
+          const { data: publicUrlData } = supabase.storage
+            .from('resume-thumbnails')
+            .getPublicUrl(fileName);
+
+          const { error: updateError } = await supabase
+            .from('resumes')
+            .update({ thumbnail_url: publicUrlData.publicUrl })
+            .eq('id', resumeData.id);
+
+          if (updateError) {
+            console.error('Thumbnail database update error:', updateError);
+          } else {
+            console.log('Thumbnail synced successfully');
+          }
+        } catch (err) {
+          // Catch any unexpected errors in the sync process
+          console.error('Unexpected error during thumbnail sync:', err);
+        }
+      };
+
+      void syncThumbnail();
+    }
+  }, [saveStatus, resumeData.id]);
 
   // Initialize resume data
   useEffect(() => {
@@ -361,7 +425,7 @@ const ResumeBuilder = () => {
               top: 0,
             }}
           >
-            <ResumePreview onPageCountChange={setTotalPages} />
+            <ResumePreview ref={previewRef} onPageCountChange={setTotalPages} />
           </motion.div>
         </div>
       </div>
@@ -581,7 +645,7 @@ const ResumeBuilder = () => {
                           transformOrigin: 'top center',
                         }}
                       >
-                        <ResumePreview onPageCountChange={setTotalPages} />
+                        <ResumePreview ref={previewRef} onPageCountChange={setTotalPages} />
                       </div>
                       <div
                         style={{

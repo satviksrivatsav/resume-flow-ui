@@ -14,6 +14,7 @@ interface ResumeRow {
   user_id: string;
   name: string;
   data: ResumeData;
+  thumbnail_url?: string | null;
   created_at: string;
   updated_at: string;
 }
