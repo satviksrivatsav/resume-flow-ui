@@ -197,7 +197,7 @@ export const LandingFooter = () => {
               </li>
               <li>
                 <a
-                  href="https://github.com/satviksrivatsav/resume-flow-ui"
+                  href="https://github.com/satviksrivatsav/resume-flow"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm hover:text-black dark:hover:text-white transition-colors"

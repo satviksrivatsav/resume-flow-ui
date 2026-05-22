@@ -32,7 +32,7 @@ export const FeaturesSection = () => {
       description:
         'Upload your old PDF or Word document and let our parser instantly extract your experience, education, and skills.',
       bullets: [
-        'Supports PDF, DOCX, and LinkedIn exports',
+        'Supports PDF and DOCX exports',
         'Accurate data extraction and categorization',
         'Start with your existing data, zero typing',
       ],
